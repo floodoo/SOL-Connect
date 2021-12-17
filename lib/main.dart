@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untis_phasierung/ui/screens/home/home.screen.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
 
 void main() {
@@ -16,7 +17,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const LoginScreen(),
+      initialRoute: LoginScreen.routeName,
+      routes: {
+        LoginScreen.routeName: (context) => const LoginScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
+      },
     );
   }
 }
