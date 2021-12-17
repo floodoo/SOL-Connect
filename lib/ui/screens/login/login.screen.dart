@@ -66,7 +66,7 @@ class LoginScreen extends StatelessWidget {
                       child: InkWell(
                         child: Container(
                           decoration: const BoxDecoration(
-                            color: Colors.lightBlue,
+                            color: Colors.blue,
                             borderRadius: BorderRadius.vertical(
                               bottom: Radius.circular(20),
                             ),
@@ -96,58 +96,5 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
-    // return Stack(
-    //   children: [
-    //     Column(
-    //       children: [
-    //         Expanded(
-    //           child: Container(
-    //             color: Colors.blue,
-    //           ),
-    //         ),
-    //         Expanded(
-    //           flex: 2,
-    //           child: Container(
-    //             color: Colors.white,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //     Center(
-    //       child: Card(
-    //         color: Colors.green,
-    //         shape: RoundedRectangleBorder(
-    //           borderRadius: BorderRadius.circular(20.0),
-    //         ),
-    //         child: ListTile(
-    //           title: Column(
-    //             children: [
-    // TextField(
-    //   style: const TextStyle(color: Colors.white),
-    //   decoration: InputDecoration(
-    //     hintText: "Username",
-    //     hintStyle: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white),
-    //     fillColor: Colors.cyan[900],
-    //     filled: true,
-    //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.0), borderSide: BorderSide.none),
-    //   ),
-    // ),
-    //               TextField(
-    //                 style: const TextStyle(color: Colors.white),
-    //                 decoration: InputDecoration(
-    //                   hintText: "Password",
-    //                   hintStyle: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white),
-    //                   fillColor: Colors.cyan[900],
-    //                   filled: true,
-    //                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.0), borderSide: BorderSide.none),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //     )
-    //   ],
-    // );
   }
 }
