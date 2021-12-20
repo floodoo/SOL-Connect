@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:untis_phasierung/ui/screens/home/home.screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
+  static final routeName = (LoginScreen).toString();
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +17,7 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: MediaQuery.of(context).size.height / 6),
@@ -85,7 +88,7 @@ class LoginScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        onTap: () {},
+                        onTap: () => Navigator.pushReplacementNamed(context, HomeScreen.routeName),
                       ),
                     )
                   ],
