@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'rpcresponse.dart' as rh;
+import 'utils.dart' as utils;
 
 class Gateway {
   static const types = {
@@ -15,16 +16,33 @@ class Gateway {
   String sessionId = "";
   int personId = -1;
   int klasseId = -1;
+  int type = 0;
 
-  final String URL =
-      "https://hepta.webuntis.com/WebUntis/jsonrpc.do?school=bbs1-mainz";
+  String school = "";
+  String schoolBase64 = "";
+
+  String URL = "https://hepta.webuntis.com/WebUntis/jsonrpc.do?school=";
   bool sessionValid = false;
 
-  Gateway(String appID) {
+  Gateway(String school, String appID) {
     applicationName = appID;
+
+    this.school = school;
+    this.schoolBase64 = base64Encode(utf8.encode(this.school));
+    URL += this.school.toString();
   }
 
-  void createSession(username, password) async {
+  /**Diese müssen in den Header gelegt werden */
+  String buildAuthCookie() {
+    if (!sessionValid) return "";
+
+    return "JSESSIONID=" +
+        sessionId +
+        "; schoolname=" +
+        schoolBase64.replaceAll("=", "%3D");
+  }
+
+  Future createSession(username, password) async {
     rh.RPCResponse response = await query({
       "id": applicationName,
       "method": "authenticate",
@@ -57,12 +75,48 @@ class Gateway {
     sessionId = response.payload['sessionId'];
     personId = response.payload['personId'];
     klasseId = response.payload['klasseId'];
+    type = response.payload['personType'];
 
-    print("Login Successfull, sessionID recieved");
+    sessionValid = true;
+
+    print("Login Successfull, sessionID recieved: " +
+        response.payload.toString());
+  }
+
+  Future<rh.RPCResponse> getTimeTable(DateTime from, DateTime to) async {
+    if (!sessionValid) throw Exception("Die Session ist ungültig.");
+
+    return await query({
+      "id": applicationName,
+      "method": "getTimetable",
+      "params": {
+        "endDate": utils.convertToUntisDate(to),
+        "startDate": utils.convertToUntisDate(from),
+        "id": personId,
+        "type": type,
+      },
+      "options": {
+        "showLsText": true,
+        "showStudentgroup": true,
+        "showLsNumber": true,
+        "showSubstText": true,
+        "showInfo": true,
+        "showBooking": true,
+        "klasseFields": ['id', 'name', 'longname', 'externalkey'],
+        "roomFields": ['id', 'name', 'longname', 'externalkey'],
+        "subjectFields": ['id', 'name', 'longname', 'externalkey'],
+        "teacherFields": ['id', 'name', 'longname', 'externalkey']
+      },
+      "jsonrpc": 2.0
+    });
   }
 
   Future<rh.RPCResponse> query(Object data) async {
     return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
-        headers: {'Content-type': 'application/json'}, body: jsonEncode(data)));
+        headers: {
+          'Content-type': 'application/json',
+          'Cookie': buildAuthCookie()
+        },
+        body: jsonEncode(data)));
   }
 }

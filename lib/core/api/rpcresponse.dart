@@ -5,7 +5,7 @@ class RPCResponse {
   String errorMessage = "";
   int errorCode = 0;
 
-  Map<String, dynamic> payload = new Map();
+  dynamic payload = new Map();
   String appId = "";
   String rpcVersion = "2.0";
 
@@ -15,12 +15,13 @@ class RPCResponse {
     //Erstmal den Statuscode checken
     if (httpResponse.statusCode != 200) {
       response.errorCode = httpResponse.statusCode;
-      response.errorMessage =
-          "Die Anfrage hat mit dem http Statuscode $httpResponse.statusCode geantwortet!";
+      response.errorMessage = "Die Anfrage hat mit dem http Statuscode " +
+          httpResponse.statusCode.toString() +
+          " geantwortet!";
       return response;
     }
 
-    Map<String, dynamic> json = jsonDecode(httpResponse.body);
+    dynamic json = jsonDecode(httpResponse.body);
 
     //Standart Daten auszulesen
     response.appId = json['id'];
@@ -52,6 +53,6 @@ class RPCResponse {
 
   /**@return true - Wenn der Handler einen Error hat */
   bool isError() {
-    return !errorMessage.isEmpty;
+    return !errorMessage.isEmpty || isHttpError();
   }
 }
