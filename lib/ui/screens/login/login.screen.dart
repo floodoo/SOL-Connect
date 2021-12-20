@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untis_phasierung/ui/screens/home/home.screen.dart';
+import 'package:untis_phasierung/ui/screens/timetable/timetable.screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -88,7 +88,7 @@ class LoginScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        onTap: () => Navigator.pushReplacementNamed(context, HomeScreen.routeName),
+                        onTap: () => Navigator.pushReplacementNamed(context, TimetableScreen.routeName),
                       ),
                     )
                   ],
