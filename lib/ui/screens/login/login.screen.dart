@@ -17,6 +17,7 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: MediaQuery.of(context).size.height / 6),
