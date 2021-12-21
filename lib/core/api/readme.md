@@ -31,3 +31,32 @@ void main() {
   });
 }
 ```
+
+```
+Montag
+	08:00 - 08:45 BBU_Inf 
+	08:45 - 09:30 BBU_Inf 
+	09:45 - 10:30 BBU_Inf 
+	10:30 - 11:15 BBU_Inf 
+	11:30 - 12:15 SkWil 
+	12:15 - 13:00 SkWil 
+	13:30 - 14:15 SkWil [cancelled]
+	14:15 - 15:00 SkWil [cancelled]
+Dienstag
+	08:00 - 08:45 Dkom [cancelled]
+	08:45 - 09:30 Dkom 
+	09:45 - 10:30 Dkom [irregular]
+	09:45 - 10:30 BBU_Wi [cancelled]
+	10:30 - 11:15 BBU_Wi 
+	11:30 - 12:15 SkWil 
+	12:15 - 13:00 SkWil 
+	13:30 - 14:15 BBU_Inf 
+	14:15 - 15:00 BBU_Inf 
+Mittwoch
+	08:00 - 08:45 BBU_Inf 
+	08:45 - 09:30 BBU_Inf 
+	09:45 - 10:30 BBU_Inf 
+	10:30 - 11:15 BBU_Inf 
+	11:30 - 12:15 ReEv 
+	12:15 - 13:00 ReEv 
+```
