@@ -48,7 +48,7 @@ void main() {
   UserSession gw = new UserSession("bbs1-mainz", "testAPP");
 
   gw.createSession("USERNAME", "PASSWORD").then((e) {
-    //Stundenplan vom 19.12 bis 23.12 abfragen
+   
     gw.getTimeTableForThisWeek().then((value) {
     
       for (TimeTableDay day in value.days) {
