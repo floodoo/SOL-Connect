@@ -36,25 +36,24 @@ Es ist also gewährleistet, dass alle Tage zwischen zwei angegebenen TimeTable D
 Diese Tage besitzten keine Stundeneinträge und besitzen den Wert `outOfScope = true` 
 
 # Beispiel
-Beispiel für eine Stundenplanabfrage.:
+Beispiel für eine Stundenplanabfrage der aktuellen Woche:
+
 ```dart
-import 'usersession.dart';
-import 'timetable.day.dart';
-import 'timetable.hour.dart';
+import '/lib/core/api/usersession.dart';
+import '/lib/core/api/timetable.day.dart';
+import '/lib/core/api/timetable.hour.dart';
 
 void main() {
-  //Dieses Beispiel gibt den Stundenplan vom 19.12 bis 23.12 mit Uhrzeit und Fach. Wenn ein Fach ausfällt oder sonstiges steht der Code hinter dem Fach
-  //Ich werden in Zukunft noch ein Enum für die codes erstellen
 
   UserSession gw = new UserSession("bbs1-mainz", "testAPP");
 
-  //Session mit Login Daten erstellen
   gw.createSession("USERNAME", "PASSWORD").then((e) {
     //Stundenplan vom 19.12 bis 23.12 abfragen
-    gw.getTimeTable(DateTime.parse("20211219"), DateTime.parse("20211223")).then((value) {
-     
+    gw.getTimeTableForThisWeek().then((value) {
+    
       for (TimeTableDay day in value.days) {
         print(day.dayName);
+        if (day.outOfScope) print("\t[FERIEN/WOCHENENDE]");
         for (TimeTableHour hour in day.hours) {
           print("\t" +
               hour.getTitle() +
@@ -64,9 +63,11 @@ void main() {
               (hour.code != "regular" ? "[" + hour.code + "]" : ""));
         }
       }
+      
     });
   });
 }
+
 ```
 ## Ausgabe:
 
@@ -97,4 +98,13 @@ Mittwoch
 	10:30 - 11:15 BBU_Inf 
 	11:30 - 12:15 ReEv 
 	12:15 - 13:00 ReEv 
+Donnerstag
+	[FERIEN/WOCHENENDE]
+Freitag
+	[FERIEN/WOCHENENDE]
+Samstag
+	[FERIEN/WOCHENENDE]
+Sonntag
+	[FERIEN/WOCHENENDE]
+
 ```
