@@ -33,18 +33,8 @@ class UserSession {
     URL += this.school.toString();
   }
 
-  /**Diese müssen in den Header gelegt werden */
-  String buildAuthCookie() {
-    if (!sessionValid) return "";
-
-    return "JSESSIONID=" +
-        sessionId +
-        "; schoolname=" +
-        schoolBase64.replaceAll("=", "%3D");
-  }
-
   Future createSession(username, password) async {
-    rh.RPCResponse response = await query({
+    rh.RPCResponse response = await _query({
       "id": applicationName,
       "method": "authenticate",
       "params": {
@@ -83,39 +73,67 @@ class UserSession {
     print("Login Successfull");
   }
 
+  Future<TimeTableRange> getTimeTableForThisWeek() async {
+    DateTime firstDayOfTheweek =
+        DateTime.now().subtract(new Duration(days: DateTime.now().weekday - 1));
+
+    DateTime lastDayOfWeek = firstDayOfTheweek.add(
+        new Duration(days: DateTime.daysPerWeek - firstDayOfTheweek.weekday));
+    return getTimeTable(firstDayOfTheweek, lastDayOfWeek);
+  }
+
+  Future<TimeTableRange> getTimeTableForToday() async {
+    if (!sessionValid) throw Exception("Die Session ist ungültig.");
+
+    return getTimeTable(DateTime.now(), DateTime.now());
+  }
+
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to) async {
     if (!sessionValid) throw Exception("Die Session ist ungültig.");
 
-    return TimeTableRange(await query({
-      "id": applicationName,
-      "method": "getTimetable",
-      "params": {
-        "options": {
-          "startDate": utils.convertToUntisDate(from),
-          "endDate": utils.convertToUntisDate(to),
-          "element": {"id": this.personId, "type": this.type},
-          "showLsText": true,
-          "showStudentgroup": true,
-          "showLsNumber": true,
-          "showSubstText": true,
-          "showInfo": true,
-          "showBooking": true,
-          "klasseFields": ['id', 'name', 'longname', 'externalkey'],
-          "roomFields": ['id', 'name', 'longname', 'externalkey'],
-          "subjectFields": ['id', 'name', 'longname', 'externalkey'],
-          "teacherFields": ['id', 'name', 'longname', 'externalkey']
-        }
-      },
-      "jsonrpc": 2.0
-    }));
+    return TimeTableRange(
+        from,
+        to,
+        await _query({
+          "id": applicationName,
+          "method": "getTimetable",
+          "params": {
+            "options": {
+              "startDate": utils.convertToUntisDate(from),
+              "endDate": utils.convertToUntisDate(to),
+              "element": {"id": this.personId, "type": this.type},
+              "showLsText": true,
+              "showStudentgroup": true,
+              "showLsNumber": true,
+              "showSubstText": true,
+              "showInfo": true,
+              "showBooking": true,
+              "klasseFields": ['id', 'name', 'longname', 'externalkey'],
+              "roomFields": ['id', 'name', 'longname', 'externalkey'],
+              "subjectFields": ['id', 'name', 'longname', 'externalkey'],
+              "teacherFields": ['id', 'name', 'longname', 'externalkey']
+            }
+          },
+          "jsonrpc": 2.0
+        }));
   }
 
-  Future<rh.RPCResponse> query(Object data) async {
+  Future<rh.RPCResponse> _query(Object data) async {
     return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
         headers: {
           'Content-type': 'application/json',
-          'Cookie': buildAuthCookie()
+          'Cookie': _buildAuthCookie()
         },
         body: jsonEncode(data)));
+  }
+
+  /**Diese müssen in den Header gelegt werden */
+  String _buildAuthCookie() {
+    if (!sessionValid) return "";
+
+    return "JSESSIONID=" +
+        sessionId +
+        "; schoolname=" +
+        schoolBase64.replaceAll("=", "%3D");
   }
 }

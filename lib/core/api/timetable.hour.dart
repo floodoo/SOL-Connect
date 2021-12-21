@@ -1,5 +1,4 @@
 import 'timetable.entity.dart';
-import 'utils.dart';
 
 class TimeTableHour {
   TimeTableEntity klasse = TimeTableEntity("", null);
@@ -14,7 +13,7 @@ class TimeTableHour {
 
   String code = "regular";
 
-  DateTime parseDate(String date, String time) {
+  DateTime _parseDate(String date, String time) {
     return DateTime.parse(date.substring(0, 4) +
         "-" +
         date.substring(4, 6) +
@@ -30,8 +29,8 @@ class TimeTableHour {
     this.id = data['id'];
 
     this.start =
-        parseDate(data['date'].toString(), data['startTime'].toString());
-    this.end = parseDate(data['date'].toString(), data['endTime'].toString());
+        _parseDate(data['date'].toString(), data['startTime'].toString());
+    this.end = _parseDate(data['date'].toString(), data['endTime'].toString());
 
     this.activityType = data['activityType'];
 

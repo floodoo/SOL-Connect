@@ -14,3 +14,7 @@ String convertToUntisDate(DateTime date) {
 DateTime convertToDateTime(String untisDate) {
   return DateTime.parse(untisDate);
 }
+
+int daysSinceEpoch(int timestamp) {
+  return (timestamp / (1000 * 60 * 60 * 24)).floor();
+}

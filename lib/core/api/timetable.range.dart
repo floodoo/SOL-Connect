@@ -1,15 +1,19 @@
 import 'rpcresponse.dart';
 import 'timetable.day.dart';
-import 'utils.dart';
-import 'timetable.hour.dart';
+import 'utils.dart' as utils;
 
 /**Diese Klasse wandelt die Antwort in ein TimeTable Objekt um*/
 class TimeTableRange {
   RPCResponse response;
+  DateTime _startDate;
+  DateTime _endDate;
 
+  /**Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.<br>
+   * Wenn Tage außerhalb des scopes liegen (Wochenende oder Ferien) werden diese auch der Liste hinzugefügt, 
+   * besitzen jedoch keine Stunden*/
   var days = <TimeTableDay>[];
 
-  TimeTableRange(this.response) {
+  TimeTableRange(this._startDate, this._endDate, this.response) {
     this.response = response;
 
     if (response.payload.runtimeType != List)
@@ -18,7 +22,7 @@ class TimeTableRange {
     //Konstruiere die Tage
     main:
     for (dynamic entry in response.payload) {
-      DateTime current = convertToDateTime(entry['date'].toString());
+      DateTime current = utils.convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
       for (TimeTableDay day in days) {
         if (day.date.day == current.day) {
@@ -36,5 +40,13 @@ class TimeTableRange {
     //Sortiere die Tage nach Datum weil, warum auch immer die nich sortiert sind.
     days.sort((a, b) =>
         a.date.millisecondsSinceEpoch.compareTo(b.date.millisecondsSinceEpoch));
+
+    //Errechne den Day index
+    int day1 = utils.daysSinceEpoch(
+        new DateTime(_startDate.year, _startDate.month, _startDate.day)
+            .millisecondsSinceEpoch);
+    for (TimeTableDay day in days) {
+      day.dayIndex = day.daysSinceEpoch - day1;
+    }
   }
 }

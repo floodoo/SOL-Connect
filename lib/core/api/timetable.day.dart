@@ -1,9 +1,13 @@
 import 'timetable.hour.dart';
+import 'utils.dart' as utils;
 
 class TimeTableDay {
   DateTime date;
   var hours = <TimeTableHour>[];
   String dayName = "";
+
+  int daysSinceEpoch = 0;
+  int dayIndex = 0;
 
   TimeTableDay(this.date) {
     switch (date.weekday) {
@@ -31,6 +35,8 @@ class TimeTableDay {
       default:
         "";
     }
+
+    daysSinceEpoch = utils.daysSinceEpoch(date.millisecondsSinceEpoch);
   }
 
   void addHour(dynamic data) {
