@@ -1,3 +1,41 @@
+# API Wrapper Dokumentation
+
+## Eine Session erstellen
+
+Eine Session wird mit dem Objekt `UserSession` erstellt:
+```dart
+import 'lib/core/api/usersession.dart';
+UserSession session = new UserSession("schul-id", "app-name");
+session.createSession("USERNAME", "PASSWORT").then((s) {});
+```
+Der App Name ist beliebig, die Schul-ID ist die ID der Schule. Z.B. "bbs1-mainz"<br>
+Eine Session wird erstellt und als gültig markiert, wenn man sich mit der Funktion `createSession(String userName, String passWord)` erfolgreich angemeldet hat<br>
+Falls beim Anmeldeprozess ein Fehler auftritt, wird eine Exception geworfen.
+
+## Stundenpläne Abfragen
+
+Um einen Stundenplan abzufragen benötigt man ein gültiges Session Objekt, ansonsten wird eine Exception geworfen.
+Folgende Funktionen können verwendet werden um einen Stundenplan abzufragen:
+
+```dart
+session.getTimeTable(DateTime from, DateTime to);
+session.getTimeTableForToday();
+session.getTimeTableForThisWeek();
+```
+Ich denke mal die Namen sind schlüssig.
+Alle Funktionen liefern das Objekt `TimeTableRange` zurück. Es strukturier und sortiert automatisch alle zurückgegebenen Tage fortlaufend.
+Alle Tage sind in einem Array `days` gespeichert.
+
+Dieses Array besteht aus einer Liste von Objekten vom Typ `TimeTableDay`
+Jeder TimeTable Tag besitzt eine Liste von Stunden vom Typ `TimeTableHour`
+Alle Stunden sind chronologisch sortiert. `TimeTableDay.dayName` behinhaltet den Namen des Wochentages auf Deutsch.
+
+## Wochenende und Ferientage
+Wochenenden und Ferientage werden von der API einfach weggelassen, jedoch fügt der Wrapper diese automatisch hinzu, dass zwischen dem gewollten Start Datum und End Datum keine Lücken entstehen.<br>
+Es ist also gewährleistet, dass alle Tage zwischen zwei angegebenen TimeTable Daten lückenlos in der erzeugten Liste vorhanden sind.
+Diese Tage besitzten keine Stundeneinträge und besitzen den Wert `outOfScope = true` 
+
+# Beispiel
 Beispiel für eine Stundenplanabfrage.:
 ```dart
 import 'usersession.dart';
@@ -26,7 +64,6 @@ void main() {
               (hour.code != "regular" ? "[" + hour.code + "]" : ""));
         }
       }
-
     });
   });
 }
