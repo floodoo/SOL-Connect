@@ -36,12 +36,5 @@ class TimeTableRange {
     //Sortiere die Tage nach Datum weil, warum auch immer die nich sortiert sind.
     days.sort((a, b) =>
         a.date.millisecondsSinceEpoch.compareTo(b.date.millisecondsSinceEpoch));
-
-    for (TimeTableDay day in days) {
-      print(day.date);
-      for (TimeTableHour hour in day.hours) {
-        print(hour.getTitle() + " " + hour.subject.longName);
-      }
-    }
   }
 }

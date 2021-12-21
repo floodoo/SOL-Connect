@@ -12,6 +12,8 @@ class TimeTableHour {
   DateTime start = DateTime(0);
   DateTime end = DateTime(0);
 
+  String code = "regular";
+
   DateTime parseDate(String date, String time) {
     return DateTime.parse(date.substring(0, 4) +
         "-" +
@@ -37,6 +39,10 @@ class TimeTableHour {
     this.teacher = new TimeTableEntity("te", data['te']);
     this.subject = new TimeTableEntity("su", data['su']);
     this.room = new TimeTableEntity("ro", data['ro']);
+
+    if (data['code'] != null) {
+      this.code = data['code'];
+    }
   }
 
   String getTitle() {

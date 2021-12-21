@@ -80,14 +80,13 @@ class UserSession {
 
     sessionValid = true;
 
-    print("Login Successfull, sessionID recieved: " +
-        response.payload.toString());
+    print("Login Successfull");
   }
 
-  Future<rh.RPCResponse> getTimeTable(DateTime from, DateTime to) async {
+  Future<TimeTableRange> getTimeTable(DateTime from, DateTime to) async {
     if (!sessionValid) throw Exception("Die Session ist ungültig.");
 
-    TimeTableRange range = new TimeTableRange(await query({
+    return TimeTableRange(await query({
       "id": applicationName,
       "method": "getTimetable",
       "params": {
@@ -109,7 +108,6 @@ class UserSession {
       },
       "jsonrpc": 2.0
     }));
-    return range.response;
   }
 
   Future<rh.RPCResponse> query(Object data) async {
