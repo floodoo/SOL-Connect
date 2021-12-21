@@ -10,3 +10,7 @@ String convertToUntisDate(DateTime date) {
               (date.day < 10 ? '0' + date.day.toString() : date.day.toString())
                   .toString()));
 }
+
+DateTime convertToDateTime(String untisDate) {
+  return DateTime.parse(untisDate);
+}
