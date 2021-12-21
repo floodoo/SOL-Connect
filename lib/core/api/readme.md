@@ -1,4 +1,9 @@
 # API Wrapper Dokumentation
+Todo: 
+- User Session überprüfen und aktiv halten
+- Error Codes handlen
+- Hour Codes (Ausfall, Vertretung etc...) in einem Enum festhalten
+- Mehr Funktionen einfügen
 
 ## Eine Session erstellen
 
