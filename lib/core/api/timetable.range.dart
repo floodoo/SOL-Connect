@@ -37,16 +37,32 @@ class TimeTableRange {
       days.add(day);
     }
 
-    //Sortiere die Tage nach Datum weil, warum auch immer die nich sortiert sind.
-    days.sort((a, b) =>
-        a.date.millisecondsSinceEpoch.compareTo(b.date.millisecondsSinceEpoch));
-
-    //Errechne den Day index
+    var finalList = <TimeTableDay>[];
     int day1 = utils.daysSinceEpoch(
         new DateTime(_startDate.year, _startDate.month, _startDate.day)
             .millisecondsSinceEpoch);
-    for (TimeTableDay day in days) {
-      day.dayIndex = day.daysSinceEpoch - day1;
+
+    int diff = _endDate.difference(_startDate).inDays;
+    if (diff < 0)
+      throw Exception("Das Start Datum muss größer als das Enddatum sein!");
+
+    main:
+    for (int i = 0; i < diff; i++) {
+      for (TimeTableDay d in days) {
+        if (d.daysSinceEpoch - day1 == i) {
+          finalList.add(d);
+          days.remove(d);
+          continue main;
+        }
+      }
+      //Nicht gefunden.
+      TimeTableDay outOfScope =
+          new TimeTableDay(_startDate.add(Duration(days: i)));
+      outOfScope.outOfScope = true;
+      finalList.add(outOfScope);
     }
+
+    days.clear();
+    days.addAll(finalList);
   }
 }

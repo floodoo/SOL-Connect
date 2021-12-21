@@ -77,8 +77,8 @@ class UserSession {
     DateTime firstDayOfTheweek =
         DateTime.now().subtract(new Duration(days: DateTime.now().weekday - 1));
 
-    DateTime lastDayOfWeek = firstDayOfTheweek.add(
-        new Duration(days: DateTime.daysPerWeek - firstDayOfTheweek.weekday));
+    DateTime lastDayOfWeek = firstDayOfTheweek.add(new Duration(
+        days: DateTime.daysPerWeek - firstDayOfTheweek.weekday + 1));
     return getTimeTable(firstDayOfTheweek, lastDayOfWeek);
   }
 
