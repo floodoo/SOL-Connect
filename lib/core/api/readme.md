@@ -1,4 +1,4 @@
-Beispiel für eine Stundenplanabfrage:
+Beispiel für eine Stundenplanabfrage.:
 ```dart
 import 'usersession.dart';
 import 'timetable.day.dart';
@@ -31,6 +31,7 @@ void main() {
   });
 }
 ```
+## Ausgabe:
 
 ```
 Montag
