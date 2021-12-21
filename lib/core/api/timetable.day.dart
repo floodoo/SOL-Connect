@@ -7,7 +7,6 @@ class TimeTableDay {
   String dayName = "";
 
   int daysSinceEpoch = 0;
-  int dayIndex = 0;
   bool outOfScope = false;
 
   TimeTableDay(this.date) {
