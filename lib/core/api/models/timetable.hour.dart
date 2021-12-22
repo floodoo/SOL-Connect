@@ -13,6 +13,9 @@ class TimeTableHour {
 
   String code = "regular";
 
+  ///Der Stundenindex beschreibt die Stunde am Tag. z.B. hourIndex 1 wäre die erste Stunde um 8:00 Uhr
+  int hourIndex = -1;
+
   DateTime _parseDate(String date, String time) {
     return DateTime.parse(date.substring(0, 4) +
         "-" +
@@ -69,9 +72,23 @@ class TimeTableHour {
 
     this._activityType = data['activityType'];
 
-    this._klasse = new TimeTableEntity("kl", data['kl']);
-    this._teacher = new TimeTableEntity("te", data['te']);
+    if (data['k1'] != null)
+      this._klasse = new TimeTableEntity("kl", data['kl']);
+    else {
+      this._klasse = new TimeTableEntity("kl", null);
+      this._klasse.longName = "unknown";
+      this._klasse.name = "unknown";
+    }
+
+    if (data['te'] != null)
+      this._teacher = new TimeTableEntity("te", data['te']);
+    else {
+      this._teacher.name = "---";
+      this._teacher.longName = "Ausfall/SOL/Vertretung";
+    }
+
     this._subject = new TimeTableEntity("su", data['su']);
+
     this._room = new TimeTableEntity("ro", data['ro']);
 
     if (data['code'] != null) {
