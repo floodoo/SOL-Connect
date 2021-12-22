@@ -22,7 +22,7 @@ class TimeTableRange {
       DateTime current = utils.convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
       for (TimeTableDay day in _days) {
-        if (day.date.day == current.day) {
+        if (day.getDate().day == current.day) {
           //Wenn ja, füge die Stunde in den Tag
           day.addHour(entry);
           continue main;
