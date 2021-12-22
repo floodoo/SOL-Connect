@@ -131,7 +131,7 @@ class UserSession {
     return createSession(username: _un, password: _pwd).then((value) {
       if (value.isError()) {
         //Failed to login again.
-        // logout();
+        logout();
         throw Exception("Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
       }
       print("Session refreshed ...");

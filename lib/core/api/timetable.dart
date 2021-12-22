@@ -9,12 +9,18 @@ class TimeTableRange {
   final DateTime _endDate;
 
   // Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.
-  // Wenn Tage außerhalb des scopes liegen (Wochenende oder Ferien) werden diese auch der Liste hinzugefügt, 
+  // Wenn Tage außerhalb des scopes liegen (Wochenende oder Ferien) werden diese auch der Liste hinzugefügt,
   // besitzen jedoch keine Stunden
   final _days = <TimeTableDay>[];
 
   TimeTableRange(this._startDate, this._endDate, this.response) {
     //Konstruiere die Tage
+    if (response.isError())
+      throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " +
+          response.errorMessage +
+          "(" +
+          response.errorCode.toString() +
+          ")");
     main:
     for (dynamic entry in response.payload) {
       DateTime current = utils.convertToDateTime(entry['date'].toString());
@@ -22,19 +28,18 @@ class TimeTableRange {
       for (TimeTableDay day in _days) {
         if (day.getDate().day == current.day) {
           //Wenn ja, füge die Stunde in den Tag
-          day.addHour(entry);
+          day.insertHour(entry);
           continue main;
         }
       }
       //Ansonsten erstelle einen neuen Tag mit der Stunde!
       TimeTableDay day = TimeTableDay(current);
-      day.addHour(entry);
+      day.insertHour(entry);
       _days.add(day);
     }
 
     var finalList = <TimeTableDay>[];
-    int day1 =
-        utils.daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+    int day1 = utils.daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
 
     int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");

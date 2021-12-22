@@ -1,0 +1,1 @@
+enum Codes { REGULAR }
