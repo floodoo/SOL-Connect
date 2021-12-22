@@ -5,13 +5,7 @@ import 'models/utils.dart' as utils;
 import 'timetable.dart';
 
 class UserSession {
-  static const types = {
-    'CLASS': 1,
-    'TEACHER': 2,
-    'SUBJECT': 3,
-    'ROOM': 4,
-    'STUDENT': 5
-  };
+  static const types = {'CLASS': 1, 'TEACHER': 2, 'SUBJECT': 3, 'ROOM': 4, 'STUDENT': 5};
 
   String applicationName = "default";
   String sessionId = "";
@@ -33,19 +27,15 @@ class UserSession {
     URL += this.school.toString();
   }
 
+  ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
   Future createSession(username, password) async {
     rh.RPCResponse response = await _query({
       "id": applicationName,
       "method": "authenticate",
-      "params": {
-        "user": username,
-        "password": password,
-        "client": applicationName
-      },
+      "params": {"user": username, "password": password, "client": applicationName},
       "jsonrpc": 2.0
     });
 
-    //TODO bessere error Nachrichten vorallem bei bekannen Error codes
     if (response.isHttpError())
       throw Exception("Ein http Fehler ist aufegteten: " +
           response.errorMessage.toString() +
@@ -74,11 +64,10 @@ class UserSession {
   }
 
   Future<TimeTableRange> getTimeTableForThisWeek() async {
-    DateTime firstDayOfTheweek =
-        DateTime.now().subtract(new Duration(days: DateTime.now().weekday - 1));
+    DateTime firstDayOfTheweek = DateTime.now().subtract(new Duration(days: DateTime.now().weekday - 1));
 
-    DateTime lastDayOfWeek = firstDayOfTheweek.add(new Duration(
-        days: DateTime.daysPerWeek - firstDayOfTheweek.weekday + 1));
+    DateTime lastDayOfWeek =
+        firstDayOfTheweek.add(new Duration(days: DateTime.daysPerWeek - firstDayOfTheweek.weekday + 1));
     return getTimeTable(firstDayOfTheweek, lastDayOfWeek);
   }
 
@@ -120,20 +109,13 @@ class UserSession {
 
   Future<rh.RPCResponse> _query(Object data) async {
     return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
-        headers: {
-          'Content-type': 'application/json',
-          'Cookie': _buildAuthCookie()
-        },
-        body: jsonEncode(data)));
+        headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(data)));
   }
 
   /**Diese müssen in den Header gelegt werden */
   String _buildAuthCookie() {
     if (!sessionValid) return "";
 
-    return "JSESSIONID=" +
-        sessionId +
-        "; schoolname=" +
-        schoolBase64.replaceAll("=", "%3D");
+    return "JSESSIONID=" + sessionId + "; schoolname=" + schoolBase64.replaceAll("=", "%3D");
   }
 }
