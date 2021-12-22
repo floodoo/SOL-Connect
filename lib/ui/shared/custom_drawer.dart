@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
-import 'package:untis_phasierung/ui/screens/timetable/timetable.screen.dart';
+import 'package:untis_phasierung/ui/screens/timetable/timeTable.screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class CustomDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text("Timetable"),
-            onTap: () => Navigator.popAndPushNamed(context, TimetableScreen.routeName),
+            onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
           ),
           ListTile(
             title: const Text("Info-Center"),

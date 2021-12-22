@@ -1,15 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/ui/screens/timetable/widgets/timeTable.arguments.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 
-class TimetableScreen extends StatelessWidget {
-  const TimetableScreen({Key? key}) : super(key: key);
-  static final routeName = (TimetableScreen).toString();
+class TimeTableScreen extends StatefulWidget {
+  TimeTableScreen({Key? key}) : super(key: key);
+  static final routeName = (TimeTableScreen).toString();
+  late TimeTableRange timeTable;
+  bool _isLoading = true;
 
   @override
-  Widget build(BuildContext context) {
-    int hourCounter = 0;
+  State<TimeTableScreen> createState() => _TimeTableScreenState();
+}
 
+class _TimeTableScreenState extends State<TimeTableScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
+    // args.userSession.getTimeTableForThisWeek().then((value) => {
+    //       print(value.getDays()[0].dayName),
+    //       timeTable = value,
+    //       // print(value.getDays()[0].hours[0].getTeacher().longName),
+    //     });
+    if (widget._isLoading) {
+      args.userSession.getTimeTableForThisWeek().then((value) {
+        // print(value.getDays()[0].dayName);
+        widget.timeTable = value;
+        setState(() {
+          widget._isLoading = false;
+        });
+      });
+    }
+    int hourCounter = 0;
+    int dayCounter = 0;
     List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
+    List dayList = [7, 13, 19, 25, 31, 37, 43, 49];
 
     return Scaffold(
         appBar: AppBar(
@@ -34,16 +59,22 @@ class TimetableScreen extends StatelessWidget {
                         if (hourList.contains(index)) {
                           hourCounter++;
                         }
-
+                        if (dayList.contains(index)) {
+                          dayCounter++;
+                        }
                         return Container(
                           color: Colors.blue,
                           child: (index == 0)
                               ? const Icon(Icons.calendar_today)
                               : (index <= 5)
-                                  ? const Text("{days} {date}")
+                                  ? Text(
+                                      "${widget.timeTable.getDays()[index - 1].dayName} ${widget.timeTable.getDays()[index - 1].date}")
                                   : (hourList.contains(index))
                                       ? Text("$hourCounter")
-                                      : const Text("{lesson} {teacher} {room}"),
+                                      : (index + 7 > 54)
+                                          ? Text("test")
+                                          : Text(
+                                              "${widget.timeTable.getDays()[0].hours[0].getSubject().name} {teacher} {room}"),
                         );
                       },
                     ),
@@ -52,7 +83,6 @@ class TimetableScreen extends StatelessWidget {
               ),
             ),
           ],
-        )
-        );
+        ));
   }
 }

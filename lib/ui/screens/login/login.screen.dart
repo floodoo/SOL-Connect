@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:untis_phasierung/ui/screens/timetable/timetable.screen.dart';
+import 'package:untis_phasierung/ui/screens/timetable/timeTable.screen.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
-import 'package:untis_phasierung/ui/screens/home/home.screen.dart';
+import 'package:untis_phasierung/ui/screens/timetable/widgets/timeTable.arguments.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -101,9 +101,12 @@ class LoginScreen extends StatelessWidget {
                         ),
                         onTap: () {
                           UserSession session = UserSession("bbs1-mainz", "untis-phasierung");
-                          session.createSession(usernameController.text, passwordController.text).then(
+                          session
+                              .createSession(username: usernameController.text, password: passwordController.text)
+                              .then(
                             (value) {
-                              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+                              Navigator.pushReplacementNamed(context, TimeTableScreen.routeName,
+                                  arguments: TimetableArguments(session));
                               log.d("Login successful");
                             },
                           );
