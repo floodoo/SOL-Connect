@@ -34,6 +34,7 @@ class UserSession {
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
   Future createSession({String username = "", String password = ""}) async {
+    if(username == "" || password == "") throw Exception("Bitte gib einen Benutzenamen und ein Passwort an");
     rh.RPCResponse response = await _query({
       "id": applicationName,
       "method": "authenticate",
