@@ -43,7 +43,7 @@ class CustomTimeTableCard extends StatelessWidget {
                     color: topColor,
                   ),
                   padding: const EdgeInsets.fromLTRB(2, 5, 2, 0),
-                  child: (center && icon != null)
+                  child: (center || icon != null)
                       ? Container()
                       : AutoSizeText(
                           text,
