@@ -1,8 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'rpcresponse.dart' as rh;
-import 'utils.dart' as utils;
-import 'timetable.range.dart';
+import 'models/utils.dart' as utils;
+import 'timetable.dart';
 
 class UserSession {
   static const types = {
