@@ -76,10 +76,15 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                             : (index == 0)
                                 ? const Icon(Icons.calendar_today)
                                 : (index <= 5)
-                                    ? Text(
-                                        "${widget.timeTable.getDays()[index - 1].getDayName()} ${widget.timeTable.getDays()[index - 1].getDate()}")
+                                    ? CustomTimeTableCard(
+                                        text: widget.timeTable.getDays()[index - 1].getDayName(),
+                                        textMaxLines: 1,
+                                      )
                                     : (hourList.contains(index))
-                                        ? Text("$timeColumnCounter")
+                                        ? CustomTimeTableCard(
+                                            text: timeColumnCounter.toString(),
+                                            center: true,
+                                          )
                                         : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
                                             ? CustomTimeTableCard(
                                                 text: "Holiday",

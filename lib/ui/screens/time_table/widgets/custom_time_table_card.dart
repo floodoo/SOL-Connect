@@ -7,13 +7,17 @@ class CustomTimeTableCard extends StatelessWidget {
       required this.text,
       this.divider = false,
       this.center = false,
-      this.colorTop = Colors.grey,
+      this.topColor = Colors.grey,
+      this.bottomColor = Colors.grey,
+      this.textColor = Colors.white,
       this.textMaxLines})
       : super(key: key);
   String text;
   bool divider;
   bool center;
-  Color colorTop;
+  Color topColor;
+  Color bottomColor;
+  Color textColor;
   int? textMaxLines;
 
   @override
@@ -23,40 +27,55 @@ class CustomTimeTableCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
-      child: Column(
-        mainAxisAlignment: (center) ? MainAxisAlignment.center : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Stack(
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                color: colorTop,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                    color: topColor,
+                  ),
+                  padding: const EdgeInsets.fromLTRB(2, 5, 2, 0),
+                  child: (center)
+                      ? Container()
+                      : AutoSizeText(
+                          text,
+                          maxLines: textMaxLines,
+                          overflow: TextOverflow.clip,
+                          softWrap: true,
+                          style: TextStyle(color: textColor),
+                        ),
+                ),
               ),
-              padding: const EdgeInsets.fromLTRB(2, 5, 2, 0),
+              if (divider && center == false)
+                const Divider(
+                  color: Colors.black,
+                  thickness: 0.5,
+                  height: 0,
+                ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
+                    color: bottomColor,
+                  ),
+                ),
+              )
+            ],
+          ),
+          if (center)
+            Center(
               child: AutoSizeText(
                 text,
                 maxLines: textMaxLines,
                 overflow: TextOverflow.clip,
                 softWrap: true,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: textColor),
               ),
             ),
-          ),
-          (divider)
-              ? const Divider(
-                  color: Colors.black,
-                  height: 0,
-                )
-              : Container(),
-          Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
-                color: Colors.red,
-              ),
-            ),
-          )
         ],
       ),
     );
