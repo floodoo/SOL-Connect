@@ -15,13 +15,15 @@ class TimeTableRange {
 
   TimeTableRange(this._startDate, this._endDate, this.response) {
     //Konstruiere die Tage
-    if (response.isError())
+    if (response.isError()) {
       throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " +
           response.errorMessage +
           "(" +
           response.errorCode.toString() +
           ")");
-    main:
+    }
+
+    outer:
     for (dynamic entry in response.payload) {
       DateTime current = utils.convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
@@ -29,7 +31,7 @@ class TimeTableRange {
         if (day.getDate().day == current.day) {
           //Wenn ja, füge die Stunde in den Tag
           day.insertHour(entry);
-          continue main;
+          continue outer;
         }
       }
       //Ansonsten erstelle einen neuen Tag mit der Stunde!

@@ -1,6 +1,6 @@
 import 'timetable.entity.dart';
 
-enum Codes { REGULAR, IRREGULAR, CANCELLED, EMPTY, UNKNWON }
+enum Codes { regular, irregular, cancelled, empty, unknown }
 
 class HourEntities {
   TimeTableEntity _klasse = TimeTableEntity("", null);
@@ -55,14 +55,16 @@ class TimeTableHour {
   }
 
   Codes getLessonCode() {
-    if (entities.length == 0)
-      return Codes.EMPTY;
-    else if (code == "regular")
-      return Codes.REGULAR;
-    else if (code == "cancelled")
-      return Codes.CANCELLED;
-    else if (code == "irregular") return Codes.IRREGULAR;
-    return Codes.UNKNWON;
+    if (entities.isEmpty) {
+      return Codes.empty;
+    } else if (code == "regular") {
+      return Codes.regular;
+    } else if (code == "cancelled") {
+      return Codes.cancelled;
+    } else if (code == "irregular") {
+      return Codes.irregular;
+    }
+    return Codes.unknown;
   }
 
   String getActivityType() {
@@ -70,12 +72,12 @@ class TimeTableHour {
   }
 
   bool isIrregular() {
-    return getLessonCode() == Codes.IRREGULAR;
+    return getLessonCode() == Codes.irregular;
   }
 
   ///Diese Stunde ist leer bzw. es gibt hier nichts
   bool isEmpty() {
-    return getLessonCode() == Codes.EMPTY;
+    return getLessonCode() == Codes.empty;
   }
 
   bool hasMultipleEntries() {

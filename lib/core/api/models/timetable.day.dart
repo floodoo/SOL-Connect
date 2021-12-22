@@ -88,10 +88,11 @@ class TimeTableDay {
 
     for (int i = 0; i < _hours.length; i++) {
       if (constructed.startAsString == _lessonTimes[i]) {
-        if (_hours[i].getLessonCode() == Codes.EMPTY)
+        if (_hours[i].getLessonCode() == Codes.empty) {
           _hours[i] = constructed;
-        else
+        } else {
           _hours[i].addEntity(constructed);
+        }
         break;
       }
     }

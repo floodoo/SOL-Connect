@@ -53,6 +53,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           itemCount: 54,
           addAutomaticKeepAlives: true,
           itemBuilder: (context, index) {
+            
             if (hourList.contains(index)) {
               timeColumnCounter++;
             }
