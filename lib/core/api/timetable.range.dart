@@ -16,9 +16,6 @@ class TimeTableRange {
   TimeTableRange(this._startDate, this._endDate, this.response) {
     this.response = response;
 
-    if (response.payload.runtimeType != List)
-      throw Exception("Falsches Datenformat");
-
     //Konstruiere die Tage
     main:
     for (dynamic entry in response.payload) {
