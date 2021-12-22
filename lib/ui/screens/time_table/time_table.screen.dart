@@ -45,83 +45,67 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
         title: const Text("Timetable"),
       ),
       drawer: const CustomDrawer(),
-      body: Column(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    color: Colors.orange,
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 6, crossAxisSpacing: 5.0, mainAxisSpacing: 5.0, childAspectRatio: 0.5),
-                      itemCount: 54,
-                      itemBuilder: (context, index) {
-                        if (hourList.contains(index)) {
-                          timeColumnCounter++;
-                        }
-                        // erste reihe auschließen
-                        if (index > 7) {
-                          // schultage zurücksezten
-                          if (schoolDayCounter >= 5) {
-                            schoolDayCounter = 0;
-                            subjectRowCounter++;
-                          } else {
-                            schoolDayCounter++;
-                          }
-                        }
+      body: Container(
+        color: Colors.orange,
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 6, crossAxisSpacing: 5.0, mainAxisSpacing: 5.0, childAspectRatio: 0.5),
+          itemCount: 54,
+          addAutomaticKeepAlives: true,
+          itemBuilder: (context, index) {
+            if (hourList.contains(index)) {
+              timeColumnCounter++;
+            }
+            // erste reihe auschließen
+            if (index > 7) {
+              // schultage zurücksezten
+              if (schoolDayCounter >= 5) {
+                schoolDayCounter = 0;
+                subjectRowCounter++;
+              } else {
+                schoolDayCounter++;
+              }
+            }
 
-                        return widget._isLoading
-                            ? Container(
-                                color: Colors.green,
+            return widget._isLoading
+                ? Container(
+                    color: Colors.green,
+                  )
+                : (index == 0)
+                    ? CustomTimeTableCard(
+                        text: "Icon",
+                        icon: Icons.calendar_today,
+                        center: true,
+                      )
+                    : (index <= 5)
+                        ? CustomTimeTableCard(
+                            text: widget.timeTable.getDays()[index - 1].getShortName(),
+                            textMaxLines: 1,
+                            center: true,
+                          )
+                        : (hourList.contains(index))
+                            ? CustomTimeTableHourCard(
+                                centerText: timeColumnCounter.toString(),
+                                topText:
+                                    widget.timeTable.getDays()[0].getHours()[timeColumnCounter].getStatTimeString(),
+                                bottomText:
+                                    widget.timeTable.getDays()[0].getHours()[timeColumnCounter].getEndTimeString(),
                               )
-                            : (index == 0)
+                            : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
                                 ? CustomTimeTableCard(
-                                    text: "Icon",
-                                    icon: Icons.calendar_today,
+                                    text: "Holiday",
                                     center: true,
+                                    textMaxLines: 1,
                                   )
-                                : (index <= 5)
-                                    ? CustomTimeTableCard(
-                                        text: widget.timeTable.getDays()[index - 1].getShortName(),
-                                        textMaxLines: 1,
-                                        center: true,
-                                      )
-                                    : (hourList.contains(index))
-                                        ? CustomTimeTableHourCard(
-                                            centerText: timeColumnCounter.toString(),
-                                            topText: widget.timeTable
-                                                .getDays()[0]
-                                                .getHours()[timeColumnCounter]
-                                                .getStatTimeString(),
-                                            bottomText: widget.timeTable
-                                                .getDays()[0]
-                                                .getHours()[timeColumnCounter]
-                                                .getEndTimeString(),
-                                          )
-                                        : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
-                                            ? CustomTimeTableCard(
-                                                text: "Holiday",
-                                                center: true,
-                                                textMaxLines: 1,
-                                              )
-                                            : (subjectRowCounter >=
-                                                    widget.timeTable.getDays()[schoolDayCounter].getHours().length)
-                                                ? Container()
-                                                : CustomTimeTableCard(
-                                                    text:
-                                                        "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
-                                                    divider: true,
-                                                  );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+                                : (subjectRowCounter >= widget.timeTable.getDays()[schoolDayCounter].getHours().length)
+                                    ? Container()
+                                    : CustomTimeTableCard(
+                                        text:
+                                            "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
+                                        divider: true,
+                                      );
+          },
+        ),
       ),
     );
   }
