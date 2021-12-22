@@ -5,12 +5,12 @@ class RPCResponse {
   String errorMessage = "";
   int errorCode = 0;
 
-  dynamic payload = new Map();
+  dynamic payload = {};
   String appId = "";
   String rpcVersion = "2.0";
 
   static RPCResponse handle(http.Response httpResponse) {
-    RPCResponse response = new RPCResponse();
+    RPCResponse response = RPCResponse();
 
     //Erstmal den Statuscode checken
     if (httpResponse.statusCode != 200) {
@@ -46,13 +46,13 @@ class RPCResponse {
     return response;
   }
 
-/**@return true - Wenn der Fehler am http liegt */
+/// @return true - Wenn der Fehler am http liegt
   bool isHttpError() {
     return errorMessage.isEmpty && payload.isEmpty;
   }
 
-  /**@return true - Wenn der Handler einen Error hat */
+  /// @return true - Wenn der Handler einen Error hat
   bool isError() {
-    return !errorMessage.isEmpty || isHttpError();
+    return errorMessage.isNotEmpty || isHttpError();
   }
 }

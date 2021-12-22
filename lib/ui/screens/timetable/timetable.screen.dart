@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/ui/screens/timetable/widgets/timeTable.arguments.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
-import 'package:untis_phasierung/util/logger.util.dart';
 
 class TimeTableScreen extends StatefulWidget {
   TimeTableScreen({Key? key}) : super(key: key);
@@ -17,13 +16,8 @@ class TimeTableScreen extends StatefulWidget {
 class _TimeTableScreenState extends State<TimeTableScreen> {
   @override
   Widget build(BuildContext context) {
-    final log = getLogger();
     final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
-    // args.userSession.getTimeTableForThisWeek().then((value) => {
-    //       print(value.getDays()[0].dayName),
-    //       timeTable = value,
-    //       // print(value.getDays()[0].hours[0].getTeacher().longName),
-    //     });
+
     if (widget._isLoading) {
       args.userSession.getTimeTableForThisWeek().then((value) {
         // print(value.getDays()[0].dayName);
@@ -33,6 +27,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
         });
       });
     }
+
     int hourCounter = 0;
     int schoolDays = 0;
     int subjectRowCounter = 0;
@@ -86,12 +81,12 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                                         : (hourList.contains(index))
                                             ? Text("$hourCounter")
                                             : (widget.timeTable.getDays()[schoolDays].isHolidayOrWeekend())
-                                                ? Text("Holiday")
+                                                ? const Text("Holiday")
                                                 : (subjectRowCounter >=
                                                         widget.timeTable.getDays()[schoolDays].getHours().length)
-                                                    ? Text("")
+                                                    ? Container()
                                                     : Text(
-                                                        "${widget.timeTable.getDays()[schoolDays].getHours()[subjectRowCounter].getSubject().name} {teacher} {room}"),
+                                                        "${widget.timeTable.getDays()[schoolDays].getHours()[subjectRowCounter].getSubject().name} ${widget.timeTable.getDays()[schoolDays].getHours()[subjectRowCounter].getTeacher().name} ${widget.timeTable.getDays()[schoolDays].getHours()[subjectRowCounter].getRoom().name}"),
                               );
                       },
                     ),

@@ -2,8 +2,8 @@ import 'timetable.hour.dart';
 import 'utils.dart' as utils;
 
 class TimeTableDay {
-  DateTime _date;
-  var _hours = <TimeTableHour>[];
+  final DateTime _date;
+  final _hours = <TimeTableHour>[];
   String _dayName = "";
 
   int daysSinceEpoch = 0;
@@ -57,7 +57,7 @@ class TimeTableDay {
   }
 
   void addHour(dynamic data) {
-    _hours.add(new TimeTableHour(data));
+    _hours.add(TimeTableHour(data));
 
     _hours.sort((a, b) => a.end.hour.compareTo(b.end.hour));
   }

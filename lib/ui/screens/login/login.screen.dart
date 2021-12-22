@@ -9,8 +9,8 @@ class LoginScreen extends StatelessWidget {
   static final routeName = (LoginScreen).toString();
 
   final log = getLogger();
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,7 @@ class LoginScreen extends StatelessWidget {
                             (value) {
                               Navigator.pushReplacementNamed(context, TimeTableScreen.routeName,
                                   arguments: TimetableArguments(session));
-                              log.d("Login successful");
+                              log.d("Login successfuly");
                             },
                           );
                           usernameController.clear();

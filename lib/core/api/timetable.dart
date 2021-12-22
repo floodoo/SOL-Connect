@@ -2,20 +2,18 @@ import 'rpcresponse.dart';
 import 'models/timetable.day.dart';
 import 'models/utils.dart' as utils;
 
-/**Diese Klasse wandelt die Antwort in ein TimeTable Objekt um*/
+///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
   RPCResponse response;
-  DateTime _startDate;
-  DateTime _endDate;
+  final DateTime _startDate;
+  final DateTime _endDate;
 
-  /**Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.<br>
-   * Wenn Tage außerhalb des scopes liegen (Wochenende oder Ferien) werden diese auch der Liste hinzugefügt, 
-   * besitzen jedoch keine Stunden*/
-  var _days = <TimeTableDay>[];
+  // Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.
+  // Wenn Tage außerhalb des scopes liegen (Wochenende oder Ferien) werden diese auch der Liste hinzugefügt, 
+  // besitzen jedoch keine Stunden
+  final _days = <TimeTableDay>[];
 
   TimeTableRange(this._startDate, this._endDate, this.response) {
-    this.response = response;
-
     //Konstruiere die Tage
     main:
     for (dynamic entry in response.payload) {
@@ -29,14 +27,14 @@ class TimeTableRange {
         }
       }
       //Ansonsten erstelle einen neuen Tag mit der Stunde!
-      TimeTableDay day = new TimeTableDay(current);
+      TimeTableDay day = TimeTableDay(current);
       day.addHour(entry);
       _days.add(day);
     }
 
     var finalList = <TimeTableDay>[];
     int day1 =
-        utils.daysSinceEpoch(new DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+        utils.daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
 
     int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");
@@ -51,7 +49,7 @@ class TimeTableRange {
         }
       }
       //Nicht gefunden.
-      TimeTableDay outOfScope = new TimeTableDay(_startDate.add(Duration(days: i)));
+      TimeTableDay outOfScope = TimeTableDay(_startDate.add(Duration(days: i)));
       outOfScope.outOfScope = true;
       finalList.add(outOfScope);
     }

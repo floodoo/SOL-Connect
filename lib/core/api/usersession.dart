@@ -16,18 +16,20 @@ class UserSession {
   String school = "";
   String schoolBase64 = "";
 
+  // ignore: non_constant_identifier_names
   String URL = "https://hepta.webuntis.com/WebUntis/jsonrpc.do?school=";
   bool sessionValid = false;
 
+  // ignore: unused_field
   String _un = "";
+  // ignore: unused_field
   String _pwd = "";
 
   UserSession(String school, String appID) {
     applicationName = appID;
 
-    this.school = school;
-    this.schoolBase64 = base64Encode(utf8.encode(this.school));
-    URL += this.school.toString();
+    schoolBase64 = base64Encode(utf8.encode(school));
+    URL += school.toString();
   }
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
@@ -39,21 +41,22 @@ class UserSession {
       "jsonrpc": 2.0
     });
 
-    if (response.isHttpError())
+    if (response.isHttpError()) {
       throw Exception("Ein http Fehler ist aufegteten: " +
           response.errorMessage.toString() +
           "(" +
           response.errorCode.toString() +
           ")");
-    else if (response.isError()) {
+    } else if (response.isError()) {
       if (response.errorCode == -8504) {
         throw Exception("Benutzename oder Passwort falsch");
-      } else
-        throw new Exception("Ein Fehler ist aufgetreten: " +
+      } else {
+        throw Exception("Ein Fehler ist aufgetreten: " +
             response.errorMessage.toString() +
             "(" +
             response.errorCode.toString() +
             ")");
+      }
     }
 
     sessionId = response.payload['sessionId'];
@@ -65,14 +68,13 @@ class UserSession {
     _un = username;
     _pwd = password;
 
-    print("Login Successfull");
   }
 
   Future<TimeTableRange> getTimeTableForThisWeek() async {
-    DateTime firstDayOfTheweek = DateTime.now().subtract(new Duration(days: DateTime.now().weekday - 1));
+    DateTime firstDayOfTheweek = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
 
     DateTime lastDayOfWeek =
-        firstDayOfTheweek.add(new Duration(days: DateTime.daysPerWeek - firstDayOfTheweek.weekday + 1));
+        firstDayOfTheweek.add(Duration(days: DateTime.daysPerWeek - firstDayOfTheweek.weekday + 1));
     return getTimeTable(firstDayOfTheweek, lastDayOfWeek);
   }
 
@@ -95,7 +97,7 @@ class UserSession {
             "options": {
               "startDate": utils.convertToUntisDate(from),
               "endDate": utils.convertToUntisDate(to),
-              "element": {"id": this.personId, "type": this.type},
+              "element": {"id": personId, "type": type},
               "showLsText": true,
               "showStudentgroup": true,
               "showLsNumber": true,
@@ -117,7 +119,7 @@ class UserSession {
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(data)));
   }
 
-  /**Diese müssen in den Header gelegt werden */
+  /// Diese müssen in den Header gelegt werden
   String _buildAuthCookie() {
     if (!sessionValid) return "";
 

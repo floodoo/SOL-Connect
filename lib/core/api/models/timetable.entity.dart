@@ -1,4 +1,4 @@
-/**Kleiner Wrapper für mehr Lesbarkeit */
+///Kleiner Wrapper für mehr Lesbarkeit
 class TimeTableEntity {
   String typeName = "";
   String name = "";
@@ -8,9 +8,8 @@ class TimeTableEntity {
   TimeTableEntity(String typeName, dynamic data) {
     if (data == null) return;
 
-    this.typeName = typeName;
-    this.name = data[0]['name'].toString();
-    this.longName = data[0]['longname'];
-    this.identifier = data[0]['id'];
+    name = data[0]['name'].toString();
+    longName = data[0]['longname'];
+    identifier = data[0]['id'];
   }
 }

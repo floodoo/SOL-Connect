@@ -1,7 +1,6 @@
-/**Wandelt ein DateTime objekt in ein Webuntis Date objekt um.
- * Dieses Datenformat setzt sich folgendermaßen zusammen:
- * YYYYMMDD
-*/
+/// Wandelt ein DateTime objekt in ein Webuntis Date objekt um.
+/// Dieses Datenformat setzt sich folgendermaßen zusammen:
+/// YYYYMMDD
 String convertToUntisDate(DateTime date) {
   return (date.year.toString() +
       (date.month < 10

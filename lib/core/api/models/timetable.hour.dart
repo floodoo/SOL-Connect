@@ -65,34 +65,34 @@ class TimeTableHour {
   }
 
   TimeTableHour(dynamic data) {
-    this._id = data['id'];
+    _id = data['id'];
 
-    this.start = _parseDate(data['date'].toString(), data['startTime'].toString());
-    this.end = _parseDate(data['date'].toString(), data['endTime'].toString());
+    start = _parseDate(data['date'].toString(), data['startTime'].toString());
+    end = _parseDate(data['date'].toString(), data['endTime'].toString());
 
-    this._activityType = data['activityType'];
+    _activityType = data['activityType'];
 
-    if (data['k1'] != null)
-      this._klasse = new TimeTableEntity("kl", data['kl']);
-    else {
-      this._klasse = new TimeTableEntity("kl", null);
-      this._klasse.longName = "unknown";
-      this._klasse.name = "unknown";
+    if (data['k1'] != null) {
+      _klasse = TimeTableEntity("kl", data['kl']);
+    } else {
+      _klasse = TimeTableEntity("kl", null);
+      _klasse.longName = "unknown";
+      _klasse.name = "unknown";
     }
 
-    if (data['te'] != null)
-      this._teacher = new TimeTableEntity("te", data['te']);
-    else {
-      this._teacher.name = "---";
-      this._teacher.longName = "Ausfall/SOL/Vertretung";
+    if (data['te'] != null) {
+      _teacher = TimeTableEntity("te", data['te']);
+    } else {
+      _teacher.name = "---";
+      _teacher.longName = "Ausfall/SOL/Vertretung";
     }
 
-    this._subject = new TimeTableEntity("su", data['su']);
+    _subject = TimeTableEntity("su", data['su']);
 
-    this._room = new TimeTableEntity("ro", data['ro']);
+    _room = TimeTableEntity("ro", data['ro']);
 
     if (data['code'] != null) {
-      this.code = data['code'];
+      code = data['code'];
     }
   }
 
