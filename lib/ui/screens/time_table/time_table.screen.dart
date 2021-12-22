@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_card.dart';
+import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/time_table.arguments.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
@@ -25,7 +26,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
 
     List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
-    int timeColumnCounter = 0;
+    int timeColumnCounter = -1;
     int schoolDayCounter = 0;
     int subjectRowCounter = 0;
 
@@ -88,9 +89,16 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                                         center: true,
                                       )
                                     : (hourList.contains(index))
-                                        ? CustomTimeTableCard(
-                                            text: timeColumnCounter.toString(),
-                                            center: true,
+                                        ? CustomTimeTableHourCard(
+                                            centerText: timeColumnCounter.toString(),
+                                            topText: widget.timeTable
+                                                .getDays()[0]
+                                                .getHours()[timeColumnCounter]
+                                                .getStatTimeString(),
+                                            bottomText: widget.timeTable
+                                                .getDays()[0]
+                                                .getHours()[timeColumnCounter]
+                                                .getEndTimeString(),
                                           )
                                         : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
                                             ? CustomTimeTableCard(
