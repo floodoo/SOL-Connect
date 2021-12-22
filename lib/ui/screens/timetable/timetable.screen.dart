@@ -85,15 +85,13 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                                             "${widget.timeTable.getDays()[index - 1].getDayName()} ${widget.timeTable.getDays()[index - 1].getDate()}")
                                         : (hourList.contains(index))
                                             ? Text("$hourCounter")
-                                            : (index + 7 > 54)
-                                                ? const Text("test")
-                                                : (widget.timeTable.getDays()[schoolDays].isHolidayOrWeekend())
-                                                    ? Text("Holiday")
-                                                    : (subjectRowCounter >=
-                                                            widget.timeTable.getDays()[schoolDays].getHours().length)
-                                                        ? Text("")
-                                                        : Text(
-                                                            "${widget.timeTable.getDays()[schoolDays].getHours()[subjectRowCounter].getSubject().name} {teacher} {room}"),
+                                            : (widget.timeTable.getDays()[schoolDays].isHolidayOrWeekend())
+                                                ? Text("Holiday")
+                                                : (subjectRowCounter >=
+                                                        widget.timeTable.getDays()[schoolDays].getHours().length)
+                                                    ? Text("")
+                                                    : Text(
+                                                        "${widget.timeTable.getDays()[schoolDays].getHours()[subjectRowCounter].getSubject().name} {teacher} {room}"),
                               );
                       },
                     ),
