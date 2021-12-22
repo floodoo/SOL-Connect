@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
+import 'package:logger/logger.dart';
+import 'package:untis_phasierung/ui/screens/home/home.screen.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
 import 'package:untis_phasierung/ui/screens/timetable/timetable.screen.dart';
 
 void main() {
+  Logger.level = Level.debug;
   runApp(const MyApp());
 }
 
@@ -20,7 +23,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: LoginScreen.routeName,
       routes: {
-        LoginScreen.routeName: (context) => const LoginScreen(),
+        LoginScreen.routeName: (context) => LoginScreen(),
         CustomDrawer.routeName: (context) => const CustomDrawer(),
         TimetableScreen.routeName: (context) => const TimetableScreen(),
       },

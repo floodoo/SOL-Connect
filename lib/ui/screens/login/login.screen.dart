@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:untis_phasierung/ui/screens/timetable/timetable.screen.dart';
+import 'package:untis_phasierung/core/api/usersession.dart';
+import 'package:untis_phasierung/ui/screens/home/home.screen.dart';
+import 'package:untis_phasierung/util/logger.util.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
+
+  final log = getLogger();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,20 +52,24 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: usernameController,
+                        autocorrect: false,
+                        decoration: const InputDecoration(
                           hintText: "User",
                           prefixIcon: Icon(Icons.person),
                         ),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                       child: TextField(
+                        controller: passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        autocorrect: false,
+                        decoration: const InputDecoration(
                           hintText: "Password",
                           prefixIcon: Icon(Icons.lock),
                         ),
@@ -88,7 +99,17 @@ class LoginScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        onTap: () => Navigator.pushReplacementNamed(context, TimetableScreen.routeName),
+                        onTap: () {
+                          UserSession session = UserSession("bbs1-mainz", "untis-phasierung");
+                          session.createSession(usernameController.text, passwordController.text).then(
+                            (value) {
+                              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+                              log.d("Login successful");
+                            },
+                          );
+                          usernameController.clear();
+                          passwordController.clear();
+                        },
                       ),
                     )
                   ],
