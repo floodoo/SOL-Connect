@@ -19,13 +19,15 @@ class TimeTableScreen extends StatefulWidget {
 class _TimeTableScreenState extends State<TimeTableScreen> {
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
     final Logger log = getLogger();
+
+    final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
+
+    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
     int timeColumnCounter = 0;
     int schoolDayCounter = 0;
     int subjectRowCounter = 0;
-    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
     if (widget._isLoading) {
       args.userSession.getTimeTableForThisWeek().then((value) {

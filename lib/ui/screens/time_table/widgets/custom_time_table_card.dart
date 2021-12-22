@@ -5,22 +5,22 @@ class CustomTimeTableCard extends StatelessWidget {
   CustomTimeTableCard(
       {Key? key,
       required this.text,
-      this.divider = false,
-      this.center = false,
       this.topColor = Colors.grey,
       this.bottomColor = Colors.grey,
       this.textColor = Colors.white,
       this.iconColor = Colors.white,
+      this.divider = false,
+      this.center = false,
       this.textMaxLines,
       this.icon})
       : super(key: key);
   String text;
-  bool divider;
-  bool center;
   Color topColor;
   Color bottomColor;
   Color textColor;
   Color iconColor;
+  bool divider;
+  bool center;
   int? textMaxLines;
   IconData? icon;
 
