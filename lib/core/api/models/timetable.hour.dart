@@ -41,18 +41,22 @@ class TimeTableHour {
     return end;
   }
 
+  ///@return Die Klasse der Stunde als TimeTableEntity objekt
   TimeTableEntity getClazz() {
     return _klasse;
   }
 
+  ///@return Der Lehrer der Stunde als TimeTableEntity objekt
   TimeTableEntity getTeacher() {
     return _teacher;
   }
 
+  ///@return Das Fach der Stunde als TimeTableEntity objekt
   TimeTableEntity getSubject() {
     return _subject;
   }
 
+  ///@return Der Raum der Stunde als TimeTableEntity objekt
   TimeTableEntity getRoom() {
     return _room;
   }
