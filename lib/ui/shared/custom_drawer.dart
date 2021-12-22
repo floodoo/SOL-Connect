@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
-import 'package:untis_phasierung/ui/screens/timetable/timeTable.screen.dart';
+import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({Key? key}) : super(key: key);

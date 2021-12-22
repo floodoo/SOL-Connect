@@ -1,19 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:untis_phasierung/ui/screens/timetable/timeTable.screen.dart';
+import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
+import 'package:untis_phasierung/ui/screens/time_table/widgets/time_table.arguments.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
-import 'package:untis_phasierung/ui/screens/timetable/widgets/timeTable.arguments.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final log = getLogger();
+
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    void _login() {
+      setState(() {
+        _isLoading = true;
+      });
+
+      UserSession session = UserSession("bbs1-mainz", "untis-phasierung");
+      session.createSession(username: usernameController.text, password: passwordController.text).then(
+        (value) {
+          Navigator.pushReplacementNamed(context, TimeTableScreen.routeName, arguments: TimetableArguments(session));
+          log.i("Successfully logged in");
+        },
+      ).catchError(
+        (error) {
+          log.e("Error logging in: $error");
+          setState(() {
+            _isLoading = false;
+          });
+        },
+      );
+      usernameController.clear();
+      passwordController.clear();
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -67,6 +98,7 @@ class LoginScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                       child: TextField(
                         controller: passwordController,
+                        onEditingComplete: () => _login(),
                         obscureText: true,
                         autocorrect: false,
                         decoration: const InputDecoration(
@@ -88,31 +120,22 @@ class LoginScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 20.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text(
-                                "Login",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              ),
+                            children: [
+                              (_isLoading)
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : const Text(
+                                      "Login",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                      ),
+                                    ),
                             ],
                           ),
                         ),
-                        onTap: () {
-                          UserSession session = UserSession("bbs1-mainz", "untis-phasierung");
-                          session
-                              .createSession(username: usernameController.text, password: passwordController.text)
-                              .then(
-                            (value) {
-                              Navigator.pushReplacementNamed(context, TimeTableScreen.routeName,
-                                  arguments: TimetableArguments(session));
-                              log.d("Login successfuly");
-                            },
-                          );
-                          usernameController.clear();
-                          passwordController.clear();
-                        },
+                        onTap: () => _login(),
                       ),
                     )
                   ],
