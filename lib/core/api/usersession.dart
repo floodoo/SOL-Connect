@@ -25,7 +25,7 @@ class UserSession {
   // ignore: unused_field
   String _pwd = "";
 
-  UserSession(String school, String appID) {
+  UserSession({String school = "", String appID = ""}) {
     applicationName = appID;
 
     schoolBase64 = base64Encode(utf8.encode(school));
@@ -34,13 +34,9 @@ class UserSession {
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
   Future createSession({String username = "", String password = ""}) async {
-    if(username == "" || password == "") throw Exception("Bitte gib einen Benutzenamen und ein Passwort an");
-    rh.RPCResponse response = await _query({
-      "id": applicationName,
-      "method": "authenticate",
-      "params": {"user": username, "password": password, "client": applicationName},
-      "jsonrpc": 2.0
-    });
+    if (username == "" || password == "") throw Exception("Bitte gib einen Benutzenamen und ein Passwort an");
+    rh.RPCResponse response =
+        await _query("authenticate", {"user": username, "password": password, "client": applicationName});
 
     if (response.isHttpError()) {
       throw Exception("Ein http Fehler ist aufegteten: " +
@@ -68,7 +64,21 @@ class UserSession {
     sessionValid = true;
     _un = username;
     _pwd = password;
+  }
 
+  /**Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
+   * Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
+  Future<rh.RPCResponse> logout() async {
+    return _query("logout", {}, validateSession: false).then((value) {
+      sessionValid = false;
+      sessionId = "";
+      _un = "";
+      _pwd = "";
+      personId = -1;
+      klasseId = -1;
+      type = -1;
+      return value;
+    });
   }
 
   Future<TimeTableRange> getTimeTableForThisWeek() async {
@@ -91,33 +101,23 @@ class UserSession {
     return TimeTableRange(
         from,
         to,
-        await _query({
-          "id": applicationName,
-          "method": "getTimetable",
-          "params": {
-            "options": {
-              "startDate": utils.convertToUntisDate(from),
-              "endDate": utils.convertToUntisDate(to),
-              "element": {"id": personId, "type": type},
-              "showLsText": true,
-              "showStudentgroup": true,
-              "showLsNumber": true,
-              "showSubstText": true,
-              "showInfo": true,
-              "showBooking": true,
-              "klasseFields": ['id', 'name', 'longname', 'externalkey'],
-              "roomFields": ['id', 'name', 'longname', 'externalkey'],
-              "subjectFields": ['id', 'name', 'longname', 'externalkey'],
-              "teacherFields": ['id', 'name', 'longname', 'externalkey']
-            }
-          },
-          "jsonrpc": 2.0
+        await _query("getTimetable", {
+          "options": {
+            "startDate": utils.convertToUntisDate(from),
+            "endDate": utils.convertToUntisDate(to),
+            "element": {"id": personId, "type": type},
+            "showLsText": true,
+            "showStudentgroup": true,
+            "showLsNumber": true,
+            "showSubstText": true,
+            "showInfo": true,
+            "showBooking": true,
+            "klasseFields": ['id', 'name', 'longname', 'externalkey'],
+            "roomFields": ['id', 'name', 'longname', 'externalkey'],
+            "subjectFields": ['id', 'name', 'longname', 'externalkey'],
+            "teacherFields": ['id', 'name', 'longname', 'externalkey']
+          }
         }));
-  }
-
-  Future<rh.RPCResponse> _query(Object data) async {
-    return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
-        headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(data)));
   }
 
   /// Diese müssen in den Header gelegt werden
@@ -125,5 +125,36 @@ class UserSession {
     if (!sessionValid) return "";
 
     return "JSESSIONID=" + sessionId + "; schoolname=" + schoolBase64.replaceAll("=", "%3D");
+  }
+
+  Future<rh.RPCResponse> _validateSession() async {
+    return createSession(username: _un, password: _pwd).then((value) {
+      if (value.isError()) {
+        //Failed to login again.
+        // logout();
+        throw Exception("Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
+      }
+      print("Session refreshed ...");
+      return value;
+    });
+  }
+
+  Future<rh.RPCResponse> _query(String method, Object params, {bool validateSession = true}) async {
+    Object build = {"id": applicationName, "method": method, "params": params, "jsonrpc": 2.0};
+
+    rh.RPCResponse orig = rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
+        headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
+
+    if (validateSession && orig.errorCode == -8520 && sessionValid) {
+      print("User not authenticated. Trying to refresh session ...");
+      rh.RPCResponse r = await _validateSession();
+      if (!r.isError()) {
+        return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
+            headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
+      } else
+        return r;
+    } else {
+      return orig;
+    }
   }
 }
