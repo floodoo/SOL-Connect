@@ -2,41 +2,41 @@ import 'timetable.hour.dart';
 import 'utils.dart' as utils;
 
 class TimeTableDay {
-  DateTime date;
-  var hours = <TimeTableHour>[];
-  String dayName = "";
+  DateTime _date;
+  var _hours = <TimeTableHour>[];
+  String _dayName = "";
 
   int daysSinceEpoch = 0;
   bool outOfScope = false;
 
-  TimeTableDay(this.date) {
-    switch (date.weekday) {
+  TimeTableDay(this._date) {
+    switch (_date.weekday) {
       case 1:
-        dayName = "Montag";
+        _dayName = "Montag";
         break;
       case 2:
-        dayName = "Dienstag";
+        _dayName = "Dienstag";
         break;
       case 3:
-        dayName = "Mittwoch";
+        _dayName = "Mittwoch";
         break;
       case 4:
-        dayName = "Donnerstag";
+        _dayName = "Donnerstag";
         break;
       case 5:
-        dayName = "Freitag";
+        _dayName = "Freitag";
         break;
       case 6:
-        dayName = "Samstag";
+        _dayName = "Samstag";
         break;
       case 7:
-        dayName = "Sonntag";
+        _dayName = "Sonntag";
         break;
       default:
         "";
     }
 
-    daysSinceEpoch = utils.daysSinceEpoch(date.millisecondsSinceEpoch);
+    daysSinceEpoch = utils.daysSinceEpoch(_date.millisecondsSinceEpoch);
   }
 
   ///Ob der Tag an einem Wochenende oder in den Ferien liegt
@@ -44,9 +44,21 @@ class TimeTableDay {
     return outOfScope;
   }
 
-  void addHour(dynamic data) {
-    hours.add(new TimeTableHour(data));
+  DateTime getDate() {
+    return _date;
+  }
 
-    hours.sort((a, b) => a.end.hour.compareTo(b.end.hour));
+  List<TimeTableHour> getHours() {
+    return _hours;
+  }
+
+  String getDayName() {
+    return _dayName;
+  }
+
+  void addHour(dynamic data) {
+    _hours.add(new TimeTableHour(data));
+
+    _hours.sort((a, b) => a.end.hour.compareTo(b.end.hour));
   }
 }
