@@ -68,13 +68,13 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                               ? const Icon(Icons.calendar_today)
                               : (index <= 5)
                                   ? Text(
-                                      "${widget.timeTable.getDays()[index - 1].dayName} ${widget.timeTable.getDays()[index - 1].date}")
+                                      "${widget.timeTable.getDays()[index - 1].getDayName()} ${widget.timeTable.getDays()[index - 1].getDate()}")
                                   : (hourList.contains(index))
                                       ? Text("$hourCounter")
                                       : (index + 7 > 54)
                                           ? Text("test")
                                           : Text(
-                                              "${widget.timeTable.getDays()[0].hours[0].getSubject().name} {teacher} {room}"),
+                                              "${widget.timeTable.getDays()[0].getHours()[0].getSubject().name} {teacher} {room}"),
                         );
                       },
                     ),
