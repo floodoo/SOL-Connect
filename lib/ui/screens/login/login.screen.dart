@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untis_phasierung/ui/screens/timetable/timetable.screen.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/ui/screens/home/home.screen.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
