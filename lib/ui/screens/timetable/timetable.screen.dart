@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/ui/screens/timetable/widgets/timeTable.arguments.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
+import 'package:untis_phasierung/util/logger.util.dart';
 
 class TimeTableScreen extends StatefulWidget {
   TimeTableScreen({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class TimeTableScreen extends StatefulWidget {
 class _TimeTableScreenState extends State<TimeTableScreen> {
   @override
   Widget build(BuildContext context) {
+    final log = getLogger();
     final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
     // args.userSession.getTimeTableForThisWeek().then((value) => {
     //       print(value.getDays()[0].dayName),
@@ -32,9 +34,9 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
       });
     }
     int hourCounter = 0;
-    int dayCounter = 0;
+    int schoolDays = 0;
+    int subjectRowCounter = 0;
     List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
-    List dayList = [7, 13, 19, 25, 31, 37, 43, 49];
 
     return Scaffold(
         appBar: AppBar(
@@ -59,23 +61,39 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                         if (hourList.contains(index)) {
                           hourCounter++;
                         }
-                        if (dayList.contains(index)) {
-                          dayCounter++;
+
+                        // erste reihe auschließen
+                        if (index > 7) {
+                          // schultage zurücksezten
+                          if (schoolDays >= 5) {
+                            schoolDays = 0;
+                            subjectRowCounter++;
+
+                          } else {
+                            schoolDays++;
+                          }
                         }
-                        return Container(
-                          color: Colors.blue,
-                          child: (index == 0)
-                              ? const Icon(Icons.calendar_today)
-                              : (index <= 5)
-                                  ? Text(
-                                      "${widget.timeTable.getDays()[index - 1].getDayName()} ${widget.timeTable.getDays()[index - 1].getDate()}")
-                                  : (hourList.contains(index))
-                                      ? Text("$hourCounter")
-                                      : (index + 7 > 54)
-                                          ? Text("test")
-                                          : Text(
-                                              "${widget.timeTable.getDays()[0].getHours()[0].getSubject().name} {teacher} {room}"),
-                        );
+
+                        return widget._isLoading
+                            ? Container(
+                                color: Colors.green,
+                              )
+                            : Container(
+                                color: Colors.blue,
+                                child: (index == 0)
+                                    ? const Icon(Icons.calendar_today)
+                                    : (index <= 5)
+                                        ? Text(
+                                            "${widget.timeTable.getDays()[index - 1].getDayName()} ${widget.timeTable.getDays()[index - 1].getDate()}")
+                                        : (hourList.contains(index))
+                                            ? Text("$hourCounter")
+                                            : (index + 7 > 54)
+                                                ? const Text("test")
+                                                : (widget.timeTable.getDays()[schoolDays].isHolidayOrWeekend())
+                                                    ? Text("Holiday")
+                                                    : Text(
+                                                        "${widget.timeTable.getDays()[schoolDays].getHours()[0].getSubject().name} {teacher} {room}"),
+                              );
                       },
                     ),
                   ),
