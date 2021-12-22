@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
 
-      UserSession session = UserSession("bbs1-mainz", "untis-phasierung");
+      UserSession session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
       session.createSession(username: usernameController.text, password: passwordController.text).then(
         (value) {
           Navigator.pushReplacementNamed(context, TimeTableScreen.routeName, arguments: TimetableArguments(session));

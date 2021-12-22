@@ -74,11 +74,16 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                                 color: Colors.green,
                               )
                             : (index == 0)
-                                ? const Icon(Icons.calendar_today)
+                                ? CustomTimeTableCard(
+                                    text: "Icon",
+                                    icon: Icons.calendar_today,
+                                    center: true,
+                                  )
                                 : (index <= 5)
                                     ? CustomTimeTableCard(
-                                        text: widget.timeTable.getDays()[index - 1].getDayName(),
+                                        text: widget.timeTable.getDays()[index - 1].getShortName(),
                                         textMaxLines: 1,
+                                        center: true,
                                       )
                                     : (hourList.contains(index))
                                         ? CustomTimeTableCard(

@@ -10,7 +10,9 @@ class CustomTimeTableCard extends StatelessWidget {
       this.topColor = Colors.grey,
       this.bottomColor = Colors.grey,
       this.textColor = Colors.white,
-      this.textMaxLines})
+      this.iconColor = Colors.white,
+      this.textMaxLines,
+      this.icon})
       : super(key: key);
   String text;
   bool divider;
@@ -18,7 +20,9 @@ class CustomTimeTableCard extends StatelessWidget {
   Color topColor;
   Color bottomColor;
   Color textColor;
+  Color iconColor;
   int? textMaxLines;
+  IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,7 @@ class CustomTimeTableCard extends StatelessWidget {
                     color: topColor,
                   ),
                   padding: const EdgeInsets.fromLTRB(2, 5, 2, 0),
-                  child: (center)
+                  child: (center && icon != null)
                       ? Container()
                       : AutoSizeText(
                           text,
@@ -68,13 +72,18 @@ class CustomTimeTableCard extends StatelessWidget {
           ),
           if (center)
             Center(
-              child: AutoSizeText(
-                text,
-                maxLines: textMaxLines,
-                overflow: TextOverflow.clip,
-                softWrap: true,
-                style: TextStyle(color: textColor),
-              ),
+              child: (icon == null)
+                  ? AutoSizeText(
+                      text,
+                      maxLines: textMaxLines,
+                      overflow: TextOverflow.clip,
+                      softWrap: true,
+                      style: TextStyle(color: textColor),
+                    )
+                  : Icon(
+                      icon,
+                      color: iconColor,
+                    ),
             ),
         ],
       ),
