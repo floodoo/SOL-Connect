@@ -1,48 +1,12 @@
 import 'timetable.entity.dart';
 
-class TimeTableHour {
+enum Codes { REGULAR, IRREGULAR, CANCELLED, EMPTY, UNKNWON }
+
+class HourEntities {
   TimeTableEntity _klasse = TimeTableEntity("", null);
   TimeTableEntity _teacher = TimeTableEntity("", null);
   TimeTableEntity _subject = TimeTableEntity("", null);
   TimeTableEntity _room = TimeTableEntity("", null);
-
-  String _activityType = "";
-  int _id = -1;
-  DateTime start = DateTime(0);
-  DateTime end = DateTime(0);
-
-  String code = "regular";
-
-  ///Der Stundenindex beschreibt die Stunde am Tag. z.B. hourIndex 1 wäre die erste Stunde um 8:00 Uhr
-  int hourIndex = -1;
-
-  DateTime _parseDate(String date, String time) {
-    return DateTime.parse(date.substring(0, 4) +
-        "-" +
-        date.substring(4, 6) +
-        "-" +
-        date.substring(6, 8) +
-        " " +
-        (time.length == 3
-            ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
-            : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
-  }
-
-  String getActivityType() {
-    return _activityType;
-  }
-
-  int getId() {
-    return _id;
-  }
-
-  DateTime getStartTime() {
-    return start;
-  }
-
-  DateTime getEndTime() {
-    return end;
-  }
 
   ///@return Die Klasse der Stunde als TimeTableEntity objekt
   TimeTableEntity getClazz() {
@@ -63,37 +27,150 @@ class TimeTableHour {
   TimeTableEntity getRoom() {
     return _room;
   }
+}
+
+class TimeTableHour {
+  final entities = <HourEntities>[];
+
+  String _activityType = "";
+  int _id = -1;
+
+  String startAsString = "0000";
+  DateTime start = DateTime(0);
+  String endAsString = "0000";
+  DateTime end = DateTime(0);
+
+  String code = "regular";
+
+  DateTime _parseDate(String date, String time) {
+    return DateTime.parse(date.substring(0, 4) +
+        "-" +
+        date.substring(4, 6) +
+        "-" +
+        date.substring(6, 8) +
+        " " +
+        (time.length == 3
+            ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
+            : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
+  }
+
+  Codes getLessonCode() {
+    if (entities.length == 0)
+      return Codes.EMPTY;
+    else if (code == "regular")
+      return Codes.REGULAR;
+    else if (code == "cancelled")
+      return Codes.CANCELLED;
+    else if (code == "irregular") return Codes.IRREGULAR;
+    return Codes.UNKNWON;
+  }
+
+  String getActivityType() {
+    return _activityType;
+  }
+
+  bool isIrregular() {
+    return getLessonCode() == Codes.IRREGULAR;
+  }
+
+  ///Diese Stunde ist leer bzw. es gibt hier nichts
+  bool isEmpty() {
+    return getLessonCode() == Codes.EMPTY;
+  }
+
+  bool hasMultipleEntries() {
+    return entities.length > 1;
+  }
+
+  int getId() {
+    return _id;
+  }
+
+  DateTime getStartTime() {
+    return start;
+  }
+
+  DateTime getEndTime() {
+    return end;
+  }
+
+  ///Wenn diese Stunde den Code IRREGULAR besitzt, ist es sehr warscheinlich dass sie mehrere Einträge besitzt.
+  ///Z.B. Original Stunde und ersetzte Stunde
+  ///Diese Funktion gibt alle einräge als "HourEntities" Objekt zurück.
+  List<HourEntities> getIrregularHours() {
+    return entities;
+  }
+
+  ///@return Die Klasse der Stunde als TimeTableEntity objekt
+  TimeTableEntity getClazz() {
+    if (isEmpty()) return TimeTableEntity("empty", null);
+    return entities[0].getClazz();
+  }
+
+  ///@return Der Lehrer der Stunde als TimeTableEntity objekt
+  TimeTableEntity getTeacher() {
+    if (isEmpty()) return TimeTableEntity("empty", null);
+    return entities[0].getTeacher();
+  }
+
+  ///@return Das Fach der Stunde als TimeTableEntity objekt
+  TimeTableEntity getSubject() {
+    if (isEmpty()) return TimeTableEntity("empty", null);
+    return entities[0].getSubject();
+  }
+
+  ///@return Der Raum der Stunde als TimeTableEntity objekt
+  TimeTableEntity getRoom() {
+    if (isEmpty()) return TimeTableEntity("empty", null);
+    return entities[0].getRoom();
+  }
 
   TimeTableHour(dynamic data) {
+    if (data == null) {
+      return;
+    }
+
     _id = data['id'];
 
-    start = _parseDate(data['date'].toString(), data['startTime'].toString());
-    end = _parseDate(data['date'].toString(), data['endTime'].toString());
+    startAsString = data['startTime'].toString();
+    endAsString = data['endTime'].toString();
+
+    start = _parseDate(data['date'].toString(), startAsString);
+    end = _parseDate(data['date'].toString(), endAsString);
 
     _activityType = data['activityType'];
 
+    HourEntities entity = HourEntities();
+
     if (data['k1'] != null) {
-      _klasse = TimeTableEntity("kl", data['kl']);
+      entity._klasse = TimeTableEntity("kl", data['kl']);
     } else {
-      _klasse = TimeTableEntity("kl", null);
-      _klasse.longName = "unknown";
-      _klasse.name = "unknown";
+      entity._klasse = TimeTableEntity("kl", null);
+      entity._klasse.longName = "unknown";
+      entity._klasse.name = "unknown";
     }
 
     if (data['te'] != null) {
-      _teacher = TimeTableEntity("te", data['te']);
+      entity._teacher = TimeTableEntity("te", data['te']);
     } else {
-      _teacher.name = "---";
-      _teacher.longName = "Ausfall/SOL/Vertretung";
+      entity._teacher.name = "---";
+      entity._teacher.longName = "Ausfall/SOL/Vertretung";
     }
 
-    _subject = TimeTableEntity("su", data['su']);
+    entity._subject = TimeTableEntity("su", data['su']);
 
-    _room = TimeTableEntity("ro", data['ro']);
+    entity._room = TimeTableEntity("ro", data['ro']);
 
     if (data['code'] != null) {
       code = data['code'];
     }
+
+    entities.add(entity);
+  }
+
+  ///Interne Funktion.
+  void addEntity(TimeTableHour entity) {
+    entities.addAll(entity.entities);
   }
 
   ///Der Titel der Stunde. Im Format HH:mm - HH:mm

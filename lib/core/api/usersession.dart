@@ -1,6 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
-import 'package:untis_phasierung/util/logger.util.dart';
 import 'dart:convert';
 import 'rpcresponse.dart' as rh;
 import 'models/utils.dart' as utils;
@@ -8,7 +6,6 @@ import 'timetable.dart';
 
 class UserSession {
   static const types = {'CLASS': 1, 'TEACHER': 2, 'SUBJECT': 3, 'ROOM': 4, 'STUDENT': 5};
-  final Logger log = getLogger();
 
   String applicationName = "default";
   String sessionId = "";
@@ -69,8 +66,8 @@ class UserSession {
     _pwd = password;
   }
 
-  ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
-  ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.
+  /**Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
+   * Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
   Future<rh.RPCResponse> logout() async {
     return _query("logout", {}, validateSession: false).then((value) {
       sessionValid = false;
@@ -137,7 +134,7 @@ class UserSession {
         logout();
         throw Exception("Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
       }
-      log.i("Session refreshed ...");
+      print("Session refreshed ...");
       return value;
     });
   }
@@ -149,14 +146,13 @@ class UserSession {
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
 
     if (validateSession && orig.errorCode == -8520 && sessionValid) {
-      log.e("User not authenticated. Trying to refresh session ...");
+      print("User not authenticated. Trying to refresh session ...");
       rh.RPCResponse r = await _validateSession();
       if (!r.isError()) {
         return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
             headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
-      } else {
+      } else
         return r;
-      }
     } else {
       return orig;
     }
