@@ -173,6 +173,16 @@ class TimeTableHour {
     entities.addAll(entity.entities);
   }
 
+  ///@return Die Startzeit im Format HH:mm
+  String getStatTimeString() {
+    return start.hour.toString() + ":" + start.minute.toString();
+  }
+
+  ///@return Die Endzeit im Format HH:mm
+  String getEndTimeString() {
+    return end.hour.toString() + ":" + end.minute.toString();
+  }
+
   ///Der Titel der Stunde. Im Format HH:mm - HH:mm
   String getTitle() {
     return (start.hour < 10 ? "0" + start.hour.toString() : start.hour.toString()) +
