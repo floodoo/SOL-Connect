@@ -61,14 +61,12 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                         if (hourList.contains(index)) {
                           hourCounter++;
                         }
-
                         // erste reihe auschließen
                         if (index > 7) {
                           // schultage zurücksezten
                           if (schoolDays >= 5) {
                             schoolDays = 0;
                             subjectRowCounter++;
-
                           } else {
                             schoolDays++;
                           }
@@ -91,8 +89,11 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                                                 ? const Text("test")
                                                 : (widget.timeTable.getDays()[schoolDays].isHolidayOrWeekend())
                                                     ? Text("Holiday")
-                                                    : Text(
-                                                        "${widget.timeTable.getDays()[schoolDays].getHours()[0].getSubject().name} {teacher} {room}"),
+                                                    : (subjectRowCounter >=
+                                                            widget.timeTable.getDays()[schoolDays].getHours().length)
+                                                        ? Text("")
+                                                        : Text(
+                                                            "${widget.timeTable.getDays()[schoolDays].getHours()[subjectRowCounter].getSubject().name} {teacher} {room}"),
                               );
                       },
                     ),
