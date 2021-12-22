@@ -39,6 +39,11 @@ class TimeTableDay {
     daysSinceEpoch = utils.daysSinceEpoch(date.millisecondsSinceEpoch);
   }
 
+  ///Ob der Tag an einem Wochenende oder in den Ferien liegt
+  bool isHolidayOrWeekend() {
+    return outOfScope;
+  }
+
   void addHour(dynamic data) {
     hours.add(new TimeTableHour(data));
 

@@ -60,7 +60,7 @@ class TimeTableRange {
     _days.addAll(finalList);
   }
 
-  ///Gibt die Tage der timetable als timetable.day.dart Liste zurück 
+  ///Gibt die Tage der timetable als timetable.day.dart Liste zurück
   List<TimeTableDay> getDays() {
     return _days;
   }

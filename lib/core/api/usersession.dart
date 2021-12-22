@@ -19,6 +19,9 @@ class UserSession {
   String URL = "https://hepta.webuntis.com/WebUntis/jsonrpc.do?school=";
   bool sessionValid = false;
 
+  String _un = "";
+  String _pwd = "";
+
   UserSession(String school, String appID) {
     applicationName = appID;
 
@@ -28,7 +31,7 @@ class UserSession {
   }
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
-  Future createSession(username, password) async {
+  Future createSession({String username = "", String password = ""}) async {
     rh.RPCResponse response = await _query({
       "id": applicationName,
       "method": "authenticate",
@@ -59,6 +62,8 @@ class UserSession {
     type = response.payload['personType'];
 
     sessionValid = true;
+    _un = username;
+    _pwd = password;
 
     print("Login Successfull");
   }
