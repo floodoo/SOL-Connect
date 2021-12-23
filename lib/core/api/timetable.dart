@@ -8,9 +8,6 @@ class TimeTableRange {
   final DateTime _startDate;
   final DateTime _endDate;
 
-  // Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.
-  // Wenn Tage außerhalb des scopes liegen (Wochenende oder Ferien) werden diese auch der Liste hinzugefügt,
-  // besitzen jedoch keine Stunden
   final _days = <TimeTableDay>[];
 
   TimeTableRange(this._startDate, this._endDate, this.response) {
@@ -65,8 +62,23 @@ class TimeTableRange {
     _days.addAll(finalList);
   }
 
-  ///Gibt die Tage der timetable als timetable.day.dart Liste zurück
+  /// Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.
+  /// Wenn Tage außerhalb des scopes liegen (Wochenende oder Ferien) werden diese auch der Liste hinzugefügt,
+  /// besitzen jedoch nur leere Stunden. Siehe `timetable.day.dart` -> `getHours()`
   List<TimeTableDay> getDays() {
     return _days;
+  }
+
+  ///Gibt einen bestimmten Wochentag zurück.
+  ///
+  ///[weekday] ist der Name des Wochentages in kurz oder Langform. Z.B. "Montag" oder "Mo". Der Name ist nicht case- sensitive.
+  TimeTableDay getDay(String weekday) {
+    for (TimeTableDay day in getDays()) {
+      if (day.getDayName().toLowerCase() == weekday.toLowerCase() ||
+          day.getShortName().toLowerCase() == weekday.toLowerCase()) {
+        return day;
+      }
+    }
+    return getDays()[0];
   }
 }

@@ -74,10 +74,12 @@ class TimeTableDay {
     return _hours;
   }
 
+  ///Der Name des Tages. Z.B. Montag, Donnerstag oder Sonntag
   String getDayName() {
     return _dayName;
   }
 
+  ///Der Name des Tages in Kurzform. Z.B. Mo, Do, oder So
   String getShortName() {
     return _shortDayName;
   }
