@@ -3,6 +3,7 @@ import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/time_table.arguments.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
+import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,12 +22,34 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  loadUserData() async {
+    final storedUsername = await UserSecureStorage.getUsername();
+    final storedPassword = await UserSecureStorage.getPassword();
+
+    setState(() {
+      usernameController.text = storedUsername ?? "";
+      passwordController.text = storedPassword ?? "";
+    });
+  }
+
+  setUserData(String username, String password) async {
+    await UserSecureStorage.setUsername(username);
+    await UserSecureStorage.setPassword(password);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    void _login() {
+    void _login() async {
       setState(() {
         _isLoading = true;
       });
 
+      await UserSecureStorage.setUsername(usernameController.text);
       UserSession session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
       session.createSession(username: usernameController.text, password: passwordController.text).then(
         (value) {
@@ -41,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         },
       );
+      setUserData(usernameController.text, passwordController.text);
       usernameController.clear();
       passwordController.clear();
     }

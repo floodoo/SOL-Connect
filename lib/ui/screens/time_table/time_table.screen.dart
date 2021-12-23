@@ -161,8 +161,10 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
       body: Container(
         color: Colors.black,
         child: widget._isLoading
-            ? Container(
-                color: Colors.green,
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
               )
             : GridView.count(
                 crossAxisCount: 6,
