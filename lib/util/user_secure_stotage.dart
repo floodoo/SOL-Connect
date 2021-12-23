@@ -10,4 +10,6 @@ class UserSecureStorage {
 
   static Future<String?> getUsername() async => await _storage.read(key: _keyUsername);
   static Future<String?> getPassword() async => await _storage.read(key: _keyPassword);
+
+  static Future clear() async => await _storage.deleteAll();
 }

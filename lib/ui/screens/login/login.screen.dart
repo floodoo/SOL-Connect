@@ -59,6 +59,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ).catchError(
         (error) {
           log.e("Error logging in: $error");
+
+          if (error.toString() == "Exception: Benutzename oder Passwort falsch") {
+            log.d("Clearing user data");
+            UserSecureStorage.clear();
+          }
           setState(() {
             _isLoading = false;
           });
