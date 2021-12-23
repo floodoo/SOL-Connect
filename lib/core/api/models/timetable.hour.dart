@@ -177,12 +177,12 @@ class TimeTableHour {
 
   ///@return Die Startzeit im Format HH:mm
   String getStatTimeString() {
-    return start.hour.toString() + ":" + start.minute.toString();
+    return start.hour.toString() + ":" + (start.minute >= 10 ? start.minute.toString() : start.minute.toString() + "0");
   }
 
   ///@return Die Endzeit im Format HH:mm
   String getEndTimeString() {
-    return end.hour.toString() + ":" + end.minute.toString();
+    return end.hour.toString() + ":" + (end.minute >= 10 ? end.minute.toString() : end.minute.toString() + "0");
   }
 
   ///Der Titel der Stunde. Im Format HH:mm - HH:mm
