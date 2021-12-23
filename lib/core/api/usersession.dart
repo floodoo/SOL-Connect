@@ -70,16 +70,16 @@ class UserSession {
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
   Future<rh.RPCResponse> logout() async {
-    return _query("logout", {}, validateSession: false).then((value) {
-      sessionValid = false;
-      sessionId = "";
-      _un = "";
-      _pwd = "";
-      personId = -1;
-      klasseId = -1;
-      type = -1;
-      return value;
-    });
+    rh.RPCResponse response = await _query("logout", {}, validateSession: false);
+    sessionValid = false;
+    sessionId = "";
+    _un = "";
+    _pwd = "";
+    personId = -1;
+    klasseId = -1;
+    type = -1;
+    getLogger().i("Logged out.");
+    return response;
   }
 
   Future<TimeTableRange> getTimeTableForThisWeek() async {
