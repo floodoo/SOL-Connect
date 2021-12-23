@@ -1,6 +1,7 @@
 import 'rpcresponse.dart';
 import 'models/timetable.day.dart';
 import 'models/utils.dart' as utils;
+import 'models/timetable.hour.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
@@ -69,6 +70,16 @@ class TimeTableRange {
         _days[i].getHours()[j].yIndex = j;
       }
     }
+  }
+
+  ///Wenn man sich die Timetable als 2d Grid vorstellt, kann man hier die Stunden bekommen die einem solchem Grid entsprechen
+  ///
+  ///Das Grid ist ___`getDays().length * 10`___ Felder groß
+  ///
+  ///* `xIndex = 0, yIndex = 0` wäre Montag erste Stunde
+  ///* `xIndex = 1, yIndex = 2` wäre Dienstag 3. Stunde
+  TimeTableHour getHourByIndex(int xIndex, int yIndex) {
+    return _days[xIndex].getHours()[yIndex];
   }
 
   /// Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.

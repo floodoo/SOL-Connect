@@ -48,7 +48,7 @@ class TimeTableHour {
 
   ///Der Code beschreibt die "Art" der Stunde. Folgende Codes sind definiert als:
   ///* __regular__: Die Stunde ist regulär
-  ///* __irregular__: Die Stunde ist nicht standartmäßig vorgesehen. Sie kam durch einen Ausfall zustande. Die Liste "getIrregularHours()" gibt die Stunde zurück, die diese ersetzen soll.
+  ///* __irregular__: Die Stunde ist nicht standartmäßig vorgesehen. Sie kam durch einen Ausfall zustande. Die Liste "getReplacement()" gibt die Stunde zurück, die diese ersetzen soll.
   ///* __cancelled__: Die Stunde fällt aus
   ///* __empty__: Die Stunde gibt es nicht. Diese dient also nur als Platzhalter um Lücken zu füllen falls z.B. die Erste Stunde frei ist
   ///* __unknown__: Das sollte nicht vorkommen. Der Status ist unbekannt / illegal
@@ -56,7 +56,7 @@ class TimeTableHour {
     return code;
   }
 
-  ///Wenn `true` dann besitzt die Stunde in `getIrregularHours()` eine Stunde die diese durch eine Vertretung ersetzen soll.
+  ///Wenn `true` dann besitzt die Stunde in `getReplacement()` eine Stunde die diese durch eine Vertretung ersetzen soll.
   bool isIrregular() {
     return getLessonCode() == Codes.irregular;
   }
