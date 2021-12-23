@@ -98,7 +98,7 @@ class TimeTableHour {
 
   ///Wenn diese Stunde den Code IRREGULAR besitzt, ist es sehr warscheinlich dass sie mehrere Einträge besitzt.
   ///Z.B. Original Stunde und ersetzte Stunde
-  ///Diese Funktion gibt alle einräge als "HourEntities" Objekt zurück.
+  ///Diese Funktion gibt alle einräge als "HourEntities" Objekt Liste zurück.
   List<HourEntities> getIrregularHours() {
     return entities;
   }
