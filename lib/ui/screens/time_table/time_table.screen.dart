@@ -53,7 +53,6 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           itemCount: 54,
           addAutomaticKeepAlives: true,
           itemBuilder: (context, index) {
-            
             if (hourList.contains(index)) {
               timeColumnCounter++;
             }
@@ -88,7 +87,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                             ? CustomTimeTableHourCard(
                                 centerText: timeColumnCounter.toString(),
                                 topText:
-                                    widget.timeTable.getDays()[0].getHours()[timeColumnCounter].getStatTimeString(),
+                                    widget.timeTable.getDays()[0].getHours()[timeColumnCounter].getStartTimeString(),
                                 bottomText:
                                     widget.timeTable.getDays()[0].getHours()[timeColumnCounter].getEndTimeString(),
                               )

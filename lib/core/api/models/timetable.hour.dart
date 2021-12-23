@@ -152,7 +152,7 @@ class TimeTableHour {
   }
 
   ///@return Die Startzeit im Format HH:mm
-  String getStatTimeString() {
+  String getStartTimeString() {
     return start.hour.toString() + ":" + (start.minute >= 10 ? start.minute.toString() : start.minute.toString() + "0");
   }
 
