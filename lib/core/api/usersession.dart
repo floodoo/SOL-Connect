@@ -66,6 +66,26 @@ class UserSession {
     _pwd = password;
   }
 
+  ///Der Benutzername.
+  String getUsername() {
+    return _un;
+  }
+
+  ///Name der Schule wie sie in webuntis registriert ist
+  String getSchool() {
+    return school;
+  }
+
+  ///Die Rolle der eingeloggten Person. Es gibt "Schüler" und "Lehrer"
+  String getPersonType() {
+    if (type == 2) {
+      return "Lehrer";
+    } else if (type == 5) {
+      return "Schüler";
+    }
+    return type.toString();
+  }
+
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
   Future<rh.RPCResponse> logout() async {
