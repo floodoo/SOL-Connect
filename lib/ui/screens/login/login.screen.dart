@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isLoading = false;
+  bool _wrongPassword = false;
 
   @override
   void initState() {
@@ -66,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
           setState(() {
             _isLoading = false;
+            _wrongPassword = true;
           });
         },
       );
@@ -116,6 +118,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                       child: TextField(
                         controller: usernameController,
+                        onChanged: (value) {
+                          if (_wrongPassword) {
+                            setState(() {
+                              _wrongPassword = false;
+                            });
+                          }
+                        },
                         autocorrect: false,
                         decoration: const InputDecoration(
                           hintText: "User",
@@ -127,6 +136,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                       child: TextField(
                         controller: passwordController,
+                        onChanged: (value) {
+                          if (_wrongPassword) {
+                            setState(() {
+                              _wrongPassword = false;
+                            });
+                          }
+                        },
                         onEditingComplete: () => _login(),
                         obscureText: true,
                         autocorrect: false,
@@ -136,6 +152,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    if (_wrongPassword)
+                      const Text(
+                        "Wrong username/password",
+                        style: TextStyle(color: Colors.red),
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: InkWell(
