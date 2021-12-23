@@ -56,7 +56,7 @@ class CustomTimeTableCard extends StatelessWidget {
               ),
               if (divider && center == false)
                 const Divider(
-                  color: Colors.black,
+                  color: Colors.white,
                   thickness: 0.5,
                   height: 0,
                 ),

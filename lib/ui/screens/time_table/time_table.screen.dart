@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
@@ -58,50 +59,95 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           }
         }
 
-        (i == 0)
-            ? timeTableList.add(
-                CustomTimeTableCard(
-                  text: "Icon",
-                  icon: Icons.calendar_today,
-                  center: true,
-                ),
-              )
-            : (i <= 5)
-                ? timeTableList.add(
-                    CustomTimeTableCard(
-                      text: widget.timeTable.getDays()[i - 1].getShortName(),
-                      textMaxLines: 1,
-                      center: true,
-                    ),
-                  )
-                : (hourList.contains(i))
-                    ? timeTableList.add(
-                        CustomTimeTableHourCard(
-                          centerText: timeColumnCounter.toString(),
-                          topText: widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getStartTimeString(),
-                          bottomText:
-                              widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getEndTimeString(),
-                        ),
-                      )
-                    : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
-                        ? timeTableList.add(
-                            CustomTimeTableCard(
-                              text: "Holiday",
-                              center: true,
-                              textMaxLines: 1,
-                            ),
-                          )
-                        : (subjectRowCounter >= widget.timeTable.getDays()[schoolDayCounter].getHours().length)
-                            ? timeTableList.add(
-                                Container(),
-                              )
-                            : timeTableList.add(
-                                CustomTimeTableCard(
-                                  text:
-                                      "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
-                                  divider: true,
-                                ),
-                              );
+        if (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
+                Codes.regular ||
+            widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
+                Codes.cancelled ||
+            i == 0 ||
+            i <= 5 ||
+            hourList.contains(i)) {
+          (i == 0)
+              ? timeTableList.add(
+                  CustomTimeTableCard(
+                    text: "Icon",
+                    icon: Icons.calendar_today,
+                    center: true,
+                  ),
+                )
+              : (i <= 5)
+                  ? timeTableList.add(
+                      CustomTimeTableCard(
+                        text: widget.timeTable.getDays()[i - 1].getShortName(),
+                        textMaxLines: 1,
+                        center: true,
+                      ),
+                    )
+                  : (hourList.contains(i))
+                      ? timeTableList.add(
+                          CustomTimeTableHourCard(
+                            centerText: timeColumnCounter.toString(),
+                            topText:
+                                widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getStartTimeString(),
+                            bottomText:
+                                widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getEndTimeString(),
+                          ),
+                        )
+                      : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
+                          ? timeTableList.add(
+                              CustomTimeTableCard(
+                                text: "Holiday",
+                                center: true,
+                                textMaxLines: 1,
+                              ),
+                            )
+                          : (subjectRowCounter >= widget.timeTable.getDays()[schoolDayCounter].getHours().length)
+                              ? timeTableList.add(
+                                  Container(),
+                                )
+                              : timeTableList.add(
+                                  CustomTimeTableCard(
+                                    text:
+                                        "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
+                                    divider: true,
+                                    topColor: (widget.timeTable
+                                                .getDays()[schoolDayCounter]
+                                                .getHours()[subjectRowCounter]
+                                                .getLessonCode() ==
+                                            Codes.cancelled)
+                                        ? Colors.red
+                                        : Colors.black87,
+                                    bottomColor: (widget.timeTable
+                                                .getDays()[schoolDayCounter]
+                                                .getHours()[subjectRowCounter]
+                                                .getLessonCode() ==
+                                            Codes.cancelled)
+                                        ? Colors.red
+                                        : Colors.black87,
+                                  ),
+                                );
+        } else if (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
+            Codes.irregular) {
+          timeTableList.add(
+            CustomTimeTableCard(
+              text:
+                  "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getRoom().name}",
+              topColor: Colors.purple.shade900,
+              bottomColor: Colors.purple.shade900,
+            ),
+          );
+        } else {
+          timeTableList.add(
+            CustomTimeTableCard(
+              text: (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? "Holiday/Weekend" : "",
+              center: true,
+              topColor:
+                  (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? Colors.blue : Colors.black87,
+              bottomColor:
+                  (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? Colors.blue : Colors.black87,
+              textMaxLines: 2,
+            ),
+          );
+        }
       }
       return timeTableList;
     }
