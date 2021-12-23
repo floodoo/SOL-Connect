@@ -98,7 +98,5 @@ class TimeTableDay {
         break;
       }
     }
-
-    //_hours.sort((a, b) => a.startAsString.compareTo(b.startAsString));
   }
 }
