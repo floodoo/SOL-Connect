@@ -2,11 +2,82 @@ import 'timetable.entity.dart';
 
 enum Codes { regular, irregular, cancelled, empty, unknown }
 
-class HourEntities {
+class TimeTableHour {
   TimeTableEntity _klasse = TimeTableEntity("", null);
   TimeTableEntity _teacher = TimeTableEntity("", null);
   TimeTableEntity _subject = TimeTableEntity("", null);
   TimeTableEntity _room = TimeTableEntity("", null);
+
+  final replacement = <TimeTableHour>[];
+
+  String _activityType = "";
+  int _id = -1;
+
+  String startAsString = "0000";
+  DateTime start = DateTime(0);
+  String endAsString = "0000";
+  DateTime end = DateTime(0);
+
+  Codes code = Codes.unknown;
+
+  DateTime _parseDate(String date, String time) {
+    return DateTime.parse(date.substring(0, 4) +
+        "-" +
+        date.substring(4, 6) +
+        "-" +
+        date.substring(6, 8) +
+        " " +
+        (time.length == 3
+            ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
+            : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
+  }
+
+  String getActivityType() {
+    return _activityType;
+  }
+
+  ///Der Code beschreibt die "Art" der Stunde. Folgende Codes sind definiert als:
+  ///
+  ///`regular`: Die Stunde ist regulär
+  ///
+  ///`irregular`: Die Stunde ist nicht standartmäßig vorgesehen. Sie kam durch einen Ausfall zustande. Die Liste "getIrregularHours()" gibt die Stunde zurück, die diese ersetzen soll.
+  ///
+  ///`cancelled`: Die Stunde fällt aus
+  ///
+  ///`empty`: Die Stunde gibt es nicht. Diese dient also nur als Platzhalter um Lücken zu füllen falls z.B. die Erste Stunde frei ist
+  ///
+  ///`unknown`: Das sollte nicht vorkommen. Der Status ist unbekannt / illegal
+  Codes getLessonCode() {
+    return code;
+  }
+
+  ///Wenn `true` dann besitzt die Stunde in `getIrregularHours()` eine Stunde die diese durch eine Vertretung ersetzen soll.
+  bool isIrregular() {
+    return getLessonCode() == Codes.irregular;
+  }
+
+  ///Diese Stunde ist leer bzw. es gibt hier nichts
+  bool isEmpty() {
+    return getLessonCode() == Codes.empty;
+  }
+
+  int getId() {
+    return _id;
+  }
+
+  DateTime getStartTime() {
+    return start;
+  }
+
+  DateTime getEndTime() {
+    return end;
+  }
+
+  ///Gibt die Stunden zurück die diese ersetzen sollen.
+  ///Ist nicht leer wenn `getLessonCode()` -> `Code.irregular` zuückliefert.
+  List<TimeTableHour> getReplacement() {
+    return replacement;
+  }
 
   ///@return Die Klasse der Stunde als TimeTableEntity objekt
   TimeTableEntity getClazz() {
@@ -27,108 +98,10 @@ class HourEntities {
   TimeTableEntity getRoom() {
     return _room;
   }
-}
-
-class TimeTableHour {
-  final entities = <HourEntities>[];
-
-  String _activityType = "";
-  int _id = -1;
-
-  String startAsString = "0000";
-  DateTime start = DateTime(0);
-  String endAsString = "0000";
-  DateTime end = DateTime(0);
-
-  String code = "regular";
-
-  DateTime _parseDate(String date, String time) {
-    return DateTime.parse(date.substring(0, 4) +
-        "-" +
-        date.substring(4, 6) +
-        "-" +
-        date.substring(6, 8) +
-        " " +
-        (time.length == 3
-            ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
-            : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
-  }
-
-  Codes getLessonCode() {
-    if (entities.isEmpty) {
-      return Codes.empty;
-    } else if (code == "regular") {
-      return Codes.regular;
-    } else if (code == "cancelled") {
-      return Codes.cancelled;
-    } else if (code == "irregular") {
-      return Codes.irregular;
-    }
-    return Codes.unknown;
-  }
-
-  String getActivityType() {
-    return _activityType;
-  }
-
-  bool isIrregular() {
-    return getLessonCode() == Codes.irregular;
-  }
-
-  ///Diese Stunde ist leer bzw. es gibt hier nichts
-  bool isEmpty() {
-    return getLessonCode() == Codes.empty;
-  }
-
-  bool hasMultipleEntries() {
-    return entities.length > 1;
-  }
-
-  int getId() {
-    return _id;
-  }
-
-  DateTime getStartTime() {
-    return start;
-  }
-
-  DateTime getEndTime() {
-    return end;
-  }
-
-  ///Wenn diese Stunde den Code IRREGULAR besitzt, ist es sehr warscheinlich dass sie mehrere Einträge besitzt.
-  ///Z.B. Original Stunde und ersetzte Stunde
-  ///Diese Funktion gibt alle einräge als "HourEntities" Objekt Liste zurück.
-  List<HourEntities> getIrregularHours() {
-    return entities;
-  }
-
-  ///@return Die Klasse der Stunde als TimeTableEntity objekt
-  TimeTableEntity getClazz() {
-    if (isEmpty()) return TimeTableEntity("empty", null);
-    return entities[0].getClazz();
-  }
-
-  ///@return Der Lehrer der Stunde als TimeTableEntity objekt
-  TimeTableEntity getTeacher() {
-    if (isEmpty()) return TimeTableEntity("empty", null);
-    return entities[0].getTeacher();
-  }
-
-  ///@return Das Fach der Stunde als TimeTableEntity objekt
-  TimeTableEntity getSubject() {
-    if (isEmpty()) return TimeTableEntity("empty", null);
-    return entities[0].getSubject();
-  }
-
-  ///@return Der Raum der Stunde als TimeTableEntity objekt
-  TimeTableEntity getRoom() {
-    if (isEmpty()) return TimeTableEntity("empty", null);
-    return entities[0].getRoom();
-  }
 
   TimeTableHour(dynamic data) {
     if (data == null) {
+      code = Codes.empty;
       return;
     }
 
@@ -142,37 +115,45 @@ class TimeTableHour {
 
     _activityType = data['activityType'];
 
-    HourEntities entity = HourEntities();
-
     if (data['k1'] != null) {
-      entity._klasse = TimeTableEntity("kl", data['kl']);
+      _klasse = TimeTableEntity("kl", data['kl']);
     } else {
-      entity._klasse = TimeTableEntity("kl", null);
-      entity._klasse.longName = "unknown";
-      entity._klasse.name = "unknown";
+      _klasse = TimeTableEntity("kl", null);
+      _klasse.longName = "unknown";
+      _klasse.name = "unknown";
     }
 
     if (data['te'] != null) {
-      entity._teacher = TimeTableEntity("te", data['te']);
+      _teacher = TimeTableEntity("te", data['te']);
     } else {
-      entity._teacher.name = "---";
-      entity._teacher.longName = "Ausfall/SOL/Vertretung";
+      _teacher.name = "---";
+      _teacher.longName = "Ausfall/SOL/Vertretung";
     }
 
-    entity._subject = TimeTableEntity("su", data['su']);
+    _subject = TimeTableEntity("su", data['su']);
 
-    entity._room = TimeTableEntity("ro", data['ro']);
+    _room = TimeTableEntity("ro", data['ro']);
 
     if (data['code'] != null) {
-      code = data['code'];
-    }
+      String c = data['code'];
 
-    entities.add(entity);
+      if (c == "regular") {
+        code = Codes.regular;
+      } else if (c == "cancelled") {
+        code = Codes.cancelled;
+      } else if (c == "irregular") {
+        code = Codes.irregular;
+      } else {
+        code = Codes.unknown;
+      }
+    } else {
+      code = Codes.regular;
+    }
   }
 
   ///Interne Funktion.
-  void addEntity(TimeTableHour entity) {
-    entities.addAll(entity.entities);
+  void addIrregularHour(TimeTableHour entity) {
+    replacement.add(entity);
   }
 
   ///@return Die Startzeit im Format HH:mm

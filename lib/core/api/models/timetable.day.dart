@@ -91,7 +91,7 @@ class TimeTableDay {
         if (_hours[i].getLessonCode() == Codes.empty) {
           _hours[i] = constructed;
         } else {
-          _hours[i].addEntity(constructed);
+          _hours[i].addIrregularHour(constructed);
         }
         break;
       }

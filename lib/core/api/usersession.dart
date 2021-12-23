@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'rpcresponse.dart' as rh;
 import 'models/utils.dart' as utils;
 import 'timetable.dart';
-import 'package:untis_phasierung/util/logger.util.dart';
 
 class UserSession {
   static const types = {'CLASS': 1, 'TEACHER': 2, 'SUBJECT': 3, 'ROOM': 4, 'STUDENT': 5};
@@ -78,7 +77,7 @@ class UserSession {
     personId = -1;
     klasseId = -1;
     type = -1;
-    getLogger().i("Logged out.");
+    print("Logged out.");
     return response;
   }
 
@@ -135,7 +134,7 @@ class UserSession {
         logout();
         throw Exception("Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
       }
-      getLogger().i("Session refreshed ...");
+      print("Session refreshed ...");
       return value;
     });
   }
@@ -147,7 +146,7 @@ class UserSession {
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
 
     if (validateSession && orig.errorCode == -8520 && sessionValid) {
-      getLogger().w("User not authenticated. Trying to refresh session ...");
+      print("User not authenticated. Trying to refresh session ...");
       rh.RPCResponse r = await _validateSession();
       if (!r.isError()) {
         return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
