@@ -26,7 +26,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
 
     List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
-    int timeColumnCounter = -1;
+    int timeColumnCounter = 0;
     int schoolDayCounter = 0;
     int subjectRowCounter = 0;
 
@@ -40,6 +40,72 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
       });
     }
 
+    List<Widget> buildTimeTable() {
+      List<Widget> timeTableList = [];
+
+      for (int i = 0; i < 54; i++) {
+        if (hourList.contains(i)) {
+          timeColumnCounter++;
+        }
+        // erste reihe auschließen
+        if (i > 7) {
+          // schultage zurücksezten
+          if (schoolDayCounter >= 5) {
+            schoolDayCounter = 0;
+            subjectRowCounter++;
+          } else {
+            schoolDayCounter++;
+          }
+        }
+
+        (i == 0)
+            ? timeTableList.add(
+                CustomTimeTableCard(
+                  text: "Icon",
+                  icon: Icons.calendar_today,
+                  center: true,
+                ),
+              )
+            : (i <= 5)
+                ? timeTableList.add(
+                    CustomTimeTableCard(
+                      text: widget.timeTable.getDays()[i - 1].getShortName(),
+                      textMaxLines: 1,
+                      center: true,
+                    ),
+                  )
+                : (hourList.contains(i))
+                    ? timeTableList.add(
+                        CustomTimeTableHourCard(
+                          centerText: timeColumnCounter.toString(),
+                          topText: widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getStartTimeString(),
+                          bottomText:
+                              widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getEndTimeString(),
+                        ),
+                      )
+                    : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
+                        ? timeTableList.add(
+                            CustomTimeTableCard(
+                              text: "Holiday",
+                              center: true,
+                              textMaxLines: 1,
+                            ),
+                          )
+                        : (subjectRowCounter >= widget.timeTable.getDays()[schoolDayCounter].getHours().length)
+                            ? timeTableList.add(
+                                Container(),
+                              )
+                            : timeTableList.add(
+                                CustomTimeTableCard(
+                                  text:
+                                      "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
+                                  divider: true,
+                                ),
+                              );
+      }
+      return timeTableList;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Timetable"),
@@ -47,65 +113,15 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
       drawer: const CustomDrawer(),
       body: Container(
         color: Colors.orange,
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 6, crossAxisSpacing: 5.0, mainAxisSpacing: 5.0, childAspectRatio: 0.5),
-          itemCount: 54,
-          addAutomaticKeepAlives: true,
-          itemBuilder: (context, index) {
-            if (hourList.contains(index)) {
-              timeColumnCounter++;
-            }
-            // erste reihe auschließen
-            if (index > 7) {
-              // schultage zurücksezten
-              if (schoolDayCounter >= 5) {
-                schoolDayCounter = 0;
-                subjectRowCounter++;
-              } else {
-                schoolDayCounter++;
-              }
-            }
-
-            return widget._isLoading
-                ? Container(
-                    color: Colors.green,
-                  )
-                : (index == 0)
-                    ? CustomTimeTableCard(
-                        text: "Icon",
-                        icon: Icons.calendar_today,
-                        center: true,
-                      )
-                    : (index <= 5)
-                        ? CustomTimeTableCard(
-                            text: widget.timeTable.getDays()[index - 1].getShortName(),
-                            textMaxLines: 1,
-                            center: true,
-                          )
-                        : (hourList.contains(index))
-                            ? CustomTimeTableHourCard(
-                                centerText: timeColumnCounter.toString(),
-                                topText:
-                                    widget.timeTable.getDays()[0].getHours()[timeColumnCounter].getStartTimeString(),
-                                bottomText:
-                                    widget.timeTable.getDays()[0].getHours()[timeColumnCounter].getEndTimeString(),
-                              )
-                            : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
-                                ? CustomTimeTableCard(
-                                    text: "Holiday",
-                                    center: true,
-                                    textMaxLines: 1,
-                                  )
-                                : (subjectRowCounter >= widget.timeTable.getDays()[schoolDayCounter].getHours().length)
-                                    ? Container()
-                                    : CustomTimeTableCard(
-                                        text:
-                                            "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
-                                        divider: true,
-                                      );
-          },
-        ),
+        child: widget._isLoading
+            ? Container(
+                color: Colors.green,
+              )
+            : GridView.count(
+                crossAxisCount: 6,
+                childAspectRatio: 0.5,
+                children: buildTimeTable(),
+              ),
       ),
     );
   }
