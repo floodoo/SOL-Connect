@@ -109,10 +109,11 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Timetable"),
+        backgroundColor: Colors.black87,
       ),
       drawer: const CustomDrawer(),
       body: Container(
-        color: Colors.orange,
+        color: Colors.black,
         child: widget._isLoading
             ? Container(
                 color: Colors.green,

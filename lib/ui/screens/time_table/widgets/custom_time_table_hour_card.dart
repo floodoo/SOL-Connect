@@ -7,7 +7,7 @@ class CustomTimeTableHourCard extends StatelessWidget {
     required this.centerText,
     required this.bottomText,
     required this.topText,
-    this.cardColor = Colors.grey,
+    this.cardColor = Colors.black87,
     this.textColor = Colors.white,
     this.textMaxLines,
   }) : super(key: key);
@@ -23,58 +23,63 @@ class CustomTimeTableHourCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      color: cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5, left: 5),
-                  child: AutoSizeText(
-                    topText,
-                    textAlign: TextAlign.start,
-                    maxLines: textMaxLines,
-                    overflow: TextOverflow.clip,
-                    softWrap: true,
-                    style: TextStyle(color: textColor),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: cardColor,
+        ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 5, left: 5),
+                    child: AutoSizeText(
+                      topText,
+                      textAlign: TextAlign.start,
+                      maxLines: textMaxLines,
+                      overflow: TextOverflow.clip,
+                      softWrap: true,
+                      style: TextStyle(color: textColor),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5, left: 5),
-                      child: AutoSizeText(
-                        bottomText,
-                        textAlign: TextAlign.right,
-                        maxLines: textMaxLines,
-                        overflow: TextOverflow.clip,
-                        softWrap: true,
-                        style: TextStyle(color: textColor),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5, left: 5),
+                        child: AutoSizeText(
+                          bottomText,
+                          textAlign: TextAlign.right,
+                          maxLines: textMaxLines,
+                          overflow: TextOverflow.clip,
+                          softWrap: true,
+                          style: TextStyle(color: textColor),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Center(
-            child: AutoSizeText(
-              centerText,
-              maxLines: textMaxLines,
-              overflow: TextOverflow.clip,
-              softWrap: true,
-              style: TextStyle(color: textColor),
+              ],
             ),
-          )
-        ],
+            Center(
+              child: AutoSizeText(
+                centerText,
+                maxLines: textMaxLines,
+                overflow: TextOverflow.clip,
+                softWrap: true,
+                style: TextStyle(color: textColor),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

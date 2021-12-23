@@ -17,6 +17,9 @@ class CustomDrawer extends StatelessWidget {
             currentAccountPicture: CircleAvatar(
               foregroundImage: AssetImage("assets/images/example_profile_picture.jpeg"),
             ),
+            decoration: BoxDecoration(
+              color: Colors.black87,
+            ),
           ),
           ListTile(
             title: const Text("Timetable"),

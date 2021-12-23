@@ -5,8 +5,8 @@ class CustomTimeTableCard extends StatelessWidget {
   CustomTimeTableCard(
       {Key? key,
       required this.text,
-      this.topColor = Colors.grey,
-      this.bottomColor = Colors.grey,
+      this.topColor = Colors.black87,
+      this.bottomColor = Colors.black87,
       this.textColor = Colors.white,
       this.iconColor = Colors.white,
       this.divider = false,
@@ -29,7 +29,7 @@ class CustomTimeTableCard extends StatelessWidget {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: Stack(
         children: [
