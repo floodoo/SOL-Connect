@@ -60,6 +60,15 @@ class TimeTableRange {
 
     _days.clear();
     _days.addAll(finalList);
+
+    //Setze die Stundenkoordinaten
+    for (int i = 0; i < _days.length; i++) {
+      _days[i].xIndex = i;
+      for (int j = 0; j < _days[i].getHours().length; j++) {
+        _days[i].getHours()[j].xIndex = _days[i].xIndex;
+        _days[i].getHours()[j].yIndex = j;
+      }
+    }
   }
 
   /// Alle vollen Tage die vom Start bis zum Enddatum angefragt wurden.

@@ -15,6 +15,8 @@ class TimeTableDay {
   int daysSinceEpoch = 0;
   bool outOfScope = false;
 
+  int xIndex = -1;
+
   TimeTableDay(this._date) {
     switch (_date.weekday) {
       case 1:
