@@ -101,4 +101,18 @@ class TimeTableRange {
     }
     return getDays()[0];
   }
+
+  ///Gibt das Startdatum im Format dd.mm zurück
+  String getStartDateString() {
+    return (_startDate.day < 10 ? "0" + _startDate.day.toString() : _startDate.day.toString()) +
+        "." +
+        (_startDate.month < 10 ? "0" + _startDate.toString() : _startDate.month.toString());
+  }
+
+  ///Gibt das Enddatum im Format dd.mm zurück
+  String getEndDateString() {
+    return (_endDate.day < 10 ? "0" + _endDate.day.toString() : _endDate.day.toString()) +
+        "." +
+        (_endDate.month < 10 ? "0" + _endDate.month.toString() : _endDate.month.toString());
+  }
 }
