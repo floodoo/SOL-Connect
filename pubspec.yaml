@@ -34,6 +34,7 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   http: ^0.13.4
   logger: ^1.1.0
+  excel: 2.0.0-null-safety-3
 
 dev_dependencies:
   flutter_lints: ^1.0.0

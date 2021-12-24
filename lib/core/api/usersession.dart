@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'rpcresponse.dart' as rh;
 import 'models/utils.dart' as utils;
 import 'timetable.dart';
+import '../excel/validator.dart';
 
 class UserSession {
   static const types = {'CLASS': 1, 'TEACHER': 2, 'SUBJECT': 3, 'ROOM': 4, 'STUDENT': 5};
