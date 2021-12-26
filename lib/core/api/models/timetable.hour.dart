@@ -1,4 +1,5 @@
 import 'timetable.entity.dart';
+import '../../excel/models/phaseelement.dart' as excel;
 
 enum Codes { regular, irregular, cancelled, empty, unknown }
 

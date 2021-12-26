@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RPCResponse {
-  String errorMessage = "";
-  int errorCode = 0;
+  String _statusMessage = "success";
+  int _errorCode = 0;
+  dynamic _payload = {};
 
-  dynamic payload = {};
   String appId = "";
   String rpcVersion = "2.0";
 
@@ -14,10 +14,8 @@ class RPCResponse {
 
     //Erstmal den Statuscode checken
     if (httpResponse.statusCode != 200) {
-      response.errorCode = httpResponse.statusCode;
-      response.errorMessage = "Die Anfrage hat mit dem http Statuscode " +
-          httpResponse.statusCode.toString() +
-          " geantwortet!";
+      response._errorCode = httpResponse.statusCode;
+      response._statusMessage = "http error";
       return response;
     }
 
@@ -30,15 +28,15 @@ class RPCResponse {
     //Lese die Daten aus
     var result = json['result'];
     if (result != null) {
-      response.payload = result;
+      response._payload = result;
       return response;
     }
 
     //wenn kein result, versuche einen Error auszulesen
     var error = json['error'];
     if (error != null) {
-      response.errorMessage = json['error']['message'];
-      response.errorCode = json['error']['code'];
+      response._statusMessage = json['error']['message'];
+      response._errorCode = json['error']['code'];
       return response;
     }
 
@@ -48,11 +46,24 @@ class RPCResponse {
 
 /// @return true - Wenn der Fehler am http liegt
   bool isHttpError() {
-    return errorMessage.isEmpty && payload.isEmpty;
+    return _payload.isEmpty && _statusMessage == "http error";
   }
 
   /// @return true - Wenn der Handler einen Error hat
   bool isError() {
-    return errorMessage.isNotEmpty || isHttpError();
+    return _statusMessage != "success" || isHttpError();
   }
+
+  String getErrorMessage() {
+    return _statusMessage;
+  }
+
+  int getErrorCode() {
+    return _errorCode;
+  }
+
+  dynamic getPayloadData() {
+    return _payload;
+  }
+
 }

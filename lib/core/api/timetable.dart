@@ -14,15 +14,11 @@ class TimeTableRange {
   TimeTableRange(this._startDate, this._endDate, this.response) {
     //Konstruiere die Tage
     if (response.isError()) {
-      throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " +
-          response.errorMessage +
-          "(" +
-          response.errorCode.toString() +
-          ")");
+      throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " + response.getErrorMessage() + "(" + response.getErrorCode().toString() + ")");
     }
 
     outer:
-    for (dynamic entry in response.payload) {
+    for (dynamic entry in response.getPayloadData()) {
       DateTime current = utils.convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
       for (TimeTableDay day in _days) {
