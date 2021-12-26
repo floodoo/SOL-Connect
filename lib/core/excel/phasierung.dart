@@ -1,1 +1,0 @@
-//Dieses Objekt versucht, die Excel Datei zu überprüfen und in ein TimeTable Objekt einzuspeisen
