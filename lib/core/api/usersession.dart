@@ -113,7 +113,7 @@ class UserSession {
 
     if (relative < 0) {
       //Ziehe die duration ab und gehe in die Vergangenheit
-      from = DateTime.now().subtract(Duration(days: (DateTime.now().weekday) * (relative.abs() + 1) - 1));
+      from = from.subtract(Duration(days: DateTime.daysPerWeek * relative.abs()));
     } else if (relative > 0) {
       //Addiere die Duration und gehe in die Zukunft.
       from = from.add(Duration(days: DateTime.daysPerWeek * relative));
@@ -122,7 +122,6 @@ class UserSession {
     DateTime lastDayOfWeek =
         from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
 
-    print(from.toString() + " -> " + lastDayOfWeek.toString());
     return getTimeTable(from, lastDayOfWeek);
   }
 
