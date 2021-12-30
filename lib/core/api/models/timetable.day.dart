@@ -5,7 +5,7 @@ class TimeTableDay {
   final DateTime _date;
 
   final _lessonTimes = <String>["800", "845", "945", "1030", "1130", "1215", "1330", "1415", "1515", "1600"];
-  final int _minHoursPerDay = 10;
+  final int minHoursPerDay = 10;
 
   ///Jeder Tag hat 8 Tage fest.
   final _hours = <TimeTableHour>[];
@@ -54,7 +54,7 @@ class TimeTableDay {
     daysSinceEpoch = utils.daysSinceEpoch(_date.millisecondsSinceEpoch);
 
     //TODO einfach etwas schöner machen
-    for (int i = 0; i < _minHoursPerDay; i++) {
+    for (int i = 0; i < minHoursPerDay; i++) {
       TimeTableHour t = TimeTableHour(null);
       t.startAsString = _lessonTimes[i];
       _hours.add(TimeTableHour(null)); //Leere Stunden

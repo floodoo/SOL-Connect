@@ -74,7 +74,7 @@ class TimeTableRange {
   ///
   ///* `xIndex = 0, yIndex = 0` wäre Montag erste Stunde
   ///* `xIndex = 1, yIndex = 2` wäre Dienstag 3. Stunde
-  TimeTableHour getHourByIndex(int xIndex, int yIndex) {
+  TimeTableHour getHourByIndex({int xIndex = 0, int yIndex = 0}) {
     return _days[xIndex].getHours()[yIndex];
   }
 
