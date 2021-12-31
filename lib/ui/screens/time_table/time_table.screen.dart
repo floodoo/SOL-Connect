@@ -77,8 +77,9 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
               : (i <= 5)
                   ? timeTableList.add(
                       CustomTimeTableCard(
-                        text: widget.timeTable.getDays()[i - 1].getShortName(),
-                        textMaxLines: 1,
+                        text:
+                            "${widget.timeTable.getDays()[i - 1].getShortName()} \n${widget.timeTable.getDays()[i - 1].getDate()}",
+                        textMaxLines: 5,
                         center: true,
                       ),
                     )
@@ -108,6 +109,13 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                                   CustomTimeTableCard(
                                     text:
                                         "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
+                                    bottomText: (widget.timeTable
+                                                .getDays()[schoolDayCounter]
+                                                .getHours()[subjectRowCounter]
+                                                .getLessonCode() ==
+                                            Codes.cancelled)
+                                        ? "Entfall"
+                                        : "",
                                     divider: true,
                                     topColor: (widget.timeTable
                                                 .getDays()[schoolDayCounter]
@@ -123,6 +131,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
                                             Codes.cancelled)
                                         ? Colors.red
                                         : Colors.black87,
+                                    bottomTextMaxLines: 1,
                                   ),
                                 );
         } else if (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
@@ -131,8 +140,14 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
             CustomTimeTableCard(
               text:
                   "${widget.timeTable.getHourByIndex(schoolDayCounter, subjectRowCounter).getReplacement().getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getRoom().name}",
+              bottomText: (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
+                      Codes.irregular)
+                  ? "Vertretung"
+                  : "",
               topColor: Colors.purple.shade900,
               bottomColor: Colors.purple.shade900,
+              divider: true,
+              bottomTextMaxLines: 2,
             ),
           );
         } else {
@@ -154,7 +169,8 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Timetable"),
+        title: Text(
+            "Timetable ${(widget._isLoading) ? "" : widget.timeTable.getDays()[0].getDate().toString()} ${(widget._isLoading) ? "" : widget.timeTable.getDays()[widget.timeTable.getDays().length - 1].getDate().toString()}"),
         backgroundColor: Colors.black87,
       ),
       drawer: const CustomDrawer(),

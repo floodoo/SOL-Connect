@@ -5,6 +5,7 @@ class CustomTimeTableCard extends StatelessWidget {
   CustomTimeTableCard(
       {Key? key,
       required this.text,
+      this.bottomText,
       this.topColor = Colors.black87,
       this.bottomColor = Colors.black87,
       this.textColor = Colors.white,
@@ -12,9 +13,11 @@ class CustomTimeTableCard extends StatelessWidget {
       this.divider = false,
       this.center = false,
       this.textMaxLines,
+      this.bottomTextMaxLines,
       this.icon})
       : super(key: key);
   String text;
+  String? bottomText;
   Color topColor;
   Color bottomColor;
   Color textColor;
@@ -22,6 +25,7 @@ class CustomTimeTableCard extends StatelessWidget {
   bool divider;
   bool center;
   int? textMaxLines;
+  int? bottomTextMaxLines;
   IconData? icon;
 
   @override
@@ -66,6 +70,15 @@ class CustomTimeTableCard extends StatelessWidget {
                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
                     color: bottomColor,
                   ),
+                  child: (bottomText == null)
+                      ? Container()
+                      : AutoSizeText(
+                          bottomText!,
+                          maxLines: bottomTextMaxLines,
+                          overflow: TextOverflow.clip,
+                          softWrap: true,
+                          style: TextStyle(color: textColor),
+                        ),
                 ),
               )
             ],
