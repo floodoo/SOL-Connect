@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import '../api/timetable.dart';
 import '../api/models/timetable.hour.dart';
+import '../exceptions.dart';
+import 'models/cellcolors.dart';
 
 ///Der "Excel Validator" dient dazu, eine Excel Datei zu überprüfen und wenn diese richtig ist, dem Stundenplan die Phasierung zuzuweisen.
 ///
@@ -15,6 +17,7 @@ class ExcelValidator {
   TimeTableRange _timetable;
 
   final bool debug = false;
+  bool _queryActive = false;
 
   ///[_path] Der lokale Pfad zur Excel Datei
   ///
@@ -25,13 +28,68 @@ class ExcelValidator {
 
     var bytes = File(_path).readAsBytesSync();
     excel = Excel.decodeBytes(bytes);
-    
-
     _valid = _verifySheet(_timetable);
   }
 
   bool isValid() {
     return _valid;
+  }
+
+  ///Sendet eine Anfrage an den Server in 4 Schritten:
+  ///* Den befehl: In diesem Fall "convertxssf". Dieser signalisiert dem Server, dass gleich eine Excel Datei kommt, die er bitte umwandeln soll (Zellenfarben)
+  ///* Warten auf die Bestätigung: Wenn der Server berit ist die Excel zu empfangen, sendet er ein "ready" zurück.
+  ///* Excel als Stream an den Server senden
+  ///* Daten in ein "CellColors" Objekt umwandeln und zurückgeben
+  ///
+  ///Wenn ein Error auftritt wird er geworfen.
+  ///Diese Funktion kann nicht aufgerufen werden bis eine gestellte Abfrage abgearbeitet wurde.
+  Future<CellColors> getColorData() async {
+    CellColors colors = new CellColors();
+    
+    if(_queryActive) {
+      throw ExcelConversionAlreadyActive(cause: "Zellenfarben werden bereits beschafft");
+    }
+
+    try {
+      
+      _queryActive = true;
+
+      final socket = await Socket.connect('localhost', 6969);    
+
+      //Sende den Befehl
+      socket.write("convertxssf\r\n");
+      await socket.flush();
+
+      var subscription = socket.listen( 
+        
+        (event) async {
+          String message = new String.fromCharCodes(event);
+
+          if(message.trim() == "ready") {
+            await socket.addStream(File(_path).openRead());
+          } else {
+            colors = CellColors(jsonData: message.trim());
+          }
+        },
+
+        onError: (error) {
+          _queryActive = false;
+          throw Exception("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+        },
+
+        onDone: () {
+          //Alles OK!
+          _queryActive = false;
+        }
+      );
+
+      await subscription.asFuture<void>();
+      return colors;
+
+    } catch(e) {
+      _queryActive = false;
+      throw Exception("Konnte keine Verbindung zum Konvertierungsserver {addr} herstellen.");
+    }
   }
 
   bool _verifySheet(TimeTableRange range) {
@@ -46,6 +104,9 @@ class ExcelValidator {
           }
          
           if(_searchRange(excel!.tables[table]!, range, startX: i, startY: j)) {
+            
+            //Hole Zellenfarben erst wenn die Datei erfolgreich verifiziert wurde.
+            
             return true;
           }
 

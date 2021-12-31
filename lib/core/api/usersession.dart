@@ -119,7 +119,9 @@ class UserSession {
       from = from.add(Duration(days: DateTime.daysPerWeek * relative));
     }
 
-    DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
+    DateTime lastDayOfWeek =
+        from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
+
     return getTimeTable(from, lastDayOfWeek);
   }
 

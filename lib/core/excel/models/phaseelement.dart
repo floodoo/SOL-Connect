@@ -11,7 +11,9 @@ class Color {
   
   int r = 0, g = 0, b = 0;
 
+  Color(this.r, this.g, this.b) {}
 
+  
 }
 
 class Phase {
