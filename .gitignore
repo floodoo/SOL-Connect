@@ -118,4 +118,4 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 
 #Synchronisiere nicht den Server
-ExcelConverter/*
+ExcelConverter/
