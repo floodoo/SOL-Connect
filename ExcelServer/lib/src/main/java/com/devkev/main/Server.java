@@ -78,7 +78,6 @@ public class Server {
 		
 		listenSocket = new ServerSocket(LISTEN_PORT);
 		listenSocket.setReuseAddress(true);
-		
 		System.out.println("Listening on " + LISTEN_PORT);
 		
 		new Thread(new Runnable() {
