@@ -45,6 +45,7 @@ Es folgt eine kleine Liste möglicher Befehle.
 - Behebung einer Schwachstelle.
 - Detaillierteres Logging für besseres Monitoring
 - Es werden nurnoch Errors geloggt
+- Maximale gleichzeitige Client Verbindungen und timeout können unbegrenzt gesetzt werden wenn diese Werte kleiner als 0 sind
 
 
 # Excel Server dependencies:
