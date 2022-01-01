@@ -18,6 +18,11 @@ public class Connection  {
 	
 	public Thread thread;
 	
+	public static final byte STATUS_OK = 0;
+	public static final byte STATUS_ERROR = 1;
+	
+	public byte status = 0;
+	
 	public Connection(Socket client) throws IOException {
 		this.sessionId = SESSION_COUNTER;
 		this.client = client;

@@ -18,6 +18,7 @@ import com.devkev.devscript.raw.Command;
 import com.devkev.devscript.raw.Library;
 import com.devkev.devscript.raw.Process;
 import com.devkev.main.Connection;
+import static com.devkev.main.Logger.logError;
 
 public class Commands extends Library {
 
@@ -88,7 +89,8 @@ public class Commands extends Library {
 				    		    	cellEntries++;
 				    		    	
 				    		    	if(cellEntries > MAX_CELL_ENTRIES) {
-				    		    		System.err.println("Session: " + c.sessionId + ": Exceeded max colored cell entries. Aborting");
+				    		    		c.status = 1;
+				    		    		logError("Session: " + c.sessionId + ": Exceeded max colored cell entries. Aborting");
 				    		    		break main;
 				    		    	}
 			    		    	}
@@ -105,7 +107,8 @@ public class Commands extends Library {
 			    		
 					} catch(Exception e) {
 						
-						System.err.println("Session: " + c.sessionId + ": Error while converting Excel: " + e.getMessage());
+						c.status = 1;
+						logError("Session: " + c.sessionId + ": Error while converting Excel: " + e.getMessage());
 						if(!c.client.isClosed()) {
 							c.writer.write("{\"message\": \"" + e.getMessage() + "\"}");
 							c.writer.flush();
