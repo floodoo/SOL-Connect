@@ -14,14 +14,12 @@ Beide Dateien benötigen eine Java installation
 - Max JRE Version: 1.11
 
 ### EXE Datei ausführen
-___
 
 Die Exe Datei besitzt beide Argumente vordefiniert: **10 Clients und Maximal 10 Sekunden timeout.**<br>
 Diese lässt sich auf Windows Systemen mit einem einfache Doppelklick öffnen.<br>
 Um Aktionen zu überwachen öffnen sich ein Konsolenfenster in dem alles geloggt wird.
 
 ### JAR Datei ausführen
-___
 
 Diese Datei lässt sich nur anständig in einem Terminal ausführen.
 Man kann aber beide Argumente selbst bestimmen.
@@ -31,7 +29,6 @@ Man kann aber beide Argumente selbst bestimmen.
 ```java -Xmx1G -jar excelServer.jar 10 10000```
 
 ### Server Funktionen
-___ 
 
 Grundlegend ist es möglich Befehle an den Server mittels eines einfachen Strings über ein TCP Socket zu senden.
 Pro Verbindungsaufbau ist die Befehlszahl auf 1 begrenzt. Bevor die Verbindung vom Server getrennt wird.<br>
@@ -42,7 +39,15 @@ Es folgt eine kleine Liste möglicher Befehle.
 
 #### convertxssf
 
-### Excel Server dependencies:
+## Patchnotes
+
+### 1.0.1
+- Behebung einer Schwachstelle.
+- Detaillierteres Logging für besseres Monitoring
+- Es werden nurnoch Errors geloggt
+
+
+# Excel Server dependencies:
 
 - <a>https://github.com/DevKevYT/devscript</a> version: '1.9.1'<br>
 - <a>https://mvnrepository.com/artifact/org.apache.poi/poi</a> version: '5.1.0'<br>
