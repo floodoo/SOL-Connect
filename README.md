@@ -28,7 +28,7 @@ Man kann aber beide Argumente selbst bestimmen.
 - Folgenden Befehl ausführen:
 ```java -Xmx1G -jar excelServer.jar 10 10000```
 
-### Server Funktionen
+## Server Funktionen
 
 Grundlegend ist es möglich Befehle an den Server mittels eines einfachen Strings über ein TCP Socket zu senden.
 Pro Verbindungsaufbau ist die Befehlszahl auf 1 begrenzt. Bevor die Verbindung vom Server getrennt wird.<br>
