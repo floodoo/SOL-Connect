@@ -4,6 +4,48 @@ import '../api/timetable.dart';
 import '../api/models/timetable.hour.dart';
 import '../exceptions.dart';
 import 'models/cellcolors.dart';
+import 'models/phaseelement.dart';
+import 'models/mergedtimetable.dart';
+import 'models/mappedsheet.dart';
+
+///Mappt Koordinaten der Excel auf den Stundenplan
+class MappedPhase {
+
+  PhaseCodes _secondHalf = PhaseCodes.unknown;
+  PhaseCodes _firstHalf = PhaseCodes.unknown;
+  
+  //x / y Index in der Excel
+  int _excelXIndex = 0;
+  int _excelYIndex = 0;
+
+  //x / y index auf dem Stundenplan
+  int _timetableXIndex = 0;
+  int _timetableYIndex = 0;
+
+  ///Die Phasierung der ersten Hälfte dieser Stunde
+  PhaseCodes getFirstHalf() {
+    return _firstHalf;
+  }
+
+  ///Die Phasierung der zweiten Hälfte dieser Stunde
+  PhaseCodes getSecondHalf() {
+    return _secondHalf;
+  }
+
+  ///Der Stundenindex auf der x ebene (Tage)
+  ///
+  ///Kann auch direkt in `TimeTableRange.getHourByIndex(xIndex, yIndex)` benutzt werden
+  int getHourXIndex() {
+    return _timetableXIndex;
+  }
+
+  ///Der Stundenindex auf der y ebene (Stunden)
+  ///
+  ///Kann auch direkt in `TimeTableRange.getHourByIndex(xIndex, yIndex)` benutzt werden
+  int getHoutYIndex() {
+    return _timetableYIndex;
+  }
+}
 
 ///Der "Excel Validator" dient dazu, eine Excel Datei zu überprüfen und wenn diese richtig ist, dem Stundenplan die Phasierung zuzuweisen.
 ///
@@ -12,27 +54,80 @@ import 'models/cellcolors.dart';
 class ExcelValidator {
   
   String _path = "";
-  Excel? excel;
-  bool _valid = false;
-  TimeTableRange _timetable;
+  Excel? _excel;
 
-  final bool debug = false;
   bool _queryActive = false;
 
+  final String EXCEL_SERVER_ADDR;
+  final int EXCE_SERVER_PORT = 6969;
+
+  //Speichere die Farben um beim mehrfachen aufrufen der mergeExcelWithTimetable() Funktion keinen unnötigen traffic zu erzeugen.
+  CellColors _colorData = CellColors();
+  var _mapped = <MappedSheet>[];
+
+  ///Der Excel Validator dient dazu den Stundenplan mit der angegebenen Phasierung zu verbinden.
+  ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
+  ///
   ///[_path] Der lokale Pfad zur Excel Datei
   ///
   ///[_timetable] Der bereits geladene Stundenplan
-  ExcelValidator(this._path, this._timetable) {
+  ExcelValidator(this.EXCEL_SERVER_ADDR, this._path) {
 
     if (_path.isEmpty) throw Exception("Der Pfad existiert nicht");
 
     var bytes = File(_path).readAsBytesSync();
-    excel = Excel.decodeBytes(bytes);
-    _valid = _verifySheet(_timetable);
+    _excel = Excel.decodeBytes(bytes);
   }
 
-  bool isValid() {
-    return _valid;
+  ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.
+  ///Diese funktion kann mehrmals mit verschiedenen Stundenplänen aufgerufen werden.
+  ///
+  ///Funktioniert aktuell nur mit der aktuellen Woche oder wenn [timetable] durch `UserSession.getRelativeTimeTableForWeek()` erzeugt wurde.
+  Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable) async {   
+    String errorMessage = "";
+
+    _mapped = await _verifySheet(timetable);
+
+    if(_mapped.length > 0) {
+        int currentWeek = await timetable.getCurrentBlockWeek(timetable.relativeToCurrent);
+        
+        for(MappedSheet mapped in _mapped) {         
+          mapped.estimateWeek();
+
+          if(currentWeek+1 == mapped.blockWeek) { //+1 weil currentWeek nur der Index ist der bei 0 anfängt
+
+             //Schließlich vergleiche und verifiziere diesen stundenplan mit dem gemappten Index
+            MappedSheet verified = _searchRange(_mapped[currentWeek].sheet, timetable, startX: mapped.rawX, startY: mapped.rawY);
+
+            if(verified.startX == mapped.startX && verified.startY == mapped.startY
+              && verified.width == mapped.width && verified.height == mapped.height) {
+                
+                await _loadColorData();
+
+                for(MappedPhase hour in mapped.getHours()) {
+
+                  //die x und y sind IMMER die ersten hälften der stunde. Also y+1 ist die 2. hälfte
+                  hour._firstHalf = Color.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex));
+                  hour._secondHalf = Color.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex+1));
+                  
+                  //##############################
+                  //          Fertig :)
+                  //##############################
+                }
+                return MergedTimeTable(timetable, mapped);
+            } else {
+              errorMessage = "Der Excel Stundenplan für Woche ${currentWeek+1} passt nicht zum angegebenen Stundenplan.";
+            }
+          } 
+        }
+       errorMessage = "Stelle sicher, dass in der Excel ein Stundenplan mit der überschrift 'Woche ${currentWeek+1}' existiert und dieser auch in die angegebene Woche passt.";
+    } else {
+      errorMessage = "Excel Datei konnte nicht für den angegebenen Stundenplan verifiziert werden.";
+    }
+
+    MergedTimeTable failed = MergedTimeTable(timetable, null);
+    failed.errorMessage = errorMessage;
+    return failed;
   }
 
   ///Sendet eine Anfrage an den Server in 4 Schritten:
@@ -43,32 +138,32 @@ class ExcelValidator {
   ///
   ///Wenn ein Error auftritt wird er geworfen.
   ///Diese Funktion kann nicht aufgerufen werden bis eine gestellte Abfrage abgearbeitet wurde.
-  Future<CellColors> getColorData() async {
-    CellColors colors = new CellColors();
+  Future<CellColors> _loadColorData({bool forceReload = false}) async {
+    
+    if(!_colorData.isEmpty() && !forceReload) return _colorData;
+
+    _colorData = new CellColors();
     
     if(_queryActive) {
       throw ExcelConversionAlreadyActive(cause: "Zellenfarben werden bereits beschafft");
     }
 
     try {
-      
       _queryActive = true;
-
-      final socket = await Socket.connect('localhost', 6969);    
+      final socket = await Socket.connect(EXCEL_SERVER_ADDR, 6969);    
 
       //Sende den Befehl
       socket.write("convertxssf\r\n");
       await socket.flush();
 
-      var subscription = socket.listen( 
-        
+      var subscription = socket.listen(    
         (event) async {
           String message = new String.fromCharCodes(event);
 
           if(message.trim() == "ready") {
             await socket.addStream(File(_path).openRead());
           } else {
-            colors = CellColors(jsonData: message.trim());
+            _colorData = CellColors(jsonData: message.trim());
           }
         },
 
@@ -84,52 +179,66 @@ class ExcelValidator {
       );
 
       await subscription.asFuture<void>();
-      return colors;
-
+      await socket.close();
+      return _colorData;
     } catch(e) {
       _queryActive = false;
-      throw Exception("Konnte keine Verbindung zum Konvertierungsserver {addr} herstellen.");
+      throw Exception("Konnte keine Verbindung zum Konvertierungsserver ${EXCEL_SERVER_ADDR} herstellen.");
     }
   }
 
-  bool _verifySheet(TimeTableRange range) {
+  ///Das sheet konnte nicht verifiziert werden, wenn das gemappte sheet leer ist
+  Future<List<MappedSheet>> _verifySheet(TimeTableRange range) async {
+    
+    //Alle Stundenpläne die in der Excel enthalten sind
+    var mappedSheets = <MappedSheet>[];
 
-    for(var table in excel!.sheets.keys) {   
-      for(int i = 0; i < excel!.tables[table]!.maxCols; i++) {
-        for(int j = 0; j < excel!.tables[table]!.maxRows; j++) {
-
-          if(debug) print("--> Searching in " + i.toString() + " " + j.toString());
-          if(i == 1 && j == 2) {
-            print("");
-          }
-         
-          if(_searchRange(excel!.tables[table]!, range, startX: i, startY: j)) {
+    for(var table in _excel!.sheets.keys) {   
+      for(int i = 0; i < _excel!.tables[table]!.maxCols; i++) {
+        for(int j = 0; j < _excel!.tables[table]!.maxRows; j++) {
+          
+          if(_worthSearching(mappedSheets, xIndex: i, yIndex: j, excelWidth: _excel!.tables[table]!.maxCols, excelHeight: _excel!.tables[table]!.maxRows)) {
             
-            //Hole Zellenfarben erst wenn die Datei erfolgreich verifiziert wurde.
-            
-            return true;
-          }
+            MappedSheet mappedTimetable = _searchRange(_excel!.tables[table]!, range, startX: i, startY: j);
 
+            if(mappedTimetable.isValid()) {   
+              mappedSheets.add(mappedTimetable);
+            }
+          }
         }
       }
     }
-    return false;
+    return mappedSheets;
   }
 
-  //Das ist ultra abgefuckt ...
-  //Der Cellname ist wie in Excel. Z.B. A0 oder C3
-  //String getCellColor(Sheet sheet, String cellName) {
-   // 
-  //}
+  //Errechnet mit den Excel boundaries und bestehenden Stundenplänen ob es sich lohnt den aktuellen index nach einem Stundenplan abzusuchen.
+  //Einfach nur um den Code etwas schneller zu machen
+  bool _worthSearching(List<MappedSheet> mappedSheets, {int xIndex = 0, int yIndex = 0, int excelWidth = 0, int excelHeight = 0}) {
+    bool worth = true;
 
-  bool _searchRange(Sheet sheet, TimeTableRange range, {int startX = 0, int startY = 0}) {
-    
-    if(sheet.cell(CellIndex.indexByColumnRow(columnIndex: startX, rowIndex: startY)).value == null) {
-      return false;
+    for(MappedSheet existing in mappedSheets) {
+      if(xIndex >= existing.startX && xIndex < existing.width && yIndex >= existing.startY && yIndex < existing.height) {
+        return false;
+      }
     }
 
-    for(int tx = 0, excelX = startX; tx < range.getDays().length; tx++, excelX++) {
-      for(int ty = 0, excelY = startY; ty < 8; ty++, excelY++) {
+    return worth;
+  }
+
+  MappedSheet _searchRange(Sheet sheet, TimeTableRange range, {int startX = 0, int startY = 0}) {
+    
+    MappedSheet mapped = MappedSheet(sheet);
+    if(sheet.cell(CellIndex.indexByColumnRow(columnIndex: startX, rowIndex: startY)).value == null) {
+      return mapped;
+    }
+
+    int excelX = startX;
+    int excelY = startY;
+
+    for(int tx = 0; tx < range.getDays().length-2; tx++, excelX++) {
+      
+      excelY = startY;
+      for(int ty = 0; ty < 8; ty++, excelY++) {
 
         TimeTableHour hour = range.getHourByIndex(xIndex: tx, yIndex: ty);
         Data cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: excelX, rowIndex: excelY));
@@ -137,9 +246,6 @@ class ExcelValidator {
         if(hour.getLessonCode() == Codes.irregular) {
           hour = hour.getReplacement();
         }
-        
-        if(debug) print("Excel: (" + excelX.toString() + "|" + excelY.toString()  + "): '" 
-          + cell.value.toString() +  "' TT: (" + tx.toString() + "|" + ty.toString() + "): '" + hour.toString() + "'");
 
         String cellValueString = cell.value == null ? "null" : cell.value.toString();
         
@@ -147,14 +253,31 @@ class ExcelValidator {
 
         if(cellValueString.toLowerCase().contains(hour.getTeacher().name.toString().toLowerCase()) || hour.getTeacher().name == "---" || 
           cellValueString == "null" || hour.getLessonCode() == Codes.empty) {
-          
-          if(debug) print(cellValueString + " matches hour " + hour.toString()); 
-          excelY++;
 
-        } else return false;
+          MappedPhase phase = MappedPhase();
+          
+          phase._excelXIndex = excelX;
+          phase._excelYIndex = excelY;
+          phase._timetableXIndex = hour.xIndex;
+          phase._timetableYIndex = hour.yIndex;
+
+          mapped.addHour(phase);
+
+          excelY++;
+        } else  return mapped;
       }
     }
-      
-    return true;
+    
+    mapped.rawX = startX;
+    mapped.rawY = startY; 
+    //-1: Erst mal davon ausgehen, dass über den Stunden der Tag angegeben ist (Und darüber die Woche vom Block) und links die Stundennummern
+    mapped.startX = startX-1;
+    mapped.startY = startY-2 < 0 ? (startY-1 < 0 ? startY : startY-1) : startY-2;
+    //Etwas irreführend. excelX und y werden durch den loop erhöht. Dadurch ergibt sich am ende automatisch die höhe und Breite
+    mapped.width = excelX-1;
+    mapped.height = excelY-1;
+
+    mapped.setValid();
+    return mapped;
   }
 }

@@ -2,16 +2,28 @@ import 'rpcresponse.dart';
 import 'models/timetable.day.dart';
 import 'models/utils.dart' as utils;
 import 'models/timetable.hour.dart';
+import 'usersession.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
+
   RPCResponse response;
   final DateTime _startDate;
   final DateTime _endDate;
 
   final _days = <TimeTableDay>[];
 
-  TimeTableRange(this._startDate, this._endDate, this.response) {
+  //Welche Woche im aktuellen Block ist das? Startet bei 0
+  //Wird erst gesetzt wenn es wirklich gebraucht wird und "getCurrentBlockWeek()" aufgerufen wird.
+  int _blockIndex = -1;
+  bool _isEmpty = true;
+
+  //TODO wird bis jetzt nur in `UserSession.getRelativeTimeTableForWeek()` gesetzt
+  int relativeToCurrent = 0;
+
+  UserSession _boundUser;
+  
+  TimeTableRange(this._startDate, this._endDate, this._boundUser, this.response) {
     //Konstruiere die Tage
     if (response.isError()) {
       throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " + response.getErrorMessage() + "(" + response.getErrorCode().toString() + ")");
@@ -44,6 +56,7 @@ class TimeTableRange {
     for (int i = 0; i < diff; i++) {
       for (TimeTableDay d in _days) {
         if (d.daysSinceEpoch - day1 == i) {
+          _isEmpty = false;
           finalList.add(d);
           _days.remove(d);
           continue main;
@@ -98,6 +111,11 @@ class TimeTableRange {
     return getDays()[0];
   }
 
+  ///Gibt true zurück, wenn diese Range nicht in einem Schulblock liegt.
+  bool isNonSchoolblockWeek() {
+    return _isEmpty;
+  }
+
   ///Gibt das Startdatum im Format dd.mm zurück
   String getStartDateString() {
     return (_startDate.day < 10 ? "0" + _startDate.day.toString() : _startDate.day.toString()) +
@@ -110,5 +128,24 @@ class TimeTableRange {
     return (_endDate.day < 10 ? "0" + _endDate.day.toString() : _endDate.day.toString()) +
         "." +
         (_endDate.month < 10 ? "0" + _endDate.month.toString() : _endDate.month.toString());
+  }
+
+  ///Gibt den index zurück, in welcher Woche die Aktuelle range ist seitdem der neue Block gestartet ist.
+  ///Schwere operation. Es wird empfolen diese Funktion nur aufzurufen wenn es wirklich sein muss
+  Future<int> getCurrentBlockWeek(int relative) async {
+    
+    if(_blockIndex >= 0) return _blockIndex;
+
+    //MAXIMAL 5 Wochen zurück
+    int steps = -1;
+    for(int i = relative; i >= -5; i--, steps++) {
+      TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
+      if(week.isNonSchoolblockWeek()) {
+        _blockIndex = steps;
+        return _blockIndex;
+      }
+    }
+    _blockIndex = -1;
+    return _blockIndex;
   }
 }
