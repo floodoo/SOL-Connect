@@ -1,5 +1,4 @@
 import 'timetable.entity.dart';
-import '../../excel/models/phaseelement.dart' as excel;
 
 enum Codes { regular, irregular, cancelled, empty, unknown }
 
@@ -159,6 +158,8 @@ class TimeTableHour {
 
   ///Interne Funktion.
   void addIrregularHour(TimeTableHour entity) {
+    entity.xIndex = xIndex;
+    entity.yIndex = yIndex;
     replacement.add(entity);
   }
 
@@ -181,5 +182,9 @@ class TimeTableHour {
         (end.hour < 10 ? "0" + end.hour.toString() : end.hour.toString()) +
         ":" +
         (end.minute < 10 ? "0" + end.minute.toString() : end.minute.toString());
+  }
+
+  String toString() {
+    return getSubject().name + " (" + getTeacher().name + ")" + " Code: " + getLessonCode().name;
   }
 }

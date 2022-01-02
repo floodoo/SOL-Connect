@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class RPCResponse {
   String _statusMessage = "success";
   int _errorCode = 0;
-  dynamic _payload = {};
+  dynamic payload = {};
 
   String appId = "";
   String rpcVersion = "2.0";
@@ -28,7 +28,7 @@ class RPCResponse {
     //Lese die Daten aus
     var result = json['result'];
     if (result != null) {
-      response._payload = result;
+      response.payload = result;
       return response;
     }
 
@@ -46,7 +46,7 @@ class RPCResponse {
 
 /// @return true - Wenn der Fehler am http liegt
   bool isHttpError() {
-    return _payload.isEmpty && _statusMessage == "http error";
+    return payload.isEmpty && _statusMessage == "http error";
   }
 
   /// @return true - Wenn der Handler einen Error hat
@@ -63,7 +63,7 @@ class RPCResponse {
   }
 
   dynamic getPayloadData() {
-    return _payload;
+    return payload;
   }
 
 }

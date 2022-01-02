@@ -107,7 +107,7 @@ class UserSession {
   ///* Das heißt `getRelativeTimeTableWeek(-1);` gibt die vorherige Woche zur aktuellen zurück
   ///* `getRelativeTimeTableWeek(1);` gibt die nächste Woche zurück.
   ///* `getRelativeTimeTableWeek(0);` entspricht `getTimeTableForThisWeek()`
-  Future<TimeTableRange> getRelativeTimeTableWeek(int relative) {
+  Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
     
     DateTime from = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
 
@@ -119,10 +119,10 @@ class UserSession {
       from = from.add(Duration(days: DateTime.daysPerWeek * relative));
     }
 
-    DateTime lastDayOfWeek =
-        from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
-
-    return getTimeTable(from, lastDayOfWeek);
+    DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
+    TimeTableRange rng = await getTimeTable(from, lastDayOfWeek);
+    rng.relativeToCurrent = relative;
+    return rng;
   }
 
   Future<TimeTableRange> getTimeTableForThisWeek() async {
@@ -141,6 +141,7 @@ class UserSession {
     return TimeTableRange(
         from,
         to,
+        this,
         await _query("getTimetable", {
           "options": {
             "startDate": utils.convertToUntisDate(from),
