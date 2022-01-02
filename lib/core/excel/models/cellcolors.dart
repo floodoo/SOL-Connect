@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'phaseelement.dart';
-import '../../exceptions.dart';
 
-class ColorEntry {
+class _ColorEntry {
   int _xIndex = 0;
   int _yIndex = 0;
   Color _color = Color(0, 0, 0);
@@ -10,7 +9,7 @@ class ColorEntry {
 
 class CellColors {
 
-  final _colorEntries = <ColorEntry>[];
+  final _colorEntries = <_ColorEntry>[];
 
   CellColors({String jsonData = ""}) {
     
@@ -23,7 +22,7 @@ class CellColors {
     }
 
     for(dynamic cell in json['cells']) {
-      ColorEntry entry = ColorEntry();
+      _ColorEntry entry = _ColorEntry();
       entry._xIndex = cell['x'];
       entry._yIndex = cell['y'];
       entry._color = Color(cell['c']['r'], cell['c']['g'], cell['c']['b']);
@@ -35,12 +34,12 @@ class CellColors {
     return _colorEntries.isEmpty;
   }
 
-  Color getColorForCell({int xIndex: 0, int yIndex: 0}) {
-    for(ColorEntry entry in _colorEntries) {
+  Color getColorForCell({int xIndex = 0, int yIndex = 0}) {
+    for(_ColorEntry entry in _colorEntries) {
       if(entry._xIndex == xIndex && entry._yIndex == yIndex) {
         return entry._color;
       }
     }
-    return new Color(0, 0, 0);
+    return Color(0, 0, 0);
   }
 }

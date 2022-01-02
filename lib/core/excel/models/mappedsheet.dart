@@ -13,10 +13,10 @@ class MappedSheet {
   int rawX = 0, rawY = 0;
 
   bool _valid = false;
-  var _hours = <MappedPhase>[];
+  final _hours = <MappedPhase>[];
   int blockWeek = -1;
 
-  MappedSheet(this.sheet) { }
+  MappedSheet(this.sheet);
 
   List<MappedPhase> getHours() {
     return _hours;

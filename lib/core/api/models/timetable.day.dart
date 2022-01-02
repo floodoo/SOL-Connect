@@ -53,7 +53,6 @@ class TimeTableDay {
 
     daysSinceEpoch = utils.daysSinceEpoch(_date.millisecondsSinceEpoch);
 
-    //TODO einfach etwas schöner machen
     for (int i = 0; i < minHoursPerDay; i++) {
       TimeTableHour t = TimeTableHour(null);
       t.startAsString = _lessonTimes[i];

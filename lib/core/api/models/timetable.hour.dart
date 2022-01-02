@@ -184,6 +184,7 @@ class TimeTableHour {
         (end.minute < 10 ? "0" + end.minute.toString() : end.minute.toString());
   }
 
+  @override
   String toString() {
     return getSubject().name + " (" + getTeacher().name + ")" + " Code: " + getLessonCode().name;
   }

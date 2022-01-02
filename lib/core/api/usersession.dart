@@ -40,8 +40,10 @@ class UserSession {
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
   Future createSession({String username = "", String password = ""}) async {
-    if (username == "" || password == "")
+    if (username == "" || password == "") {
       throw Exception("Bitte gib einen Benutzenamen und ein Passwort an");
+    }
+
     rh.RPCResponse response = await _query("authenticate",
         {"user": username, "password": password, "client": applicationName});
 
@@ -98,7 +100,6 @@ class UserSession {
     personId = -1;
     klasseId = -1;
     type = -1;
-    print("Logged out.");
     return response;
   }
 
@@ -179,7 +180,6 @@ class UserSession {
         throw Exception(
             "Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
       }
-      print("Session refreshed ...");
       return value;
     });
   }
@@ -202,7 +202,6 @@ class UserSession {
         body: jsonEncode(build)));
 
     if (validateSession && orig.getErrorCode() == -8520 && sessionValid) {
-      print("User not authenticated. Trying to refresh session ...");
       rh.RPCResponse r = await _validateSession();
       if (!r.isError()) {
         return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
