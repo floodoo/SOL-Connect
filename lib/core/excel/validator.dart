@@ -53,7 +53,7 @@ class MappedPhase {
 ///auch der komplett enthaltene Block verarbeitet werden können.
 class ExcelValidator {
   
-  String _path = "";
+  final String _path;
   Excel? _excel;
 
   bool _queryActive = false;
@@ -88,7 +88,7 @@ class ExcelValidator {
 
     _mapped = await _verifySheet(timetable);
 
-    if(_mapped.length > 0) {
+    if(_mapped.isNotEmpty) {
         int currentWeek = await timetable.getCurrentBlockWeek(timetable.relativeToCurrent);
         
         for(MappedSheet mapped in _mapped) {         
@@ -142,7 +142,7 @@ class ExcelValidator {
     
     if(!_colorData.isEmpty() && !forceReload) return _colorData;
 
-    _colorData = new CellColors();
+    _colorData = CellColors();
     
     if(_queryActive) {
       throw ExcelConversionAlreadyActive(cause: "Zellenfarben werden bereits beschafft");
@@ -158,7 +158,7 @@ class ExcelValidator {
 
       var subscription = socket.listen(    
         (event) async {
-          String message = new String.fromCharCodes(event);
+          String message = String.fromCharCodes(event);
 
           if(message.trim() == "ready") {
             await socket.addStream(File(_path).openRead());
@@ -183,7 +183,7 @@ class ExcelValidator {
       return _colorData;
     } catch(e) {
       _queryActive = false;
-      throw Exception("Konnte keine Verbindung zum Konvertierungsserver ${EXCEL_SERVER_ADDR} herstellen.");
+      throw Exception("Konnte keine Verbindung zum Konvertierungsserver " + EXCEL_SERVER_ADDR + " herstellen.");
     }
   }
 
@@ -248,8 +248,6 @@ class ExcelValidator {
         }
 
         String cellValueString = cell.value == null ? "null" : cell.value.toString();
-        
-        if(cell.cellStyle != null) print(cell.cellStyle!.backgroundColor);
 
         if(cellValueString.toLowerCase().contains(hour.getTeacher().name.toString().toLowerCase()) || hour.getTeacher().name == "---" || 
           cellValueString == "null" || hour.getLessonCode() == Codes.empty) {
@@ -264,7 +262,9 @@ class ExcelValidator {
           mapped.addHour(phase);
 
           excelY++;
-        } else  return mapped;
+        } else {
+          return mapped;
+        }
       }
     }
     

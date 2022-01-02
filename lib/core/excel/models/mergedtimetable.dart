@@ -16,7 +16,7 @@ class MergedTimeTable {
   //Die phasen zum Stundenplan
   final MappedSheet? mapped;
 
-  MergedTimeTable(this.timetable, this.mapped) {}
+  MergedTimeTable(this.timetable, this.mapped);
 
   ///Gibt `true` zurück, wenn der gebundene Stundenplan `timetable` erfolgreich in `mapped` gemappt wurde.
   ///
@@ -24,7 +24,9 @@ class MergedTimeTable {
   bool verified() {
     if(mapped != null) {
       return mapped!.isValid();
-    } else return false;
+    } else {
+      return false;
+    }
   }
 
   ///Gibt die entsprechende Phasierung zum Stunden Index zurück.

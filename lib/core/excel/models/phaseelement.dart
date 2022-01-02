@@ -29,7 +29,7 @@ extension Phase on PhaseCodes {
 class Color {
 
   ///Maximale Abweichung der angegebenen Farbe
-  static final int maxRGBDeviation = 5;
+  static const int maxRGBDeviation = 5;
 
   static final Color PHASE_ORIENTING = Color(255, 192, 0);
   static final Color PHASE_REFLECTION = Color(255, 255, 0);
@@ -37,9 +37,9 @@ class Color {
   static final Color PHASE_FREE = Color(146, 208, 80);
   static final Color PHASE_FEEDBACK = Color(255, 0, 0);
 
-  int r = 0, g = 0, b = 0;
+  final int r, g, b;
 
-  Color(this.r, this.g, this.b) {}
+  Color(this.r, this.g, this.b);
 
   static PhaseCodes estimatePhaseFromColor(Color color) { 
     for(PhaseCodes code in PhaseCodes.values) {

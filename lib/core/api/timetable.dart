@@ -21,7 +21,7 @@ class TimeTableRange {
   //TODO wird bis jetzt nur in `UserSession.getRelativeTimeTableForWeek()` gesetzt
   int relativeToCurrent = 0;
 
-  UserSession _boundUser;
+  final UserSession _boundUser;
   
   TimeTableRange(this._startDate, this._endDate, this._boundUser, this.response) {
     //Konstruiere die Tage
