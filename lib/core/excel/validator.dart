@@ -42,7 +42,7 @@ class MappedPhase {
   ///Der Stundenindex auf der y ebene (Stunden)
   ///
   ///Kann auch direkt in `TimeTableRange.getHourByIndex(xIndex, yIndex)` benutzt werden
-  int getHoutYIndex() {
+  int getHourYIndex() {
     return _timetableYIndex;
   }
 }

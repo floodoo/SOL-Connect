@@ -44,7 +44,7 @@ class MergedTimeTable {
   ///Gibt immer unbekannte Phasen zurück, wenn `verified() == false`
   MappedPhase getPhaseForHour(TimeTableHour hour) {
     for(MappedPhase phase in mapped!.getHours()) {
-      if(phase.getHourXIndex() == hour.xIndex && phase.getHoutYIndex() == hour.yIndex) {
+      if(phase.getHourXIndex() == hour.xIndex && phase.getHourYIndex() == hour.yIndex) {
         return phase;
       }
     }
