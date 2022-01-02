@@ -139,7 +139,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           timeTableList.add(
             CustomTimeTableCard(
               text:
-                  "${widget.timeTable.getHourByIndex(schoolDayCounter, subjectRowCounter).getReplacement().getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getRoom().name}",
+                  "${widget.timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: subjectRowCounter).getReplacement().getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getRoom().name}",
               bottomText: (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
                       Codes.irregular)
                   ? "Vertretung"
