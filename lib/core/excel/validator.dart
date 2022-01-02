@@ -69,8 +69,7 @@ class ExcelValidator {
   ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
   ///
   ///[_path] Der lokale Pfad zur Excel Datei
-  ///
-  ///[_timetable] Der bereits geladene Stundenplan
+  ///[EXCEL_SERVER_ADDR] Die Serveradresse eines excel Servers
   ExcelValidator(this.EXCEL_SERVER_ADDR, this._path) {
 
     if (_path.isEmpty) throw Exception("Der Pfad existiert nicht");
