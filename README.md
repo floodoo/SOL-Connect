@@ -29,6 +29,7 @@ Siehe "Excel Server ausführen"
 
 Das laden und verifizieren wird beides vom Objekt `ExcelValidator` übernommen.
 Gefunden in `excel/validator.dart`
+Eine Testdatei kann in /assets/excel/model1.xlsx gefunden werden.
 
 ```dart
 ExcelValidator validator = ExcelValidator("excel-server-adresse", "C:/pfad/zur/excel.xlsx");
