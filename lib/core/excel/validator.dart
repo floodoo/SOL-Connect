@@ -108,7 +108,7 @@ class ExcelValidator {
 
                   //die x und y sind IMMER die ersten hälften der stunde. Also y+1 ist die 2. hälfte
                   hour._firstHalf = Color.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex));
-                  hour._secondHalf = Color.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex+1));
+                  hour._secondHalf = Color.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex + 1));
                   
                   //##############################
                   //          Fertig :)
@@ -153,7 +153,7 @@ class ExcelValidator {
       final socket = await Socket.connect(EXCEL_SERVER_ADDR, 6969);    
 
       //Sende den Befehl
-      socket.write("convertxssf\r\n");
+      socket.writeln("convertxssf\r\n");
       await socket.flush();
 
       var subscription = socket.listen(    
