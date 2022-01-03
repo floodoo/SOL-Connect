@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 import 'timetable.hour.dart';
 import 'utils.dart' as utils;
 

@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 class WrongCredentiansException implements Exception {
   WrongCredentiansException({String cause = "Falscher Benutzename oder Passwort!"});
 }
@@ -7,17 +9,82 @@ class FailedToRefreshSessionException implements Exception {
 }
 
 class FailedToEstablishExcelServerConnection implements Exception {
-  FailedToEstablishExcelServerConnection({String cause= ""});
+  String cause = "";
+  FailedToEstablishExcelServerConnection(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
 }
 
-class ExcelConvertConnectionError implements Exception {
-  ExcelConvertConnectionError({String cause= ""});
+class ExcelConversionConnectionError implements Exception {
+  String cause = "";
+  ExcelConversionConnectionError(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
 }
 
 class ExcelConversionAlreadyActive implements Exception {
-  ExcelConversionAlreadyActive({String cause=""});
+  String cause = "";
+  ExcelConversionAlreadyActive(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
 }
 
 class ExcelConversionServerError implements Exception {
-  ExcelConversionServerError({String cause = ""});
+  String cause = "";
+  ExcelConversionServerError(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
 }
+
+class ExcelMergeNonSchoolBlockException implements Exception {
+  String cause = "";
+  ExcelMergeNonSchoolBlockException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+
+class ExcelMergeTimetableNotMatchException implements Exception {
+  String cause = "";
+  ExcelMergeTimetableNotMatchException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+
+class ExcelMergeTimetableNotFound implements Exception {
+  String cause = "";
+  ExcelMergeTimetableNotFound(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+//Excel Datei konnte nicht für den angegebenen Stundenplan verifiziert werden.
+class ExcelMergeFileNotVerified implements Exception {
+  String cause = "";
+  ExcelMergeFileNotVerified(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+

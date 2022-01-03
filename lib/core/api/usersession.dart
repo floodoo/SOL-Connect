@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'rpcresponse.dart' as rh;

@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 enum PhaseCodes {
   orienting,
   reflection,

@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 import '../../api/timetable.dart';
 import 'mappedsheet.dart';
 import '../../api/models/timetable.hour.dart';
@@ -8,7 +10,7 @@ class MergedTimeTable {
   ///Gibt eine Fehlermeldung zurück, falls dieser Stundenplan nicht mit der Excel gemappt werden konnte.
   ///
   ///Immer leer, außer `verified() == false`
-  String errorMessage = "";
+  //String errorMessage = "";
 
   //Der Stundenplan
   final TimeTableRange timetable;

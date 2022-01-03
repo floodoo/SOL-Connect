@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 /// Wandelt ein DateTime objekt in ein Webuntis Date objekt um.
 /// Dieses Datenformat setzt sich folgendermaßen zusammen:
 /// YYYYMMDD

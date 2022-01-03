@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 import 'dart:io';
 import 'package:excel/excel.dart';
 import '../api/timetable.dart';
@@ -82,8 +84,20 @@ class ExcelValidator {
   ///Diese funktion kann mehrmals mit verschiedenen Stundenplänen aufgerufen werden.
   ///
   ///Funktioniert aktuell nur mit der aktuellen Woche oder wenn [timetable] durch `UserSession.getRelativeTimeTableForWeek()` erzeugt wurde.
+  ///
+  ///Folgende Errors kann diese Funktion werfen (Alle zu finden in '/exceptions.dart')
+  ///* `ExcelMergeNonSchoolBlockException`: Wenn die Woche keine Schulblockwoche ist
+  ///* `ExcelMergeTimetableNotMatchException`: Wenn die angegebene Woche in der Excel nicht dem angegebenen Stundenplan entspricht
+  ///* `ExcelMergeTimetableNotFound`: Wenn die angegebene Woche nicht in der Excel gefunden werden konnte
+  ///* `ExcelMergeFileNotVerified`: Wenn kein Stundenplan in der Excel gefunden werden konnte
+  ///* `ExcelConversionAlreadyActive`: Wenn diese Funktion bereits aufgerufen wurde und noch nicht fertig ist
+  ///* `ExcelConversionServerError`: Wenn ein Fehler Serverseitig aufgetreten ist
+  ///* `FailedToEstablishExcelServerConnection`: Wenn keine VErbindung zum Excel Server hergestellt werden konnte
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable) async {   
-    String errorMessage = "";
+
+    if(timetable.isNonSchoolblockWeek()) {
+      throw ExcelMergeNonSchoolBlockException("Diese Woche enthält keine Schulstunden");
+    } 
 
     _mapped = await _verifySheet(timetable);
 
@@ -95,7 +109,7 @@ class ExcelValidator {
 
           if(currentWeek+1 == mapped.blockWeek) { //+1 weil currentWeek nur der Index ist der bei 0 anfängt
 
-             //Schließlich vergleiche und verifiziere diesen stundenplan mit dem gemappten Index
+            //Schließlich vergleiche und verifiziere diesen stundenplan mit dem gemappten Index
             MappedSheet verified = _searchRange(_mapped[currentWeek].sheet, timetable, startX: mapped.rawX, startY: mapped.rawY);
 
             if(verified.startX == mapped.startX && verified.startY == mapped.startY
@@ -115,18 +129,14 @@ class ExcelValidator {
                 }
                 return MergedTimeTable(timetable, mapped);
             } else {
-              errorMessage = "Der Excel Stundenplan für Woche ${currentWeek+1} passt nicht zum angegebenen Stundenplan.";
+              throw ExcelMergeTimetableNotMatchException("Der Excel Stundenplan für Woche ${currentWeek+1} passt nicht zum angegebenen Stundenplan.");
             }
           } 
         }
-       errorMessage = "Stelle sicher, dass in der Excel ein Stundenplan mit der überschrift 'Woche ${currentWeek+1}' existiert und dieser auch in die angegebene Woche passt.";
-    } else {
-      errorMessage = "Excel Datei konnte nicht für den angegebenen Stundenplan verifiziert werden.";
-    }
-
-    MergedTimeTable failed = MergedTimeTable(timetable, null);
-    failed.errorMessage = errorMessage;
-    return failed;
+        throw ExcelMergeTimetableNotFound("Stelle sicher, dass in der Excel ein Stundenplan mit der überschrift 'Woche ${currentWeek+1}' existiert und dieser auch in die angegebene Woche passt.");
+    } 
+    
+     throw ExcelMergeFileNotVerified("Es konnte kein Stundenplan auf der Excel Datei gefunden werden.");
   }
 
   ///Sendet eine Anfrage an den Server in 4 Schritten:
@@ -144,7 +154,7 @@ class ExcelValidator {
     _colorData = CellColors();
     
     if(_queryActive) {
-      throw ExcelConversionAlreadyActive(cause: "Zellenfarben werden bereits beschafft");
+      throw ExcelConversionAlreadyActive("Zellenfarben werden bereits beschafft");
     }
 
     try {
@@ -158,7 +168,6 @@ class ExcelValidator {
       var subscription = socket.listen(    
         (event) async {
           String message = String.fromCharCodes(event);
-
           if(message.trim() == "ready") {
             await socket.addStream(File(_path).openRead());
           } else {
@@ -168,7 +177,7 @@ class ExcelValidator {
 
         onError: (error) {
           _queryActive = false;
-          throw Exception("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+          throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
         },
 
         onDone: () {
@@ -182,7 +191,7 @@ class ExcelValidator {
       return _colorData;
     } catch(e) {
       _queryActive = false;
-      throw Exception("Konnte keine Verbindung zum Konvertierungsserver " + EXCEL_SERVER_ADDR + " herstellen.");
+      throw FailedToEstablishExcelServerConnection("Konnte keine Verbindung zum Konvertierungsserver " + EXCEL_SERVER_ADDR + " herstellen.");
     }
   }
 
@@ -192,21 +201,24 @@ class ExcelValidator {
     //Alle Stundenpläne die in der Excel enthalten sind
     var mappedSheets = <MappedSheet>[];
 
+    int searchCount = 0;
     for(var table in _excel!.sheets.keys) {   
       for(int i = 0; i < _excel!.tables[table]!.maxCols; i++) {
         for(int j = 0; j < _excel!.tables[table]!.maxRows; j++) {
           
           if(_worthSearching(mappedSheets, xIndex: i, yIndex: j, excelWidth: _excel!.tables[table]!.maxCols, excelHeight: _excel!.tables[table]!.maxRows)) {
-            
+            searchCount++;
             MappedSheet mappedTimetable = _searchRange(_excel!.tables[table]!, range, startX: i, startY: j);
 
             if(mappedTimetable.isValid()) {   
               mappedSheets.add(mappedTimetable);
+              print("Valid");
             }
           }
         }
       }
     }
+    print("Searched: " + searchCount.toString() + " cells");
     return mappedSheets;
   }
 
@@ -219,6 +231,10 @@ class ExcelValidator {
       if(xIndex >= existing.startX && xIndex < existing.width && yIndex >= existing.startY && yIndex < existing.height) {
         return false;
       }
+      //if(xIndex + 5 > existing.startX && xIndex + 5 < existing.startX + existing.width 
+      //  || yIndex + 8 > existing.startY && yIndex +5 < existing.startY + existing.height) {
+      //  return false;
+      //}
     }
 
     return worth;

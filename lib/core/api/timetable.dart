@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 import 'rpcresponse.dart';
 import 'models/timetable.day.dart';
 import 'models/utils.dart' as utils;

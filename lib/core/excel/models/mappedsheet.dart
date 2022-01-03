@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 import '../validator.dart';
 import 'package:excel/excel.dart';
 

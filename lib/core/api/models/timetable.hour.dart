@@ -1,3 +1,5 @@
+/*Author Philipp Gersch*/
+
 import 'timetable.entity.dart';
 
 enum Codes { regular, irregular, cancelled, empty, unknown }
