@@ -60,15 +60,35 @@ print(phaseFromIndex.getFirstHalf().color); -> "(r: 255, g: 0, b: 0)"
 ```
 ## Error Handling
 
-Falls eine Excel datei nicht verifiziert werden konnte, kann man das im zurückgegebenen `MergedTimeTable` Objekt überprüfen.
-Wenn isValid() false zurückliefert, kann eine Fehlernachricht mit `MergedTimeTable.errorMessage` ausgelesen werden.
+Falls ein Fehler beim überprüfen der Excel auftritt wird eine exception geworfen.
+Folgende Exceptions können auftreten:
+* `ExcelMergeNonSchoolBlockException`: Wenn die Woche keine Schulblockwoche ist
+* `ExcelMergeTimetableNotMatchException`: Wenn die angegebene Woche in der Excel nicht dem angegebenen Stundenplan entspricht
+* `ExcelMergeTimetableNotFound`: Wenn die angegebene Woche nicht in der Excel gefunden werden konnte
+* `ExcelMergeFileNotVerified`: Wenn kein Stundenplan in der Excel gefunden werden konnte
+* `ExcelConversionAlreadyActive`: Wenn diese Funktion bereits aufgerufen wurde und noch nicht fertig ist
+* `ExcelConversionServerError`: Wenn ein Fehler Serverseitig aufgetreten ist
+* `FailedToEstablishExcelServerConnection`: Wenn keine VErbindung zum Excel Server hergestellt werden konnte
 
 ```dart
-if(merged.isValid()) {
-  ...
-} else {
-  print("Ein Fehler ist aufgetreten: ${merged.errorMessage}");
-}
+    try {
+      MergedTimeTable merged = await validator.mergeExcelWithTimetable(timetable);
+      ...
+    } on ExcelMergeNonSchoolBlockException catch(e) {
+      ...
+    } on ExcelMergeTimetableNotMatchException catch(e) {
+      ...
+    } on ExcelMergeTimetableNotFound catch(e) {
+      ...
+    } on ExcelMergeFileNotVerified catch(e) {
+      ...
+    } on ExcelConversionAlreadyActive catch(e) {
+      ...
+    } on ExcelConversionServerError catch(e) {
+      ...
+    } on FailedToEstablishExcelServerConnection catch(e) {
+      ...
+    }
 ```
 ## Beispiel: Stundenplan mit Phasierung ausgeben
 
@@ -84,34 +104,31 @@ import 'excel/models/phaseelement.dart';
 void main() {
 
   UserSession gw = new UserSession(school: "bbs1-mainz", appID: "testAPP");
-  gw.createSession(username: "username", password: "password").then((e) async {
+  gw.createSession(username: "username", password: "password").then((e) async { 
     
-    TimeTableRange timetable = await gw.getRelativeTimeTableWeek(-1); 
+    TimeTableRange timetable = await gw.getRelativeTimeTableWeek(-2); 
+    ExcelValidator validator = ExcelValidator("localhost", "C:/users/philipp/nextcloud/berufsschule/projekte/model1.xlsx");
     
-    ExcelValidator validator = ExcelValidator("localhost", "C:/excel/model1.xlsx");
-    MergedTimeTable merged = await validator.mergeExcelWithTimetable(timetable);
-    
-    if(merged.verified()) {
+    try {     
+      MergedTimeTable merged = await validator.mergeExcelWithTimetable(timetable);
       
       for(TimeTableDay day in timetable.getDays()) {
         for(TimeTableHour hour in day.getHours()) {
-
           MappedPhase phase = merged.getPhaseForHour(hour);
-
           print(hour.getSubject().name);
           print(phase.getFirstHalf().name + " " + phase.getFirstHalf().color.toString());
           print(phase.getSecondHalf().name + " " + phase.getFirstHalf().color.toString());
-
         }
       }
-
-    } else {
-      print(merged.errorMessage);
-    } 
-
+      
+    } catch(e) {
+      print("Ein Fehler ist aufgetreten: ${e}");
+    }
+    
     await gw.logout();
   });
 }
+
 ```
 
 ## Excel Server ausführen:
