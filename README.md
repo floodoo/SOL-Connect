@@ -161,6 +161,10 @@ Es folgt eine kleine Liste möglicher Befehle.
 - Es werden nurnoch Errors geloggt
 - Maximale gleichzeitige Client Verbindungen und timeout können unbegrenzt gesetzt werden wenn diese Werte kleiner als 0 sind
 
+### Zukunft
+- Excel Verifizierung komplett auf den Server auslagern
+- Server commands für bessere Administration
+- Log Datei für alles erstellen für besseres Monitoring
 
 # Excel Server dependencies:
 
