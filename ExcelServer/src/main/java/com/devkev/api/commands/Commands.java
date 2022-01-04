@@ -18,7 +18,7 @@ import com.devkev.devscript.raw.Command;
 import com.devkev.devscript.raw.Library;
 import com.devkev.devscript.raw.Process;
 import com.devkev.main.Connection;
-import static com.devkev.main.Logger.logError;
+import com.devkev.main.Main;
 
 public class Commands extends Library {
 
@@ -48,13 +48,14 @@ public class Commands extends Library {
 					
 					//Warte auf den Excel stram. Der timeout wird vom observer gehandled
 					//Sende ready antwort. Dies signalisiert dass der Server bereit ist die Excel zu empfangen!
-					c.writer.write("ready\r\n");
+					c.writer.write("{\"message\": \"ready-for-file\"}\r\n");
 					c.writer.flush();
 					
 					try {
 						
-						StringBuilder json = new StringBuilder("{\"message\": \"ok\", \"cells\":[");
+						StringBuilder json = new StringBuilder("{\"message\": \"ok\", \"data\":[");
 			            Workbook workbook = new XSSFWorkbook(c.client.getInputStream());
+			            workbook = null;
 			    		Sheet sheet = workbook.getSheetAt(0);
 			    		
 			    		Map<Integer, List<String>> data = new HashMap<>();
@@ -90,7 +91,7 @@ public class Commands extends Library {
 				    		    	
 				    		    	if(cellEntries > MAX_CELL_ENTRIES) {
 				    		    		c.status = 1;
-				    		    		logError("Session: " + c.sessionId + ": Exceeded max colored cell entries. Aborting");
+				    		    		Main.logger.logError("Session: " + c.sessionId + ": Exceeded max colored cell entries. Aborting");
 				    		    		break main;
 				    		    	}
 			    		    	}
@@ -108,9 +109,9 @@ public class Commands extends Library {
 					} catch(Exception e) {
 						
 						c.status = 1;
-						logError("Session: " + c.sessionId + ": Error while converting Excel: " + e.getMessage());
+						Main.logger.logError("Session: " + c.sessionId + ": Error while converting Excel: " + e.getMessage());
 						if(!c.client.isClosed()) {
-							c.writer.write("{\"message\": \"" + e.getMessage() + "\"}");
+							c.writer.write("{\"error\": \"" + e.getMessage() + "\"}");
 							c.writer.flush();
 						}
 					}

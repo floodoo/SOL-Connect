@@ -6,6 +6,7 @@ import java.io.IOException;
 public class Main {
 	
 	public static Server handler;
+	public static Logger logger;
 	
 	public static void main(String[] args) throws IOException  {
 		
@@ -13,6 +14,7 @@ public class Main {
 			throw new IllegalArgumentException("Expecting arguments: <max-connections> <connection-timeout (milliseconds)>");
 		}
 		
+		logger = new Logger();
 		//Nervige "Fehlende Log4j Klasse" Fehlermeldung ausschalten ...
 		//StatusLogger.getLogger().setLevel(Level.OFF);
 		

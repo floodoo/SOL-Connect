@@ -6,12 +6,12 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
+import com.devkev.api.commands.AdminCommands;
 import com.devkev.api.commands.Commands;
 import com.devkev.devscript.raw.Output;
 import com.devkev.devscript.raw.Process;
-import static com.devkev.main.Logger.logError;
-import static com.devkev.main.Logger.log;
 
 public class Server {
 	
@@ -23,6 +23,7 @@ public class Server {
 	
 	private ArrayList<Connection> activeClients = new ArrayList<>();
 	private Thread gateway;
+	
 	
 	
 	/**@param maxConnections - Maximal Anzahl an Clients die sich verbinden dürfen.
@@ -65,7 +66,7 @@ public class Server {
 						}
 						@Override
 						public void error(String arg0) {
-							logError("Error while executing command: " + command + ": " + arg0);
+							Main.logger.logError("Error while executing command: " + command + ": " + arg0);
 							c.status = 1;
 						}
 					});
@@ -78,8 +79,8 @@ public class Server {
 				closeConnection(c);
 				
 				if(c.status == 1) {
-					logError("Closed session " + c.sessionId + " (" + (c.status == 0 ? "SUCCESS" : "ERROR") + ")");
-					log(activeClients.size() + " active connections.");
+					Main.logger.logError("Closed session " + c.sessionId + " (" + (c.status == 0 ? "SUCCESS" : "ERROR") + ")");
+					Main.logger.log(activeClients.size() + " active connections.");
 				}
 				
 			}
@@ -112,7 +113,7 @@ public class Server {
 		listenSocket = new ServerSocket(LISTEN_PORT);
 		listenSocket.setReuseAddress(true);
 		
-		System.out.println("Version: 1.0.1\n");
+		System.out.println("Version: 1.1.0\n");
 		System.out.println("Listening on " + LISTEN_PORT);
 		
 		if(MAX_CONNECTIONS > 0) {
@@ -135,7 +136,7 @@ public class Server {
 						for(int i = 0; i < activeClients.size(); i++) {
 							if(currentTime - activeClients.get(i).startTime > MAX_CONNECTION_TIME) {
 								//Wirf den client raus
-								logError("Client exceeded max connection time! Kicking SessionID: " + activeClients.get(i).sessionId);
+								Main.logger.logError("Client exceeded max connection time! Kicking SessionID: " + activeClients.get(i).sessionId);
 								activeClients.get(i).status = 1;
 								
 								//Sende eine Nachricht bevor die Verbindung geschlossen wird
@@ -143,7 +144,7 @@ public class Server {
 									activeClients.get(i).writer.write("{\"message\": \"Connection timeout (" + (MAX_CONNECTION_TIME / 1000) + " sec)\"}");
 									activeClients.get(i).writer.flush();
 								} catch (IOException e) {
-									logError("Failed to send abort message ...");
+									Main.logger.logError("Failed to send abort message ...");
 								}
 					    		
 								closeConnection(activeClients.get(i));
@@ -165,14 +166,14 @@ public class Server {
 						try {
 							addClientConnection(connectionSocket);
 						} catch(Exception e) {
-							logError("Failed to establish an open connection to client.");
+							Main.logger.logError("Failed to establish an open connection to client.");
 						}
 						
 						if(MAX_CONNECTIONS > 0) {
 							//Friere den Gateway ein, wenn zu viele Verbindungen gleichzeitig aufgebaut wurden
 							if(activeClients.size() >= MAX_CONNECTIONS) {
 								try {
-									logError("Exceeded max connections! " + MAX_CONNECTIONS + " Waiting for more space ...");
+									Main.logger.logError("Exceeded max connections! " + MAX_CONNECTIONS + " Waiting for more space ...");
 									synchronized (gateway) {
 										gateway.wait();
 									}
@@ -193,6 +194,42 @@ public class Server {
 			}
 		}
 		}, "StateListener");
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final Scanner scanner = new Scanner(System.in);
+				final Process executor = new Process(true);
+				executor.clearLibraries();
+				executor.includeLibrary(new AdminCommands());
+				executor.addOutput(new Output() {
+					@Override
+					public void warning(String arg0) {
+						System.out.println(arg0);
+						Main.logger.log("[CMD: '" + arg0 + "']");
+					}
+					
+					@Override
+					public void log(String arg0, boolean arg1) {
+						System.out.println(arg0);
+						Main.logger.log("[CMD: '" + arg0 + "']");
+					}
+					
+					@Override
+					public void error(String arg0) {
+						System.err.println(arg0);
+						Main.logger.logError("[CMD: '" + arg0 + "']");
+					}
+				});
+				System.out.println("\n###\nWillkommen in der Admin Konsole.\nGib 'help' ein für eine Liste von Befehlen\n###\n");
+				while(true) {
+					System.out.print(">>");
+					String command = scanner.nextLine();
+					executor.execute(command, false);
+				}
+			}
+		}, "Admin Console").start();
+		
 		gateway.start();
 	}
 }
