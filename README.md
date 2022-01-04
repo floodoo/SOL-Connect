@@ -185,7 +185,7 @@ Es folgt eine kleine Liste möglicher Befehle.
 
 # Excel Server dependencies:
 
-- <a>https://github.com/DevKevYT/devscript</a> version: '1.9.1'<br>
+- <a>https://github.com/DevKevYT/devscript</a> version: '1.9.4'<br>
 - <a>https://mvnrepository.com/artifact/org.apache.poi/poi</a> version: '5.1.0'<br>
 - <a>https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml</a> version: '5.1.0'<br>
 - <a>https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans</a> version: '2.3.0'<br>
