@@ -172,16 +172,21 @@ Es folgt eine kleine Liste möglicher Befehle.
 
 ## Patchnotes
 
-### 1.0.1
+### 1.0.1 (NICHT MEHR KOMPATIBEL!)
 - Behebung einer Schwachstelle.
 - Detaillierteres Logging für besseres Monitoring
 - Es werden nurnoch Errors geloggt
 - Maximale gleichzeitige Client Verbindungen und timeout können unbegrenzt gesetzt werden wenn diese Werte kleiner als 0 sind
 
+### 1.1.0
+- Erstellung einer Logdatei.
+- Server commands: 
+    - Diese können mit 'help' aufgerufen werden.
+    - ermöglichen ausführung vom Shellcommands
+- Änderung des 'convertxsff' client command flows. `!Aktueller client nicht mehr mit 1.0.1 kompatibel!`
+
 ### Zukunft
 - Excel Verifizierung komplett auf den Server auslagern
-- Server commands für bessere Administration
-- Log Datei für alles erstellen für besseres Monitoring
 
 # Excel Server dependencies:
 
