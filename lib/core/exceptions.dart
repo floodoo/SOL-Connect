@@ -1,4 +1,4 @@
-/*Author Philipp Gersch*/
+/*Author Philipp Gersch */
 
 class WrongCredentiansException implements Exception {
   WrongCredentiansException({String cause = "Falscher Benutzename oder Passwort!"});
@@ -14,7 +14,7 @@ class FailedToEstablishExcelServerConnection implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -24,7 +24,7 @@ class ExcelConversionConnectionError implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -34,7 +34,7 @@ class ExcelConversionAlreadyActive implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -44,7 +44,7 @@ class ExcelConversionServerError implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -54,7 +54,7 @@ class ExcelMergeNonSchoolBlockException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -64,7 +64,7 @@ class ExcelMergeTimetableNotMatchException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -74,7 +74,7 @@ class ExcelMergeTimetableNotFound implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 //Excel Datei konnte nicht für den angegebenen Stundenplan verifiziert werden.
@@ -84,7 +84,17 @@ class ExcelMergeFileNotVerified implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return this.runtimeType.toString() + ": " + cause;
   }
 }
 
+//Excel Datei konnte nicht für den angegebenen Stundenplan verifiziert werden.
+class FailedToFetchUserdata implements Exception {
+  String cause = "";
+  FailedToFetchUserdata(this.cause);
+
+  @override
+  String toString() {
+    return this.runtimeType.toString() + ": " + cause;
+  }
+}

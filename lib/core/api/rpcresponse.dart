@@ -1,4 +1,4 @@
-/*Author Philipp Gersch*/
+/*Author Philipp Gersch */
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -11,9 +11,13 @@ class RPCResponse {
   String appId = "";
   String rpcVersion = "2.0";
 
-  static RPCResponse handle(http.Response httpResponse) {
-    RPCResponse response = RPCResponse();
+  http.Response originalResponse;
 
+  RPCResponse(this.originalResponse);
+
+  static RPCResponse handle(http.Response httpResponse) {
+    RPCResponse response = RPCResponse(httpResponse);
+   
     //Erstmal den Statuscode checken
     if (httpResponse.statusCode != 200) {
       response._errorCode = httpResponse.statusCode;
@@ -24,7 +28,10 @@ class RPCResponse {
     dynamic json = jsonDecode(httpResponse.body);
 
     //Standart Daten auszulesen
-    response.appId = json['id'];
+    if(json['id'].runtimeType == int) {
+      response.appId = json['id'];
+    } else response.appId = "null";
+
     response.rpcVersion = json['jsonrpc'];
 
     //Lese die Daten aus

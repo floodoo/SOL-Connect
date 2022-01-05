@@ -1,6 +1,5 @@
-/*Author Philipp Gersch*/
+/*Author Philipp Gersch */
 
-///Kleiner Wrapper für mehr Lesbarkeit
 class TimeTableEntity {
   String typeName = "";
   String name = "";

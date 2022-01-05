@@ -1,6 +1,5 @@
-/*Author Philipp Gersch*/
+/*Author Philipp Gersch */
 
-import 'dart:convert';
 import 'phaseelement.dart';
 
 class _ColorEntry {
@@ -13,17 +12,11 @@ class CellColors {
 
   final _colorEntries = <_ColorEntry>[];
 
-  CellColors({String jsonData = ""}) {
-    
-    if(jsonData.isEmpty) return;
+  ///Erwartet eine Liste von Zellen
+  CellColors({dynamic data}) {
+    if(data == null) return;
 
-    dynamic json = jsonDecode(jsonData);
-
-    if(json['message'] != "ok") {
-      throw Exception("The conversion Server emitted an Error: " + json['message']);
-    }
-
-    for(dynamic cell in json['cells']) {
+    for(dynamic cell in data) {
       _ColorEntry entry = _ColorEntry();
       entry._xIndex = cell['x'];
       entry._yIndex = cell['y'];

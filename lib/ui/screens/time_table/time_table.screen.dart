@@ -32,7 +32,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
     int subjectRowCounter = 0;
 
     if (widget._isLoading) {
-      args.userSession.getTimeTableForThisWeek().then((value) {
+      args.userSession.getRelativeTimeTableWeek(0).then((value) {
         widget.timeTable = value;
         setState(() {
           widget._isLoading = false;

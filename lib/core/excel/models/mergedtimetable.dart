@@ -1,4 +1,4 @@
-/*Author Philipp Gersch*/
+/*Author Philipp Gersch */
 
 import '../../api/timetable.dart';
 import 'mappedsheet.dart';

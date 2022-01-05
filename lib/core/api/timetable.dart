@@ -1,4 +1,4 @@
-/*Author Philipp Gersch*/
+/*Author Philipp Gersch */
 
 import 'rpcresponse.dart';
 import 'models/timetable.day.dart';

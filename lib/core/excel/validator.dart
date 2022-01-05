@@ -1,5 +1,6 @@
-/*Author Philipp Gersch*/
+/*Author Philipp Gersch */
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
 import '../api/timetable.dart';
@@ -85,6 +86,8 @@ class ExcelValidator {
   ///
   ///Funktioniert aktuell nur mit der aktuellen Woche oder wenn [timetable] durch `UserSession.getRelativeTimeTableForWeek()` erzeugt wurde.
   ///
+  ///Der optionale Parameter [maxTries] gibt an, wie viele Versuche es geben soll die Excel Farben zu holen, falls ein Versuch fehlschlägt bwvor ein Fehler geworfen wird.
+  ///
   ///Folgende Errors kann diese Funktion werfen (Alle zu finden in '/exceptions.dart')
   ///* `ExcelMergeNonSchoolBlockException`: Wenn die Woche keine Schulblockwoche ist
   ///* `ExcelMergeTimetableNotMatchException`: Wenn die angegebene Woche in der Excel nicht dem angegebenen Stundenplan entspricht
@@ -92,8 +95,8 @@ class ExcelValidator {
   ///* `ExcelMergeFileNotVerified`: Wenn kein Stundenplan in der Excel gefunden werden konnte
   ///* `ExcelConversionAlreadyActive`: Wenn diese Funktion bereits aufgerufen wurde und noch nicht fertig ist
   ///* `ExcelConversionServerError`: Wenn ein Fehler Serverseitig aufgetreten ist
-  ///* `FailedToEstablishExcelServerConnection`: Wenn keine VErbindung zum Excel Server hergestellt werden konnte
-  Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable) async {   
+  ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
+  Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {int maxTries = 5}) async {   
 
     if(timetable.isNonSchoolblockWeek()) {
       throw ExcelMergeNonSchoolBlockException("Diese Woche enthält keine Schulstunden");
@@ -156,22 +159,31 @@ class ExcelValidator {
     if(_queryActive) {
       throw ExcelConversionAlreadyActive("Zellenfarben werden bereits beschafft");
     }
+  
 
     try {
       _queryActive = true;
       final socket = await Socket.connect(EXCEL_SERVER_ADDR, 6969);    
 
       //Sende den Befehl
-      socket.writeln("convertxssf\r\n");
+      socket.writeln("convertxssf");
       await socket.flush();
 
       var subscription = socket.listen(    
         (event) async {
-          String message = String.fromCharCodes(event);
-          if(message.trim() == "ready") {
-            await socket.addStream(File(_path).openRead());
-          } else {
-            _colorData = CellColors(jsonData: message.trim());
+         // String message = String.fromCharCodes(event);
+          dynamic decodedMessage = jsonDecode(String.fromCharCodes(event));
+
+          if(decodedMessage['error'] != null) {
+           throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']); 
+          }
+
+          if(decodedMessage['message'] != null) {
+            if(decodedMessage['message'] == "ready-for-file") {
+              await socket.addStream(File(_path).openRead());
+            } else {
+              _colorData = CellColors(data: decodedMessage['data']);
+            }
           }
         },
 
@@ -189,7 +201,8 @@ class ExcelValidator {
       await subscription.asFuture<void>();
       await socket.close();
       return _colorData;
-    } catch(e) {
+
+    } on Exception catch(e) {
       _queryActive = false;
       throw FailedToEstablishExcelServerConnection("Konnte keine Verbindung zum Konvertierungsserver " + EXCEL_SERVER_ADDR + " herstellen.");
     }
