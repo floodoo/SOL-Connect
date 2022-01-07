@@ -185,6 +185,9 @@ Es folgt eine kleine Liste möglicher Befehle.
     - ermöglichen ausführung vom Shellcommands
 - Änderung des 'convertxsff' client command flows. `!Aktueller client nicht mehr mit 1.0.1 kompatibel!`
 
+### 1.1.1
+- Bugfix
+
 ### Zukunft
 - Excel Verifizierung komplett auf den Server auslagern
 
