@@ -27,7 +27,7 @@ class UserSession {
 
   // ignore: non_constant_identifier_names
   final String BASE_URL = "https://hepta.webuntis.com";
-  String URL = ""; ///WebUntis/jsonrpc.do?school=
+  String URL = "";
   bool sessionValid = false;
 
   // Empfindliche Variablen:
@@ -140,7 +140,7 @@ class UserSession {
   Future<ProfileData> getProfileData({bool loadFromCache = true}) async {
   
     if(!loadFromCache || _cachedProfileData.getSchoolId() == -1) {
-      http.Response r = await _queryURL("/WebUntis/api/rest/view/v1/app/data", needsAuthorization: false);
+      http.Response r = await _queryURL("/WebUntis/api/rest/view/v1/app/data", needsAuthorization: true);
       _cachedProfileData = ProfileData(jsonDecode(r.body));
     }
 
