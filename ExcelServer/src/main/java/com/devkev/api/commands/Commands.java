@@ -55,7 +55,6 @@ public class Commands extends Library {
 						
 						StringBuilder json = new StringBuilder("{\"message\": \"ok\", \"data\":[");
 			            Workbook workbook = new XSSFWorkbook(c.client.getInputStream());
-			            workbook = null;
 			    		Sheet sheet = workbook.getSheetAt(0);
 			    		
 			    		Map<Integer, List<String>> data = new HashMap<>();
