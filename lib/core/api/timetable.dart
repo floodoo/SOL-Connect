@@ -8,7 +8,6 @@ import 'usersession.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
-
   RPCResponse response;
   final DateTime _startDate;
   final DateTime _endDate;
@@ -24,11 +23,15 @@ class TimeTableRange {
   int relativeToCurrent = 0;
 
   final UserSession _boundUser;
-  
+
   TimeTableRange(this._startDate, this._endDate, this._boundUser, this.response) {
     //Konstruiere die Tage
     if (response.isError()) {
-      throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " + response.getErrorMessage() + "(" + response.getErrorCode().toString() + ")");
+      throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " +
+          response.getErrorMessage() +
+          "(" +
+          response.getErrorCode().toString() +
+          ")");
     }
 
     outer:
@@ -135,14 +138,13 @@ class TimeTableRange {
   ///Gibt den index zurück, in welcher Woche die Aktuelle range ist seitdem der neue Block gestartet ist.
   ///Schwere operation. Es wird empfolen diese Funktion nur aufzurufen wenn es wirklich sein muss
   Future<int> getCurrentBlockWeek(int relative) async {
-    
-    if(_blockIndex >= 0) return _blockIndex;
+    if (_blockIndex >= 0) return _blockIndex;
 
     //MAXIMAL 5 Wochen zurück
     int steps = -1;
-    for(int i = relative; i >= -5; i--, steps++) {
+    for (int i = relative; i >= -5; i--, steps++) {
       TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
-      if(week.isNonSchoolblockWeek()) {
+      if (week.isNonSchoolblockWeek()) {
         _blockIndex = steps;
         return _blockIndex;
       }
