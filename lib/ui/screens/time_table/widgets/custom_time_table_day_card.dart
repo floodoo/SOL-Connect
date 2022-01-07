@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomTimeTableCard extends StatelessWidget {
-  CustomTimeTableCard({Key? key, this.child}) : super(key: key);
+class CustomTimeTableDayCard extends StatelessWidget {
+  CustomTimeTableDayCard({Key? key, this.child}) : super(key: key);
   Widget? child;
 
   @override

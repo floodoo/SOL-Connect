@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_card.dart';
+import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
+import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/time_table.arguments.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
@@ -11,7 +12,6 @@ import 'package:untis_phasierung/util/logger.util.dart';
 class TimeTableScreen extends StatefulWidget {
   TimeTableScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableScreen).toString();
-  late TimeTableRange timeTable;
   bool _isLoading = true;
 
   @override
@@ -19,22 +19,22 @@ class TimeTableScreen extends StatefulWidget {
 }
 
 class _TimeTableScreenState extends State<TimeTableScreen> {
+  late TimeTableRange timeTable;
   @override
   Widget build(BuildContext context) {
     final Logger log = getLogger();
 
     final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
 
-    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
-
     int timeColumnCounter = 0;
     int schoolDayCounter = 0;
-    int subjectRowCounter = 0;
+    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
+
 
     if (widget._isLoading) {
-      args.userSession.getRelativeTimeTableWeek(0).then((value) {
-        widget.timeTable = value;
+      args.userSession.getRelativeTimeTableWeek(2).then((value) {
         setState(() {
+          timeTable = value;
           widget._isLoading = false;
         });
         log.i("TimeTable loaded");
@@ -45,123 +45,70 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
       List<Widget> timeTableList = [];
 
       for (int i = 0; i < 54; i++) {
-        if (hourList.contains(i)) {
-          timeColumnCounter++;
-        }
-        // erste reihe auschließen
+        // don't calculate first row
         if (i > 7) {
-          // schultage zurücksezten
+          //reset counter for the first left column
           if (schoolDayCounter >= 5) {
             schoolDayCounter = 0;
-            subjectRowCounter++;
           } else {
             schoolDayCounter++;
           }
         }
 
-        if (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
-                Codes.regular ||
-            widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
-                Codes.cancelled ||
-            i == 0 ||
-            i <= 5 ||
-            hourList.contains(i)) {
-          (i == 0)
-              ? timeTableList.add(
-                  CustomTimeTableCard(
-                    text: "Icon",
-                    icon: Icons.calendar_today,
-                    center: true,
-                  ),
-                )
-              : (i <= 5)
-                  ? timeTableList.add(
-                      CustomTimeTableCard(
-                        text:
-                            "${widget.timeTable.getDays()[i - 1].getShortName()} \n${widget.timeTable.getDays()[i - 1].getDate()}",
-                        textMaxLines: 5,
-                        center: true,
-                      ),
-                    )
-                  : (hourList.contains(i))
-                      ? timeTableList.add(
-                          CustomTimeTableHourCard(
-                            centerText: timeColumnCounter.toString(),
-                            topText:
-                                widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getStartTimeString(),
-                            bottomText:
-                                widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getEndTimeString(),
-                          ),
-                        )
-                      : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
-                          ? timeTableList.add(
-                              CustomTimeTableCard(
-                                text: "Holiday",
-                                center: true,
-                                textMaxLines: 1,
-                              ),
-                            )
-                          : (subjectRowCounter >= widget.timeTable.getDays()[schoolDayCounter].getHours().length)
-                              ? timeTableList.add(
-                                  Container(),
-                                )
-                              : timeTableList.add(
-                                  CustomTimeTableCard(
-                                    text:
-                                        "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
-                                    bottomText: (widget.timeTable
-                                                .getDays()[schoolDayCounter]
-                                                .getHours()[subjectRowCounter]
-                                                .getLessonCode() ==
-                                            Codes.cancelled)
-                                        ? "Entfall"
-                                        : "",
-                                    divider: true,
-                                    topColor: (widget.timeTable
-                                                .getDays()[schoolDayCounter]
-                                                .getHours()[subjectRowCounter]
-                                                .getLessonCode() ==
-                                            Codes.cancelled)
-                                        ? Colors.red
-                                        : Colors.black87,
-                                    bottomColor: (widget.timeTable
-                                                .getDays()[schoolDayCounter]
-                                                .getHours()[subjectRowCounter]
-                                                .getLessonCode() ==
-                                            Codes.cancelled)
-                                        ? Colors.red
-                                        : Colors.black87,
-                                    bottomTextMaxLines: 1,
-                                  ),
-                                );
-        } else if (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
-            Codes.irregular) {
+        if (hourList.contains(i)) {
+          timeColumnCounter++;
+        }
+
+        // Top left corner
+        if (i == 0) {
           timeTableList.add(
             CustomTimeTableCard(
-              text:
-                  "${widget.timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: subjectRowCounter).getReplacement().getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getRoom().name}",
-              bottomText: (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
-                      Codes.irregular)
-                  ? "Vertretung"
-                  : "",
-              topColor: Colors.purple.shade900,
-              bottomColor: Colors.purple.shade900,
-              divider: true,
-              bottomTextMaxLines: 2,
+              child: const Icon(
+                Icons.calendar_today_rounded,
+                color: Colors.white,
+              ),
             ),
           );
+          log.d("TimeTableCard: Top left corner");
+
+          // The first row
+        } else if (i <= 5) {
+          timeTableList.add(
+            CustomTimeTableDayCard(),
+          );
+          log.d("TimeTableCard: The first row");
+
+          // Left column with hours
+        } else if (hourList.contains(i)) {
+          timeTableList.add(
+            CustomTimeTableHourCard(
+              timeTableHour: timeTable.getDays()[0].getHours()[timeColumnCounter-1],
+            ),
+          );
+          log.d("TimeTableCard: Left column with hours");
+
+          // If holiday  or weekend
+        } else if (timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
+          timeTableList.add(
+            CustomTimeTableCard(
+              child: const Text("Holiday"),
+            ),
+          );
+          log.d("TimeTableCard: If holiday or weekend");
+
+          // If no subject
+        } else if (timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter-1].isEmpty()) {
+          timeTableList.add(CustomTimeTableCard());
+          log.d("TimeTableCard: If no subject");
+
+          // subject
         } else {
           timeTableList.add(
-            CustomTimeTableCard(
-              text: (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? "Holiday/Weekend" : "",
-              center: true,
-              topColor:
-                  (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? Colors.blue : Colors.black87,
-              bottomColor:
-                  (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? Colors.blue : Colors.black87,
-              textMaxLines: 2,
+            CustomTimeTableInfoCard(
+              timeTableHour: timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter-1],
             ),
           );
+          log.d("TimeTableCard: Subject");
         }
       }
       return timeTableList;
@@ -170,13 +117,13 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            "Timetable ${(widget._isLoading) ? "" : widget.timeTable.getDays()[0].getDate().toString()} ${(widget._isLoading) ? "" : widget.timeTable.getDays()[widget.timeTable.getDays().length - 1].getDate().toString()}"),
+            "Timetable ${(widget._isLoading) ? "" : timeTable.getDays()[0].getDate().toString()} ${(widget._isLoading) ? "" : timeTable.getDays()[timeTable.getDays().length - 1].getDate().toString()}"),
         backgroundColor: Colors.black87,
       ),
       drawer: const CustomDrawer(),
       body: Container(
         color: Colors.black,
-        child: widget._isLoading
+        child: (widget._isLoading)
             ? const Center(
                 child: CircularProgressIndicator(
                   color: Colors.white,
