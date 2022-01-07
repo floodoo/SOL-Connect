@@ -74,7 +74,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           // The first row
         } else if (i <= 5) {
           timeTableList.add(
-            CustomTimeTableDayCard(),
+            CustomTimeTableDayCard(timeTableDay: timeTable.getDays()[i-1]),
           );
           log.d("TimeTableCard: The first row");
 
