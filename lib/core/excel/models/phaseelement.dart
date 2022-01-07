@@ -10,25 +10,26 @@ enum PhaseCodes {
 }
 
 extension Phase on PhaseCodes {
-  Color get color {
-    switch (this) {
-      case PhaseCodes.orienting:
-        return Color.PHASE_ORIENTING;
-      case PhaseCodes.reflection:
-        return Color.PHASE_REFLECTION;
-      case PhaseCodes.structured:
-        return Color.PHASE_STRUCTURED;
-      case PhaseCodes.free:
-        return Color.PHASE_FREE;
-      case PhaseCodes.feedback:
-        return Color.PHASE_FEEDBACK;
-      default:
-        return Color(0, 0, 0);
+    Color get color {
+      switch(this) {
+        case PhaseCodes.orienting:
+          return Color.PHASE_ORIENTING;
+        case PhaseCodes.reflection:
+          return Color.PHASE_REFLECTION;
+        case PhaseCodes.structured:
+          return Color.PHASE_STRUCTURED;
+        case PhaseCodes.free:
+          return Color.PHASE_FREE;
+        case PhaseCodes.feedback:
+          return Color.PHASE_FEEDBACK;
+        default:
+          return Color(0, 0, 0);
+      }
     }
-  }
 }
 
 class Color {
+
   ///Maximale Abweichung der angegebenen Farbe
   static const int maxRGBDeviation = 5;
 
@@ -42,13 +43,13 @@ class Color {
 
   Color(this.r, this.g, this.b);
 
-  static PhaseCodes estimatePhaseFromColor(Color color) {
-    for (PhaseCodes code in PhaseCodes.values) {
-      if (_inRange(need: code.color.r, isvalue: color.r) &&
-          _inRange(need: code.color.g, isvalue: color.g) &&
-          _inRange(need: code.color.b, isvalue: color.b)) {
+  static PhaseCodes estimatePhaseFromColor(Color color) { 
+    for(PhaseCodes code in PhaseCodes.values) {
+      if(_inRange(need: code.color.r, isvalue: color.r) 
+        && _inRange(need: code.color.g, isvalue: color.g) 
+          && _inRange(need: code.color.b, isvalue: color.b) ) {
         return code;
-      }
+      } 
     }
     return PhaseCodes.unknown;
   }

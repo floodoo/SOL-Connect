@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       routes: {
         LoginScreen.routeName: (context) => const LoginScreen(),
         CustomDrawer.routeName: (context) => const CustomDrawer(),
-        TimeTableScreen.routeName: (context) => const TimeTableScreen(),
+        TimeTableScreen.routeName: (context) => TimeTableScreen(),
       },
     );
   }

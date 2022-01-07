@@ -10,6 +10,7 @@ import 'models/profiledata.dart';
 import '../exceptions.dart';
 
 class UserSession {
+
   String _appName = "adw8638ordfgq37qp98";
   String _sessionId = "";
   int _personId = -1;
@@ -22,7 +23,6 @@ class UserSession {
   // ignore: non_constant_identifier_names
   ///Die base url von allen API Endpunkten.
   final String API_BASE_URL = "https://hepta.webuntis.com";
-
   ///JsonRPC endpoint. Überlicherweise: https://hepta.webuntis.com/WebUntis/jsonrpc.do?school=bbs1-mainz
   String RPC_URL = "";
   bool _sessionValid = false;
@@ -54,33 +54,24 @@ class UserSession {
   ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
   Future createSession({String username = "", String password = ""}) async {
-    if (_sessionValid) {
-      throw UserAlreadyLoggedInException(
-          "Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
+
+    if(_sessionValid) {
+      throw UserAlreadyLoggedInException("Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
     }
 
     if (username == "" || password == "") {
       throw MissingCredentialsException("Bitte gib einen Benutzenamen und ein Passwort an");
     }
 
-    rh.RPCResponse response =
-        await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
+    rh.RPCResponse response = await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
 
     if (response.isHttpError()) {
-      throw ApiConnectionError("Ein http Fehler ist aufegteten: " +
-          response.getErrorMessage().toString() +
-          "(" +
-          response.getErrorCode().toString() +
-          ")");
+      throw ApiConnectionError("Ein http Fehler ist aufegteten: " + response.getErrorMessage().toString() +  "(" + response.getErrorCode().toString() + ")");
     } else if (response.isError()) {
-      if (response.getErrorCode() == -8504) {
+      if (response.getErrorCode() == -8504) { 
         throw WrongCredentialsException("Benutzename oder Passwort falsch");
       } else {
-        throw ApiConnectionError("Ein Fehler ist aufgetreten: " +
-            response.getErrorMessage().toString() +
-            "(" +
-            response.getErrorCode().toString() +
-            ")");
+        throw ApiConnectionError("Ein Fehler ist aufgetreten: " + response.getErrorMessage().toString() + "(" + response.getErrorCode().toString() +  ")");
       }
     }
 
@@ -98,9 +89,9 @@ class UserSession {
 
   ///Muss üblicherweise nicht aufgerufen werden.
   Future regenerateSessionBearerToken() async {
-    //Bearer Token für aktuelle Session holen.
+     //Bearer Token für aktuelle Session holen.
     http.Response r = await _queryURL("/WebUntis/api/token/new");
-    if (r.statusCode == 200) {
+    if(r.statusCode == 200) {
       _bearerToken = r.body;
     } else {
       print("Warning: Failed to fetch api token. Unable to call 'getNews()' and 'getProfileData()'");
@@ -154,14 +145,13 @@ class UserSession {
 
   ///* Benötigt einen erfolgreich generierten Bearer Token (Passiert automatisch)
   Future<News> getNewsData(DateTime date, {bool loadFromCache = true}) async {
-    if (!loadFromCache || _cachedNewsData.getRssUrl() == "") {
-      http.Response r = await _queryURL(
-          "/WebUntis/api/public/news/newsWidgetData?date=" + utils.convertToUntisDate(date),
-          needsAuthorization: true);
+  
+     if(!loadFromCache || _cachedNewsData.getRssUrl() == "") {
+      http.Response r = await _queryURL("/WebUntis/api/public/news/newsWidgetData?date=" + utils.convertToUntisDate(date), needsAuthorization: true);
       _cachedNewsData = News(jsonDecode(r.body));
-    }
+     }
 
-    return _cachedNewsData;
+     return _cachedNewsData;
   }
 
   ///Gibt Profil Daten wie Name, Profilbild etc. in einem `ProfileData` Objekt zurück.
@@ -171,7 +161,8 @@ class UserSession {
   ///Erfolgreich geladene Profildaten werden gecached.
   ///Falls frische Serverdaten erzwungen werden sollten, [loadFromCache] auf false setzen.
   Future<ProfileData> getProfileData({bool loadFromCache = true}) async {
-    if (!loadFromCache || _cachedProfileData.getSchoolId() == -1) {
+
+    if(!loadFromCache || _cachedProfileData.getSchoolId() == -1) {
       http.Response r = await _queryURL("/WebUntis/api/rest/view/v1/app/data", needsAuthorization: true);
       _cachedProfileData = ProfileData(jsonDecode(r.body));
     }
@@ -216,6 +207,7 @@ class UserSession {
   ///* `getRelativeTimeTableWeek(1);` gibt die nächste Woche zurück.
   ///* `getRelativeTimeTableWeek(0);` entspricht `getTimeTableForThisWeek()`
   Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
+    
     DateTime from = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
 
     if (relative < 0) {
@@ -280,29 +272,30 @@ class UserSession {
       if (value.isError()) {
         //Failed to login again.
         logout();
-        throw Exception("Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
+        throw Exception(
+            "Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
       }
       return value;
     });
   }
 
   Future<http.Response> _queryURL(String url, {bool needsAuthorization = false}) async {
-    if (needsAuthorization && !isAPIAuthorized()) {
+    if(needsAuthorization && !isAPIAuthorized()) {
       print("Failed to fetch bearer token. Retrying ...");
       await regenerateSessionBearerToken();
     }
 
     Map<String, String> header = {};
-    if (needsAuthorization) {
+    if(needsAuthorization) {
       header = {
         'Content-type': 'application/json',
-        'Cookie': _buildAuthCookie(),
-        'Authorization': "Bearer " + _bearerToken
+          'Cookie': _buildAuthCookie(),
+          'Authorization': "Bearer " + _bearerToken
       };
     } else {
       header = {
         'Content-type': 'application/json',
-        'Cookie': _buildAuthCookie(),
+          'Cookie': _buildAuthCookie(),
       };
     }
 
@@ -310,16 +303,31 @@ class UserSession {
   }
 
   Future<rh.RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
-    Object build = {"id": _appName, "method": method, "params": params, "jsonrpc": 2.0};
+    
+    Object build = {
+      "id": _appName,
+      "method": method,
+      "params": params,
+      "jsonrpc": 2.0
+    };
 
-    rh.RPCResponse orig = rh.RPCResponse.handle(await http.Client().post(Uri.parse(RPC_URL),
-        headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
+    rh.RPCResponse orig = rh.RPCResponse.handle(await http.Client().post(
+        Uri.parse(RPC_URL),
+        headers: {
+          'Content-type': 'application/json',
+          'Cookie': _buildAuthCookie()
+        },
+        body: jsonEncode(build)));
 
     if (validateSession && orig.getErrorCode() == -8520 && _sessionValid) {
       rh.RPCResponse r = await _validateSession();
       if (!r.isError()) {
         return rh.RPCResponse.handle(await http.Client().post(Uri.parse(RPC_URL),
-            headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
+            headers: {
+              'Content-type': 'application/json',
+              'Cookie': _buildAuthCookie()
+            },
+            body: jsonEncode(build)));
       } else {
         return r;
       }

@@ -3,6 +3,7 @@
 import '../../exceptions.dart';
 
 class ProfileData {
+
   String _displayName = "";
   String _imageURL = "";
 
@@ -11,26 +12,27 @@ class ProfileData {
   int _schoolId = -1;
 
   ProfileData(dynamic jsonData) {
-    if (jsonData == null) {
+    
+    if(jsonData == null) {
       return;
     }
 
-    if (jsonData['errorMessage'] != null) {
+    if(jsonData['errorMessage'] != null) {
       throw FailedToFetchUserdata(jsonData['errorMessage']);
-    }
+    }   
 
     _displayName = jsonData['user']['person']['displayName'];
-
-    if (jsonData['user']['person']['imageUrl'] != null) {
+   
+    if(jsonData['user']['person']['imageUrl'] != null) {
       _imageURL = jsonData['user']['person']['imageUrl'];
     }
 
-    if (jsonData['tenant'] != null) {
+    if(jsonData['tenant'] != null) {
       _schoolId = jsonData['tenant']['id'];
       _schoolLongName = jsonData['tenant']['displayName'];
     }
 
-    if (jsonData['oneDriveData'] != null) {
+    if(jsonData['oneDriveData'] != null) {
       _oneDriveClientID = jsonData['oneDriveData']['oneDriveClientId'];
     }
   }

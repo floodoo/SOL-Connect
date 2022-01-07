@@ -69,7 +69,6 @@ class ExcelMergeTimetableNotFound implements Exception {
     return this.runtimeType.toString() + ": " + cause;
   }
 }
-
 //Excel Datei konnte nicht für den angegebenen Stundenplan verifiziert werden.
 class ExcelMergeFileNotVerified implements Exception {
   String cause = "";

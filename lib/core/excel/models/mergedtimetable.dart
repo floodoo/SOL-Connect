@@ -6,6 +6,7 @@ import '../../api/models/timetable.hour.dart';
 import '../validator.dart';
 
 class MergedTimeTable {
+  
   ///Gibt eine Fehlermeldung zurück, falls dieser Stundenplan nicht mit der Excel gemappt werden konnte.
   ///
   ///Immer leer, außer `verified() == false`
@@ -23,7 +24,7 @@ class MergedTimeTable {
   ///
   ///Wenn dies nicht der Fall ist, ist `mapped` null. Außerdem kann eine kurze Fehlernachricht in `MergedTimeTable.errorMessage` ausgelesen werden.
   bool verified() {
-    if (mapped != null) {
+    if(mapped != null) {
       return mapped!.isValid();
     } else {
       return false;
@@ -44,8 +45,8 @@ class MergedTimeTable {
   ///
   ///Gibt immer unbekannte Phasen zurück, wenn `verified() == false`
   MappedPhase getPhaseForHour(TimeTableHour hour) {
-    for (MappedPhase phase in mapped!.getHours()) {
-      if (phase.getHourXIndex() == hour.xIndex && phase.getHourYIndex() == hour.yIndex) {
+    for(MappedPhase phase in mapped!.getHours()) {
+      if(phase.getHourXIndex() == hour.xIndex && phase.getHourYIndex() == hour.yIndex) {
         return phase;
       }
     }

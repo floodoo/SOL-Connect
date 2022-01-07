@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomTimeTableCard extends StatelessWidget {
-  const CustomTimeTableCard({Key? key, this.child}) : super(key: key);
-  final Widget? child;
+  CustomTimeTableCard({Key? key, this.child}) : super(key: key);
+  Widget? child;
 
   @override
   Widget build(BuildContext context) {

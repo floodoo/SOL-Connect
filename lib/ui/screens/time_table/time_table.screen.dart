@@ -10,31 +10,32 @@ import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 
 class TimeTableScreen extends StatefulWidget {
-  const TimeTableScreen({Key? key}) : super(key: key);
+  TimeTableScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableScreen).toString();
+  bool _isLoading = true;
 
   @override
   State<TimeTableScreen> createState() => _TimeTableScreenState();
 }
 
 class _TimeTableScreenState extends State<TimeTableScreen> {
+  late TimeTableRange timeTable;
   @override
   Widget build(BuildContext context) {
     final Logger log = getLogger();
-    final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
-    late TimeTableRange timeTable;
 
-    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
+    final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
 
     int timeColumnCounter = 0;
     int schoolDayCounter = 0;
-    bool _isLoading = true;
+    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
-    if (_isLoading) {
+
+    if (widget._isLoading) {
       args.userSession.getRelativeTimeTableWeek(2).then((value) {
         setState(() {
           timeTable = value;
-          _isLoading = false;
+          widget._isLoading = false;
         });
         log.i("TimeTable loaded");
       });
@@ -61,8 +62,8 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
         // Top left corner
         if (i == 0) {
           timeTableList.add(
-            const CustomTimeTableCard(
-              child: Icon(
+            CustomTimeTableCard(
+              child: const Icon(
                 Icons.calendar_today_rounded,
                 color: Colors.white,
               ),
@@ -73,7 +74,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           // The first row
         } else if (i <= 5) {
           timeTableList.add(
-            CustomTimeTableDayCard(timeTableDay: timeTable.getDays()[i - 1]),
+            CustomTimeTableDayCard(timeTableDay: timeTable.getDays()[i-1]),
           );
           log.d("TimeTableCard: The first row");
 
@@ -81,7 +82,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
         } else if (hourList.contains(i)) {
           timeTableList.add(
             CustomTimeTableHourCard(
-              timeTableHour: timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
+              timeTableHour: timeTable.getDays()[0].getHours()[timeColumnCounter-1],
             ),
           );
           log.d("TimeTableCard: Left column with hours");
@@ -89,22 +90,22 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           // If holiday  or weekend
         } else if (timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
           timeTableList.add(
-            const CustomTimeTableCard(
-              child: Text("Holiday"),
+            CustomTimeTableCard(
+              child: const Text("Holiday"),
             ),
           );
           log.d("TimeTableCard: If holiday or weekend");
 
           // If no subject
-        } else if (timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty()) {
-          timeTableList.add(const CustomTimeTableCard());
+        } else if (timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter-1].isEmpty()) {
+          timeTableList.add(CustomTimeTableCard());
           log.d("TimeTableCard: If no subject");
 
           // subject
         } else {
           timeTableList.add(
             CustomTimeTableInfoCard(
-              timeTableHour: timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1],
+              timeTableHour: timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter-1],
             ),
           );
           log.d("TimeTableCard: Subject");
@@ -116,13 +117,13 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            "Timetable ${(_isLoading) ? "" : timeTable.getDays()[0].getDate().toString()} ${(_isLoading) ? "" : timeTable.getDays()[timeTable.getDays().length - 1].getDate().toString()}"),
+            "Timetable ${(widget._isLoading) ? "" : timeTable.getDays()[0].getDate().toString()} ${(widget._isLoading) ? "" : timeTable.getDays()[timeTable.getDays().length - 1].getDate().toString()}"),
         backgroundColor: Colors.black87,
       ),
       drawer: const CustomDrawer(),
       body: Container(
         color: Colors.black,
-        child: (_isLoading)
+        child: (widget._isLoading)
             ? const Center(
                 child: CircularProgressIndicator(
                   color: Colors.white,
