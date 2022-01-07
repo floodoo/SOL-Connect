@@ -186,7 +186,8 @@ Es folgt eine kleine Liste möglicher Befehle.
 - Änderung des 'convertxsff' client command flows. `!Aktueller client nicht mehr mit 1.0.1 kompatibel!`
 
 ### 1.1.1
-- Bugfix
+- Fehler Behoben, bei dem immer ein Verbindungsfehler auftrat, sobalt sich der erste Client nach einem Server neustart verbinden wollte.
+- Diverse weitere Bugfixes
 
 ### Zukunft
 - Excel Verifizierung komplett auf den Server auslagern
