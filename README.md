@@ -27,7 +27,7 @@ Alle kriterien sind mit dem bereits benutzten Format erfüllt.
 ## Excel Server
 
 Da es nicht möglich ist Zellenfarben auszulesen, wird ein aktive Excel Server benötigt.
-Siehe "Andere Prokejte"
+Siehe [Andere Prokejte](#andere-projekte)
 
 ## Laden einer Excel Datei
 
