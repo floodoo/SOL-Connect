@@ -47,9 +47,11 @@ class _CustomTimeTableHourCardState extends State<CustomTimeTableHourCard> {
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  hour.toString(),
-                  style: const TextStyle(color: Colors.white),
+                child: Center(
+                  child: Text(
+                    hour.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
               Expanded(
