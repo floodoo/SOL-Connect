@@ -62,8 +62,8 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
         // Top left corner
         if (i == 0) {
           timeTableList.add(
-            CustomTimeTableCard(
-              child: const Icon(
+            const CustomTimeTableCard(
+              child: Icon(
                 Icons.calendar_today_rounded,
                 color: Colors.white,
               ),
@@ -90,15 +90,15 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           // If holiday  or weekend
         } else if (timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
           timeTableList.add(
-            CustomTimeTableCard(
-              child: const Text("Holiday"),
+            const CustomTimeTableCard(
+              child: Text("Holiday"),
             ),
           );
           log.d("TimeTableCard: If holiday or weekend");
 
           // If no subject
         } else if (timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter-1].isEmpty()) {
-          timeTableList.add(CustomTimeTableCard());
+          timeTableList.add(const CustomTimeTableCard());
           log.d("TimeTableCard: If no subject");
 
           // subject
