@@ -2,33 +2,30 @@
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'models/news.dart';
 import 'rpcresponse.dart' as rh;
 import 'models/utils.dart' as utils;
 import 'timetable.dart';
 import 'models/profiledata.dart';
+import '../exceptions.dart';
 
 class UserSession {
-  static const types = {
-    'CLASS': 1,
-    'TEACHER': 2,
-    'SUBJECT': 3,
-    'ROOM': 4,
-    'STUDENT': 5
-  };
 
-  String applicationName = "default";
-  String sessionId = "";
-  int personId = -1;
-  int klasseId = -1;
-  int type = 0;
+  String _appName = "adw8638ordfgq37qp98";
+  String _sessionId = "";
+  int _personId = -1;
+  int _klasseId = -1;
+  int _type = 0;
 
   String _school = "";
   String _schoolBase64 = "";
 
   // ignore: non_constant_identifier_names
-  final String BASE_URL = "https://hepta.webuntis.com";
-  String URL = "";
-  bool sessionValid = false;
+  ///Die base url von allen API Endpunkten.
+  final String API_BASE_URL = "https://hepta.webuntis.com";
+  ///JsonRPC endpoint. Überlicherweise: https://hepta.webuntis.com/WebUntis/jsonrpc.do?school=bbs1-mainz
+  String RPC_URL = "";
+  bool _sessionValid = false;
 
   // Empfindliche Variablen:
 
@@ -37,51 +34,67 @@ class UserSession {
   // ignore: unused_field
   String _pwd = "";
   //Token für API
-  String bearerToken = "";
+  String _bearerToken = "";
 
   ProfileData _cachedProfileData = ProfileData(null);
+  News _cachedNewsData = News(null);
 
   UserSession({String school = "", String appID = ""}) {
-    applicationName = appID;
+    _appName = appID;
 
     _school = school;
     _schoolBase64 = base64Encode(utf8.encode(school));
-    URL += BASE_URL + "/WebUntis/jsonrpc.do?school=" + school.toString();
+    RPC_URL += API_BASE_URL + "/WebUntis/jsonrpc.do?school=" + school.toString();
   }
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
+  ///Kann folgende Exceptions werfen:
+  ///
+  ///* `MissingCredentialsException` Bei fehlendem Benutzer oder Passwort
+  ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
+  ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
   Future createSession({String username = "", String password = ""}) async {
-    if (username == "" || password == "") {
-      throw Exception("Bitte gib einen Benutzenamen und ein Passwort an");
+
+    if(_sessionValid) {
+      throw UserAlreadyLoggedInException("Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
     }
 
-    rh.RPCResponse response = await _queryRPC("authenticate",
-        {"user": username, "password": password, "client": applicationName});
+    if (username == "" || password == "") {
+      throw MissingCredentialsException("Bitte gib einen Benutzenamen und ein Passwort an");
+    }
+
+    rh.RPCResponse response = await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
 
     if (response.isHttpError()) {
-      throw Exception("Ein http Fehler ist aufegteten: " +
-          response.getErrorMessage().toString() +  "(" + response.getErrorCode().toString() + ")");
+      throw ApiConnectionError("Ein http Fehler ist aufegteten: " + response.getErrorMessage().toString() +  "(" + response.getErrorCode().toString() + ")");
     } else if (response.isError()) {
-      if (response.getErrorCode() == -8504) {
-        throw Exception("Benutzename oder Passwort falsch");
+      if (response.getErrorCode() == -8504) { 
+        throw WrongCredentialsException("Benutzename oder Passwort falsch");
       } else {
-        throw Exception("Ein Fehler ist aufgetreten: " + response.getErrorMessage().toString() + "(" + response.getErrorCode().toString() +  ")");
+        throw ApiConnectionError("Ein Fehler ist aufgetreten: " + response.getErrorMessage().toString() + "(" + response.getErrorCode().toString() +  ")");
       }
     }
 
-    sessionId = response.getPayloadData()['sessionId'];
-    personId = response.getPayloadData()['personId'];
-    klasseId = response.getPayloadData()['klasseId'];
-    type = response.getPayloadData()['personType'];
+    _sessionId = response.getPayloadData()['sessionId'];
+    _personId = response.getPayloadData()['personId'];
+    _klasseId = response.getPayloadData()['klasseId'];
+    _type = response.getPayloadData()['personType'];
 
-    sessionValid = true;
+    _sessionValid = true;
     _un = username;
     _pwd = password;
 
-    //Bearer Token für aktuelle Session holen.
+    await regenerateSessionBearerToken();
+  }
+
+  ///Muss üblicherweise nicht aufgerufen werden.
+  Future regenerateSessionBearerToken() async {
+     //Bearer Token für aktuelle Session holen.
     http.Response r = await _queryURL("/WebUntis/api/token/new");
     if(r.statusCode == 200) {
-      bearerToken = r.body;
+      _bearerToken = r.body;
+    } else {
+      print("Warning: Failed to fetch api token. Unable to call 'getNews()' and 'getProfileData()'");
     }
   }
 
@@ -97,54 +110,95 @@ class UserSession {
 
   ///Die Rolle der eingeloggten Person. Es gibt "Schüler" und "Lehrer"
   String getPersonType() {
-    if (type == 2) {
+    if (_type == 2) {
       return "Lehrer";
-    } else if (type == 5) {
+    } else if (_type == 5) {
       return "Schüler";
     }
-    return type.toString();
+    return _type.toString();
   }
 
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
   Future<rh.RPCResponse> logout() async {
-    rh.RPCResponse response =
-        await _queryRPC("logout", {}, validateSession: false);
-    sessionValid = false;
-    sessionId = "";
+    rh.RPCResponse response = await _queryRPC("logout", {}, validateSession: false);
+    _sessionValid = false;
+    _sessionId = "";
     _un = "";
     _pwd = "";
-    personId = -1;
-    klasseId = -1;
-    type = -1;
-    bearerToken = "";
+    _personId = -1;
+    _klasseId = -1;
+    _type = -1;
+    _bearerToken = "";
     return response;
   }
 
-  bool isAuthroized() {
-    return bearerToken.isNotEmpty && sessionId.isNotEmpty && personId != -1;
+  ///Gibt true zurück, wenn der user eingeloggt ist und JsonRPC API Anfragen stellen darf
+  bool isRPCAuthroized() {
+    return _sessionId.isNotEmpty && _personId != -1;
   }
 
-  getNews(DateTime date) async {
-    http.Response r = await _queryURL("/WebUntis/api/public/news/newsWidgetData?date=" + utils.convertToUntisDate(date), needsAuthorization: true);
-    print(r.body);
+  ///Gibt true zurück, wenn der user eingeloggt ist und API Anfragen stellen darf
+  bool isAPIAuthorized() {
+    return _bearerToken.isNotEmpty;
+  }
+
+  ///* Benötigt einen erfolgreich generierten Bearer Token (Passiert automatisch)
+  Future<News> getNewsData(DateTime date, {bool loadFromCache = true}) async {
+  
+     if(!loadFromCache || _cachedNewsData.getRssUrl() == "") {
+      http.Response r = await _queryURL("/WebUntis/api/public/news/newsWidgetData?date=" + utils.convertToUntisDate(date), needsAuthorization: true);
+      _cachedNewsData = News(jsonDecode(r.body));
+     }
+
+     return _cachedNewsData;
   }
 
   ///Gibt Profil Daten wie Name, Profilbild etc. in einem `ProfileData` Objekt zurück.
+  ///* Benötigt einen erfolgreich generierten Bearer Token (Passiert automatisch)
   ///
   ///Da die Profil Daten sich innerhalb einer Instanz nicht (oder nur selten) ändern sollten wird nur beim ersten Aufruf dieser Funktion eine API anfrage gesendet.
   ///Erfolgreich geladene Profildaten werden gecached.
   ///Falls frische Serverdaten erzwungen werden sollten, [loadFromCache] auf false setzen.
-  ///
-  ///Falls ein Fehler auftritt, wird eine `FailedToFetchUserdata` Exception geworfen.
   Future<ProfileData> getProfileData({bool loadFromCache = true}) async {
-  
+
     if(!loadFromCache || _cachedProfileData.getSchoolId() == -1) {
       http.Response r = await _queryURL("/WebUntis/api/rest/view/v1/app/data", needsAuthorization: true);
       _cachedProfileData = ProfileData(jsonDecode(r.body));
     }
 
     return _cachedProfileData;
+  }
+
+  ///Die URL des Profilbildes von `getProfileData()` gecached.
+  ///
+  ///Könnte eine `FailedToFetchUserdata` exception werfen.
+  Future<String> getProfilePictureUrl() async {
+    ProfileData data = await getProfileData();
+    return data.getProfilePictureURL();
+  }
+
+  ///Nach und Vornamen von `getProfileData()` gecached.
+  ///Um Namen getrennt zu bekommen `getProfileData().getNameSeparated()` aufrufen.
+  ///
+  ///Könnte eine `FailedToFetchUserdata` exception werfen.
+  Future<String> getProfileFirstAndLastName() async {
+    ProfileData data = await getProfileData();
+    return data.getFirstAndLastName();
+  }
+
+  ///Den langen Schulnamen: "BBS I für gewerberbe" blah ...
+  ///Wrapper für `getProfileData().getSchoolLongName()`
+  ///
+  ///Könnte eine `FailedToFetchUserdata` exception werfen.
+  Future<String> getProfileSchoolName() async {
+    ProfileData data = await getProfileData();
+    return data.getSchoolLongName();
+  }
+
+  ///Die ID der Klasse in der der Schüler ist
+  int getKlasseId() {
+    return _klasseId;
   }
 
   ///Gibt einen Wochenstundenplan relativ zur derzeitigen Woche zurück. Von Montag bis Sonntag
@@ -175,13 +229,13 @@ class UserSession {
   }
 
   Future<TimeTableRange> getTimeTableForToday() async {
-    if (!sessionValid) throw Exception("Die Session ist ungültig.");
+    if (!_sessionValid) throw Exception("Die Session ist ungültig.");
 
     return getTimeTable(DateTime.now(), DateTime.now());
   }
 
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to) async {
-    if (!sessionValid) throw Exception("Die Session ist ungültig.");
+    if (!_sessionValid) throw Exception("Die Session ist ungültig.");
 
     return TimeTableRange(
         from,
@@ -191,7 +245,7 @@ class UserSession {
           "options": {
             "startDate": utils.convertToUntisDate(from),
             "endDate": utils.convertToUntisDate(to),
-            "element": {"id": personId, "type": type},
+            "element": {"id": _personId, "type": _type},
             "showLsText": true,
             "showStudentgroup": true,
             "showLsNumber": true,
@@ -208,12 +262,9 @@ class UserSession {
 
   /// Diese müssen in den Header gelegt werden
   String _buildAuthCookie() {
-    if (!sessionValid) return "";
+    if (!_sessionValid) return "";
 
-    return "JSESSIONID=" +
-        sessionId +
-        "; schoolname=" +
-        _schoolBase64.replaceAll("=", "%3D");
+    return "JSESSIONID=" + _sessionId + "; schoolname=" + _schoolBase64.replaceAll("=", "%3D");
   }
 
   Future<rh.RPCResponse> _validateSession() async {
@@ -229,12 +280,17 @@ class UserSession {
   }
 
   Future<http.Response> _queryURL(String url, {bool needsAuthorization = false}) async {
+    if(needsAuthorization && !isAPIAuthorized()) {
+      print("Failed to fetch bearer token. Retrying ...");
+      await regenerateSessionBearerToken();
+    }
+
     Map<String, String> header = {};
     if(needsAuthorization) {
       header = {
         'Content-type': 'application/json',
           'Cookie': _buildAuthCookie(),
-          'Authorization': "Bearer " + bearerToken
+          'Authorization': "Bearer " + _bearerToken
       };
     } else {
       header = {
@@ -243,29 +299,30 @@ class UserSession {
       };
     }
 
-    return http.Client().get(Uri.parse(BASE_URL + url), headers: header);
+    return http.Client().get(Uri.parse(API_BASE_URL + url), headers: header);
   }
 
   Future<rh.RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
+    
     Object build = {
-      "id": applicationName,
+      "id": _appName,
       "method": method,
       "params": params,
       "jsonrpc": 2.0
     };
 
     rh.RPCResponse orig = rh.RPCResponse.handle(await http.Client().post(
-        Uri.parse(URL),
+        Uri.parse(RPC_URL),
         headers: {
           'Content-type': 'application/json',
           'Cookie': _buildAuthCookie()
         },
         body: jsonEncode(build)));
 
-    if (validateSession && orig.getErrorCode() == -8520 && sessionValid) {
+    if (validateSession && orig.getErrorCode() == -8520 && _sessionValid) {
       rh.RPCResponse r = await _validateSession();
       if (!r.isError()) {
-        return rh.RPCResponse.handle(await http.Client().post(Uri.parse(URL),
+        return rh.RPCResponse.handle(await http.Client().post(Uri.parse(RPC_URL),
             headers: {
               'Content-type': 'application/json',
               'Cookie': _buildAuthCookie()
