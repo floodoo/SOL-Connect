@@ -6,7 +6,7 @@ class FailedToEstablishExcelServerConnection implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -16,7 +16,7 @@ class ExcelConversionConnectionError implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -26,7 +26,7 @@ class ExcelConversionAlreadyActive implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -36,7 +36,7 @@ class ExcelConversionServerError implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -46,7 +46,7 @@ class ExcelMergeNonSchoolBlockException implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -56,7 +56,7 @@ class ExcelMergeTimetableNotMatchException implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -66,7 +66,7 @@ class ExcelMergeTimetableNotFound implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 //Excel Datei konnte nicht für den angegebenen Stundenplan verifiziert werden.
@@ -76,7 +76,7 @@ class ExcelMergeFileNotVerified implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -86,7 +86,7 @@ class FailedToFetchUserdata implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -96,7 +96,7 @@ class UserAlreadyLoggedInException implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -106,7 +106,7 @@ class WrongCredentialsException implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -116,7 +116,7 @@ class MissingCredentialsException implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -126,7 +126,7 @@ class ApiConnectionError implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }
 
@@ -136,6 +136,6 @@ class FailedToFetchNewsException implements Exception {
 
   @override
   String toString() {
-    return this.runtimeType.toString() + ": " + cause;
+    return runtimeType.toString() + ": " + cause;
   }
 }

@@ -1,4 +1,4 @@
-/**Author Philipp Gersch */
+//Author Philipp Gersch
 
 import '../../exceptions.dart';
 
@@ -39,7 +39,7 @@ class NewsMessage {
 class News {
   
   NewsMessage _systemMessage = NewsMessage(null);
-  var _messagesOfDay = <NewsMessage>[];
+  final _messagesOfDay = <NewsMessage>[];
   String _rssUrl = "";
 
   News(dynamic jsonData) {

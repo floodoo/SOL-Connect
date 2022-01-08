@@ -13,15 +13,15 @@ extension Phase on PhaseCodes {
     Color get color {
       switch(this) {
         case PhaseCodes.orienting:
-          return Color.PHASE_ORIENTING;
+          return Color.phaseOrienting;
         case PhaseCodes.reflection:
-          return Color.PHASE_REFLECTION;
+          return Color.phaseReflection;
         case PhaseCodes.structured:
-          return Color.PHASE_STRUCTURED;
+          return Color.phaseStructured;
         case PhaseCodes.free:
-          return Color.PHASE_FREE;
+          return Color.phaseFree;
         case PhaseCodes.feedback:
-          return Color.PHASE_FEEDBACK;
+          return Color.phaseFeedback;
         default:
           return Color(0, 0, 0);
       }
@@ -33,11 +33,11 @@ class Color {
   ///Maximale Abweichung der angegebenen Farbe
   static const int maxRGBDeviation = 5;
 
-  static final Color PHASE_ORIENTING = Color(255, 192, 0);
-  static final Color PHASE_REFLECTION = Color(255, 255, 0);
-  static final Color PHASE_STRUCTURED = Color(0, 176, 240);
-  static final Color PHASE_FREE = Color(146, 208, 80);
-  static final Color PHASE_FEEDBACK = Color(255, 0, 0);
+  static final Color phaseOrienting = Color(255, 192, 0);
+  static final Color phaseReflection = Color(255, 255, 0);
+  static final Color phaseStructured = Color(0, 176, 240);
+  static final Color phaseFree = Color(146, 208, 80);
+  static final Color phaseFeedback = Color(255, 0, 0);
 
   final int r, g, b;
 
@@ -58,6 +58,7 @@ class Color {
     return isvalue >= need - maxRGBDeviation && isvalue <= need + maxRGBDeviation;
   }
 
+  @override
   String toString() {
     return r.toString() + ", " + g.toString() + ", " + b.toString();
   }

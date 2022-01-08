@@ -61,8 +61,8 @@ class ExcelValidator {
 
   bool _queryActive = false;
 
-  final String EXCEL_SERVER_ADDR;
-  final int EXCE_SERVER_PORT = 6969;
+  final String excelServerAddr;
+  final int excelServerPort = 6969;
 
   //Speichere die Farben um beim mehrfachen aufrufen der mergeExcelWithTimetable() Funktion keinen unnötigen traffic zu erzeugen.
   CellColors _colorData = CellColors();
@@ -73,7 +73,7 @@ class ExcelValidator {
   ///
   ///[_path] Der lokale Pfad zur Excel Datei
   ///[EXCEL_SERVER_ADDR] Die Serveradresse eines excel Servers
-  ExcelValidator(this.EXCEL_SERVER_ADDR, this._path) {
+  ExcelValidator(this.excelServerAddr, this._path) {
 
     if (_path.isEmpty) throw Exception("Der Pfad existiert nicht");
 
@@ -163,7 +163,7 @@ class ExcelValidator {
 
     try {
       _queryActive = true;
-      final socket = await Socket.connect(EXCEL_SERVER_ADDR, 6969);    
+      final socket = await Socket.connect(excelServerAddr, excelServerPort);    
 
       //Sende den Befehl
       socket.writeln("convertxssf");
@@ -202,9 +202,9 @@ class ExcelValidator {
       await socket.close();
       return _colorData;
 
-    } on Exception catch(e) {
+    } on Exception {
       _queryActive = false;
-      throw FailedToEstablishExcelServerConnection("Konnte keine Verbindung zum Konvertierungsserver " + EXCEL_SERVER_ADDR + " herstellen.");
+      throw FailedToEstablishExcelServerConnection("Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen.");
     }
   }
 
@@ -214,24 +214,20 @@ class ExcelValidator {
     //Alle Stundenpläne die in der Excel enthalten sind
     var mappedSheets = <MappedSheet>[];
 
-    int searchCount = 0;
     for(var table in _excel!.sheets.keys) {   
       for(int i = 0; i < _excel!.tables[table]!.maxCols; i++) {
         for(int j = 0; j < _excel!.tables[table]!.maxRows; j++) {
           
           if(_worthSearching(mappedSheets, xIndex: i, yIndex: j, excelWidth: _excel!.tables[table]!.maxCols, excelHeight: _excel!.tables[table]!.maxRows)) {
-            searchCount++;
             MappedSheet mappedTimetable = _searchRange(_excel!.tables[table]!, range, startX: i, startY: j);
 
             if(mappedTimetable.isValid()) {   
               mappedSheets.add(mappedTimetable);
-              print("Valid");
             }
           }
         }
       }
     }
-    print("Searched: " + searchCount.toString() + " cells");
     return mappedSheets;
   }
 

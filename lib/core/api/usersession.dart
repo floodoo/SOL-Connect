@@ -20,11 +20,10 @@ class UserSession {
   String _school = "";
   String _schoolBase64 = "";
 
-  // ignore: non_constant_identifier_names
   ///Die base url von allen API Endpunkten.
-  final String API_BASE_URL = "https://hepta.webuntis.com";
+  final String apiBaseUrl = "https://hepta.webuntis.com";
   ///JsonRPC endpoint. Überlicherweise: https://hepta.webuntis.com/WebUntis/jsonrpc.do?school=bbs1-mainz
-  String RPC_URL = "";
+  String rpcUrl = "";
   bool _sessionValid = false;
 
   // Empfindliche Variablen:
@@ -44,7 +43,7 @@ class UserSession {
 
     _school = school;
     _schoolBase64 = base64Encode(utf8.encode(school));
-    RPC_URL += API_BASE_URL + "/WebUntis/jsonrpc.do?school=" + school.toString();
+    rpcUrl += apiBaseUrl + "/WebUntis/jsonrpc.do?school=" + school.toString();
   }
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
@@ -94,7 +93,7 @@ class UserSession {
     if(r.statusCode == 200) {
       _bearerToken = r.body;
     } else {
-      print("Warning: Failed to fetch api token. Unable to call 'getNews()' and 'getProfileData()'");
+      //print("Warning: Failed to fetch api token. Unable to call 'getNews()' and 'getProfileData()'");
     }
   }
 
@@ -281,7 +280,7 @@ class UserSession {
 
   Future<http.Response> _queryURL(String url, {bool needsAuthorization = false}) async {
     if(needsAuthorization && !isAPIAuthorized()) {
-      print("Failed to fetch bearer token. Retrying ...");
+      //print("Failed to fetch bearer token. Retrying ...");
       await regenerateSessionBearerToken();
     }
 
@@ -299,7 +298,7 @@ class UserSession {
       };
     }
 
-    return http.Client().get(Uri.parse(API_BASE_URL + url), headers: header);
+    return http.Client().get(Uri.parse(apiBaseUrl + url), headers: header);
   }
 
   Future<rh.RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
@@ -312,7 +311,7 @@ class UserSession {
     };
 
     rh.RPCResponse orig = rh.RPCResponse.handle(await http.Client().post(
-        Uri.parse(RPC_URL),
+        Uri.parse(rpcUrl),
         headers: {
           'Content-type': 'application/json',
           'Cookie': _buildAuthCookie()
@@ -322,7 +321,7 @@ class UserSession {
     if (validateSession && orig.getErrorCode() == -8520 && _sessionValid) {
       rh.RPCResponse r = await _validateSession();
       if (!r.isError()) {
-        return rh.RPCResponse.handle(await http.Client().post(Uri.parse(RPC_URL),
+        return rh.RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
             headers: {
               'Content-type': 'application/json',
               'Cookie': _buildAuthCookie()

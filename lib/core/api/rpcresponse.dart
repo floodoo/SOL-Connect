@@ -30,7 +30,9 @@ class RPCResponse {
     //Standart Daten auszulesen
     if(json['id'].runtimeType == int) {
       response.appId = json['id'];
-    } else response.appId = "null";
+    } else {
+      response.appId = "null";
+    }
 
     response.rpcVersion = json['jsonrpc'];
 
