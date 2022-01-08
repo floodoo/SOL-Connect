@@ -5,7 +5,7 @@ import 'phaseelement.dart';
 class _ColorEntry {
   int _xIndex = 0;
   int _yIndex = 0;
-  Color _color = Color(0, 0, 0);
+  PhaseColor _color = PhaseColor(0, 0, 0);
 }
 
 class CellColors {
@@ -20,7 +20,7 @@ class CellColors {
       _ColorEntry entry = _ColorEntry();
       entry._xIndex = cell['x'];
       entry._yIndex = cell['y'];
-      entry._color = Color(cell['c']['r'], cell['c']['g'], cell['c']['b']);
+      entry._color = PhaseColor(cell['c']['r'], cell['c']['g'], cell['c']['b']);
       _colorEntries.add(entry);
     }
   }
@@ -29,12 +29,12 @@ class CellColors {
     return _colorEntries.isEmpty;
   }
 
-  Color getColorForCell({int xIndex = 0, int yIndex = 0}) {
+  PhaseColor getColorForCell({int xIndex = 0, int yIndex = 0}) {
     for(_ColorEntry entry in _colorEntries) {
       if(entry._xIndex == xIndex && entry._yIndex == yIndex) {
         return entry._color;
       }
     }
-    return Color(0, 0, 0);
+    return PhaseColor(0, 0, 0);
   }
 }

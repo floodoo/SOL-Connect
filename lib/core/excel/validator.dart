@@ -123,8 +123,8 @@ class ExcelValidator {
                 for(MappedPhase hour in mapped.getHours()) {
 
                   //die x und y sind IMMER die ersten hälften der stunde. Also y+1 ist die 2. hälfte
-                  hour._firstHalf = Color.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex));
-                  hour._secondHalf = Color.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex + 1));
+                  hour._firstHalf = PhaseColor.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex));
+                  hour._secondHalf = PhaseColor.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex + 1));
                   
                   //##############################
                   //          Fertig :)

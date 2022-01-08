@@ -16,8 +16,8 @@ class CustomTimeTableInfoCard extends StatefulWidget {
 
 class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
   late TimeTableHour _timeTableHour;
-  dynamic _colorPhaseTop = Colors.black87;
-  dynamic _colorPhaseBottom = Colors.black87;
+  PhaseColor _colorPhaseTop = PhaseCodes.unknown.color;
+  PhaseColor _colorPhaseBottom = PhaseCodes.unknown.color;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(10.0),
                           ),
-                          color: _colorPhaseTop,
+                          color: Color.fromRGBO(_colorPhaseTop.r, _colorPhaseTop.g, _colorPhaseTop.b, 1),
                         ),
                       ),
                     ),
@@ -73,7 +73,7 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                               ? Colors.purple.shade900
                               : (_timeTableHour.code == Codes.cancelled)
                                   ? Colors.red
-                                  : _colorPhaseTop,
+                                  : Color.fromRGBO(_colorPhaseTop.r, _colorPhaseTop.g, _colorPhaseTop.b, 1),
                         ),
                       ),
                     )
@@ -92,7 +92,7 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(10.0),
                           ),
-                          color: _colorPhaseBottom,
+                         color: Color.fromRGBO(_colorPhaseBottom.r, _colorPhaseBottom.g, _colorPhaseBottom.b, 1),
                         ),
                       ),
                     ),
@@ -108,7 +108,7 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                               ? Colors.purple.shade900
                               : (_timeTableHour.code == Codes.cancelled)
                                   ? Colors.red
-                                  : _colorPhaseBottom,
+                                  : Color.fromRGBO(_colorPhaseBottom.r, _colorPhaseBottom.g, _colorPhaseBottom.b, 1),
                         ),
                       ),
                     )
