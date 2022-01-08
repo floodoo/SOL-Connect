@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
+import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
+import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
@@ -8,7 +11,6 @@ import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table
 import 'package:untis_phasierung/ui/screens/time_table/widgets/time_table.arguments.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
-
 class TimeTableScreen extends StatefulWidget {
   TimeTableScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableScreen).toString();
@@ -30,9 +32,15 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
     int schoolDayCounter = 0;
     List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
-
     if (widget._isLoading) {
-      args.userSession.getRelativeTimeTableWeek(2).then((value) {
+      args.userSession.getRelativeTimeTableWeek(2).then((value) async {
+        ExcelValidator validator = ExcelValidator(
+            "flo-dev.me:6969", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
+        MergedTimeTable merged = await validator.mergeExcelWithTimetable(value);
+        MappedPhase phase = merged.getPhaseForHour(value.getDays()[0].getHours()[0]);
+        print(value.getDays()[0].getHours()[0].getSubject().name);
+        print(phase.getFirstHalf().name + " " + phase.getFirstHalf().color.toString());
+        print(phase.getSecondHalf().name + " " + phase.getFirstHalf().color.toString());
         setState(() {
           timeTable = value;
           widget._isLoading = false;
@@ -74,7 +82,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           // The first row
         } else if (i <= 5) {
           timeTableList.add(
-            CustomTimeTableDayCard(timeTableDay: timeTable.getDays()[i-1]),
+            CustomTimeTableDayCard(timeTableDay: timeTable.getDays()[i - 1]),
           );
           log.d("TimeTableCard: The first row");
 
@@ -82,7 +90,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
         } else if (hourList.contains(i)) {
           timeTableList.add(
             CustomTimeTableHourCard(
-              timeTableHour: timeTable.getDays()[0].getHours()[timeColumnCounter-1],
+              timeTableHour: timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
             ),
           );
           log.d("TimeTableCard: Left column with hours");
@@ -97,7 +105,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
           log.d("TimeTableCard: If holiday or weekend");
 
           // If no subject
-        } else if (timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter-1].isEmpty()) {
+        } else if (timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty()) {
           timeTableList.add(const CustomTimeTableCard());
           log.d("TimeTableCard: If no subject");
 
@@ -105,7 +113,7 @@ class _TimeTableScreenState extends State<TimeTableScreen> {
         } else {
           timeTableList.add(
             CustomTimeTableInfoCard(
-              timeTableHour: timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter-1],
+              timeTableHour: timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1],
             ),
           );
           log.d("TimeTableCard: Subject");
