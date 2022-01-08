@@ -5,7 +5,6 @@ import 'package:excel/excel.dart';
 
 ///Enthält gemappte Daten von einem Stundenplan in der Excel Datei
 class MappedSheet {
-
   final Sheet sheet;
   //Excel Timetable Boundaries
   int startX = 0, startY = 0;
@@ -37,11 +36,11 @@ class MappedSheet {
   }
 
   void estimateWeek() {
-    for(int i = 0; i < rawY - startY; i++) {
-      for(int i = 0; i < width; i++) {
-        var value = sheet.cell(CellIndex.indexByColumnRow(columnIndex: startX+i, rowIndex: startY));
-        if(value.value != null) {
-          if(value.value.toString().contains(RegExp(r'Woche\s[0-9]', caseSensitive: false))) {
+    for (int i = 0; i < rawY - startY; i++) {
+      for (int i = 0; i < width; i++) {
+        var value = sheet.cell(CellIndex.indexByColumnRow(columnIndex: startX + i, rowIndex: startY));
+        if (value.value != null) {
+          if (value.value.toString().contains(RegExp(r'Woche\s[0-9]', caseSensitive: false))) {
             blockWeek = int.parse(value.value.toString().split(" ")[1]);
             return;
           }

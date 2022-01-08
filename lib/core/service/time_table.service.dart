@@ -4,6 +4,7 @@ import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
@@ -14,6 +15,7 @@ class TimeTableService with ChangeNotifier {
   late UserSession session;
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
+  bool isSchoolBlock = true;
 
   void login(String username, String password) {
     UserSecureStorage.setUsername(username);
@@ -29,6 +31,10 @@ class TimeTableService with ChangeNotifier {
       },
     ).catchError(
       (error) {
+        if (error is ExcelMergeNonSchoolBlockException) {
+          isSchoolBlock = false;
+          notifyListeners();
+        }
         log.e("Error logging in: $error");
 
         log.d("Clearing user data");

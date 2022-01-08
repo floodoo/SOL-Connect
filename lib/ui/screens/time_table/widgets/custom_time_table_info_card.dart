@@ -92,7 +92,7 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(10.0),
                           ),
-                         color: Color.fromRGBO(_colorPhaseBottom.r, _colorPhaseBottom.g, _colorPhaseBottom.b, 1),
+                          color: Color.fromRGBO(_colorPhaseBottom.r, _colorPhaseBottom.g, _colorPhaseBottom.b, 1),
                         ),
                       ),
                     ),
