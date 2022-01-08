@@ -1,11 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
+import 'package:untis_phasierung/core/excel/validator.dart';
 
 class CustomTimeTableInfoCard extends StatefulWidget {
-  const CustomTimeTableInfoCard({Key? key, required this.timeTableHour}) : super(key: key);
+  const CustomTimeTableInfoCard({Key? key, required this.timeTableHour, this.phase}) : super(key: key);
 
   final TimeTableHour timeTableHour;
+  final MappedPhase? phase;
 
   @override
   State<CustomTimeTableInfoCard> createState() => _CustomTimeTableInfoCardState();
@@ -13,8 +16,8 @@ class CustomTimeTableInfoCard extends StatefulWidget {
 
 class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
   late TimeTableHour _timeTableHour;
-  final Color _colorPhaseTop = Colors.green;
-  final Color _colorPhaseBottom = Colors.green;
+  dynamic _colorPhaseTop = Colors.black87;
+  dynamic _colorPhaseBottom = Colors.black87;
 
   @override
   void initState() {
@@ -22,6 +25,11 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
       _timeTableHour = widget.timeTableHour.getReplacement();
     } else {
       _timeTableHour = widget.timeTableHour;
+    }
+
+    if (widget.phase != null) {
+      _colorPhaseTop = widget.phase!.getFirstHalf().color;
+      _colorPhaseBottom = widget.phase!.getSecondHalf().color;
     }
     super.initState();
   }
@@ -45,11 +53,11 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                     Expanded(
                       flex: 4,
                       child: Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(10.0),
                           ),
-                          color: Colors.green,
+                          color: _colorPhaseTop,
                         ),
                       ),
                     ),
@@ -80,11 +88,11 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                     Expanded(
                       flex: 4,
                       child: Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(10.0),
                           ),
-                          color: Colors.green,
+                          color: _colorPhaseBottom,
                         ),
                       ),
                     ),
