@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/time_table.arguments.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
@@ -20,7 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isLoading = false;
-  bool _wrongPassword = false;
+  //bool _wrongPassword = false;
+  String loginError = "";
 
   @override
   void initState() {
@@ -51,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       await UserSecureStorage.setUsername(usernameController.text);
-      UserSession session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
+      UserSession session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");    
       session.createSession(username: usernameController.text, password: passwordController.text).then(
         (value) {
           Navigator.pushReplacementNamed(context, TimeTableScreen.routeName, arguments: TimetableArguments(session));
@@ -61,13 +63,19 @@ class _LoginScreenState extends State<LoginScreen> {
         (error) {
           log.e("Error logging in: $error");
 
-          if (error.toString() == "Exception: Benutzename oder Passwort falsch") {
-            log.d("Clearing user data");
-            UserSecureStorage.clear();
-          }
+          log.d("Clearing user data");
+          UserSecureStorage.clear();
+
           setState(() {
             _isLoading = false;
-            _wrongPassword = true;
+            //_wrongPassword = true;
+             if(error is WrongCredentialsException) {
+              loginError = "Benutzename oder Passwort falsch";
+            } else if(error is MissingCredentialsException) {
+              loginError = "Fehlender Benutzername oder Passwort";
+            } else {
+              loginError = "Bitte überprüfe deine Internetverbindung";
+            }
           });
         },
       );
@@ -108,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Padding(
                       padding: EdgeInsets.only(bottom: 10.0, top: 20.0),
                       child: Text(
-                        "Login",
+                        "Untis Login",
                         style: TextStyle(
                           fontSize: 30,
                         ),
@@ -119,15 +127,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextField(
                         controller: usernameController,
                         onChanged: (value) {
-                          if (_wrongPassword) {
+                          if(loginError.isNotEmpty) {
                             setState(() {
-                              _wrongPassword = false;
+                              loginError = "";
                             });
                           }
                         },
                         autocorrect: false,
                         decoration: const InputDecoration(
-                          hintText: "User",
+                          hintText: "Benutzername",
                           prefixIcon: Icon(Icons.person),
                         ),
                       ),
@@ -137,9 +145,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextField(
                         controller: passwordController,
                         onChanged: (value) {
-                          if (_wrongPassword) {
+                          if(loginError.isNotEmpty) {
                             setState(() {
-                              _wrongPassword = false;
+                              loginError = "";
                             });
                           }
                         },
@@ -147,16 +155,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: true,
                         autocorrect: false,
                         decoration: const InputDecoration(
-                          hintText: "Password",
+                          hintText: "Passwort",
                           prefixIcon: Icon(Icons.lock),
                         ),
                       ),
                     ),
-                    if (_wrongPassword)
-                      const Text(
-                        "Wrong username/password",
-                        style: TextStyle(color: Colors.red),
+                    
+                    if (loginError.isNotEmpty) 
+                      Text(loginError,
+                        style: const TextStyle(color: Colors.red),
                       ),
+
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: InkWell(
