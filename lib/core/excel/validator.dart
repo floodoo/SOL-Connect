@@ -171,7 +171,7 @@ class ExcelValidator {
 
       var subscription = socket.listen((event) async {
         // String message = String.fromCharCodes(event);
-        dynamic decodedMessage = jsonDecode(String.fromCharCodes(event));
+        dynamic decodedMessage = jsonDecode(String.fromCharCodes(event).replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", ""));
 
         if (decodedMessage['error'] != null) {
           throw ExcelConversionServerError(
