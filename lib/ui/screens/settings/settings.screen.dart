@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -49,11 +50,18 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               CustomSettingsCard(
-                  leading: const Icon(
-                    FontAwesome.github_circled,
-                    color: Colors.black87,
-                  ),
-                  text: "Github repo"),
+                leading: const Icon(
+                  FontAwesome.github_circled,
+                  color: Colors.black87,
+                ),
+                text: "Github repo",
+                onTap: () async {
+                  String _url = "https://github.com/floodoo/untis_phasierung";
+                  if (!await launch(_url)) {
+                    throw "Could not launch $_url";
+                  }
+                },
+              ),
               CustomSettingsCard(
                   leading: const Icon(
                     Icons.info,

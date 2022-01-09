@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CustomSettingsCard extends StatelessWidget {
-  CustomSettingsCard({Key? key, required this.text, this.leading}) : super(key: key);
+  CustomSettingsCard({Key? key, required this.text, this.leading, this.onTap}) : super(key: key);
 
   String text;
   Widget? leading;
+  void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class CustomSettingsCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           leading: leading,
+          onTap: onTap,
         ),
       ),
     );
