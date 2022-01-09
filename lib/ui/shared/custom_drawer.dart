@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
+import 'package:untis_phasierung/ui/screens/settings/settings.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 
 class CustomDrawer extends ConsumerWidget {
@@ -48,7 +49,7 @@ class CustomDrawer extends ConsumerWidget {
           Expanded(child: Container()),
           ListTile(
             title: const Text("Settings"),
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => Navigator.pushNamed(context, SettingsScreen.routeName),
           ),
           ListTile(
             title: const Text(

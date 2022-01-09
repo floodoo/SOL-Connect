@@ -10,17 +10,22 @@ import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
 class TimeTableService with ChangeNotifier {
   final Logger log = getLogger();
-  bool isLoggedIn = false;
-  bool isLoading = false;
+
   late UserSession session;
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
-  bool isSchoolBlock = true;
-  int _weekCounter = 0;
-  String username = "";
-  String password = "";
   ExcelValidator validator =
       ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
+
+  bool isLoggedIn = false;
+  bool isLoading = false;
+  bool isSchoolBlock = true;
+
+  int _weekCounter = 0;
+
+  String username = "";
+  String password = "";
+
   dynamic loginError;
 
   void login(String username, String password) {
