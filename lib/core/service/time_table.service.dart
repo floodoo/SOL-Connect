@@ -16,6 +16,7 @@ class TimeTableService with ChangeNotifier {
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
   bool isSchoolBlock = true;
+  int _weekCounter = 2;
 
   void login(String username, String password) {
     UserSecureStorage.setUsername(username);
@@ -43,15 +44,18 @@ class TimeTableService with ChangeNotifier {
     );
   }
 
-  getTimeTable() async {
+  getTimeTable({int weekCounter = 2}) async {
     log.d("Getting timetable");
-    timeTable = await session.getRelativeTimeTableWeek(2);
-
+    timeTable = await session.getRelativeTimeTableWeek(weekCounter);
     try {
       ExcelValidator validator =
           ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
       phaseTimeTable = await validator.mergeExcelWithTimetable(timeTable!);
+      isSchoolBlock = true;
+      notifyListeners();
     } catch (e) {
+      isSchoolBlock = true;
+      notifyListeners();
       if (e is ExcelMergeNonSchoolBlockException) {
         isSchoolBlock = false;
         notifyListeners();
@@ -62,6 +66,23 @@ class TimeTableService with ChangeNotifier {
 
   void toggleLoading(bool value) {
     isLoading = value;
+    notifyListeners();
+  }
+
+  Future<void> getTimeTableNextWeek() async {
+    _weekCounter++;
+    await getTimeTable(weekCounter: _weekCounter);
+    log.d(_weekCounter.toString());
+  }
+
+  Future<void> getTimeTablePreviousWeek() async {
+    _weekCounter--;
+    await getTimeTable(weekCounter: _weekCounter);
+    log.d(_weekCounter.toString());
+  }
+
+  void resetTimeTable() {
+    timeTable = null;
     notifyListeners();
   }
 }
