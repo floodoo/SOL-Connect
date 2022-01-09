@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
@@ -9,6 +10,7 @@ import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
 class TimeTableService with ChangeNotifier {
   final Logger log = getLogger();
+  SharedPreferences? prefs;
 
   late UserSession session;
   TimeTableRange? timeTable;
@@ -25,8 +27,9 @@ class TimeTableService with ChangeNotifier {
 
   dynamic loginError;
 
-  void login(String username, String password) {
+  Future<void> login(String username, String password) async {
     UserSecureStorage.setUsername(username);
+    prefs = await SharedPreferences.getInstance();
 
     session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
     session.createSession(username: username, password: password).then(
@@ -99,7 +102,13 @@ class TimeTableService with ChangeNotifier {
 
   Future<void> loadPhase([String? phaseFilePath]) async {
     if (phaseFilePath != null) {
+      prefs!.setString("phasePlan", phaseFilePath);
       validator = ExcelValidator("flo-dev.me", phaseFilePath);
+    } else {
+      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
+      if (phaseFilePath != "empty") {
+        validator = ExcelValidator("flo-dev.me", phaseFilePath);
+      }
     }
     try {
       phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
