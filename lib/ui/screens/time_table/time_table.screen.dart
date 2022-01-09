@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/service/services.dart';
@@ -93,11 +94,27 @@ class TimeTableScreen extends ConsumerWidget {
     final _timeTable = ref.watch(timeTableService).timeTable;
     final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
     final isSchoolBlock = ref.watch(timeTableService).isSchoolBlock;
+    GlobalKey previewContainer = GlobalKey();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Timetable"),
         backgroundColor: Colors.black87,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.adaptive.share_rounded),
+            onPressed: () {
+              ShareFilesAndScreenshotWidgets().shareScreenshot(
+                previewContainer,
+                MediaQuery.of(context).devicePixelRatio.toInt() * 10000,
+                "TimeTable",
+                "TimeTable.png",
+                "image/png",
+                text: "Shared via Untis Phasierung",
+              );
+            },
+          )
+        ],
       ),
       drawer: const CustomDrawer(),
       body: GestureDetector(
@@ -112,26 +129,29 @@ class TimeTableScreen extends ConsumerWidget {
             _timeTableService.getTimeTablePreviousWeek();
           }
         },
-        child: Container(
-          color: Colors.black,
-          child: (_timeTable == null)
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                )
-              : (isSchoolBlock == true)
-                  ? GridView.count(
-                      crossAxisCount: 6,
-                      childAspectRatio: 0.5,
-                      children: buildTimeTable(_timeTable, _phaseTimeTable),
-                    )
-                  : const Center(
-                      child: Text(
-                        "No school this week",
-                        style: TextStyle(color: Colors.white),
-                      ),
+        child: RepaintBoundary(
+          key: previewContainer,
+          child: Container(
+            color: Colors.black,
+            child: (_timeTable == null)
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
                     ),
+                  )
+                : (isSchoolBlock == true)
+                    ? GridView.count(
+                        crossAxisCount: 6,
+                        childAspectRatio: 0.5,
+                        children: buildTimeTable(_timeTable, _phaseTimeTable),
+                      )
+                    : const Center(
+                        child: Text(
+                          "No school this week",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+          ),
         ),
       ),
     );

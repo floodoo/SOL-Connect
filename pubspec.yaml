@@ -38,6 +38,7 @@ dependencies:
   http: ^0.13.4
   intl: ^0.17.0
   logger: ^1.1.0
+  share_files_and_screenshot_widgets: ^1.0.6
   url_launcher: ^6.0.17
 
 dev_dependencies:
