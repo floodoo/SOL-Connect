@@ -46,9 +46,18 @@ class TimeTableService with ChangeNotifier {
   getTimeTable() async {
     log.d("Getting timetable");
     timeTable = await session.getRelativeTimeTableWeek(2);
-    ExcelValidator validator =
-        ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
-    phaseTimeTable = await validator.mergeExcelWithTimetable(timeTable!);
+
+    try {
+      ExcelValidator validator =
+          ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
+      phaseTimeTable = await validator.mergeExcelWithTimetable(timeTable!);
+    } catch (e) {
+      if (e is ExcelMergeNonSchoolBlockException) {
+        isSchoolBlock = false;
+        notifyListeners();
+      }
+      log.e(e);
+    }
   }
 
   void toggleLoading(bool value) {
