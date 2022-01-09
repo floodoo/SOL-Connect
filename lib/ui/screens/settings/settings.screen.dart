@@ -53,6 +53,10 @@ class SettingsScreen extends ConsumerWidget {
                   color: Colors.black87,
                 ),
                 text: "Delete phase plan",
+                onTap: () {
+                  Navigator.of(context).pop();
+                  ref.read(timeTableService).deletePhase();
+                },
               ),
               const Center(
                 child: Padding(

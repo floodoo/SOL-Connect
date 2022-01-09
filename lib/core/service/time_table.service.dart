@@ -117,4 +117,10 @@ class TimeTableService with ChangeNotifier {
       log.e(e);
     }
   }
+
+  void deletePhase() {
+    prefs!.remove("phasePlan");
+    validator = null;
+    phaseTimeTable = null;
+  }
 }
