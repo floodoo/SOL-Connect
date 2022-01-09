@@ -1,34 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
-import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
-class CustomDrawer extends StatefulWidget {
+class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({Key? key}) : super(key: key);
   static final routeName = (CustomDrawer).toString();
 
   @override
-  State<CustomDrawer> createState() => _CustomDrawerState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    String username = ref.watch(timeTableService).username;
 
-class _CustomDrawerState extends State<CustomDrawer> {
-  String username = "";
-  @override
-  void initState() {
-    super.initState();
-    loadUserData();
-  }
-
-  loadUserData() async {
-    final storedUsername = await UserSecureStorage.getUsername();
-
-    setState(() {
-      username = storedUsername ?? "";
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Drawer(
       child: Column(
         children: [

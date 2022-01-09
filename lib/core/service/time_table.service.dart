@@ -19,6 +19,8 @@ class TimeTableService with ChangeNotifier {
   int _weekCounter = 2;
   String username = "";
   String password = "";
+  ExcelValidator validator =
+      ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
 
   void login(String username, String password) {
     UserSecureStorage.setUsername(username);
@@ -50,8 +52,6 @@ class TimeTableService with ChangeNotifier {
     log.d("Getting timetable");
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
     try {
-      ExcelValidator validator =
-          ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
       phaseTimeTable = await validator.mergeExcelWithTimetable(timeTable!);
       isSchoolBlock = true;
       notifyListeners();
