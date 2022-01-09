@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 
@@ -14,11 +15,23 @@ class LoginScreen extends ConsumerWidget {
     final _timeTableService = ref.read(timeTableService);
     final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
     final _isLoading = ref.watch(timeTableService).isLoading;
+    final _loginError = ref.watch(timeTableService).loginError;
+    String? loginErrorMessage;
 
     if (_isLoggedIn) {
       Future.delayed(Duration.zero, () {
         Navigator.pushReplacementNamed(context, TimeTableScreen.routeName);
       });
+    }
+
+    if (_loginError != null) {
+      if (_loginError is WrongCredentialsException) {
+        loginErrorMessage = "Incorrect username or password";
+      } else if (_loginError is MissingCredentialsException) {
+        loginErrorMessage = "Missing username or password";
+      } else {
+        loginErrorMessage = "Please check your internet connection";
+      }
     }
 
     void _login() {
@@ -88,6 +101,11 @@ class LoginScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
+                    if (loginErrorMessage != null)
+                      Text(
+                        loginErrorMessage,
+                        style: const TextStyle(color: Colors.red),
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: InkWell(

@@ -21,6 +21,7 @@ class TimeTableService with ChangeNotifier {
   String password = "";
   ExcelValidator validator =
       ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
+  dynamic loginError;
 
   void login(String username, String password) {
     UserSecureStorage.setUsername(username);
@@ -41,9 +42,14 @@ class TimeTableService with ChangeNotifier {
           notifyListeners();
         }
         log.e("Error logging in: $error");
-
         log.d("Clearing user data");
         UserSecureStorage.clear();
+        loginError = true;
+        isLoading = false;
+        this.username = "";
+        this.password = "";
+        loginError = error;
+        notifyListeners();
       },
     );
   }
@@ -61,8 +67,9 @@ class TimeTableService with ChangeNotifier {
       if (e is ExcelMergeNonSchoolBlockException) {
         isSchoolBlock = false;
         notifyListeners();
+      } else {
+        log.e(e);
       }
-      log.e(e);
     }
   }
 
@@ -99,6 +106,7 @@ class TimeTableService with ChangeNotifier {
     isLoading = false;
     timeTable = null;
     phaseTimeTable = null;
+    loginError = null;
     session.logout();
     notifyListeners();
   }
