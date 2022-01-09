@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:logger/logger.dart';
@@ -14,11 +15,12 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(timeTableService).getUserData();
     return MaterialApp(
       title: "Untis phasierung",
       debugShowCheckedModeBanner: false,

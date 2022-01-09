@@ -9,8 +9,8 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController usernameController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
+    final TextEditingController usernameController = TextEditingController(text: ref.watch(timeTableService).username);
+    final TextEditingController passwordController = TextEditingController(text: ref.watch(timeTableService).password);
     final _timeTableService = ref.read(timeTableService);
     final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
     final _isLoading = ref.watch(timeTableService).isLoading;

@@ -17,6 +17,8 @@ class TimeTableService with ChangeNotifier {
   MergedTimeTable? phaseTimeTable;
   bool isSchoolBlock = true;
   int _weekCounter = 2;
+  String username = "";
+  String password = "";
 
   void login(String username, String password) {
     UserSecureStorage.setUsername(username);
@@ -83,6 +85,12 @@ class TimeTableService with ChangeNotifier {
 
   void resetTimeTable() {
     timeTable = null;
+    notifyListeners();
+  }
+
+  Future<void> getUserData() async {
+    username = await UserSecureStorage.getUsername() ?? "";
+    password = await UserSecureStorage.getPassword() ?? "";
     notifyListeners();
   }
 }
