@@ -30,6 +30,7 @@ dependencies:
   auto_size_text: ^3.0.0
   cupertino_icons: ^1.0.2
   excel: 2.0.0-null-safety-3
+  file_picker: ^4.3.1
   flutter:
     sdk: flutter
   flutter_secure_storage: ^5.0.2

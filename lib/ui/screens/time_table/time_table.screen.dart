@@ -93,7 +93,6 @@ class TimeTableScreen extends ConsumerWidget {
     final _timeTableService = ref.read(timeTableService);
     final _timeTable = ref.watch(timeTableService).timeTable;
     final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
-    final isSchoolBlock = ref.watch(timeTableService).isSchoolBlock;
     GlobalKey previewContainer = GlobalKey();
 
     return Scaffold(
@@ -132,26 +131,26 @@ class TimeTableScreen extends ConsumerWidget {
         child: RepaintBoundary(
           key: previewContainer,
           child: Container(
-            color: Colors.black,
-            child: (_timeTable == null)
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                  )
-                : (isSchoolBlock == true)
-                    ? GridView.count(
-                        crossAxisCount: 6,
-                        childAspectRatio: 0.5,
-                        children: buildTimeTable(_timeTable, _phaseTimeTable),
-                      )
-                    : const Center(
-                        child: Text(
-                          "No school this week",
-                          style: TextStyle(color: Colors.white),
-                        ),
+              color: Colors.black,
+              child: (_timeTable == null)
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
                       ),
-          ),
+                    )
+                  // : (isSchoolBlock == true)
+                  : GridView.count(
+                      crossAxisCount: 6,
+                      childAspectRatio: 0.5,
+                      children: buildTimeTable(_timeTable, _phaseTimeTable),
+                    )
+              // : const Center(
+              //     child: Text(
+              //       "No school this week",
+              //       style: TextStyle(color: Colors.white),
+              //     ),
+              //   ),
+              ),
         ),
       ),
     );

@@ -4,7 +4,6 @@ import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
-import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
@@ -14,12 +13,10 @@ class TimeTableService with ChangeNotifier {
   late UserSession session;
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
-  ExcelValidator validator =
-      ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
+  ExcelValidator? validator;
 
   bool isLoggedIn = false;
   bool isLoading = false;
-  bool isSchoolBlock = true;
 
   int _weekCounter = 0;
 
@@ -42,10 +39,6 @@ class TimeTableService with ChangeNotifier {
       },
     ).catchError(
       (error) {
-        if (error is ExcelMergeNonSchoolBlockException) {
-          isSchoolBlock = false;
-          notifyListeners();
-        }
         log.e("Error logging in: $error");
         log.d("Clearing user data");
         UserSecureStorage.clear();
@@ -62,20 +55,8 @@ class TimeTableService with ChangeNotifier {
   getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
-    try {
-      phaseTimeTable = await validator.mergeExcelWithTimetable(timeTable!);
-      isSchoolBlock = true;
-      notifyListeners();
-    } catch (e) {
-      isSchoolBlock = true;
-      notifyListeners();
-      if (e is ExcelMergeNonSchoolBlockException) {
-        isSchoolBlock = false;
-        notifyListeners();
-      } else {
-        log.e(e);
-      }
-    }
+    loadPhase();
+    notifyListeners();
   }
 
   void toggleLoading(bool value) {
@@ -114,5 +95,17 @@ class TimeTableService with ChangeNotifier {
     loginError = null;
     session.logout();
     notifyListeners();
+  }
+
+  Future<void> loadPhase([String? phaseFilePath]) async {
+    if (phaseFilePath != null) {
+      validator = ExcelValidator("flo-dev.me", phaseFilePath);
+    }
+    try {
+      phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
+      notifyListeners();
+    } catch (e) {
+      log.e(e);
+    }
   }
 }
