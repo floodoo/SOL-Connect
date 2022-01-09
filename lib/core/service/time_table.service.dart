@@ -14,8 +14,7 @@ class TimeTableService with ChangeNotifier {
   late UserSession session;
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
-  ExcelValidator validator =
-      ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
+  ExcelValidator validator = ExcelValidator("flo-dev.me", "/Users/flo/development/privat/untis_phasierung/assets/excel/model1.xlsx");
 
   bool isLoggedIn = false;
   bool isLoading = false;

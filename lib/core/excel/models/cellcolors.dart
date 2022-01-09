@@ -14,7 +14,7 @@ class CellColors {
   bool failed = false;
   
   ///Erwartet eine Liste von Zellen
-  CellColors({dynamic data, bool this.failed = false}) {
+  CellColors({dynamic data, this.failed = false}) {
     
     if(data == null) return;
 
@@ -25,7 +25,6 @@ class CellColors {
       entry._color = PhaseColor(cell['c']['r'], cell['c']['g'], cell['c']['b']);
       _colorEntries.add(entry);
     }
-    print(_colorEntries.length);
   }
 
   bool isEmpty() {
