@@ -9,19 +9,23 @@ class _ColorEntry {
 }
 
 class CellColors {
+
   final _colorEntries = <_ColorEntry>[];
-
+  bool failed = false;
+  
   ///Erwartet eine Liste von Zellen
-  CellColors({dynamic data}) {
-    if (data == null) return;
+  CellColors({dynamic data, bool this.failed = false}) {
+    
+    if(data == null) return;
 
-    for (dynamic cell in data) {
+    for(dynamic cell in data) {
       _ColorEntry entry = _ColorEntry();
       entry._xIndex = cell['x'];
       entry._yIndex = cell['y'];
       entry._color = PhaseColor(cell['c']['r'], cell['c']['g'], cell['c']['b']);
       _colorEntries.add(entry);
     }
+    print(_colorEntries.length);
   }
 
   bool isEmpty() {
@@ -29,8 +33,8 @@ class CellColors {
   }
 
   PhaseColor getColorForCell({int xIndex = 0, int yIndex = 0}) {
-    for (_ColorEntry entry in _colorEntries) {
-      if (entry._xIndex == xIndex && entry._yIndex == yIndex) {
+    for(_ColorEntry entry in _colorEntries) {
+      if(entry._xIndex == xIndex && entry._yIndex == yIndex) {
         return entry._color;
       }
     }
