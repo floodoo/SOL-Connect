@@ -55,7 +55,10 @@ class CustomDrawer extends ConsumerWidget {
               "Logout",
               style: TextStyle(color: Colors.red),
             ),
-            onTap: () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
+            onTap: () {
+              ref.read(timeTableService).logout();
+              Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            },
           ),
         ],
       ),

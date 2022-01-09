@@ -93,4 +93,13 @@ class TimeTableService with ChangeNotifier {
     password = await UserSecureStorage.getPassword() ?? "";
     notifyListeners();
   }
+
+  void logout() {
+    isLoggedIn = false;
+    isLoading = false;
+    timeTable = null;
+    phaseTimeTable = null;
+    session.logout();
+    notifyListeners();
+  }
 }
