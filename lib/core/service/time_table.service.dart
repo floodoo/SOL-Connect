@@ -16,7 +16,7 @@ class TimeTableService with ChangeNotifier {
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
   bool isSchoolBlock = true;
-  int _weekCounter = 2;
+  int _weekCounter = 0;
   String username = "";
   String password = "";
   ExcelValidator validator =
@@ -48,7 +48,7 @@ class TimeTableService with ChangeNotifier {
     );
   }
 
-  getTimeTable({int weekCounter = 2}) async {
+  getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
     try {
