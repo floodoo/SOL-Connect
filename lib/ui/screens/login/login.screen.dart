@@ -5,13 +5,13 @@ import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 
 class LoginScreen extends ConsumerWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController usernameController = TextEditingController(text: ref.watch(timeTableService).username);
-    final TextEditingController passwordController = TextEditingController(text: ref.watch(timeTableService).password);
     final _timeTableService = ref.read(timeTableService);
     final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
     final _isLoading = ref.watch(timeTableService).isLoading;
