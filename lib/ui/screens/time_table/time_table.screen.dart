@@ -141,7 +141,7 @@ class TimeTableScreen extends ConsumerWidget {
                   // : (isSchoolBlock == true)
                   : GridView.count(
                       crossAxisCount: 6,
-                      childAspectRatio: 0.5,
+                      childAspectRatio: 0.6,
                       children: buildTimeTable(_timeTable, _phaseTimeTable),
                     )
               // : const Center(
