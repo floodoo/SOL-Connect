@@ -12,6 +12,7 @@ class TimeTableHour {
 
   final replacement = <TimeTableHour>[];
 
+  String _substText = "";
   String _activityType = "";
   int _id = -1;
 
@@ -32,6 +33,62 @@ class TimeTableHour {
   ///* xIndex=1,yIndex=2 wäre Dienstag 3. Stunde
   int yIndex = -1;
 
+  TimeTableHour(dynamic data) {
+    if (data == null) {
+      code = Codes.empty;
+      return;
+    }
+
+    _id = data['id'];
+
+    startAsString = data['startTime'].toString();
+    endAsString = data['endTime'].toString();
+
+    start = _parseDate(data['date'].toString(), startAsString);
+    end = _parseDate(data['date'].toString(), endAsString);
+
+    _activityType = data['activityType'];
+
+    if (data['k1'] != null) {
+      _klasse = TimeTableEntity("kl", data['kl']);
+    } else {
+      _klasse = TimeTableEntity("kl", null);
+      _klasse.longName = "unknown";
+      _klasse.name = "unknown";
+    }
+
+    if (data['te'] != null) {
+      _teacher = TimeTableEntity("te", data['te']);
+    } else {
+      _teacher.name = "---";
+      _teacher.longName = "Ausfall/SOL/Vertretung";
+    }
+
+    _subject = TimeTableEntity("su", data['su']);
+
+    _room = TimeTableEntity("ro", data['ro']);
+
+    if (data['code'] != null) {
+      String c = data['code'];
+
+      if (c == "regular") {
+        code = Codes.regular;
+      } else if (c == "cancelled") {
+        code = Codes.cancelled;
+      } else if (c == "irregular") {
+        code = Codes.irregular;
+      } else {
+        code = Codes.unknown;
+      }
+    } else {
+      code = Codes.regular;
+    }
+
+    if(data['substText'] != null) {
+      _substText = data['substText'];
+    }
+  }
+
   DateTime _parseDate(String date, String time) {
     return DateTime.parse(date.substring(0, 4) +
         "-" +
@@ -42,6 +99,13 @@ class TimeTableHour {
         (time.length == 3
             ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
             : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
+  }
+
+  ///Gibt die Stundeninformation zurück, die ein Lehere bei Ausfall vielleicht notiert hat.
+  ///
+  ///Meißtenst steht dann "EvA" da
+  String getLessionInformation() {
+    return _substText;
   }
 
   String getActivityType() {
@@ -104,58 +168,6 @@ class TimeTableHour {
   ///@return Der Raum der Stunde als TimeTableEntity objekt
   TimeTableEntity getRoom() {
     return _room;
-  }
-
-  TimeTableHour(dynamic data) {
-    if (data == null) {
-      code = Codes.empty;
-      return;
-    }
-
-    _id = data['id'];
-
-    startAsString = data['startTime'].toString();
-    endAsString = data['endTime'].toString();
-
-    start = _parseDate(data['date'].toString(), startAsString);
-    end = _parseDate(data['date'].toString(), endAsString);
-
-    _activityType = data['activityType'];
-
-    if (data['k1'] != null) {
-      _klasse = TimeTableEntity("kl", data['kl']);
-    } else {
-      _klasse = TimeTableEntity("kl", null);
-      _klasse.longName = "unknown";
-      _klasse.name = "unknown";
-    }
-
-    if (data['te'] != null) {
-      _teacher = TimeTableEntity("te", data['te']);
-    } else {
-      _teacher.name = "---";
-      _teacher.longName = "Ausfall/SOL/Vertretung";
-    }
-
-    _subject = TimeTableEntity("su", data['su']);
-
-    _room = TimeTableEntity("ro", data['ro']);
-
-    if (data['code'] != null) {
-      String c = data['code'];
-
-      if (c == "regular") {
-        code = Codes.regular;
-      } else if (c == "cancelled") {
-        code = Codes.cancelled;
-      } else if (c == "irregular") {
-        code = Codes.irregular;
-      } else {
-        code = Codes.unknown;
-      }
-    } else {
-      code = Codes.regular;
-    }
   }
 
   ///Interne Funktion.

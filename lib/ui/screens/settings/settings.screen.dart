@@ -35,7 +35,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.add,
                   color: Colors.black87,
                 ),
-                text: "Add phase plan",
+                text: "Add Phase Plan",
                 onTap: () async {
                   FilePickerResult? result = await FilePicker.platform.pickFiles(
                     type: FileType.custom,
@@ -52,7 +52,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.delete,
                   color: Colors.black87,
                 ),
-                text: "Delete phase plan",
+                text: "Delete Phase Plan",
                 onTap: () {
                   Navigator.of(context).pop();
                   ref.read(timeTableService).deletePhase();
@@ -62,7 +62,7 @@ class SettingsScreen extends ConsumerWidget {
                 child: Padding(
                   padding: EdgeInsets.only(top: 25.0),
                   child: Text(
-                    "App info",
+                    "App Info",
                     style: TextStyle(fontSize: 25, color: Colors.white),
                   ),
                 ),
@@ -72,7 +72,7 @@ class SettingsScreen extends ConsumerWidget {
                   FontAwesome.github_circled,
                   color: Colors.black87,
                 ),
-                text: "Github repo",
+                text: "Github Repo",
                 onTap: () async {
                   String _url = "https://github.com/floodoo/untis_phasierung";
                   if (!await launch(_url)) {
@@ -85,7 +85,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.info,
                   color: Colors.black87,
                 ),
-                text: "Build number",
+                text: "Build Number",
               ),
             ],
           ),

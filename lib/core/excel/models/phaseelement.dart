@@ -23,7 +23,7 @@ extension Phase on PhaseCodes {
       case PhaseCodes.feedback:
         return PhaseColor.phaseFeedback;
       default:
-        return PhaseColor(38, 38, 38);
+        return PhaseColor(80, 80, 80);
     }
   }
 }
