@@ -5,13 +5,13 @@ import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 
 class LoginScreen extends ConsumerWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final TextEditingController usernameController = TextEditingController(text: ref.watch(timeTableService).username);
+    final TextEditingController passwordController = TextEditingController(text: ref.watch(timeTableService).password);
     final _timeTableService = ref.read(timeTableService);
     final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
     final _isLoading = ref.watch(timeTableService).isLoading;
@@ -79,25 +79,39 @@ class LoginScreen extends ConsumerWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                      child: TextField(
-                        controller: usernameController,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                          hintText: "Benutzername",
-                          prefixIcon: Icon(Icons.person),
+                      child: Focus(
+                        onFocusChange: (value) {
+                          if (value == false) {
+                            ref.read(timeTableService).setUsername(usernameController.text);
+                          }
+                        },
+                        child: TextField(
+                          controller: usernameController,
+                          autocorrect: false,
+                          decoration: const InputDecoration(
+                            hintText: "Benutzername",
+                            prefixIcon: Icon(Icons.person),
+                          ),
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                      child: TextField(
-                        controller: passwordController,
-                        onEditingComplete: () => _login(),
-                        obscureText: true,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                          hintText: "Passwort",
-                          prefixIcon: Icon(Icons.lock),
+                      child: Focus(
+                        onFocusChange: (value) {
+                          if (value == false) {
+                            ref.read(timeTableService).setPassword(passwordController.text);
+                          }
+                        },
+                        child: TextField(
+                          controller: passwordController,
+                          onEditingComplete: () => _login(),
+                          obscureText: true,
+                          autocorrect: false,
+                          decoration: const InputDecoration(
+                            hintText: "Passwort",
+                            prefixIcon: Icon(Icons.lock),
+                          ),
                         ),
                       ),
                     ),

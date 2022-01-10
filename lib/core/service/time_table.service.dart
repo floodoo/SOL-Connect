@@ -90,6 +90,16 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
+  void setUsername(String value) {
+    username = value;
+    notifyListeners();
+  }
+
+  void setPassword(String value) {
+    password = value;
+    notifyListeners();
+  }
+
   void logout() {
     isLoggedIn = false;
     isLoading = false;
