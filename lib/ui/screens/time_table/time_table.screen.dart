@@ -188,7 +188,7 @@ class TimeTableScreen extends ConsumerWidget {
                     : Center(
                         child: Text(
                           "No school this week",
-                          style: TextStyle(color: theme.colors.primary),
+                          style: TextStyle(color: theme.colors.text),
                         ),
                       ),
           ),

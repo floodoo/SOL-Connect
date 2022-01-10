@@ -21,13 +21,13 @@ class AppColors {
 
   factory AppColors.light() {
     return AppColors(
-      primary: Colors.red,
-      background: Colors.amber.shade50,
+      primary: Colors.orange.shade600,
+      background: Colors.blueGrey.shade200,
       text: Colors.white,
       textDark: Colors.black,
       hintText: Colors.black38,
       error: Colors.red,
-      circleAvatar: Colors.black,
+      circleAvatar: Colors.white,
     );
   }
 
