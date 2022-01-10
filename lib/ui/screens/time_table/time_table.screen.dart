@@ -131,26 +131,26 @@ class TimeTableScreen extends ConsumerWidget {
         child: RepaintBoundary(
           key: previewContainer,
           child: Container(
-              color: Colors.black,
-              child: (_timeTable == null)
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
+            color: Colors.black,
+            child: (_timeTable == null)
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+                : (ref.watch(timeTableService).isSchool)
+                    ? GridView.count(
+                        crossAxisCount: 6,
+                        childAspectRatio: 0.6,
+                        children: buildTimeTable(_timeTable, _phaseTimeTable),
+                      )
+                    : const Center(
+                        child: Text(
+                          "No school this week",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    )
-                  // : (isSchoolBlock == true)
-                  : GridView.count(
-                      crossAxisCount: 6,
-                      childAspectRatio: 0.6,
-                      children: buildTimeTable(_timeTable, _phaseTimeTable),
-                    )
-              // : const Center(
-              //     child: Text(
-              //       "No school this week",
-              //       style: TextStyle(color: Colors.white),
-              //     ),
-              //   ),
-              ),
+          ),
         ),
       ),
     );

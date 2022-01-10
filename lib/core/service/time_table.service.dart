@@ -19,6 +19,7 @@ class TimeTableService with ChangeNotifier {
 
   bool isLoggedIn = false;
   bool isLoading = false;
+  bool isSchool = true;
 
   int _weekCounter = 0;
 
@@ -57,7 +58,19 @@ class TimeTableService with ChangeNotifier {
 
   getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
+    int holidayCounter = 0;
+    isSchool = true;
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
+    for (var i in timeTable!.getDays()) {
+      if (i.isHolidayOrWeekend()) {
+        holidayCounter++;
+        print("Holiday");
+      }
+    }
+
+    if (holidayCounter == 7) {
+      isSchool = false;
+    }
     loadPhase();
     notifyListeners();
   }
@@ -132,5 +145,10 @@ class TimeTableService with ChangeNotifier {
     prefs!.remove("phasePlan");
     validator = null;
     phaseTimeTable = null;
+  }
+
+  void toggleSchool() {
+    isSchool = isSchool ? false : true;
+    notifyListeners();
   }
 }
