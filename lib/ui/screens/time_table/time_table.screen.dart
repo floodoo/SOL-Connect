@@ -14,13 +14,36 @@ class TimeTableScreen extends ConsumerWidget {
   const TimeTableScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableScreen).toString();
 
+  buildFirstTimeTableRow(TimeTableRange _timeTable) {
+    List<Widget> timeTableList = [];
+    for (int i = 0; i <= 5; i++) {
+      if (i == 0) {
+        timeTableList.add(
+          const CustomTimeTableCard(
+            child: Icon(
+              Icons.calendar_today_rounded,
+              color: Colors.white,
+            ),
+          ),
+        );
+
+        // The first row
+      } else {
+        timeTableList.add(
+          CustomTimeTableDayCard(timeTableDay: _timeTable.getDays()[i - 1]),
+        );
+      }
+    }
+    return timeTableList;
+  }
+
   buildTimeTable(TimeTableRange _timeTable, MergedTimeTable? _phasedTimeTable) {
     List<Widget> timeTableList = [];
     int timeColumnCounter = 0;
     int schoolDayCounter = 0;
     List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
-    for (int i = 0; i < 54; i++) {
+    for (int i = 6; i < 54; i++) {
       // don't calculate first row
       if (i > 7) {
         //reset counter for the first left column
@@ -139,10 +162,22 @@ class TimeTableScreen extends ConsumerWidget {
                     ),
                   )
                 : (ref.watch(timeTableService).isSchool)
-                    ? GridView.count(
-                        crossAxisCount: 6,
-                        childAspectRatio: 0.6,
-                        children: buildTimeTable(_timeTable, _phaseTimeTable),
+                    ? ListView(
+                        children: [
+                          GridView.count(
+                            crossAxisCount: 6,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: buildFirstTimeTableRow(_timeTable),
+                          ),
+                          GridView.count(
+                            crossAxisCount: 6,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            childAspectRatio: 0.6,
+                            children: buildTimeTable(_timeTable, _phaseTimeTable),
+                          ),
+                        ],
                       )
                     : const Center(
                         child: Text(

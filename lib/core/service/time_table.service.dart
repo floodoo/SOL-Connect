@@ -64,7 +64,6 @@ class TimeTableService with ChangeNotifier {
     for (var i in timeTable!.getDays()) {
       if (i.isHolidayOrWeekend()) {
         holidayCounter++;
-        print("Holiday");
       }
     }
 
