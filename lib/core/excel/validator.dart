@@ -103,7 +103,6 @@ class ExcelValidator {
     } 
 
     if(_mapped.isEmpty || refresh) {
-      print("verifying");
       _mapped = await _verifySheet(timetable);
     }
 
@@ -125,7 +124,6 @@ class ExcelValidator {
                 //Nicht super schön, aber fürs erste ok
                 while(_colorData.isEmpty() || _colorData.failed) {
                     await _loadColorData(forceReload: false);
-                    print("loading color");
                 }
 
                 for(MappedPhase hour in mapped.getHours()) {
