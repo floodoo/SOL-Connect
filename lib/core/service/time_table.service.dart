@@ -133,7 +133,9 @@ class TimeTableService with ChangeNotifier {
       }
     }
     try {
-      phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
+      if (validator != null) {
+        phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
+      }
       notifyListeners();
     } catch (e) {
       log.e(e);
@@ -144,6 +146,7 @@ class TimeTableService with ChangeNotifier {
     prefs!.remove("phasePlan");
     validator = null;
     phaseTimeTable = null;
+    notifyListeners();
   }
 
   void toggleSchool() {

@@ -44,6 +44,7 @@ class SettingsScreen extends ConsumerWidget {
                   );
                   if (result != null) {
                     ref.read(timeTableService).loadPhase(result.files.first.path!);
+                    Navigator.of(context).pop();
                   }
                 },
               ),
