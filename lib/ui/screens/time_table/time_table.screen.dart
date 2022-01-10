@@ -116,6 +116,7 @@ class TimeTableScreen extends ConsumerWidget {
     final _timeTableService = ref.read(timeTableService);
     final _timeTable = ref.watch(timeTableService).timeTable;
     final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
+    final theme = ref.watch(themeService).theme;
     GlobalKey previewContainer = GlobalKey();
 
     return Scaffold(

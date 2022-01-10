@@ -22,12 +22,18 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.read(timeTableService).getUserData();
+    final theme = ref.watch(themeService).theme;
+
+    // to load apperance from shared preferences
+    ref.read(themeService).loadAppearence();
+
     return MaterialApp(
       title: "Untis phasierung",
+      theme: theme.data,
       debugShowCheckedModeBanner: false,
       initialRoute: LoginScreen.routeName,
       routes: {
-        LoginScreen.routeName: (context) =>  const LoginScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
         CustomDrawer.routeName: (context) => const CustomDrawer(),
         TimeTableScreen.routeName: (context) => const TimeTableScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),

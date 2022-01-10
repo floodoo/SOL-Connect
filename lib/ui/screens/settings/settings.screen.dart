@@ -12,6 +12,15 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeService).theme;
+    bool lightMode;
+
+    // on app start the saved appearance is loaded. This is only for the switch
+    if (theme.mode == ThemeMode.light) {
+      lightMode = true;
+    } else {
+      lightMode = false;
+    }
     return Scaffold(
         appBar: AppBar(
           title: const Text('Settings'),
@@ -58,6 +67,35 @@ class SettingsScreen extends ConsumerWidget {
                   Navigator.of(context).pop();
                   ref.read(timeTableService).deletePhase();
                 },
+              ),
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 25.0),
+                  child: Text(
+                    "Appearance",
+                    style: TextStyle(fontSize: 25, color: Colors.white),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 0.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: SwitchListTile(
+                    value: lightMode,
+                    onChanged: (bool value) {
+                      ref.read(themeService).saveAppearence(value);
+                    },
+                    title: Text(
+                      (theme.mode == ThemeMode.light) ? "Light Mode" : "Dark Mode",
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
               ),
               const Center(
                 child: Padding(
