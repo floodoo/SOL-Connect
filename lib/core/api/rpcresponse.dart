@@ -17,7 +17,7 @@ class RPCResponse {
 
   static RPCResponse handle(http.Response httpResponse) {
     RPCResponse response = RPCResponse(httpResponse);
-
+   
     //Erstmal den Statuscode checken
     if (httpResponse.statusCode != 200) {
       response._errorCode = httpResponse.statusCode;
@@ -28,7 +28,7 @@ class RPCResponse {
     dynamic json = jsonDecode(httpResponse.body);
 
     //Standart Daten auszulesen
-    if (json['id'].runtimeType == int) {
+    if(json['id'].runtimeType == int) {
       response.appId = json['id'];
     } else {
       response.appId = "null";
@@ -55,7 +55,7 @@ class RPCResponse {
     return response;
   }
 
-  /// @return true - Wenn der Fehler am http liegt
+/// @return true - Wenn der Fehler am http liegt
   bool isHttpError() {
     return payload.isEmpty && _statusMessage == "http error";
   }
@@ -76,4 +76,5 @@ class RPCResponse {
   dynamic getPayloadData() {
     return payload;
   }
+
 }

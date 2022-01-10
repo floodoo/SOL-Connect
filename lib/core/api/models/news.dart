@@ -8,17 +8,17 @@ class NewsMessage {
   String _htmltext = "";
 
   NewsMessage(dynamic data) {
-    if (data == null) return;
+    if(data == null) return;
 
-    if (data['id'] != null) {
+    if(data['id'] != null) {
       _id = data['id'];
     }
 
-    if (data['subject'] != null) {
+    if(data['subject'] != null) {
       _subject = data['subject'];
     }
 
-    if (data['text'] != null) {
+    if(data['text'] != null) {
       _htmltext = data['text'];
     }
   }
@@ -37,25 +37,26 @@ class NewsMessage {
 }
 
 class News {
+  
   NewsMessage _systemMessage = NewsMessage(null);
   final _messagesOfDay = <NewsMessage>[];
   String _rssUrl = "";
 
   News(dynamic jsonData) {
-    if (jsonData == null) return;
+    if(jsonData == null) return;
 
-    if (jsonData['errorMessage'] != null) {
+    if(jsonData['errorMessage'] != null) {
       throw FailedToFetchNewsException(jsonData['errorMessage']);
-    }
+    }   
 
     dynamic data = jsonData['data'];
-    if (data['systemMessage'] != null) {
-      if (data['systemMessage'] != "null") {
+    if(data['systemMessage'] != null) {
+      if(data['systemMessage'] != "null") {
         _systemMessage = NewsMessage(data['systemMessage']);
       }
     }
 
-    for (dynamic d in data['messagesOfDay']) {
+    for(dynamic d in data['messagesOfDay']) {
       _messagesOfDay.add(NewsMessage(d));
     }
 
