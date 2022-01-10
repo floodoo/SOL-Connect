@@ -86,7 +86,7 @@ class ExcelValidator {
   ///
   ///Funktioniert aktuell nur mit der aktuellen Woche oder wenn [timetable] durch `UserSession.getRelativeTimeTableForWeek()` erzeugt wurde.
   ///
-  ///Der optionale Parameter [maxTries] gibt an, wie viele Versuche es geben soll die Excel Farben zu holen, falls ein Versuch fehlschlägt bwvor ein Fehler geworfen wird.
+  ///Der optionale Parameter [refresh] gibt an, ob gecachte excel sheets neu verifiziert werden sollen.
   ///
   ///Folgende Errors kann diese Funktion werfen (Alle zu finden in '/exceptions.dart')
   ///* `ExcelMergeNonSchoolBlockException`: Wenn die Woche keine Schulblockwoche ist
@@ -96,13 +96,16 @@ class ExcelValidator {
   ///* `ExcelConversionAlreadyActive`: Wenn diese Funktion bereits aufgerufen wurde und noch nicht fertig ist
   ///* `ExcelConversionServerError`: Wenn ein Fehler Serverseitig aufgetreten ist
   ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
-  Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {int maxTries = 5}) async {   
+  Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {   
 
     if(timetable.isNonSchoolblockWeek()) {
       throw ExcelMergeNonSchoolBlockException("Diese Woche enthält keine Schulstunden");
     } 
 
-    _mapped = await _verifySheet(timetable);
+    if(_mapped.isEmpty || refresh) {
+      print("verifying");
+      _mapped = await _verifySheet(timetable);
+    }
 
     if(_mapped.isNotEmpty) {
        
@@ -122,6 +125,7 @@ class ExcelValidator {
                 //Nicht super schön, aber fürs erste ok
                 while(_colorData.isEmpty() || _colorData.failed) {
                     await _loadColorData(forceReload: false);
+                    print("loading color");
                 }
 
                 for(MappedPhase hour in mapped.getHours()) {
@@ -130,11 +134,14 @@ class ExcelValidator {
                   hour._firstHalf = PhaseColor.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex));
                   hour._secondHalf = PhaseColor.estimatePhaseFromColor(_colorData.getColorForCell(xIndex: hour._excelXIndex, yIndex: hour._excelYIndex + 1));
                   
-                  //##############################
-                  //          Fertig :)
-                  //##############################
                 }
+
+                //##############################
+                //          Fertig :)
+                //##############################
+                
                 return MergedTimeTable(timetable, mapped);
+
             } else {
               throw ExcelMergeTimetableNotMatchException("Der Excel Stundenplan für Woche ${currentWeek+1} passt nicht zum angegebenen Stundenplan.");
             }
