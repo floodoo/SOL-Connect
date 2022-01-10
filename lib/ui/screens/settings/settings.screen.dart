@@ -24,25 +24,25 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Settings'),
-          backgroundColor: Colors.black87,
+          backgroundColor: theme.colors.primary,
         ),
         body: Container(
-          color: Colors.black87,
+          color: theme.colors.background,
           child: ListView(
             children: [
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 25.0),
+                  padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "Phase plan",
-                    style: TextStyle(fontSize: 25, color: Colors.white),
+                    style: TextStyle(fontSize: 25, color: theme.colors.textDark),
                   ),
                 ),
               ),
               CustomSettingsCard(
-                leading: const Icon(
+                leading: Icon(
                   Icons.add,
-                  color: Colors.black87,
+                  color: theme.colors.text,
                 ),
                 text: "Add Phase Plan",
                 onTap: () async {
@@ -58,9 +58,9 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
               CustomSettingsCard(
-                leading: const Icon(
+                leading: Icon(
                   Icons.delete,
-                  color: Colors.black87,
+                  color: theme.colors.text,
                 ),
                 text: "Delete Phase Plan",
                 onTap: () {
@@ -68,12 +68,12 @@ class SettingsScreen extends ConsumerWidget {
                   ref.read(timeTableService).deletePhase();
                 },
               ),
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 25.0),
+                  padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "Appearance",
-                    style: TextStyle(fontSize: 25, color: Colors.white),
+                    style: TextStyle(fontSize: 25, color: theme.colors.textDark),
                   ),
                 ),
               ),
@@ -83,6 +83,7 @@ class SettingsScreen extends ConsumerWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
+                  color: theme.colors.primary,
                   child: SwitchListTile(
                     value: lightMode,
                     onChanged: (bool value) {
@@ -91,25 +92,29 @@ class SettingsScreen extends ConsumerWidget {
                     title: Text(
                       (theme.mode == ThemeMode.light) ? "Light Mode" : "Dark Mode",
                       maxLines: 1,
+                      style: TextStyle(color: theme.colors.text),
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    inactiveThumbColor: theme.colors.text,
+                    activeTrackColor: theme.colors.background,
+                    activeColor: theme.colors.text,
                   ),
                 ),
               ),
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 25.0),
+                  padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "App Info",
-                    style: TextStyle(fontSize: 25, color: Colors.white),
+                    style: TextStyle(fontSize: 25, color: theme.colors.textDark),
                   ),
                 ),
               ),
               CustomSettingsCard(
-                leading: const Icon(
+                leading: Icon(
                   FontAwesome.github_circled,
-                  color: Colors.black87,
+                  color: theme.colors.text,
                 ),
                 text: "Github Repo",
                 onTap: () async {
@@ -120,9 +125,9 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
               CustomSettingsCard(
-                leading: const Icon(
+                leading: Icon(
                   Icons.info,
-                  color: Colors.black87,
+                  color: theme.colors.text,
                 ),
                 text: "Build Number",
               ),

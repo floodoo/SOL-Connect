@@ -11,6 +11,7 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeService).theme;
     String username = ref.watch(timeTableService).username;
 
     return Drawer(
@@ -20,14 +21,14 @@ class CustomDrawer extends ConsumerWidget {
             accountName: Text(username),
             accountEmail: const Text("bbs1-mainz"),
             currentAccountPicture: CircleAvatar(
-              child: const Icon(
+              child: Icon(
                 Icons.person,
-                color: Colors.white,
+                color: theme.colors.primary,
               ),
-              backgroundColor: Colors.grey[850],
+              backgroundColor: theme.colors.background,
             ),
-            decoration: const BoxDecoration(
-              color: Colors.black87,
+            decoration: BoxDecoration(
+              color: theme.colors.primary,
             ),
           ),
           ListTile(
