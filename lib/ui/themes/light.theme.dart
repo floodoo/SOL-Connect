@@ -7,6 +7,7 @@ ThemeData get lightTheme {
   final colors = AppColors.light();
   return ThemeData.light().copyWith(
     scaffoldBackgroundColor: colors.background,
+    iconTheme: IconThemeData(color: colors.text),
     primaryColor: colors.primary,
     textTheme: ThemeData.light()
         .textTheme

@@ -1,46 +1,40 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
+import 'package:untis_phasierung/core/service/services.dart';
 
-class CustomTimeTableInfoCard extends StatefulWidget {
+class CustomTimeTableInfoCard extends ConsumerWidget {
   const CustomTimeTableInfoCard({Key? key, required this.timeTableHour, this.phase}) : super(key: key);
-
   final TimeTableHour timeTableHour;
   final MappedPhase? phase;
 
   @override
-  State<CustomTimeTableInfoCard> createState() => _CustomTimeTableInfoCardState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    late TimeTableHour _timeTableHour;
+    final theme = ref.watch(themeService).theme;
+    PhaseColor _colorPhaseTop = PhaseCodes.unknown.color;
+    PhaseColor _colorPhaseBottom = PhaseCodes.unknown.color;
 
-class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
-  late TimeTableHour _timeTableHour;
-  PhaseColor _colorPhaseTop = PhaseCodes.unknown.color;
-  PhaseColor _colorPhaseBottom = PhaseCodes.unknown.color;
-
-  @override
-  void initState() {
-    if (widget.timeTableHour.isIrregular()) {
-      _timeTableHour = widget.timeTableHour.getReplacement();
+    if (timeTableHour.isIrregular()) {
+      _timeTableHour = timeTableHour.getReplacement();
     } else {
-      _timeTableHour = widget.timeTableHour;
+      _timeTableHour = timeTableHour;
     }
 
-    if (widget.phase != null) {
-      _colorPhaseTop = widget.phase!.getFirstHalf().color;
-      _colorPhaseBottom = widget.phase!.getSecondHalf().color;
+    if (phase != null) {
+      _colorPhaseTop = phase!.getFirstHalf().color;
+      _colorPhaseBottom = phase!.getSecondHalf().color;
     }
-    super.initState();
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
+      color: theme.colors.primary,
       child: Stack(
         children: [
           Column(
@@ -128,21 +122,21 @@ class _CustomTimeTableInfoCardState extends State<CustomTimeTableInfoCard> {
                     _timeTableHour.getSubject().name,
                     maxLines: 1,
                     overflow: TextOverflow.fade,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: theme.colors.text),
                   ),
                 ),
                 Expanded(
                   flex: 1,
                   child: Text(
                     _timeTableHour.getTeacher().name,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: theme.colors.text),
                   ),
                 ),
                 Expanded(
                   flex: 1,
                   child: Text(
                     _timeTableHour.getRoom().name,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: theme.colors.text),
                   ),
                 ),
               ],

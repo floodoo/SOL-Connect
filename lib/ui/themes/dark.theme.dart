@@ -7,6 +7,7 @@ ThemeData get darkTheme {
   final colors = AppColors.dark();
   return ThemeData.dark().copyWith(
     scaffoldBackgroundColor: colors.background,
+    iconTheme: IconThemeData(color: colors.text),
     primaryColor: colors.primary,
     textTheme: ThemeData.dark()
         .textTheme

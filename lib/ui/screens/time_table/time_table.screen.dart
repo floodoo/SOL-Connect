@@ -121,11 +121,16 @@ class TimeTableScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Timetable"),
-        backgroundColor: Colors.black87,
+        title: Text(
+          "Timetable",
+          style: TextStyle(color: theme.colors.text),
+        ),
+        backgroundColor: theme.colors.primary,
         actions: [
           IconButton(
-            icon: Icon(Icons.adaptive.share_rounded),
+            icon: Icon(
+              Icons.adaptive.share_rounded,
+            ),
             onPressed: () {
               ShareFilesAndScreenshotWidgets().shareScreenshot(
                 previewContainer,
@@ -155,11 +160,11 @@ class TimeTableScreen extends ConsumerWidget {
         child: RepaintBoundary(
           key: previewContainer,
           child: Container(
-            color: Colors.black,
+            color: theme.colors.background,
             child: (_timeTable == null)
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: theme.colors.primary,
                     ),
                   )
                 : (ref.watch(timeTableService).isSchool)
@@ -180,10 +185,10 @@ class TimeTableScreen extends ConsumerWidget {
                           ),
                         ],
                       )
-                    : const Center(
+                    : Center(
                         child: Text(
                           "No school this week",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: theme.colors.primary),
                         ),
                       ),
           ),

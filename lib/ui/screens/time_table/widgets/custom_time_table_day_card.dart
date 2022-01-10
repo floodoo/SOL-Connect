@@ -1,37 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:untis_phasierung/core/api/models/timetable.day.dart';
+import 'package:untis_phasierung/core/service/services.dart';
 
-class CustomTimeTableDayCard extends StatelessWidget {
+class CustomTimeTableDayCard extends ConsumerWidget {
   const CustomTimeTableDayCard({Key? key, required this.timeTableDay}) : super(key: key);
   final TimeTableDay timeTableDay;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeService).theme;
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Container(
-          color: Colors.black87,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  timeTableDay.getShortName(),
-                  style: const TextStyle(color: Colors.white),
-                ),
-                Text(
-                  DateFormat("dd").format(
-                    timeTableDay.getDate(),
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
+      color: theme.colors.primary,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              timeTableDay.getShortName(),
+              style: TextStyle(color: theme.colors.text),
             ),
-          )),
+            Text(
+              DateFormat("dd").format(
+                timeTableDay.getDate(),
+              ),
+              style: TextStyle(color: theme.colors.text),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

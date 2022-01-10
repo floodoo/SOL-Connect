@@ -6,7 +6,7 @@ enum PhaseCodes {
   structured,
   free,
   feedback,
-  unknown //<- Wenn der Lehrer nix eingetragen hat *hust* DEC *hust*    oder Ferien sind oder so ...
+  unknown //<- Wenn der Lehrer nix eingetragen hat
 }
 
 extension Phase on PhaseCodes {
