@@ -28,7 +28,17 @@ class TimeTableRange {
   TimeTableRange(this._startDate, this._endDate, this._boundUser, this.response) {
     //Konstruiere die Tage
     if (response.isError()) {
-      throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " + response.getErrorMessage() + "(" + response.getErrorCode().toString() + ")");
+      if(response.getErrorCode() == -7004) { //"no allowed date"
+        //erzeuge eine leere Tabelle
+        for(int i = 0; i < _endDate.difference(_startDate).inDays; i++) {
+          TimeTableDay day = TimeTableDay(_startDate.add(Duration(days: i)));
+          _days.add(day);
+        }
+        return;
+
+      } else {
+        throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " + response.getErrorMessage() + "(" + response.getErrorCode().toString() + ")");
+      }
     }
 
     outer:
