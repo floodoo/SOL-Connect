@@ -104,7 +104,9 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                               ? Colors.deepPurple.shade900
                               : (_timeTableHour.getLessonCode() == Codes.cancelled)
                                   ? Colors.purpleAccent
-                                  : _colorPhaseTop,
+                                  : (timeTableHour.getTeacher().name == "---")
+                                      ? Colors.grey
+                                      : _colorPhaseTop,
                         ),
                       ),
                     )
@@ -139,7 +141,9 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                               ? Colors.deepPurple.shade900
                               : (_timeTableHour.getLessonCode() == Codes.cancelled)
                                   ? Colors.purpleAccent
-                                  : _colorPhaseBottom,
+                                  : (timeTableHour.getTeacher().name == "---")
+                                      ? Colors.grey
+                                      : _colorPhaseBottom,
                         ),
                       ),
                     )
