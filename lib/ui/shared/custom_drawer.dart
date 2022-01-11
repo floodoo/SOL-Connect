@@ -14,20 +14,25 @@ class CustomDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     String username = ref.watch(timeTableService).username;
-    String ppUrl = "";
+    String profilePictureUrl = "";
     UserSession session = ref.watch(timeTableService).session;
-    
-    CircleAvatar currentAccountPicture = CircleAvatar(
-      backgroundColor: theme.colors.background,
-      child: Icon( 
-                  Icons.person,
-                    color: theme.colors.circleAvatar,
-                    
-                  ));
-    if(session.isAPIAuthorized()) {
-      username = session.getCachedProfileFirstAndLastName();
-      ppUrl = session.getCachedProfilePictureUrl();
-      currentAccountPicture = CircleAvatar(backgroundColor: theme.colors.background, backgroundImage: Image.network(ppUrl).image);
+
+    CircleAvatar profilePicture = CircleAvatar(
+      child: CircularProgressIndicator(color: theme.colors.text),
+    );
+
+    if (session.isAPIAuthorized()) {
+      profilePictureUrl = session.getCachedProfilePictureUrl();
+      profilePicture = CircleAvatar(
+          backgroundColor: theme.colors.background, backgroundImage: Image.network(profilePictureUrl).image);
+    } else {
+      profilePicture = CircleAvatar(
+        backgroundColor: theme.colors.background,
+        child: Icon(
+          Icons.person,
+          color: theme.colors.circleAvatar,
+        ),
+      );
     }
 
     return Drawer(
@@ -36,7 +41,7 @@ class CustomDrawer extends ConsumerWidget {
           UserAccountsDrawerHeader(
             accountName: Text(username),
             accountEmail: const Text("bbs1-mainz"),
-            currentAccountPicture: currentAccountPicture,
+            currentAccountPicture: profilePicture,
             decoration: BoxDecoration(
               color: theme.colors.primary,
             ),
