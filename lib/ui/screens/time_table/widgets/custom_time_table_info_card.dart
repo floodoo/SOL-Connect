@@ -42,7 +42,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
           _colorPhaseTop = theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseTop = theme.colors.primary;
+          _colorPhaseTop = theme.colors.phaseUnknown;
       }
 
       switch (phase!.getSecondHalf()) {
@@ -62,7 +62,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
           _colorPhaseBottom = theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseBottom = theme.colors.primary;
+          _colorPhaseBottom = theme.colors.phaseUnknown;
       }
     }
 

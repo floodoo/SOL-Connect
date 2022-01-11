@@ -16,6 +16,8 @@ class LoginScreen extends ConsumerWidget {
     final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
     final _isLoading = ref.watch(timeTableService).isLoading;
     final _loginError = ref.watch(timeTableService).loginError;
+    final theme = ref.watch(themeService).theme;
+
     String? loginErrorMessage;
 
     if (_isLoggedIn) {
@@ -55,7 +57,7 @@ class LoginScreen extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: MediaQuery.of(context).size.height / 6),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colors.background,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: const [
                     BoxShadow(
@@ -68,13 +70,11 @@ class LoginScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 10.0, top: 20.0),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
                       child: Text(
                         "Untis Login",
-                        style: TextStyle(
-                          fontSize: 30,
-                        ),
+                        style: TextStyle(fontSize: 30, color: theme.colors.textBackground),
                       ),
                     ),
                     Padding(
@@ -124,9 +124,9 @@ class LoginScreen extends ConsumerWidget {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: InkWell(
                         child: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.vertical(
+                          decoration: BoxDecoration(
+                            color: theme.colors.primary,
+                            borderRadius: const BorderRadius.vertical(
                               bottom: Radius.circular(20),
                             ),
                           ),
@@ -135,13 +135,13 @@ class LoginScreen extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               (_isLoading)
-                                  ? const CircularProgressIndicator(
-                                      color: Colors.white,
+                                  ? CircularProgressIndicator(
+                                      color: theme.colors.icon,
                                     )
-                                  : const Text(
+                                  : Text(
                                       "Login",
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: theme.colors.text,
                                         fontSize: 20,
                                       ),
                                     ),

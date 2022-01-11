@@ -26,6 +26,7 @@ class TimeTableScreen extends ConsumerWidget {
               Icons.calendar_today_rounded,
               color: theme.colors.icon,
             ),
+            color: theme.colors.primary,
           ),
         );
 
@@ -60,25 +61,8 @@ class TimeTableScreen extends ConsumerWidget {
         timeColumnCounter++;
       }
 
-      // Top left corner
-      if (i == 0) {
-        timeTableList.add(
-          const CustomTimeTableCard(
-            child: Icon(
-              Icons.calendar_today_rounded,
-              color: Colors.white,
-            ),
-          ),
-        );
-
-        // The first row
-      } else if (i <= 5) {
-        timeTableList.add(
-          CustomTimeTableDayCard(timeTableDay: _timeTable.getDays()[i - 1]),
-        );
-
-        // Left column with hours
-      } else if (hourList.contains(i)) {
+      // left column with hours
+      if (hourList.contains(i)) {
         timeTableList.add(
           CustomTimeTableHourCard(
             timeTableHour: _timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
@@ -88,14 +72,15 @@ class TimeTableScreen extends ConsumerWidget {
         // If holiday  or weekend
       } else if (_timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
         timeTableList.add(
-          const CustomTimeTableCard(
-            child: Text("Holiday"),
+          CustomTimeTableCard(
+            child: const Text("Holiday"),
+            color: theme.colors.phaseUnknown,
           ),
         );
 
         // If no subject
       } else if (_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty()) {
-        timeTableList.add(const CustomTimeTableCard());
+        timeTableList.add(CustomTimeTableCard(color: theme.colors.phaseUnknown));
 
         // subject
       } else {
@@ -189,7 +174,7 @@ class TimeTableScreen extends ConsumerWidget {
                     : Center(
                         child: Text(
                           "No school this week",
-                          style: TextStyle(color: theme.colors.text),
+                          style: TextStyle(color: theme.colors.textBackground),
                         ),
                       ),
           ),
