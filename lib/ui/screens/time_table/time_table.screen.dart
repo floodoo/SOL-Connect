@@ -8,8 +8,6 @@ import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
-import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.argument.dart';
-import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:untis_phasierung/ui/themes/app_theme.dart';
 
