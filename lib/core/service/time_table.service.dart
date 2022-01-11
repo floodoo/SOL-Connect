@@ -58,18 +58,14 @@ class TimeTableService with ChangeNotifier {
 
   getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
-    int holidayCounter = 0;
-    isSchool = true;
+    
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
-    for (var i in timeTable!.getDays()) {
-      if (i.isHolidayOrWeekend()) {
-        holidayCounter++;
-      }
-    }
-
-    if (holidayCounter == 7) {
+    if(timeTable != null) {
+      isSchool = !timeTable!.isNonSchoolblockWeek();
+    } else {
       isSchool = false;
     }
+
     loadPhase();
     notifyListeners();
   }
