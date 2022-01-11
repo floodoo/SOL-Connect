@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:untis_phasierung/core/api/models/timetable.day.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 
