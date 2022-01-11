@@ -170,11 +170,21 @@ class TimeTableScreen extends ConsumerWidget {
                           ),
                         ],
                       )
-                    : Center(
-                        child: Text(
-                          "No school this week",
-                          style: TextStyle(color: theme.colors.textBackground),
-                        ),
+                    : Column(
+                        children: [
+                          GridView.count(
+                            crossAxisCount: 6,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: buildFirstTimeTableRow(_timeTable, theme),
+                          ),
+                          Center(
+                            child: Text(
+                              "No school this week",
+                              style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                            ),
+                          ),
+                        ],
                       ),
           ),
         ),
