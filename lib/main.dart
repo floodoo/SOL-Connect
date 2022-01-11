@@ -35,7 +35,7 @@ class MyApp extends ConsumerWidget {
       routes: {
         LoginScreen.routeName: (context) => const LoginScreen(),
         CustomDrawer.routeName: (context) => const CustomDrawer(),
-        TimeTableScreen.routeName: (context) => TimeTableScreen(theme: theme),
+        TimeTableScreen.routeName: (context) => const TimeTableScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
       },
     );

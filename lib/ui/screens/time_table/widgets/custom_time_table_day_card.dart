@@ -27,9 +27,6 @@ class CustomTimeTableDayCard extends ConsumerWidget {
             ),
             Text(
               timeTableDay.getDate().day.toString() + "." + timeTableDay.getDate().month.toString(),
-             // DateFormat("dd.mm").format(
-             //   timeTableDay.getDate(),
-              //),
               style: TextStyle(color: theme.colors.text),
             ),
           ],

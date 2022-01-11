@@ -12,11 +12,10 @@ import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:untis_phasierung/ui/themes/app_theme.dart';
 
 class TimeTableScreen extends ConsumerWidget {
-  const TimeTableScreen({Key? key, required this.theme}) : super(key: key);
+  const TimeTableScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableScreen).toString();
-  final AppTheme theme;
 
-  buildFirstTimeTableRow(TimeTableRange _timeTable) {
+  buildFirstTimeTableRow(TimeTableRange _timeTable, AppTheme theme) {
     List<Widget> timeTableList = [];
     for (int i = 0; i <= 5; i++) {
       if (i == 0) {
@@ -40,7 +39,7 @@ class TimeTableScreen extends ConsumerWidget {
     return timeTableList;
   }
 
-  buildTimeTable(TimeTableRange _timeTable, MergedTimeTable? _phasedTimeTable) {
+  buildTimeTable(TimeTableRange _timeTable, MergedTimeTable? _phasedTimeTable, AppTheme theme) {
     List<Widget> timeTableList = [];
     int timeColumnCounter = 0;
     int schoolDayCounter = 0;
@@ -160,14 +159,14 @@ class TimeTableScreen extends ConsumerWidget {
                             crossAxisCount: 6,
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            children: buildFirstTimeTableRow(_timeTable),
+                            children: buildFirstTimeTableRow(_timeTable, theme),
                           ),
                           GridView.count(
                             crossAxisCount: 6,
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             childAspectRatio: 0.6,
-                            children: buildTimeTable(_timeTable, _phaseTimeTable),
+                            children: buildTimeTable(_timeTable, _phaseTimeTable, theme),
                           ),
                         ],
                       )
