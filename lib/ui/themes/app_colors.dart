@@ -21,9 +21,9 @@ class AppColors {
 
   factory AppColors.light() {
     return AppColors(
-      primary: Colors.orange.shade200,
-      background: Colors.blueGrey.shade300,
-      text: Colors.white,
+      primary: Colors.orange.shade400,
+      background: Colors.grey.shade300,
+      text: Colors.black,
       textDark: Colors.black,
       hintText: Colors.black38,
       error: Colors.red.shade800,
