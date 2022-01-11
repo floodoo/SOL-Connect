@@ -25,6 +25,9 @@ class SettingsScreen extends ConsumerWidget {
         appBar: AppBar(
           title: Text('Settings', style: TextStyle(color: theme.colors.text)),
           backgroundColor: theme.colors.primary,
+          leading: BackButton(
+            color: theme.colors.icon,
+          ),
         ),
         body: Container(
           color: theme.colors.background,
