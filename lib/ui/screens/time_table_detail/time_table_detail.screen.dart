@@ -4,7 +4,8 @@ import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_wi
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/core/service/services.dart';
-import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.argument.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_table_detail.argument.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/widgets/custom_text.dart';
 
 class TimeTableDetailScreen extends ConsumerWidget {
   const TimeTableDetailScreen({Key? key}) : super(key: key);
@@ -50,37 +51,41 @@ class TimeTableDetailScreen extends ConsumerWidget {
       ),
       body: RepaintBoundary(
         key: previewContainer,
-        child: ListView(
-          children: [
-            Text(
-              _timeTableHour.getSubject().longName,
-              style: TextStyle(color: theme.colors.textBackground),
-            ),
-            Text(
-              _timeTableHour.getActivityType(),
-              style: TextStyle(color: theme.colors.textBackground),
-            ),
-            Text(
-              _timeTableHour.getTeacher().longName,
-              style: TextStyle(color: theme.colors.textBackground),
-            ),
-            Text(
-              _timeTableHour.getRoom().longName,
-              style: TextStyle(color: theme.colors.textBackground),
-            ),
-            Text(
-              _timeTableHour.getLessonCode().name,
-              style: TextStyle(color: theme.colors.textBackground),
-            ),
-            Text(
-              _timeTableHour.getTitle(),
-              style: TextStyle(color: theme.colors.textBackground),
-            ),
-            Text(
-              _timeTableHour.getLessionInformation(),
-              style: TextStyle(color: theme.colors.textBackground),
-            ),
-          ],
+        child: Center(
+          child: ListView(
+            children: [
+              CustomText(text: _timeTableHour.getSubject().longName),
+              CustomText(text: _timeTableHour.getActivityType()),
+              CustomText(text: _timeTableHour.getRoom().longName),
+              CustomText(text: _timeTableHour.getLessonCode().name),
+              CustomText(text: _timeTableHour.getTitle()),
+              Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  elevation: 5,
+                  child: TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      fillColor: theme.colors.primary,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: (_timeTableHour.getLessionInformation() != "")
+                          ? _timeTableHour.getLessionInformation()
+                          : "If available: additional lesson information",
+                      hintStyle: TextStyle(color: theme.colors.text),
+                    ),
+                    maxLines: 12,
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

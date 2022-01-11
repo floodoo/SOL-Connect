@@ -5,7 +5,7 @@ import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/core/service/services.dart';
-import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.argument.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_table_detail.argument.dart';
 import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
