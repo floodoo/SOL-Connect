@@ -35,49 +35,54 @@ class CustomDrawer extends ConsumerWidget {
       );
     }
 
-    return Drawer(
-      child: Column(
-        children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(username),
-            accountEmail: const Text("bbs1-mainz"),
-            currentAccountPicture: profilePicture,
-            decoration: BoxDecoration(
-              color: theme.colors.primary,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: theme.colors.background,
+      ),
+      child: Drawer(
+        child: Column(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(username, style: TextStyle(color: theme.colors.text)),
+              accountEmail: Text("bbs1-mainz", style: TextStyle(color: theme.colors.text)),
+              currentAccountPicture: profilePicture,
+              decoration: BoxDecoration(
+                color: theme.colors.primary,
+              ),
             ),
-          ),
-          ListTile(
-            title: const Text("Timetable"),
-            onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
-          ),
-          ListTile(
-            title: const Text("Info-Center"),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          ListTile(
-            title: const Text("Notifications"),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          ListTile(
-            title: const Text("Messages: {0}"),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          Expanded(child: Container()),
-          ListTile(
-            title: const Text("Settings"),
-            onTap: () => Navigator.pushNamed(context, SettingsScreen.routeName),
-          ),
-          ListTile(
-            title: const Text(
-              "Logout",
-              style: TextStyle(color: Colors.red),
+            ListTile(
+              title: Text("Timetable", style: TextStyle(color: theme.colors.text)),
+              onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
             ),
-            onTap: () {
-              ref.read(timeTableService).logout();
-              Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-            },
-          ),
-        ],
+            ListTile(
+              title: Text("Info-Center", style: TextStyle(color: theme.colors.text)),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            ListTile(
+              title: Text("Notifications", style: TextStyle(color: theme.colors.text)),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            ListTile(
+              title: Text("Messages: {0}", style: TextStyle(color: theme.colors.text)),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            Expanded(child: Container()),
+            ListTile(
+              title: Text("Settings", style: TextStyle(color: theme.colors.text)),
+              onTap: () => Navigator.pushNamed(context, SettingsScreen.routeName),
+            ),
+            ListTile(
+              title: Text(
+                "Logout",
+                style: TextStyle(color: theme.colors.error),
+              ),
+              onTap: () {
+                ref.read(timeTableService).logout();
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

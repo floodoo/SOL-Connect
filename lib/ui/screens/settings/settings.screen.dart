@@ -23,7 +23,7 @@ class SettingsScreen extends ConsumerWidget {
     }
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Settings'),
+          title: Text('Settings', style: TextStyle(color: theme.colors.text)),
           backgroundColor: theme.colors.primary,
         ),
         body: Container(
@@ -35,7 +35,7 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "Phase plan",
-                    style: TextStyle(fontSize: 25, color: theme.colors.textDark),
+                    style: TextStyle(fontSize: 25, color: theme.colors.text),
                   ),
                 ),
               ),
@@ -73,7 +73,7 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "Appearance",
-                    style: TextStyle(fontSize: 25, color: theme.colors.textDark),
+                    style: TextStyle(fontSize: 25, color: theme.colors.text),
                   ),
                 ),
               ),
@@ -107,7 +107,7 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "App Info",
-                    style: TextStyle(fontSize: 25, color: theme.colors.textDark),
+                    style: TextStyle(fontSize: 25, color: theme.colors.text),
                   ),
                 ),
               ),

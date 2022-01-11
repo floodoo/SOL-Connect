@@ -9,20 +9,22 @@ import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
+import 'package:untis_phasierung/ui/themes/app_theme.dart';
 
 class TimeTableScreen extends ConsumerWidget {
-  const TimeTableScreen({Key? key}) : super(key: key);
+  const TimeTableScreen({Key? key, required this.theme}) : super(key: key);
   static final routeName = (TimeTableScreen).toString();
+  final AppTheme theme;
 
   buildFirstTimeTableRow(TimeTableRange _timeTable) {
     List<Widget> timeTableList = [];
     for (int i = 0; i <= 5; i++) {
       if (i == 0) {
         timeTableList.add(
-          const CustomTimeTableCard(
+          CustomTimeTableCard(
             child: Icon(
               Icons.calendar_today_rounded,
-              color: Colors.white,
+              color: theme.colors.icon,
             ),
           ),
         );
@@ -121,15 +123,14 @@ class TimeTableScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Timetable",
-          style: TextStyle(color: theme.colors.text),
-        ),
+        title: Text("Timetable", style: TextStyle(color: theme.colors.text)),
+        iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
         actions: [
           IconButton(
             icon: Icon(
               Icons.adaptive.share_rounded,
+              color: theme.colors.icon,
             ),
             onPressed: () {
               ShareFilesAndScreenshotWidgets().shareScreenshot(
