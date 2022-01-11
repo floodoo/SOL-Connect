@@ -64,9 +64,9 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                             topRight: Radius.circular(10.0),
                           ),
                           color: (_timeTableHour.code == Codes.irregular)
-                              ? Colors.purple.shade900
+                              ? Colors.purple.shade800
                               : (_timeTableHour.code == Codes.cancelled)
-                                  ? Colors.red
+                                  ? Colors.red.shade900
                                   : Color.fromRGBO(_colorPhaseTop.r, _colorPhaseTop.g, _colorPhaseTop.b, 1),
                         ),
                       ),
@@ -99,9 +99,9 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                             bottomRight: Radius.circular(10.0),
                           ),
                           color: (_timeTableHour.code == Codes.irregular)
-                              ? Colors.purple.shade900
+                              ? Colors.purple.shade800
                               : (_timeTableHour.code == Codes.cancelled)
-                                  ? Colors.red
+                                  ? Colors.red.shade900
                                   : Color.fromRGBO(_colorPhaseBottom.r, _colorPhaseBottom.g, _colorPhaseBottom.b, 1),
                         ),
                       ),

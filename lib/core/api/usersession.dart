@@ -52,7 +52,7 @@ class UserSession {
   ///* `MissingCredentialsException` Bei fehlendem Benutzer oder Passwort
   ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
-  Future createSession({String username = "", String password = ""}) async {
+  Future<rh.RPCResponse> createSession({String username = "", String password = ""}) async {
 
     if(_sessionValid) {
       throw UserAlreadyLoggedInException("Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
@@ -84,6 +84,7 @@ class UserSession {
     _pwd = password;
 
     await regenerateSessionBearerToken();
+    return response;
   }
 
   ///Muss üblicherweise nicht aufgerufen werden.
@@ -268,15 +269,8 @@ class UserSession {
   }
 
   Future<rh.RPCResponse> _validateSession() async {
-    return createSession(username: _un, password: _pwd).then((value) {
-      if (value.isError()) {
-        //Failed to login again.
-        logout();
-        throw Exception(
-            "Refreshen der Session fehlgeschlagen. Hat sich das Passwort geändert?");
-      }
-      return value;
-    });
+    _sessionValid = false;
+    return await createSession(username: _un, password: _pwd);
   }
 
   Future<http.Response> _queryURL(String url, {bool needsAuthorization = false}) async {
