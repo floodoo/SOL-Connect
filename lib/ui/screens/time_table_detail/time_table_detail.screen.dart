@@ -54,11 +54,16 @@ class TimeTableDetailScreen extends ConsumerWidget {
         child: Center(
           child: ListView(
             children: [
-              CustomText(text: _timeTableHour.getSubject().longName),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: CustomText(text: _timeTableHour.getSubject().longName),
+              ),
               CustomText(text: _timeTableHour.getActivityType()),
               CustomText(text: "Raum " + _timeTableHour.getRoom().name),
               CustomText(text: _timeTableHour.getLessonCode().name),
               CustomText(text: _timeTableHour.getTitle()),
+              if (phase != null) CustomText(text: phase.getFirstHalf().toString()),
+              if (phase != null) CustomText(text: phase.getSecondHalf().toString()),
               Padding(
                 padding: const EdgeInsets.all(40.0),
                 child: Card(

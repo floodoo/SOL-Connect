@@ -149,7 +149,7 @@ class TimeTableScreen extends ConsumerWidget {
             child: (_timeTable == null)
                 ? Center(
                     child: CircularProgressIndicator(
-                      color: theme.colors.icon,
+                      color: theme.colors.progressIndicator,
                     ),
                   )
                 : (ref.watch(timeTableService).isSchool)

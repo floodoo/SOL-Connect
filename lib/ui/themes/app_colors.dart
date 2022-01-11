@@ -9,6 +9,7 @@ class AppColors {
     required this.hintText,
     required this.error,
     required this.circleAvatar,
+    required this.progressIndicator,
     required this.icon,
     // Phase colors
     required this.phaseFree,
@@ -26,6 +27,7 @@ class AppColors {
   final Color hintText;
   final Color error;
   final Color circleAvatar;
+  final Color progressIndicator;
   final Color icon;
   // Phase colors
   final Color phaseFree;
@@ -44,6 +46,7 @@ class AppColors {
       hintText: Colors.black38,
       error: Colors.red.shade800,
       circleAvatar: Colors.black87,
+      progressIndicator: Colors.red.shade800,
       icon: Colors.white,
       // Phase colors
       phaseFree: Colors.green,
@@ -64,6 +67,7 @@ class AppColors {
       hintText: Colors.white38,
       error: Colors.red.shade800,
       circleAvatar: Colors.white,
+      progressIndicator: Colors.white,
       icon: Colors.white,
       // Phase color
       phaseFree: Colors.green,
