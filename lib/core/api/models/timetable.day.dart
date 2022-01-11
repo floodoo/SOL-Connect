@@ -13,6 +13,8 @@ class TimeTableDay {
   final _hours = <TimeTableHour>[];
   String _dayName = "";
   String _shortDayName = "";
+  String _formattedDay = "";
+  String _formattedMonth = "";
 
   int daysSinceEpoch = 0;
   bool outOfScope = false;
@@ -60,6 +62,10 @@ class TimeTableDay {
       t.startAsString = _lessonTimes[i];
       _hours.add(TimeTableHour(null)); //Leere Stunden
     }
+
+    String date = utils.convertToUntisDate(_date);
+    _formattedDay = date.substring(6);
+    _formattedMonth = date.substring(4, 6);
   }
 
   ///Ob der Tag an einem Wochenende oder in den Ferien liegt
@@ -69,6 +75,10 @@ class TimeTableDay {
 
   DateTime getDate() {
     return _date;
+  }
+
+  String getFormattedDate() {
+   return _formattedDay + "." + _formattedMonth;
   }
 
   ///Gibt eine Liste der Stunden dieses Tages zurück. Diese Liste hat IMMER die Länge 10.
