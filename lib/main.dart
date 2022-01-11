@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/settings.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
@@ -36,6 +37,7 @@ class MyApp extends ConsumerWidget {
         LoginScreen.routeName: (context) => const LoginScreen(),
         CustomDrawer.routeName: (context) => const CustomDrawer(),
         TimeTableScreen.routeName: (context) => const TimeTableScreen(),
+        TimeTableDetailScreen.routeName: (context) => const TimeTableDetailScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
       },
     );

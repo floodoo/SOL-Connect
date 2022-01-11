@@ -5,6 +5,8 @@ import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/core/service/services.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.argument.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
   const CustomTimeTableInfoCard({Key? key, required this.timeTableHour, this.phase}) : super(key: key);
@@ -66,124 +68,136 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
       }
     }
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      color: theme.colors.primary,
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              // Top color
-              Expanded(
-                child: Row(
-                  children: [
-                    // Phase color
-                    Expanded(
-                      flex: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                          ),
-                          color: _colorPhaseTop,
-                        ),
-                      ),
-                    ),
-                    // Irregular color
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(10.0),
-                          ),
-                          color: (_timeTableHour.getLessonCode() == Codes.irregular)
-                              ? Colors.deepPurple.shade900
-                              : (_timeTableHour.getLessonCode() == Codes.cancelled)
-                                  ? Colors.purpleAccent
-                                  : (timeTableHour.getTeacher().name == "---")
-                                      ? Colors.grey
-                                      : _colorPhaseTop,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              // Bottom color
-              Expanded(
-                child: Row(
-                  children: [
-                    // Phase color
-                    Expanded(
-                      flex: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(10.0),
-                          ),
-                          color: _colorPhaseBottom,
-                        ),
-                      ),
-                    ),
-                    // Irregular color
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            bottomRight: Radius.circular(10.0),
-                          ),
-                          color: (_timeTableHour.getLessonCode() == Codes.irregular)
-                              ? Colors.deepPurple.shade900
-                              : (_timeTableHour.getLessonCode() == Codes.cancelled)
-                                  ? Colors.purpleAccent
-                                  : (timeTableHour.getTeacher().name == "---")
-                                      ? Colors.grey
-                                      : _colorPhaseBottom,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          TimeTableDetailScreen.routeName,
+          arguments: TimeTableDetailArgument(
+            timeTableHour: timeTableHour,
+            phase: phase,
           ),
-          // Card content
-          Padding(
-            padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
-            child: Column(
+        );
+      },
+      child: Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        color: theme.colors.primary,
+        child: Stack(
+          children: [
+            Column(
               children: [
+                // Top color
                 Expanded(
-                  flex: 1,
-                  child: AutoSizeText(
-                    _timeTableHour.getSubject().name,
-                    maxLines: 1,
-                    overflow: TextOverflow.fade,
-                    style: TextStyle(color: theme.colors.text),
+                  child: Row(
+                    children: [
+                      // Phase color
+                      Expanded(
+                        flex: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                            ),
+                            color: _colorPhaseTop,
+                          ),
+                        ),
+                      ),
+                      // Irregular color
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(10.0),
+                            ),
+                            color: (_timeTableHour.getLessonCode() == Codes.irregular)
+                                ? Colors.deepPurple.shade900
+                                : (_timeTableHour.getLessonCode() == Codes.cancelled)
+                                    ? Colors.purpleAccent
+                                    : (timeTableHour.getTeacher().name == "---")
+                                        ? Colors.grey
+                                        : _colorPhaseTop,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
+                // Bottom color
                 Expanded(
-                  flex: 1,
-                  child: Text(
-                    _timeTableHour.getTeacher().name,
-                    style: TextStyle(color: theme.colors.text),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    _timeTableHour.getRoom().name,
-                    style: TextStyle(color: theme.colors.text),
+                  child: Row(
+                    children: [
+                      // Phase color
+                      Expanded(
+                        flex: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(10.0),
+                            ),
+                            color: _colorPhaseBottom,
+                          ),
+                        ),
+                      ),
+                      // Irregular color
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              bottomRight: Radius.circular(10.0),
+                            ),
+                            color: (_timeTableHour.getLessonCode() == Codes.irregular)
+                                ? Colors.deepPurple.shade900
+                                : (_timeTableHour.getLessonCode() == Codes.cancelled)
+                                    ? Colors.purpleAccent
+                                    : (timeTableHour.getTeacher().name == "---")
+                                        ? Colors.grey
+                                        : _colorPhaseBottom,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ],
             ),
-          )
-        ],
+            // Card content
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: AutoSizeText(
+                      _timeTableHour.getSubject().name,
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(color: theme.colors.text),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      _timeTableHour.getTeacher().name,
+                      style: TextStyle(color: theme.colors.text),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      _timeTableHour.getRoom().name,
+                      style: TextStyle(color: theme.colors.text),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,8 @@ import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.argument.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:untis_phasierung/ui/themes/app_theme.dart';
 
@@ -39,7 +41,7 @@ class TimeTableScreen extends ConsumerWidget {
     return timeTableList;
   }
 
-  buildTimeTable(TimeTableRange _timeTable, MergedTimeTable? _phasedTimeTable, AppTheme theme) {
+  buildTimeTable(TimeTableRange _timeTable, MergedTimeTable? _phasedTimeTable, AppTheme theme, BuildContext context) {
     List<Widget> timeTableList = [];
     int timeColumnCounter = 0;
     int schoolDayCounter = 0;
@@ -166,7 +168,7 @@ class TimeTableScreen extends ConsumerWidget {
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             childAspectRatio: 0.6,
-                            children: buildTimeTable(_timeTable, _phaseTimeTable, theme),
+                            children: buildTimeTable(_timeTable, _phaseTimeTable, theme, context),
                           ),
                         ],
                       )
