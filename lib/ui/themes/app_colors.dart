@@ -21,12 +21,12 @@ class AppColors {
 
   factory AppColors.light() {
     return AppColors(
-      primary: Colors.orange.shade600,
-      background: Colors.blueGrey.shade200,
+      primary: Colors.orange.shade200,
+      background: Colors.blueGrey.shade300,
       text: Colors.white,
       textDark: Colors.black,
       hintText: Colors.black38,
-      error: Colors.red,
+      error: Colors.red.shade800,
       circleAvatar: Colors.white,
     );
   }
@@ -38,7 +38,7 @@ class AppColors {
       text: Colors.white,
       textDark: Colors.black,
       hintText: Colors.white38,
-      error: Colors.red,
+      error: Colors.red.shade800,
       circleAvatar: Colors.white,
     );
   }
