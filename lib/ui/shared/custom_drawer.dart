@@ -19,7 +19,7 @@ class CustomDrawer extends ConsumerWidget {
     
     CircleAvatar currentAccountPicture = CircleAvatar(
       backgroundColor: theme.colors.background,
-      child: Icon(
+      child: Icon( 
                   Icons.person,
                     color: theme.colors.circleAvatar,
                     

@@ -180,8 +180,6 @@ class UserSession {
   ///Die URL des Profilbildes von `getProfileData()` gecached.
   ///Wird üblicherweise beim Login abgefragt und kann hier direkt abgerufen werde
   ///Für mehr details, benutze `getProfileData()`
-  ///
-  ///Könnte eine `FailedToFetchUserdata` exception werfen.
   String getCachedProfilePictureUrl() {
     return _cachedProfileData.getProfilePictureURL();
   }
@@ -190,8 +188,6 @@ class UserSession {
   ///Wird üblicherweise beim Login abgefragt und kann hier direkt abgerufen werden.
   ///Für mehr details, benutze `getProfileData()`
   ///Um Namen getrennt zu bekommen `getProfileData().getNameSeparated()` aufrufen.
-  ///
-  ///Könnte eine `FailedToFetchUserdata` exception werfen.
   String getCachedProfileFirstAndLastName() {
     return _cachedProfileData.getFirstAndLastName();
   }
