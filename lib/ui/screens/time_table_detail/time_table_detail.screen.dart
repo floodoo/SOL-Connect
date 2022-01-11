@@ -56,7 +56,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
             children: [
               CustomText(text: _timeTableHour.getSubject().longName),
               CustomText(text: _timeTableHour.getActivityType()),
-              CustomText(text: _timeTableHour.getRoom().longName),
+              CustomText(text: "Raum " + _timeTableHour.getRoom().name),
               CustomText(text: _timeTableHour.getLessonCode().name),
               CustomText(text: _timeTableHour.getTitle()),
               Padding(
