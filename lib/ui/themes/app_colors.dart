@@ -9,6 +9,11 @@ class AppColors {
     required this.hintText,
     required this.error,
     required this.circleAvatar,
+    required this.phaseFree,
+    required this.phaseOrienting,
+    required this.phaseReflection,
+    required this.phaseStructured,
+    required this.phaseFeedback
   });
 
   final Color primary;
@@ -18,6 +23,11 @@ class AppColors {
   final Color textDark;
   final Color error;
   final Color circleAvatar;
+  final Color phaseFree;
+  final Color phaseOrienting;
+  final Color phaseReflection;
+  final Color phaseStructured;
+  final Color phaseFeedback;
 
   factory AppColors.light() {
     return AppColors(
@@ -28,6 +38,11 @@ class AppColors {
       hintText: Colors.black38,
       error: Colors.red.shade800,
       circleAvatar: Colors.white,
+      phaseFree: Colors.green.shade300,
+      phaseOrienting: Colors.orange.shade300,
+      phaseReflection: Colors.blue.shade300,
+      phaseStructured: Colors.purple.shade300,
+      phaseFeedback: Colors.red.shade300,
     );
   }
 
@@ -40,6 +55,11 @@ class AppColors {
       hintText: Colors.white38,
       error: Colors.red.shade800,
       circleAvatar: Colors.white,
+      phaseFree: Colors.green.shade300,
+      phaseOrienting: Colors.orange.shade300,
+      phaseReflection: Colors.blue.shade300,
+      phaseStructured: Colors.purple.shade300,
+      phaseFeedback: Colors.red.shade300,
     );
   }
 }

@@ -15,8 +15,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     late TimeTableHour _timeTableHour;
     final theme = ref.watch(themeService).theme;
-    PhaseColor _colorPhaseTop = PhaseCodes.unknown.color;
-    PhaseColor _colorPhaseBottom = PhaseCodes.unknown.color;
+    Color _colorPhaseTop = theme.colors.primary;
+    Color _colorPhaseBottom = theme.colors.primary;
 
     if (timeTableHour.isIrregular()) {
       _timeTableHour = timeTableHour.getReplacement();
@@ -25,8 +25,45 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
     }
 
     if (phase != null) {
-      _colorPhaseTop = phase!.getFirstHalf().color;
-      _colorPhaseBottom = phase!.getSecondHalf().color;
+      switch (phase!.getFirstHalf()) {
+        case PhaseCodes.free:
+          _colorPhaseTop = theme.colors.phaseFree;
+          break;
+        case PhaseCodes.orienting:
+          _colorPhaseTop = theme.colors.phaseOrienting;
+          break;
+        case PhaseCodes.reflection:
+          _colorPhaseTop = theme.colors.phaseReflection;
+          break;
+        case PhaseCodes.structured:
+          _colorPhaseTop = theme.colors.phaseStructured;
+          break;
+        case PhaseCodes.feedback:
+          _colorPhaseTop = theme.colors.phaseFeedback;
+          break;
+        default:
+          _colorPhaseTop = theme.colors.primary;
+      }
+
+      switch (phase!.getSecondHalf()) {
+        case PhaseCodes.free:
+          _colorPhaseBottom = theme.colors.phaseFree;
+          break;
+        case PhaseCodes.orienting:
+          _colorPhaseBottom = theme.colors.phaseOrienting;
+          break;
+        case PhaseCodes.reflection:
+          _colorPhaseBottom = theme.colors.phaseReflection;
+          break;
+        case PhaseCodes.structured:
+          _colorPhaseBottom = theme.colors.phaseStructured;
+          break;
+        case PhaseCodes.feedback:
+          _colorPhaseBottom = theme.colors.phaseFeedback;
+          break;
+        default:
+          _colorPhaseBottom = theme.colors.primary;
+      }
     }
 
     return Card(
@@ -51,7 +88,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(10.0),
                           ),
-                          color: Color.fromRGBO(_colorPhaseTop.r, _colorPhaseTop.g, _colorPhaseTop.b, 1),
+                          color: _colorPhaseTop,
                         ),
                       ),
                     ),
@@ -67,7 +104,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                               ? Colors.purple.shade800
                               : (_timeTableHour.getLessonCode() == Codes.cancelled)
                                   ? Colors.red.shade900
-                                  : Color.fromRGBO(_colorPhaseTop.r, _colorPhaseTop.g, _colorPhaseTop.b, 1),
+                                  : _colorPhaseTop,
                         ),
                       ),
                     )
@@ -86,7 +123,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(10.0),
                           ),
-                          color: Color.fromRGBO(_colorPhaseBottom.r, _colorPhaseBottom.g, _colorPhaseBottom.b, 1),
+                          color: _colorPhaseBottom,
                         ),
                       ),
                     ),
@@ -102,7 +139,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                               ? Colors.purple.shade800
                               : (_timeTableHour.getLessonCode() == Codes.cancelled)
                                   ? Colors.red.shade900
-                                  : Color.fromRGBO(_colorPhaseBottom.r, _colorPhaseBottom.g, _colorPhaseBottom.b, 1),
+                                  : _colorPhaseBottom,
                         ),
                       ),
                     )
