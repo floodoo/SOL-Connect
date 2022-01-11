@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
 import 'package:untis_phasierung/ui/screens/settings/settings.screen.dart';
@@ -13,6 +14,21 @@ class CustomDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     String username = ref.watch(timeTableService).username;
+    String ppUrl = "";
+    UserSession session = ref.watch(timeTableService).session;
+    
+    CircleAvatar currentAccountPicture = CircleAvatar(
+      backgroundColor: theme.colors.background,
+      child: Icon(
+                  Icons.person,
+                    color: theme.colors.circleAvatar,
+                    
+                  ));
+    if(session.isAPIAuthorized()) {
+      username = session.getCachedProfileFirstAndLastName();
+      ppUrl = session.getCachedProfilePictureUrl();
+      currentAccountPicture = CircleAvatar(backgroundColor: theme.colors.background, backgroundImage: Image.network(ppUrl).image);
+    }
 
     return Drawer(
       child: Column(
@@ -20,13 +36,7 @@ class CustomDrawer extends ConsumerWidget {
           UserAccountsDrawerHeader(
             accountName: Text(username),
             accountEmail: const Text("bbs1-mainz"),
-            currentAccountPicture: CircleAvatar(
-              child: Icon(
-                Icons.person,
-                color: theme.colors.circleAvatar,
-              ),
-              backgroundColor: theme.colors.background,
-            ),
+            currentAccountPicture: currentAccountPicture,
             decoration: BoxDecoration(
               color: theme.colors.primary,
             ),

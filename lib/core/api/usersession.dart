@@ -84,6 +84,8 @@ class UserSession {
     _pwd = password;
 
     await regenerateSessionBearerToken();
+    _cachedProfileData = await getProfileData(loadFromCache: false);
+
     return response;
   }
 
@@ -133,6 +135,11 @@ class UserSession {
     return response;
   }
 
+  ///Gibt true zurück, wenn in diesem Objekt ein Benutzer eingeloggt ist
+  bool isLoggedIn() {
+    return _sessionId.isNotEmpty && _sessionValid && _personId != -1;
+  }
+
   ///Gibt true zurück, wenn der user eingeloggt ist und JsonRPC API Anfragen stellen darf
   bool isRPCAuthroized() {
     return _sessionId.isNotEmpty && _personId != -1;
@@ -171,20 +178,22 @@ class UserSession {
   }
 
   ///Die URL des Profilbildes von `getProfileData()` gecached.
+  ///Wird üblicherweise beim Login abgefragt und kann hier direkt abgerufen werde
+  ///Für mehr details, benutze `getProfileData()`
   ///
   ///Könnte eine `FailedToFetchUserdata` exception werfen.
-  Future<String> getProfilePictureUrl() async {
-    ProfileData data = await getProfileData();
-    return data.getProfilePictureURL();
+  String getCachedProfilePictureUrl() {
+    return _cachedProfileData.getProfilePictureURL();
   }
 
   ///Nach und Vornamen von `getProfileData()` gecached.
+  ///Wird üblicherweise beim Login abgefragt und kann hier direkt abgerufen werden.
+  ///Für mehr details, benutze `getProfileData()`
   ///Um Namen getrennt zu bekommen `getProfileData().getNameSeparated()` aufrufen.
   ///
   ///Könnte eine `FailedToFetchUserdata` exception werfen.
-  Future<String> getProfileFirstAndLastName() async {
-    ProfileData data = await getProfileData();
-    return data.getFirstAndLastName();
+  String getCachedProfileFirstAndLastName() {
+    return _cachedProfileData.getFirstAndLastName();
   }
 
   ///Den langen Schulnamen: "BBS I für gewerberbe" blah ...
