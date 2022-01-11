@@ -21,7 +21,7 @@ class TimeTableHour {
   String endAsString = "0000";
   DateTime end = DateTime(0);
 
-  Codes code = Codes.unknown;
+  Codes _code = Codes.unknown;
 
   ///Index der X-Koordinate wenn die Stunde auf einem Gridartigem Stundenplan liegt.
   ///* xIndex=0, yIndex=0 wäre Montag erste Stunde
@@ -35,7 +35,7 @@ class TimeTableHour {
 
   TimeTableHour(dynamic data) {
     if (data == null) {
-      code = Codes.empty;
+      _code = Codes.empty;
       return;
     }
 
@@ -72,16 +72,16 @@ class TimeTableHour {
       String c = data['code'];
 
       if (c == "regular") {
-        code = Codes.regular;
+        _code = Codes.regular;
       } else if (c == "cancelled") {
-        code = Codes.cancelled;
+        _code = Codes.cancelled;
       } else if (c == "irregular") {
-        code = Codes.irregular;
+        _code = Codes.irregular;
       } else {
-        code = Codes.unknown;
+        _code = Codes.unknown;
       }
     } else {
-      code = Codes.regular;
+      _code = Codes.regular;
     }
 
     if(data['substText'] != null) {
@@ -119,7 +119,7 @@ class TimeTableHour {
   ///* __empty__: Die Stunde gibt es nicht. Diese dient also nur als Platzhalter um Lücken zu füllen falls z.B. die Erste Stunde frei ist
   ///* __unknown__: Das sollte nicht vorkommen. Der Status ist unbekannt / illegal
   Codes getLessonCode() {
-    return code;
+    return _code;
   }
 
   ///Wenn `true` dann besitzt die Stunde in `getReplacement()` eine Stunde die diese durch eine Vertretung ersetzen soll.
@@ -174,6 +174,7 @@ class TimeTableHour {
   void addIrregularHour(TimeTableHour entity) {
     entity.xIndex = xIndex;
     entity.yIndex = yIndex;
+    entity._code = _code;
     replacement.add(entity);
   }
 
