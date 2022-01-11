@@ -58,20 +58,20 @@ class AppColors {
   factory AppColors.dark() {
     return AppColors(
       primary: Colors.grey.shade900,
-      background: Colors.black,
+      background: Colors.blueGrey.shade900,
       text: Colors.white,
-      textBackground: Colors.black,
+      textBackground: Colors.white,
       hintText: Colors.white38,
       error: Colors.red.shade800,
       circleAvatar: Colors.white,
       icon: Colors.white,
       // Phase color
-      phaseFree: Colors.green.shade300,
-      phaseOrienting: Colors.orange.shade300,
-      phaseReflection: Colors.blue.shade300,
-      phaseStructured: Colors.purple.shade300,
-      phaseFeedback: Colors.red.shade300,
-      phaseUnknown: Colors.grey.shade300,
+      phaseFree: Colors.green,
+      phaseOrienting: Colors.orange,
+      phaseReflection: Colors.yellow,
+      phaseStructured: Colors.blue,
+      phaseFeedback: Colors.red,
+      phaseUnknown: Colors.blueGrey.shade700,
     );
   }
 }
