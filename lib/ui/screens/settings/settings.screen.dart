@@ -103,7 +103,7 @@ class SettingsScreen extends ConsumerWidget {
                     
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(_createSnackbar(
-                      errorMessage == "" ? "Phasierung erfolgreich für {block} geladen!" : errorMessage, 
+                      errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage, 
                       errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground, theme));
                   }
                   //Navigator.of(context).pop();
