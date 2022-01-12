@@ -6,7 +6,7 @@ import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_table_detail.argument.dart';
-import 'package:untis_phasierung/ui/themes/app_theme.dart';
+import 'package:untis_phasierung/ui/screens/time_table_detail/widgets/custom_phase_card.dart';
 
 extension PhaseReadables on PhaseCodes {
   String get readableName {
@@ -48,50 +48,6 @@ class TimeTableDetailScreen extends ConsumerWidget {
   const TimeTableDetailScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableDetailScreen).toString();
 
-  Widget createPhaseCard(PhaseCodes? phase, AppTheme theme) {
-    return Center(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-          child: Card(
-            shadowColor: Colors.black87,
-            elevation: 10,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(7.0),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(7),
-              child: Column(
-                children: [
-                  Container(
-                    color: (phase == null ? theme.colors.phaseUnknown : phase == PhaseCodes.feedback ? theme.colors.phaseFeedback
-                    : phase == PhaseCodes.free ? theme.colors.phaseFree
-                    : phase == PhaseCodes.orienting ? theme.colors.phaseOrienting
-                    : phase == PhaseCodes.reflection ? theme.colors.phaseOrienting
-                    : phase == PhaseCodes.structured ? theme.colors.phaseStructured
-                    : theme.colors.phaseUnknown),
-                    padding: const EdgeInsets.fromLTRB(25, 5, 0, 5),
-                    alignment: const Alignment(-1, 0),
-                    child: Text(
-                      phase == null ? "Keine Phasierung geladen" : phase.readableName,
-                      textAlign: TextAlign.left,
-                      style:  TextStyle(color: theme.colors.textInverted, fontSize: 23)
-                    ), 
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 15, 10, 20),
-                    child: Text(
-                      phase == null ? "Du kannst die Phasierung für diesen Block unter \"Einstellungen\" > \"Add Phase Plan\" laden" : phase.description,
-                      textAlign: TextAlign.left,  
-                      style:  TextStyle(color: theme.colors.textInverted))  
-                  )
-                ],
-              )
-            )
-          )
-        ) 
-      );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
@@ -99,11 +55,11 @@ class TimeTableDetailScreen extends ConsumerWidget {
     final TimeTableDetailArgument args = ModalRoute.of(context)!.settings.arguments as TimeTableDetailArgument;
     final MappedPhase? phase = args.phase;
     late TimeTableHour _timeTableHour;
-    
+
     PhaseCodes? firstHalf;
     PhaseCodes? secondHalf;
-    
-    if(phase != null) {
+
+    if (phase != null) {
       firstHalf = phase.getFirstHalf();
       secondHalf = phase.getSecondHalf();
     }
@@ -116,7 +72,8 @@ class TimeTableDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Stunde " + _timeTableHour.getStartTimeString() + " - " + _timeTableHour.getEndTimeString(), style: TextStyle(color: theme.colors.text)),
+        title: Text("Stunde " + _timeTableHour.getStartTimeString() + " - " + _timeTableHour.getEndTimeString(),
+            style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
         actions: [
@@ -142,54 +99,11 @@ class TimeTableDetailScreen extends ConsumerWidget {
         key: previewContainer,
         child: ListView(
           children: [
-           createPhaseCard(firstHalf, theme),
-           createPhaseCard(secondHalf, theme)
+            CustomPhaseCard(phase: firstHalf),
+            CustomPhaseCard(phase: secondHalf),
           ],
         ),
       ),
-
-        /*child: Center(
-          child: ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: CustomText(text: _timeTableHour.getSubject().longName),
-              ),
-              CustomText(text: _timeTableHour.getActivityType()),
-              CustomText(text: "Raum " + _timeTableHour.getRoom().name),
-              CustomText(text: _timeTableHour.getLessonCode().name),
-              CustomText(text: _timeTableHour.getTitle()),
-              if (phase != null) CustomText(text: phase.getFirstHalf().toString()),
-              if (phase != null) CustomText(text: phase.getSecondHalf().toString()),
-              Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  elevation: 5,
-                  child: TextField(
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      fillColor: theme.colors.primary,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      hintText: (_timeTableHour.getLessionInformation() != "")
-                          ? _timeTableHour.getLessionInformation()
-                          : "If available: additional lesson information",
-                      hintStyle: TextStyle(color: theme.colors.text),
-                    ),
-                    maxLines: 12,
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),*/
-      
     );
   }
 }
