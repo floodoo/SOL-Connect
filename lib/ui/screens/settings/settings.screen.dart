@@ -202,6 +202,7 @@ class SettingsScreen extends ConsumerWidget {
                   color: theme.colors.text,
                 ),
                 padTop: 10,
+                padBottom: 30,
                 text: "Build Number",
               ),
             ],
