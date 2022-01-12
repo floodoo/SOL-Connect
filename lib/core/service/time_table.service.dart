@@ -5,6 +5,7 @@ import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
@@ -120,6 +121,7 @@ class TimeTableService with ChangeNotifier {
   }
 
   Future<void> loadPhase([String? phaseFilePath]) async {
+    
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
       validator = ExcelValidator("flo-dev.me", phaseFilePath);
@@ -131,7 +133,28 @@ class TimeTableService with ChangeNotifier {
     }
 
     if (validator != null) {
-      phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
+      try {
+        DateTime? loadStart = await UserSecureStorage.getPhaseLoadBlockStart();
+        DateTime? loadEnd = await UserSecureStorage.getPhaseLoadBlockEnd();
+        
+        if(loadStart != null && loadEnd != null) {
+          validator!.limitPhasePlanToCurrentBlock(loadStart, loadEnd);
+          log.i("Limiting Phaseplan to block " + loadStart.toString() + " -> " + loadEnd.toString() + " until a new phase is loaded.");
+          phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
+
+        } else {
+          phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
+          DateTime start = validator!.getBlockStart()!;
+          DateTime end = validator!.getBlockEnd()!;
+          log.i("Setting Phaseplan limitation to current block: " + start.toString() + " -> " + end.toString());
+          UserSecureStorage.setPhaseLoadDateStart(start);
+          UserSecureStorage.setPhaseLoadDateEnd(end);
+        }
+
+      } catch(e) {
+        phaseTimeTable = null;
+        log.e(e);
+      }
     }
     notifyListeners();
   }
@@ -140,6 +163,10 @@ class TimeTableService with ChangeNotifier {
     prefs!.remove("phasePlan");
     validator = null;
     phaseTimeTable = null;
+    
+    UserSecureStorage.clearPhaseDates();
+    log.i("Deleted Phase block limitation");
+
     notifyListeners();
   }
 

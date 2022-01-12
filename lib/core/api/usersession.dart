@@ -213,6 +213,24 @@ class UserSession {
   ///* `getRelativeTimeTableWeek(0);` entspricht `getTimeTableForThisWeek()`
   Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
     
+    /*DateTime from = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+
+    if (relative < 0) {
+      //Ziehe die duration ab und gehe in die Vergangenheit
+      from = from.subtract(Duration(days: DateTime.daysPerWeek * relative.abs()));
+    } else if (relative > 0) {
+      //Addiere die Duration und gehe in die Zukunft.
+      from = from.add(Duration(days: DateTime.daysPerWeek * relative));
+    }*/
+    DateTime from = getRelativeWeekStartDate(relative);
+    DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
+    TimeTableRange rng = await getTimeTable(from, lastDayOfWeek);
+    rng.relativeToCurrent = relative;
+    return rng;
+  }
+
+  ///Gibt nur das Datum einers Wochenstartes relativ zum aktuellen Datum zurück ohne ein extra Timetable Objekt abzufragen und zu erzeugen
+  DateTime getRelativeWeekStartDate(int relative) {
     DateTime from = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
 
     if (relative < 0) {
@@ -222,11 +240,7 @@ class UserSession {
       //Addiere die Duration und gehe in die Zukunft.
       from = from.add(Duration(days: DateTime.daysPerWeek * relative));
     }
-
-    DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
-    TimeTableRange rng = await getTimeTable(from, lastDayOfWeek);
-    rng.relativeToCurrent = relative;
-    return rng;
+    return from;
   }
 
   Future<TimeTableRange> getTimeTableForThisWeek() async {
