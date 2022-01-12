@@ -18,6 +18,8 @@ class TimeTableRange {
   //Welche Woche im aktuellen Block ist das? Startet bei 0
   //Wird erst gesetzt wenn es wirklich gebraucht wird und "getCurrentBlockWeek()" aufgerufen wird.
   int _blockIndex = -1;
+  DateTime? _blockStartDate; //Block startdatum dem die timetable woche gehört
+  DateTime? _blockEndDate; //Block enddatum dem die timetable woche gehört
   bool _isEmpty = true;
 
   //TODO wird bis jetzt nur in `UserSession.getRelativeTimeTableForWeek()` gesetzt
@@ -140,6 +142,59 @@ class TimeTableRange {
     return (_endDate.day < 10 ? "0" + _endDate.day.toString() : _endDate.day.toString()) +
         "." +
         (_endDate.month < 10 ? "0" + _endDate.month.toString() : _endDate.month.toString());
+  }
+
+  void setManualBlockBounds() {
+    
+  }
+
+  ///Gibt den ersten Montag nach ende des Blockes zurück
+  Future<DateTime> getNextBlockEndDate(int relativeToCurrent) async {
+    if(_blockEndDate != null) {
+      return _blockEndDate!;
+    }
+
+    if(_blockStartDate == null) {
+      await getNextBlockStartDate(relativeToCurrent);
+    }
+    //Gehe Wochen nach vorne bis eine leere Woche kommt!
+    for(int i = relativeToCurrent; i < relativeToCurrent+8; i++) {
+      TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
+      if(week.isNonSchoolblockWeek() && week.getDays()[0].getDate().millisecondsSinceEpoch > _blockStartDate!.millisecondsSinceEpoch) {
+        _blockEndDate = week.getDays()[0].getDate(); //Der erste Montag nach dem Block
+        break;
+      }
+    }
+    return _blockEndDate!;
+  }
+
+  Future<DateTime> getNextBlockStartDate(int relativeToCurrent) async {
+    
+    if(_blockStartDate != null) {
+      return _blockStartDate!;
+    } 
+
+    if(_blockIndex == -1) { //Man kommt um eine Abfrage nicht herum
+      getCurrentBlockWeek(relativeToCurrent); //Das AKTUELLE DATUM!
+    }
+    if(!isNonSchoolblockWeek()) {
+      if(_blockIndex == 0) {
+        _blockStartDate = getDays()[0].getDate();
+        return _blockStartDate!;
+      } else if(_blockIndex >= 0) {
+        _blockStartDate = _boundUser.getRelativeWeekStartDate(- _blockIndex);
+        return _blockStartDate!;
+      } 
+    } else { //Suche in der Zukunft
+      for(int i = relativeToCurrent; i < relativeToCurrent+5; i++) {
+        TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
+        if(!week.isNonSchoolblockWeek()) {
+          _blockStartDate = week.getDays()[0].getDate();
+          break;
+        }
+      }
+    }
+    return _blockStartDate!;
   }
 
   ///Gibt den index zurück, in welcher Woche die Aktuelle range ist seitdem der neue Block gestartet ist.

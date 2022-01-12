@@ -67,6 +67,12 @@ class ExcelValidator {
   //Speichere die Farben um beim mehrfachen aufrufen der mergeExcelWithTimetable() Funktion keinen unnötigen traffic zu erzeugen.
   CellColors _colorData = CellColors();
   var _mapped = <MappedSheet>[];
+  
+  ///Startdatum des Blocks
+  ///Das gemappte Sheet ist automatisch nicht mehr gültig wenn:
+  ///* Das Datum größer als das Startdatum des Blocks ist und die Woche keine Schulwoche ist
+  static DateTime? _validDateStart;
+  static DateTime? _validDateEnd; //TODO static wegmachen wenn nicht bei jedem Stundenplanladen eine neue ExcelValidator instanz erstellt wird ...
 
   ///Der Excel Validator dient dazu den Stundenplan mit der angegebenen Phasierung zu verbinden.
   ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
@@ -79,6 +85,29 @@ class ExcelValidator {
 
     var bytes = File(_path).readAsBytesSync();
     _excel = Excel.decodeBytes(bytes);
+    print("Creating new validator instance ...");
+  }
+
+  ///Mit dieser Funktion kann ein geladener Phasierungsplan auf einen Schulblock beschränkt werden.
+  ///
+  ///Das Datum ist das Datum des aktuellen Block Startes (Montag). 
+  ///Funktion kann benutzt werden um das Datum manuell aus dem Speicher zu setzten bis der user z.B. eine neue 
+  ///Excel lädt und damit ein neues Objekt erzeugt.
+  ///
+  ///Eine Phasierung wird als ungültig betrachtet wenn ein verglichenes Datum:
+  ///* Kleiner als [datetime] ist
+  ///* Größer als [datetime] ist und die aktuelle Woche keine Schulwoche ist
+  void limitPhasePlanToCurrentBlock(DateTime startDate, DateTime endDate) {
+    _validDateStart = startDate;
+    _validDateEnd = endDate;
+  }
+
+  DateTime? getBlockStart() {
+    return _validDateStart;
+  }
+
+  DateTime? getBlockEnd() {
+    return _validDateEnd;
   }
 
   ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.
@@ -96,11 +125,32 @@ class ExcelValidator {
   ///* `ExcelConversionAlreadyActive`: Wenn diese Funktion bereits aufgerufen wurde und noch nicht fertig ist
   ///* `ExcelConversionServerError`: Wenn ein Fehler Serverseitig aufgetreten ist
   ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
+  ///* `CurrentPhaseplanOutOfRange`: Wenn die timetable Stunden hat die aber außerhalb des aktuellen Blockes sind.
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {   
 
+    //TODO Noch nicht voll debuggt. Bitte überwachen. Das Datum soll den ersten und letzten Tag des nächsten oder aktuellen Blocks sein
+    _validDateStart ??= await timetable.getNextBlockStartDate(0);
+    _validDateEnd ??= await timetable.getNextBlockEndDate(0);
+
+
+    print(_validDateStart);
+    print(_validDateEnd);
     if(timetable.isNonSchoolblockWeek()) {
       throw ExcelMergeNonSchoolBlockException("Diese Woche enthält keine Schulstunden");
-    } 
+    } else {
+      if(_validDateStart != null) {
+        if(timetable.getDays()[0].getDate().millisecondsSinceEpoch < _validDateStart!.millisecondsSinceEpoch) {
+          throw CurrentPhaseplanOutOfRange("Dieser Schulblock gehört nicht mehr zur Phasierung!");
+        }
+      } 
+
+      if(_validDateEnd != null) {
+        if(timetable.getDays()[0].getDate().millisecondsSinceEpoch >= _validDateEnd!.millisecondsSinceEpoch) {
+           throw CurrentPhaseplanOutOfRange("Dieser Schulblock gehört nicht mehr zur Phasierung!");
+        }
+      }
+    }
+    
 
     if(_mapped.isEmpty || refresh) {
       _mapped = await _verifySheet(timetable);

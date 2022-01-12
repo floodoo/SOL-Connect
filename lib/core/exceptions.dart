@@ -140,3 +140,13 @@ class FailedToFetchNewsException implements Exception {
     return runtimeType.toString() + ": " + cause;
   }
 }
+
+class CurrentPhaseplanOutOfRange implements Exception {
+  String cause = "";
+  CurrentPhaseplanOutOfRange(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
