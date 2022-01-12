@@ -20,7 +20,8 @@ class AppColors {
     required this.phaseUnknown,
     required this.elementBackground,
     required this.errorBackground,
-    required this.textInverted
+    required this.textInverted,
+    required this.successColor
   });
 
   final Color primary;
@@ -35,6 +36,7 @@ class AppColors {
   final Color icon;
   final Color errorBackground;
   final Color textInverted; //Umgedreht zum mode: light -> schwarz, dark -> weiß
+  final Color successColor;
   // Phase colors
   final Color phaseFree;
   final Color phaseOrienting;
@@ -63,7 +65,8 @@ class AppColors {
       phaseUnknown: Colors.grey,
       elementBackground: Colors.grey.shade600,
       errorBackground: Colors.red.shade900,
-      textInverted: Colors.black
+      textInverted: Colors.black,
+      successColor: Colors.green.shade600
     );
   }
 
@@ -87,7 +90,8 @@ class AppColors {
       phaseFeedback: Colors.red,
       phaseUnknown: Colors.blueGrey.shade700,
       elementBackground: Colors.black,
-      errorBackground: Colors.red.shade900
+      errorBackground: Colors.red.shade900,
+      successColor: Colors.green.shade800
     );
   }
 }

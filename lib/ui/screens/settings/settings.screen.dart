@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
+import 'package:untis_phasierung/ui/themes/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import '../../../core/exceptions.dart';
@@ -13,6 +14,24 @@ class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
   static final routeName = (SettingsScreen).toString();
    
+   SnackBar _createSnackbar(String message, Color backgroundColor, AppTheme theme, {Duration duration = const Duration(seconds: 4)}) {
+     return SnackBar(
+       duration: duration,
+        elevation: 20,
+        backgroundColor: backgroundColor,
+        content: Text(
+          message,
+          style: TextStyle(fontSize: 17, color: theme.colors.text)
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0),
+            topRight: Radius.circular(15.0),
+          ),
+        )
+      );
+   }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
@@ -57,10 +76,13 @@ class SettingsScreen extends ConsumerWidget {
                     type: FileType.custom,
                     allowedExtensions: ["xlsx"],
                     allowMultiple: false,
+                    dialogTitle: "Phasierung laden"
                   );
                   if (result != null) {
                     //Light und darkmode beachten
-                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                       _createSnackbar("Excel Überprüfen ...", theme.colors.elementBackground, theme, duration: const Duration(minutes: 1)));
+
                     String errorMessage = "";
                     try {
                       await ref.read(timeTableService).loadPhase(result.files.first.path!);
@@ -79,22 +101,10 @@ class SettingsScreen extends ConsumerWidget {
                       log.e(e);
                     }
                     
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      elevation: 20,
-                      backgroundColor: errorMessage == "" ? theme.colors.elementBackground : theme.colors.errorBackground,
-                      content: Text(
-                        errorMessage == "" ? 
-                          "Phasierung erfolgreich für {block} geladen!"
-                        : errorMessage,
-                        style: TextStyle(fontSize: 17, color: theme.colors.text)
-                      ),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15.0),
-                          topRight: Radius.circular(15.0),
-                        ),
-                      )
-                    ));
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(_createSnackbar(
+                      errorMessage == "" ? "Phasierung erfolgreich für {block} geladen!" : errorMessage, 
+                      errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground, theme));
                   }
                   //Navigator.of(context).pop();
                 },
@@ -110,20 +120,9 @@ class SettingsScreen extends ConsumerWidget {
                   //Navigator.of(context).pop();
                   ref.read(timeTableService).deletePhase();
 
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      elevation: 20,
-                      backgroundColor: theme.colors.elementBackground,
-                      content: Text(
-                        "Phasierung entfernt",
-                        style: TextStyle(fontSize: 17, color: theme.colors.text)
-                      ),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15.0),
-                          topRight: Radius.circular(15.0),
-                        ),
-                      )
-                    ));
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(_createSnackbar("Phasierung entfernt", 
+                  theme.colors.elementBackground, theme));
                 },
               ),
               Center(
