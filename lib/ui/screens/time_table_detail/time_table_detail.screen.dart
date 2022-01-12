@@ -2,14 +2,96 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_table_detail.argument.dart';
 import 'package:untis_phasierung/ui/screens/time_table_detail/widgets/custom_text.dart';
+import 'package:untis_phasierung/ui/themes/app_theme.dart';
+
+extension PhaseReadables on PhaseCodes {
+  String get readableName {
+    switch (this) {
+      case PhaseCodes.orienting:
+        return "Orientierungsphase";
+      case PhaseCodes.reflection:
+        return "Reflektionsphase";
+      case PhaseCodes.structured:
+        return "Strukturierte Phase";
+      case PhaseCodes.free:
+        return "Freie Phase";
+      case PhaseCodes.feedback:
+        return "Feedback Phase";
+      default:
+        return "Keine Info verfügbar";
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case PhaseCodes.orienting:
+        return "In dieser Phase spricht der Lehrer";
+      case PhaseCodes.reflection:
+        return "In dieser Phase macht man was wiß ich";
+      case PhaseCodes.structured:
+        return "In dieser Phase spricht der Lehrer";
+      case PhaseCodes.free:
+        return "In dieser Phase kann man machen was man will";
+      case PhaseCodes.feedback:
+        return "In dieser Phase macht man was weiß ich";
+      default:
+        return "Dieser Lehrer hat sich wohl nicht in die Excel eingetragen";
+    }
+  }
+}
 
 class TimeTableDetailScreen extends ConsumerWidget {
   const TimeTableDetailScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableDetailScreen).toString();
+
+  Widget createPhaseCard(PhaseCodes? phase, AppTheme theme) {
+    return Center(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+          child: Card(
+            shadowColor: Colors.black87,
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7.0),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(7),
+              child: Column(
+                children: [
+                  Container(
+                    color: (phase == null ? theme.colors.phaseUnknown : phase == PhaseCodes.feedback ? theme.colors.phaseFeedback
+                    : phase == PhaseCodes.free ? theme.colors.phaseFree
+                    : phase == PhaseCodes.orienting ? theme.colors.phaseOrienting
+                    : phase == PhaseCodes.reflection ? theme.colors.phaseOrienting
+                    : phase == PhaseCodes.structured ? theme.colors.phaseStructured
+                    : theme.colors.phaseUnknown),
+                    padding: const EdgeInsets.fromLTRB(25, 5, 0, 5),
+                    alignment: const Alignment(-1, 0),
+                    child: Text(
+                      phase == null ? "Keine Phasierung geladen" : phase.readableName,
+                      textAlign: TextAlign.left,
+                      style:  TextStyle(color: theme.colors.textInverted, fontSize: 23)
+                    ), 
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 15, 10, 20),
+                    child: Text(
+                      phase == null ? "Du kannst die Phasierung für diesen Block unter \"Einstellungen\" > \"Add Phase Plan\" laden" : phase.description,
+                      textAlign: TextAlign.left,  
+                      style:  TextStyle(color: theme.colors.textInverted))  
+                  )
+                ],
+              )
+            )
+          )
+        ) 
+      );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,6 +100,14 @@ class TimeTableDetailScreen extends ConsumerWidget {
     final TimeTableDetailArgument args = ModalRoute.of(context)!.settings.arguments as TimeTableDetailArgument;
     final MappedPhase? phase = args.phase;
     late TimeTableHour _timeTableHour;
+    
+    PhaseCodes? firstHalf;
+    PhaseCodes? secondHalf;
+    
+    if(phase != null) {
+      firstHalf = phase.getFirstHalf();
+      secondHalf = phase.getSecondHalf();
+    }
 
     if (args.timeTableHour.isIrregular()) {
       _timeTableHour = args.timeTableHour.getReplacement();
@@ -27,7 +117,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Timetable", style: TextStyle(color: theme.colors.text)),
+        title: Text("Stunde " + _timeTableHour.getStartTimeString() + " - " + _timeTableHour.getEndTimeString(), style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
         actions: [
@@ -51,7 +141,15 @@ class TimeTableDetailScreen extends ConsumerWidget {
       ),
       body: RepaintBoundary(
         key: previewContainer,
-        child: Center(
+        child: ListView(
+          children: [
+           createPhaseCard(firstHalf, theme),
+           createPhaseCard(secondHalf, theme)
+          ],
+        ),
+      ),
+
+        /*child: Center(
           child: ListView(
             children: [
               Padding(
@@ -91,8 +189,8 @@ class TimeTableDetailScreen extends ConsumerWidget {
               )
             ],
           ),
-        ),
-      ),
+        ),*/
+      
     );
   }
 }
