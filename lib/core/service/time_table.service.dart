@@ -151,9 +151,9 @@ class TimeTableService with ChangeNotifier {
           UserSecureStorage.setPhaseLoadDateEnd(end);
         }
 
-      } catch(e) {
+      } on CurrentPhaseplanOutOfRange {
         phaseTimeTable = null;
-        log.e(e);
+        log.e("Week not part of current block");
       }
     }
     notifyListeners();
