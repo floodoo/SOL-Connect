@@ -2,18 +2,22 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:untis_phasierung/util/logger.util.dart';
+import '../../../core/exceptions.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
   static final routeName = (SettingsScreen).toString();
-
+   
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     bool lightMode;
+    Logger log = getLogger();
 
     // on app start the saved appearance is loaded. This is only for the switch
     if (theme.mode == ThemeMode.light) {
@@ -38,7 +42,7 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "Phase plan",
-                    style: TextStyle(fontSize: 25, color: theme.colors.text),
+                    style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                   ),
                 ),
               ),
@@ -55,9 +59,44 @@ class SettingsScreen extends ConsumerWidget {
                     allowMultiple: false,
                   );
                   if (result != null) {
-                    ref.read(timeTableService).loadPhase(result.files.first.path!);
-                    Navigator.of(context).pop();
+                    //Light und darkmode beachten
+                    
+                    String errorMessage = "";
+                    try {
+                      await ref.read(timeTableService).loadPhase(result.files.first.path!);
+                    } on ExcelMergeFileNotVerified {
+                      errorMessage = "Kein Stundenplan in Datei gefunden!";
+                    } on ExcelConversionAlreadyActive {
+                      errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
+                    } on ExcelConversionServerError {
+                      errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
+                    } on FailedToEstablishExcelServerConnection {
+                      errorMessage = "Bitte überprüfe deine Internetverbindung";
+                    } on ExcelMergeNonSchoolBlockException {
+                      //Hier egal!
+                    } catch(e) {
+                      errorMessage = "Unbekannter Fehler: " + e.toString();
+                      log.e(e);
+                    }
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      elevation: 20,
+                      backgroundColor: errorMessage == "" ? theme.colors.elementBackground : theme.colors.errorBackground,
+                      content: Text(
+                        errorMessage == "" ? 
+                          "Phasierung erfolgreich für {block} geladen!"
+                        : errorMessage,
+                        style: TextStyle(fontSize: 17, color: theme.colors.text)
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15.0),
+                          topRight: Radius.circular(15.0),
+                        ),
+                      )
+                    ));
                   }
+                  //Navigator.of(context).pop();
                 },
               ),
               CustomSettingsCard(
@@ -65,10 +104,26 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.delete,
                   color: theme.colors.text,
                 ),
+                padTop: 10,
                 text: "Delete Phase Plan",
                 onTap: () {
-                  Navigator.of(context).pop();
+                  //Navigator.of(context).pop();
                   ref.read(timeTableService).deletePhase();
+
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      elevation: 20,
+                      backgroundColor: theme.colors.elementBackground,
+                      content: Text(
+                        "Phasierung entfernt",
+                        style: TextStyle(fontSize: 17, color: theme.colors.text)
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15.0),
+                          topRight: Radius.circular(15.0),
+                        ),
+                      )
+                    ));
                 },
               ),
               Center(
@@ -76,7 +131,7 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "Appearance",
-                    style: TextStyle(fontSize: 25, color: theme.colors.text),
+                    style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                   ),
                 ),
               ),
@@ -110,7 +165,7 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 25.0),
                   child: Text(
                     "App Info",
-                    style: TextStyle(fontSize: 25, color: theme.colors.text),
+                    style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                   ),
                 ),
               ),
@@ -119,9 +174,23 @@ class SettingsScreen extends ConsumerWidget {
                   FontAwesome.github_circled,
                   color: theme.colors.text,
                 ),
-                text: "Github Repo",
+                text: "Github Project",
                 onTap: () async {
                   String _url = "https://github.com/floodoo/untis_phasierung";
+                  if (!await launch(_url)) {
+                    throw "Could not launch $_url";
+                  }
+                },
+              ),
+              CustomSettingsCard(
+                leading: Icon(
+                  FontAwesome.github_circled,
+                  color: theme.colors.text,
+                ),
+                padTop: 10,
+                text: "Report Bug",
+                onTap: () async {
+                  String _url = "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
                   if (!await launch(_url)) {
                     throw "Could not launch $_url";
                   }
@@ -132,6 +201,7 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.info,
                   color: theme.colors.text,
                 ),
+                padTop: 10,
                 text: "Build Number",
               ),
             ],

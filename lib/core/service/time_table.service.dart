@@ -66,7 +66,8 @@ class TimeTableService with ChangeNotifier {
       isSchool = false;
     }
 
-    loadPhase();
+    loadPhase().onError((error, stackTrace) => log.e(error));
+
     notifyListeners();
   }
 
@@ -128,14 +129,11 @@ class TimeTableService with ChangeNotifier {
         validator = ExcelValidator("flo-dev.me", phaseFilePath);
       }
     }
-    try {
-      if (validator != null) {
-        phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
-      }
-      notifyListeners();
-    } catch (e) {
-      log.e(e);
+
+    if (validator != null) {
+      phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
     }
+    notifyListeners();
   }
 
   void deletePhase() {

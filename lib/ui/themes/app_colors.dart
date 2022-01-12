@@ -18,10 +18,14 @@ class AppColors {
     required this.phaseStructured,
     required this.phaseFeedback,
     required this.phaseUnknown,
+    required this.elementBackground,
+    required this.errorBackground,
+    required this.textInverted
   });
 
   final Color primary;
   final Color background;
+  final Color elementBackground;
   final Color text;
   final Color textBackground;
   final Color hintText;
@@ -29,6 +33,8 @@ class AppColors {
   final Color circleAvatar;
   final Color progressIndicator;
   final Color icon;
+  final Color errorBackground;
+  final Color textInverted; //Umgedreht zum mode: light -> schwarz, dark -> weiß
   // Phase colors
   final Color phaseFree;
   final Color phaseOrienting;
@@ -55,6 +61,9 @@ class AppColors {
       phaseStructured: Colors.blue,
       phaseFeedback: Colors.red,
       phaseUnknown: Colors.grey,
+      elementBackground: Colors.grey.shade600,
+      errorBackground: Colors.red.shade900,
+      textInverted: Colors.black
     );
   }
 
@@ -63,6 +72,7 @@ class AppColors {
       primary: Colors.grey.shade900,
       background: Colors.blueGrey.shade900,
       text: Colors.white,
+      textInverted: Colors.white,
       textBackground: Colors.white,
       hintText: Colors.white38,
       error: Colors.red.shade800,
@@ -76,6 +86,8 @@ class AppColors {
       phaseStructured: Colors.blue,
       phaseFeedback: Colors.red,
       phaseUnknown: Colors.blueGrey.shade700,
+      elementBackground: Colors.black,
+      errorBackground: Colors.red.shade900
     );
   }
 }
