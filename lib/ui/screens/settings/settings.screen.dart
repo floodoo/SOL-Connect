@@ -41,177 +41,178 @@ class SettingsScreen extends ConsumerWidget {
       lightMode = false;
     }
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Settings', style: TextStyle(color: theme.colors.text)),
-          backgroundColor: theme.colors.primary,
-          leading: BackButton(
-            color: theme.colors.icon,
-          ),
+      appBar: AppBar(
+        title: Text('Settings', style: TextStyle(color: theme.colors.text)),
+        backgroundColor: theme.colors.primary,
+        leading: BackButton(
+          color: theme.colors.icon,
         ),
-        body: Container(
-          color: theme.colors.background,
-          child: ListView(
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 25.0),
-                  child: Text(
-                    "Phase plan",
-                    style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
-                  ),
+      ),
+      body: Container(
+        color: theme.colors.background,
+        child: ListView(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Text(
+                  "Phase plan",
+                  style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                 ),
               ),
-              CustomSettingsCard(
-                leading: Icon(
-                  Icons.add,
-                  color: theme.colors.text,
-                ),
-                text: "Add Phase Plan",
-                onTap: () async {
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(
-                      type: FileType.custom,
-                      allowedExtensions: ["xlsx"],
-                      allowMultiple: false,
-                      dialogTitle: "Phasierung laden");
+            ),
+            CustomSettingsCard(
+              leading: Icon(
+                Icons.add,
+                color: theme.colors.text,
+              ),
+              text: "Add Phase Plan",
+              onTap: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ["xlsx"],
+                    allowMultiple: false,
+                    dialogTitle: "Phasierung laden");
 
-                  if (result != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      _createSnackbar(
-                        "Excel Überprüfen ...",
-                        theme.colors.elementBackground,
-                        duration: const Duration(minutes: 1),
-                      ),
-                    );
+                if (result != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    _createSnackbar(
+                      "Excel Überprüfen ...",
+                      theme.colors.elementBackground,
+                      duration: const Duration(minutes: 1),
+                    ),
+                  );
 
-                    String errorMessage = "";
-                    try {
-                      await ref.read(timeTableService).loadPhase(result.files.first.path!);
-                    } on ExcelMergeFileNotVerified {
-                      errorMessage = "Kein Stundenplan in Datei gefunden!";
-                    } on ExcelConversionAlreadyActive {
-                      errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
-                    } on ExcelConversionServerError {
-                      errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
-                    } on FailedToEstablishExcelServerConnection {
-                      errorMessage = "Bitte überprüfe deine Internetverbindung";
-                    } on ExcelMergeNonSchoolBlockException {
-                      // Doesn't matter
-                    } catch (e) {
-                      errorMessage = "Unbekannter Fehler: " + e.toString();
-                      log.e(e);
-                    }
-
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      _createSnackbar(
-                        errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
-                        errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
-                      ),
-                    );
+                  String errorMessage = "";
+                  try {
+                    await ref.read(timeTableService).loadPhase(result.files.first.path!);
+                  } on ExcelMergeFileNotVerified {
+                    errorMessage = "Kein Stundenplan in Datei gefunden!";
+                  } on ExcelConversionAlreadyActive {
+                    errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
+                  } on ExcelConversionServerError {
+                    errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
+                  } on FailedToEstablishExcelServerConnection {
+                    errorMessage = "Bitte überprüfe deine Internetverbindung";
+                  } on ExcelMergeNonSchoolBlockException {
+                    // Doesn't matter
+                  } catch (e) {
+                    errorMessage = "Unbekannter Fehler: " + e.toString();
+                    log.e(e);
                   }
-                },
-              ),
-              CustomSettingsCard(
-                leading: Icon(
-                  Icons.delete,
-                  color: theme.colors.text,
-                ),
-                padTop: 10,
-                text: "Delete Phase Plan",
-                onTap: () {
-                  ref.read(timeTableService).deletePhase();
 
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
                     _createSnackbar(
-                      "Phasierung entfernt",
-                      theme.colors.elementBackground,
+                      errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
+                      errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
                     ),
                   );
-                },
+                }
+              },
+            ),
+            CustomSettingsCard(
+              leading: Icon(
+                Icons.delete,
+                color: theme.colors.text,
               ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 25.0),
-                  child: Text(
-                    "Appearance",
-                    style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
+              padTop: 10,
+              text: "Delete Phase Plan",
+              onTap: () {
+                ref.read(timeTableService).deletePhase();
+
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  _createSnackbar(
+                    "Phasierung entfernt",
+                    theme.colors.elementBackground,
                   ),
+                );
+              },
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Text(
+                  "Appearance",
+                  style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 0.0),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 0.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                color: theme.colors.primary,
+                child: SwitchListTile(
+                  value: lightMode,
+                  onChanged: (bool value) {
+                    ref.read(themeService).saveAppearence(value);
+                  },
+                  title: Text(
+                    (theme.mode == ThemeMode.light) ? "Light Mode" : "Dark Mode",
+                    maxLines: 1,
+                    style: TextStyle(color: theme.colors.text),
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  color: theme.colors.primary,
-                  child: SwitchListTile(
-                    value: lightMode,
-                    onChanged: (bool value) {
-                      ref.read(themeService).saveAppearence(value);
-                    },
-                    title: Text(
-                      (theme.mode == ThemeMode.light) ? "Light Mode" : "Dark Mode",
-                      maxLines: 1,
-                      style: TextStyle(color: theme.colors.text),
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    inactiveThumbColor: theme.colors.text,
-                    activeTrackColor: theme.colors.background,
-                    activeColor: theme.colors.text,
-                  ),
+                  inactiveThumbColor: theme.colors.text,
+                  activeTrackColor: theme.colors.background,
+                  activeColor: theme.colors.text,
                 ),
               ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 25.0),
-                  child: Text(
-                    "App Info",
-                    style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
-                  ),
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Text(
+                  "App Info",
+                  style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                 ),
               ),
-              CustomSettingsCard(
-                leading: Icon(
-                  FontAwesome.github_circled,
-                  color: theme.colors.text,
-                ),
-                text: "Github Project",
-                onTap: () async {
-                  String _url = "https://github.com/floodoo/untis_phasierung";
-                  if (!await launch(_url)) {
-                    throw "Could not launch $_url";
-                  }
-                },
+            ),
+            CustomSettingsCard(
+              leading: Icon(
+                FontAwesome.github_circled,
+                color: theme.colors.text,
               ),
-              CustomSettingsCard(
-                leading: Icon(
-                  FontAwesome.github_circled,
-                  color: theme.colors.text,
-                ),
-                padTop: 10,
-                text: "Report Bug",
-                onTap: () async {
-                  String _url =
-                      "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
-                  if (!await launch(_url)) {
-                    throw "Could not launch $_url";
-                  }
-                },
+              text: "Github Project",
+              onTap: () async {
+                String _url = "https://github.com/floodoo/untis_phasierung";
+                if (!await launch(_url)) {
+                  throw "Could not launch $_url";
+                }
+              },
+            ),
+            CustomSettingsCard(
+              leading: Icon(
+                FontAwesome.bug,
+                color: theme.colors.text,
               ),
-              CustomSettingsCard(
-                leading: Icon(
-                  Icons.info,
-                  color: theme.colors.text,
-                ),
-                padTop: 10,
-                padBottom: 30,
-                text: "Build Number",
+              padTop: 10,
+              text: "Report Bug",
+              onTap: () async {
+                String _url =
+                    "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
+                if (!await launch(_url)) {
+                  throw "Could not launch $_url";
+                }
+              },
+            ),
+            CustomSettingsCard(
+              leading: Icon(
+                Icons.info,
+                color: theme.colors.text,
               ),
-            ],
-          ),
-        ));
+              padTop: 10,
+              padBottom: 30,
+              text: "Build Number",
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
