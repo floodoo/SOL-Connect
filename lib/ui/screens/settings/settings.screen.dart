@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
-import 'package:untis_phasierung/ui/themes/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import '../../../core/exceptions.dart';
@@ -13,30 +12,27 @@ import '../../../core/exceptions.dart';
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
   static final routeName = (SettingsScreen).toString();
-   
-   SnackBar _createSnackbar(String message, Color backgroundColor, AppTheme theme, {Duration duration = const Duration(seconds: 4)}) {
-     return SnackBar(
-       duration: duration,
-        elevation: 20,
-        backgroundColor: backgroundColor,
-        content: Text(
-          message,
-          style: TextStyle(fontSize: 17, color: theme.colors.text)
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            topRight: Radius.circular(15.0),
-          ),
-        )
-      );
-   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     bool lightMode;
     Logger log = getLogger();
+
+    SnackBar _createSnackbar(String message, Color backgroundColor, {Duration duration = const Duration(seconds: 4)}) {
+      return SnackBar(
+        duration: duration,
+        elevation: 20,
+        backgroundColor: backgroundColor,
+        content: Text(message, style: TextStyle(fontSize: 17, color: theme.colors.text)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0),
+            topRight: Radius.circular(15.0),
+          ),
+        ),
+      );
+    }
 
     // on app start the saved appearance is loaded. This is only for the switch
     if (theme.mode == ThemeMode.light) {
@@ -73,15 +69,19 @@ class SettingsScreen extends ConsumerWidget {
                 text: "Add Phase Plan",
                 onTap: () async {
                   FilePickerResult? result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ["xlsx"],
-                    allowMultiple: false,
-                    dialogTitle: "Phasierung laden"
-                  );
+                      type: FileType.custom,
+                      allowedExtensions: ["xlsx"],
+                      allowMultiple: false,
+                      dialogTitle: "Phasierung laden");
+
                   if (result != null) {
-                    //Light und darkmode beachten
                     ScaffoldMessenger.of(context).showSnackBar(
-                       _createSnackbar("Excel Überprüfen ...", theme.colors.elementBackground, theme, duration: const Duration(minutes: 1)));
+                      _createSnackbar(
+                        "Excel Überprüfen ...",
+                        theme.colors.elementBackground,
+                        duration: const Duration(minutes: 1),
+                      ),
+                    );
 
                     String errorMessage = "";
                     try {
@@ -95,18 +95,20 @@ class SettingsScreen extends ConsumerWidget {
                     } on FailedToEstablishExcelServerConnection {
                       errorMessage = "Bitte überprüfe deine Internetverbindung";
                     } on ExcelMergeNonSchoolBlockException {
-                      //Hier egal!
-                    } catch(e) {
+                      // Doesn't matter
+                    } catch (e) {
                       errorMessage = "Unbekannter Fehler: " + e.toString();
                       log.e(e);
                     }
-                    
+
                     ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(_createSnackbar(
-                      errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage, 
-                      errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground, theme));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      _createSnackbar(
+                        errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
+                        errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
+                      ),
+                    );
                   }
-                  //Navigator.of(context).pop();
                 },
               ),
               CustomSettingsCard(
@@ -117,12 +119,15 @@ class SettingsScreen extends ConsumerWidget {
                 padTop: 10,
                 text: "Delete Phase Plan",
                 onTap: () {
-                  //Navigator.of(context).pop();
                   ref.read(timeTableService).deletePhase();
 
                   ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(_createSnackbar("Phasierung entfernt", 
-                  theme.colors.elementBackground, theme));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    _createSnackbar(
+                      "Phasierung entfernt",
+                      theme.colors.elementBackground,
+                    ),
+                  );
                 },
               ),
               Center(
@@ -189,7 +194,8 @@ class SettingsScreen extends ConsumerWidget {
                 padTop: 10,
                 text: "Report Bug",
                 onTap: () async {
-                  String _url = "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
+                  String _url =
+                      "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
                   if (!await launch(_url)) {
                     throw "Could not launch $_url";
                   }
