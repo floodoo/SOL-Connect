@@ -125,6 +125,7 @@ class ExcelValidator {
   ///* `ExcelConversionAlreadyActive`: Wenn diese Funktion bereits aufgerufen wurde und noch nicht fertig ist
   ///* `ExcelConversionServerError`: Wenn ein Fehler Serverseitig aufgetreten ist
   ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
+  ///* `CurrentPhaseplanOutOfRange`: Wenn die timetable Stunden hat die aber außerhalb des aktuellen Blockes sind.
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {   
 
     //TODO Noch nicht voll debuggt. Bitte überwachen. Das Datum soll den ersten und letzten Tag des nächsten oder aktuellen Blocks sein
