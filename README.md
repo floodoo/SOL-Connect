@@ -1,7 +1,7 @@
 <a href="https://www.freepik.com/photos/background">Background photo created by rawpixel.com - www.freepik.com</a>
 
 # Untis Phasierung
-Dies ist eine App, die den Untis Stundenplan mit der SOL Phasierung mithilfe bereits existierenden Excel Dateien zu verbinden.
+Dies ist eine App, die den Untis Stundenplan mit der SOL Phasierung mithilfe bereits existierenden Excel Dateien verbindet und übersichtlich in einem Stundenplan darstellt.
 Diese App ist kompatibel mit Android und IOS.
 
 ## Andere Projekte:
