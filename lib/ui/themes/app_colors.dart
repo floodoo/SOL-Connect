@@ -21,10 +21,12 @@ class AppColors {
     required this.elementBackground,
     required this.errorBackground,
     required this.textInverted,
-    required this.successColor
+    required this.successColor,
+    required this.primaryLight
   });
 
   final Color primary;
+  final Color primaryLight;
   final Color background;
   final Color elementBackground;
   final Color text;
@@ -47,7 +49,8 @@ class AppColors {
 
   factory AppColors.light() {
     return AppColors(
-      primary: Colors.red.shade800,
+      primary: Colors.red.shade900,
+      primaryLight: Colors.red.shade500,
       background: Colors.white,
       text: Colors.white,
       textBackground: Colors.black,
@@ -73,6 +76,7 @@ class AppColors {
   factory AppColors.dark() {
     return AppColors(
       primary: Colors.grey.shade900,
+      primaryLight: Colors.grey.shade800,
       background: Colors.blueGrey.shade900,
       text: Colors.white,
       textInverted: Colors.white,

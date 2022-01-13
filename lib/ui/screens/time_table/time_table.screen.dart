@@ -25,14 +25,14 @@ class TimeTableScreen extends ConsumerWidget {
               Icons.calendar_today_rounded,
               color: theme.colors.icon,
             ),
-            color: theme.colors.primary,
+            color: theme.colors.primaryLight,
           ),
         );
 
         // The first row
       } else {
         timeTableList.add(
-          CustomTimeTableDayCard(timeTableDay: _timeTable.getDays()[i - 1]),
+          CustomTimeTableDayCard(timeTableDay: _timeTable.getDays()[i - 1], cardColor: theme.colors.primaryLight),
         );
       }
     }
@@ -65,6 +65,7 @@ class TimeTableScreen extends ConsumerWidget {
         timeTableList.add(
           CustomTimeTableHourCard(
             timeTableHour: _timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
+            customColor: theme.colors.primaryLight,
           ),
         );
 
@@ -179,10 +180,14 @@ class TimeTableScreen extends ConsumerWidget {
                             children: buildFirstTimeTableRow(_timeTable, theme),
                           ),
                           Center(
-                            child: Text(
-                              "No school this week",
-                              style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
-                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                              child:  Text(
+                                "No school this week",
+                                style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                               )
+                            )
+                            
                           ),
                         ],
                       ),

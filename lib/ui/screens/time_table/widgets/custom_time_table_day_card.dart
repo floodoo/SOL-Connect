@@ -4,8 +4,9 @@ import 'package:untis_phasierung/core/api/models/timetable.day.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 
 class CustomTimeTableDayCard extends ConsumerWidget {
-  const CustomTimeTableDayCard({Key? key, required this.timeTableDay}) : super(key: key);
+  const CustomTimeTableDayCard({Key? key, required this.timeTableDay, this.cardColor}) : super(key: key);
   final TimeTableDay timeTableDay;
+  final Color? cardColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,7 +17,7 @@ class CustomTimeTableDayCard extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      color: theme.colors.primary,
+      color: (cardColor ?? theme.colors.primary),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
