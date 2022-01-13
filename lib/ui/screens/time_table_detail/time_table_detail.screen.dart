@@ -108,7 +108,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 11),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                         child: Text(_timeTableHour.getSubject().longName,
                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -195,7 +195,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                 ),
               )
               :
-              Padding(padding: const EdgeInsets.fromLTRB(0, 10, 0, 10)),
+              const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
             CustomPhaseCard(phase: firstHalf),
             CustomPhaseCard(phase: secondHalf),
           ],
