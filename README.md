@@ -1,10 +1,14 @@
 <a href="https://www.freepik.com/photos/background">Background photo created by rawpixel.com - www.freepik.com</a>
 
-# Andere Projekte:
+# Untis Phasierung
+Dies ist eine App, die den Untis Stundenplan mit der SOL Phasierung mithilfe bereits existierenden Excel Dateien zu verbinden.
+Diese App ist kompatibel mit Android und IOS.
+
+## Andere Projekte:
 
 * Excel Color Server <a>https://github.com/DevKevYT/Excel-CellColor-Server</a>
 
-# Einbindung der Phasierung
+## Einbindung der Phasierung
 
 Die Phasierung sollte unabhängig vom Stundenplan und der User Session sein.<br>
 Dies hat folgende Vorteile:
