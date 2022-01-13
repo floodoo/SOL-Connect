@@ -100,51 +100,102 @@ class TimeTableDetailScreen extends ConsumerWidget {
         child: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(5.0),
               child: Card(
                 elevation: 10,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 11),
+                        child: Text(_timeTableHour.getSubject().longName,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "Fach: ${_timeTableHour.getSubject().longName}",
-                            style: TextStyle(color: theme.colors.textInverted),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Lehrer: ${_timeTableHour.getTeacher().longName}",
+                                style: TextStyle(color: theme.colors.textInverted),
+                              ),
+                              Text(
+                                "Raum: ${_timeTableHour.getRoom().name}",
+                                style: TextStyle(color: theme.colors.textInverted),
+                              ),
+                            ],
                           ),
-                          Text(
-                            "Lehrer: ${_timeTableHour.getTeacher().longName}",
-                            style: TextStyle(color: theme.colors.textInverted),
-                          ),
-                          Text(
-                            "Raum: ${_timeTableHour.getRoom().name}",
-                            style: TextStyle(color: theme.colors.textInverted),
-                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "Typ: ${_timeTableHour.getActivityType()}",
+                                  style: TextStyle(color: theme.colors.textInverted),
+                                ),
+                                Text(
+                                  "Status: ${_timeTableHour.getLessonCode()}",
+                                  style: TextStyle(color: theme.colors.textInverted),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Typ: ${_timeTableHour.getActivityType()}",
-                              style: TextStyle(color: theme.colors.textInverted),
-                            ),
-                            Text(
-                              "Status: ${_timeTableHour.getLessonCode()}",
-                              style: TextStyle(color: theme.colors.textInverted),
-                            ),
-                          ],
-                        ),
-                      )
                     ],
-                  ),
+                  )
                 ),
               ),
             ),
+            _timeTableHour.getLessionInformation().isNotEmpty ? 
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
+              child: Card(
+                elevation: 10,
+                child: Column(
+                    children: [
+                       Container(
+                         color: Colors.black26,
+                        alignment: Alignment.topLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(8, 4, 10, 5),
+                            child: Text("Vertretungstext",
+                              style: TextStyle(fontSize: 18),
+                            )
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 7, 9, 7),
+                            child: 
+                              Icon(Icons.info_outline, color: theme.colors.textInverted)
+                          ),
+                        ],
+                      )
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                        child: Container(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                          child: Text(
+                           _timeTableHour.getLessionInformation(),
+                          ), 
+                        )
+                        )
+                      )
+                    ],
+                  )
+                ),
+              )
+              :
+              Padding(padding: const EdgeInsets.fromLTRB(0, 10, 0, 10)),
             CustomPhaseCard(phase: firstHalf),
             CustomPhaseCard(phase: secondHalf),
           ],
