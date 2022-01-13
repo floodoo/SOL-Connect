@@ -4,7 +4,9 @@
 Dies ist eine App, die den Untis Stundenplan mit der SOL Phasierung mithilfe bereits existierenden Excel Dateien verbindet und übersichtlich in einem Stundenplan darstellt.
 Diese App ist kompatibel mit Android und IOS.
 
-## Andere Projekte:
+Zum Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
+
+## Weitere Projekte:
 
 * Excel Color Server <a>https://github.com/DevKevYT/Excel-CellColor-Server</a>
 
