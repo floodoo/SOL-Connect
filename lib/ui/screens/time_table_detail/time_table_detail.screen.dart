@@ -99,6 +99,52 @@ class TimeTableDetailScreen extends ConsumerWidget {
         key: previewContainer,
         child: ListView(
           children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Card(
+                elevation: 10,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Fach: ${_timeTableHour.getSubject().longName}",
+                            style: TextStyle(color: theme.colors.text),
+                          ),
+                          Text(
+                            "Lehrer: ${_timeTableHour.getTeacher().longName}",
+                            style: TextStyle(color: theme.colors.text),
+                          ),
+                          Text(
+                            "Raum: ${_timeTableHour.getRoom().name}",
+                            style: TextStyle(color: theme.colors.text),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Typ: ${_timeTableHour.getActivityType()}",
+                              style: TextStyle(color: theme.colors.text),
+                            ),
+                            Text(
+                              "Status: ${_timeTableHour.getLessonCode()}",
+                              style: TextStyle(color: theme.colors.text),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
             CustomPhaseCard(phase: firstHalf),
             CustomPhaseCard(phase: secondHalf),
           ],
