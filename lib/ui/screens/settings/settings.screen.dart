@@ -77,7 +77,7 @@ class SettingsScreen extends ConsumerWidget {
                   if (result != null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       _createSnackbar(
-                        "Excel Überprüfen ...",
+                        "Datei Überprüfen ...",
                         theme.colors.elementBackground,
                         duration: const Duration(minutes: 1),
                       ),

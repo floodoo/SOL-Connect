@@ -126,10 +126,10 @@ class TimeTableService with ChangeNotifier {
       prefs!.setString("phasePlan", phaseFilePath);
       validator = ExcelValidator("flo-dev.me", phaseFilePath);
     } else {
-      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
-      if (phaseFilePath != "empty") {
-        validator = ExcelValidator("flo-dev.me", phaseFilePath);
-      }
+     // phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
+     // if (phaseFilePath != "empty") {
+     //   validator = ExcelValidator("flo-dev.me", phaseFilePath);
+     // }
     }
 
     if (validator != null) {
@@ -139,14 +139,14 @@ class TimeTableService with ChangeNotifier {
         
         if(loadStart != null && loadEnd != null) {
           validator!.limitPhasePlanToCurrentBlock(loadStart, loadEnd);
-          log.i("Limiting Phaseplan to block " + loadStart.toString() + " -> " + loadEnd.toString() + " until a new phase is loaded.");
+          log.d("Limiting Phaseplan to block " + loadStart.toString() + " -> " + loadEnd.toString() + " until a new file is loaded.");
           phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
 
         } else {
           phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
           DateTime start = validator!.getBlockStart()!;
           DateTime end = validator!.getBlockEnd()!;
-          log.i("Setting Phaseplan limitation to current block: " + start.toString() + " -> " + end.toString());
+          log.d("Setting Phaseplan limitation to current block: " + start.toString() + " -> " + end.toString());
           UserSecureStorage.setPhaseLoadDateStart(start);
           UserSecureStorage.setPhaseLoadDateEnd(end);
         }
