@@ -113,15 +113,15 @@ class TimeTableDetailScreen extends ConsumerWidget {
                         children: [
                           Text(
                             "Fach: ${_timeTableHour.getSubject().longName}",
-                            style: TextStyle(color: theme.colors.text),
+                            style: TextStyle(color: theme.colors.textInverted),
                           ),
                           Text(
                             "Lehrer: ${_timeTableHour.getTeacher().longName}",
-                            style: TextStyle(color: theme.colors.text),
+                            style: TextStyle(color: theme.colors.textInverted),
                           ),
                           Text(
                             "Raum: ${_timeTableHour.getRoom().name}",
-                            style: TextStyle(color: theme.colors.text),
+                            style: TextStyle(color: theme.colors.textInverted),
                           ),
                         ],
                       ),
@@ -131,11 +131,11 @@ class TimeTableDetailScreen extends ConsumerWidget {
                           children: [
                             Text(
                               "Typ: ${_timeTableHour.getActivityType()}",
-                              style: TextStyle(color: theme.colors.text),
+                              style: TextStyle(color: theme.colors.textInverted),
                             ),
                             Text(
                               "Status: ${_timeTableHour.getLessonCode()}",
-                              style: TextStyle(color: theme.colors.text),
+                              style: TextStyle(color: theme.colors.textInverted),
                             ),
                           ],
                         ),

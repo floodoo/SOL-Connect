@@ -85,7 +85,8 @@ class SettingsScreen extends ConsumerWidget {
 
                   String errorMessage = "";
                   try {
-                    await ref.read(timeTableService).loadPhase(result.files.first.path!);
+                    await ref.read(timeTableService).loadPhaseFromFile(result.files.first.path!);
+                    await ref.read(timeTableService).loadPhase();
                   } on ExcelMergeFileNotVerified {
                     errorMessage = "Kein Stundenplan in Datei gefunden!";
                   } on ExcelConversionAlreadyActive {
@@ -99,6 +100,7 @@ class SettingsScreen extends ConsumerWidget {
                   } catch (e) {
                     errorMessage = "Unbekannter Fehler: " + e.toString();
                     log.e(e);
+                    e.toString();
                   }
 
                   ScaffoldMessenger.of(context).clearSnackBars();

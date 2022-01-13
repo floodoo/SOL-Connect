@@ -120,17 +120,19 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadPhase([String? phaseFilePath]) async {
-    
+  Future<void> loadPhaseFromFile([String? phaseFilePath]) async {
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
       validator = ExcelValidator("flo-dev.me", phaseFilePath);
     } else {
-     // phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
-     // if (phaseFilePath != "empty") {
-     //   validator = ExcelValidator("flo-dev.me", phaseFilePath);
-     // }
+      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
+      if (phaseFilePath != "empty") {
+        validator = ExcelValidator("flo-dev.me", phaseFilePath);
+      }
     }
+  }
+
+  Future<void> loadPhase() async {
 
     if (validator != null) {
       try {
