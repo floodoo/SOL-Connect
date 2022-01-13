@@ -9,9 +9,12 @@ import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_tab
 import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
-  const CustomTimeTableInfoCard({Key? key, required this.timeTableHour, this.phase}) : super(key: key);
+  const CustomTimeTableInfoCard({Key? key, required this.timeTableHour, this.phase, this.connectTop = false, this.connectBottom = false, this.showHourText = true}) : super(key: key);
   final TimeTableHour timeTableHour;
   final MappedPhase? phase;
+  final bool connectTop;
+  final bool connectBottom;
+  final bool showHourText;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,7 +82,11 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
           ),
         );
       },
-      child: Card(
+      child: 
+      Center(child:
+      Padding(padding: EdgeInsets.fromLTRB(5, connectTop ? 1 : 5, 5, connectBottom ? 1 : 5),child:
+      Card(
+        margin: EdgeInsets.zero,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -98,8 +105,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                         flex: 4,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(connectTop ? 0 : 10.0),
                             ),
                             color: _colorPhaseTop,
                           ),
@@ -110,8 +117,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(10.0),
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(connectTop ? 0: 10.0),
                             ),
                             color: (_timeTableHour.getLessonCode() == Codes.irregular)
                                 ? Colors.deepPurple.shade900
@@ -135,8 +142,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                         flex: 4,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(10.0),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(connectBottom ? 0 : 10.0),
                             ),
                             color: _colorPhaseBottom,
                           ),
@@ -147,8 +154,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomRight: Radius.circular(10.0),
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(connectBottom ? 0 : 10.0),
                             ),
                             color: (_timeTableHour.getLessonCode() == Codes.irregular)
                                 ? Colors.deepPurple.shade900
@@ -165,40 +172,44 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                 ),
               ],
             ),
-            // Card content
-            Padding(
-              padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: AutoSizeText(
-                      _timeTableHour.getSubject().name,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
-                      style: TextStyle(color: theme.colors.text),
+            // Card content - Only show if showHourText == true
+            showHourText ? 
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: AutoSizeText(
+                        _timeTableHour.getSubject().name,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
+                        style: TextStyle(color: theme.colors.text),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      _timeTableHour.getTeacher().name,
-                      style: TextStyle(color: theme.colors.text),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        _timeTableHour.getTeacher().name,
+                        style: TextStyle(color: theme.colors.text),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      _timeTableHour.getRoom().name,
-                      style: TextStyle(color: theme.colors.text),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        _timeTableHour.getRoom().name,
+                        style: TextStyle(color: theme.colors.text),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
+                  ],
+                ),
+              )
+              : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0))
           ],
         ),
       ),
+      )
+      )
     );
   }
 }

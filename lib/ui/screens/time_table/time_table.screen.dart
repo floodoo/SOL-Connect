@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
+import 'package:untis_phasierung/core/api/models/timetable.day.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/service/services.dart';
@@ -80,21 +82,62 @@ class TimeTableScreen extends ConsumerWidget {
 
         // If no subject
       } else if (_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty()) {
-        timeTableList.add(CustomTimeTableCard(color: theme.colors.phaseUnknown));
+        timeTableList.add(CustomTimeTableCard(color: theme.colors.background));
 
         // subject
       } else {
+        bool connectBottom = false;
+        bool connectTop = false;
+        //bool hourBeforeLunch = false;
+
+        TimeTableHour current = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1];
+        
+        if(timeColumnCounter-1 > 0) {
+          TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
+          if(current.getTeacher().name == prev.getTeacher().name && current.getStartTimeString() != "13:30") { //Doppelstunde!
+            connectTop = true;
+          } 
+        }
+        if(timeColumnCounter <  _timeTable.getDays()[schoolDayCounter].getHours().length) {
+           TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
+           if(current.getTeacher().name == next.getTeacher().name) { //Doppelstunde!
+            connectBottom = true;
+          } 
+          if(current.getEndTime().hour == 13) {
+           // hourBeforeLunch = true;
+            connectBottom = false;
+          }
+        }
+
+        bool showText = (connectBottom && !connectTop) || (!connectBottom && !connectTop); //Die erste stunde bei verbindungen
+
         timeTableList.add(
           CustomTimeTableInfoCard(
-            timeTableHour: _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1],
+            timeTableHour: current,
             phase: (_phasedTimeTable != null)
                 ? _phasedTimeTable
                     .getPhaseForHour(_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1])
-                : null,
+                : null, connectBottom: connectBottom, connectTop: connectTop, showHourText: showText,
           ),
         );
       }
     }
+
+    //Überprüfe jetzt auf doppelstunden
+   /* TimeTableHour? previous;
+    for(TimeTableDay day in _timeTable.getDays()) {
+      for(TimeTableHour hour in day.getHours()) {
+        if(previous == null) {
+          previous = hour;
+          continue;
+        }
+        if(hour.getTeacher().name == previous.getTeacher().name) {
+          //Verbinden!
+
+        }
+      }
+      
+    }*/
     return timeTableList;
   }
 
@@ -164,9 +207,10 @@ class TimeTableScreen extends ConsumerWidget {
                           ),
                           GridView.count(
                             crossAxisCount: 6,
+                            crossAxisSpacing: 0,
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            childAspectRatio: 0.6,
+                            childAspectRatio: 0.75,
                             children: buildTimeTable(_timeTable, _phaseTimeTable, theme, context),
                           ),
                         ],

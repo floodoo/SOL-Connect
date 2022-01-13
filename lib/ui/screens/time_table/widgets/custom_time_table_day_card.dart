@@ -13,7 +13,7 @@ class CustomTimeTableDayCard extends ConsumerWidget {
     final theme = ref.watch(themeService).theme;
 
     return Card(
-      elevation: 0,
+      elevation: 1,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
