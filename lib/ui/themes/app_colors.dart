@@ -22,7 +22,8 @@ class AppColors {
       required this.errorBackground,
       required this.textInverted,
       required this.successColor,
-      required this.primaryLight});
+      required this.primaryLight,
+      required this.phaseOutOfBlock});
 
   final Color primary;
   final Color primaryLight;
@@ -45,6 +46,7 @@ class AppColors {
   final Color phaseStructured;
   final Color phaseFeedback;
   final Color phaseUnknown;
+  final Color phaseOutOfBlock;
 
   factory AppColors.light() {
     return AppColors(
@@ -68,6 +70,7 @@ class AppColors {
         elementBackground: Colors.grey.shade600,
         errorBackground: Colors.red.shade900,
         textInverted: Colors.black,
+        phaseOutOfBlock: Colors.red.shade300,
         successColor: Colors.green.shade600);
   }
 
@@ -93,6 +96,7 @@ class AppColors {
         phaseUnknown: Colors.blueGrey.shade700,
         elementBackground: Colors.black,
         errorBackground: Colors.red.shade900,
+        phaseOutOfBlock: Colors.red.shade900,
         successColor: Colors.green.shade800);
   }
 }
