@@ -60,9 +60,9 @@ class TimeTableService with ChangeNotifier {
 
   getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
-    
+
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
-    if(timeTable != null) {
+    if (timeTable != null) {
       isSchool = !timeTable!.isNonSchoolblockWeek();
     } else {
       isSchool = false;
@@ -134,17 +134,19 @@ class TimeTableService with ChangeNotifier {
   }
 
   Future<void> loadPhase() async {
-
     if (validator != null) {
       try {
         DateTime? loadStart = await UserSecureStorage.getPhaseLoadBlockStart();
         DateTime? loadEnd = await UserSecureStorage.getPhaseLoadBlockEnd();
-        
-        if(loadStart != null && loadEnd != null) {
-          validator!.limitPhasePlanToCurrentBlock(loadStart, loadEnd);
-          log.d("Limiting Phaseplan to block " + loadStart.toString() + " -> " + loadEnd.toString() + " until a new file is loaded.");
-          phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
 
+        if (loadStart != null && loadEnd != null) {
+          validator!.limitPhasePlanToCurrentBlock(loadStart, loadEnd);
+          log.d("Limiting Phaseplan to block " +
+              loadStart.toString() +
+              " -> " +
+              loadEnd.toString() +
+              " until a new file is loaded.");
+          phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
         } else {
           phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
           DateTime start = validator!.getBlockStart()!;
@@ -153,7 +155,6 @@ class TimeTableService with ChangeNotifier {
           UserSecureStorage.setPhaseLoadDateStart(start);
           UserSecureStorage.setPhaseLoadDateEnd(end);
         }
-
       } on CurrentPhaseplanOutOfRange {
         phaseTimeTable = null;
         log.e("Week not part of current block");
@@ -166,7 +167,7 @@ class TimeTableService with ChangeNotifier {
     prefs!.remove("phasePlan");
     validator = null;
     phaseTimeTable = null;
-    
+
     UserSecureStorage.clearPhaseDates();
     log.i("Deleted Phase block limitation");
 

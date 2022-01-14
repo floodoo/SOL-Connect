@@ -9,7 +9,14 @@ import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_tab
 import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
-  const CustomTimeTableInfoCard({Key? key, required this.timeTableHour, this.phase, this.connectTop = false, this.connectBottom = false, this.showHourText = true}) : super(key: key);
+  const CustomTimeTableInfoCard(
+      {Key? key,
+      required this.timeTableHour,
+      this.phase,
+      this.connectTop = false,
+      this.connectBottom = false,
+      this.showHourText = true})
+      : super(key: key);
   final TimeTableHour timeTableHour;
   final MappedPhase? phase;
   final bool connectTop;
@@ -82,146 +89,143 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
           ),
         );
       },
-      child: 
-      Center(child:
-      Padding(padding: EdgeInsets.fromLTRB(5, connectTop ? 1 : 5, 5, connectBottom ? 1 : 5),child:
-      Card(
-        margin: EdgeInsets.zero,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        color: theme.colors.primary,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                // Top color
-                Expanded(
-                  child: Row(
-                    children: [
-                      // Phase color
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(connectTop ? 0 : 10.0),
-                            ),
-                            color: _colorPhaseTop,
-                          ),
-                        ),
-                      ),
-                      // Irregular color
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(connectTop ? 0: 10.0),
-                            ),
-                            color: (_timeTableHour.getLessonCode() == Codes.irregular)
-                                ? Colors.deepPurple.shade900
-                                : (_timeTableHour.getLessonCode() == Codes.cancelled)
-                                    ? Colors.purpleAccent
-                                    : (timeTableHour.getTeacher().name == "---")
-                                        ? Colors.grey
-                                        : _colorPhaseTop,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                // Bottom color
-                Expanded(
-                  child: Row(
-                    children: [
-                      // Phase color
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(connectBottom ? 0 : 10.0),
-                            ),
-                            color: _colorPhaseBottom,
-                          ),
-                        ),
-                      ),
-                      // Irregular color
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(connectBottom ? 0 : 10.0),
-                            ),
-                            color: (_timeTableHour.getLessonCode() == Codes.irregular)
-                                ? Colors.deepPurple.shade900
-                                : (_timeTableHour.getLessonCode() == Codes.cancelled)
-                                    ? Colors.purpleAccent
-                                    : (timeTableHour.getTeacher().name == "---")
-                                        ? Colors.grey
-                                        : _colorPhaseBottom,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(5, connectTop ? 1 : 5, 5, connectBottom ? 1 : 5),
+          child: Card(
+            margin: EdgeInsets.zero,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            // Info icon
-           (timeTableHour.getLessionInformation().isNotEmpty ?       
-            Align(
-              alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(1, 1, 4, 4),
-              child: 
-                  Icon(Icons.info, size: 15, color: theme.colors.text)
-              ),
-          )
-           : const Padding(padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0))),
-            // Card content - Only show if showHourText == true
-            showHourText ? 
-              Padding(
-                padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 3.0),
-                child: Column(
-                  
+            color: theme.colors.primary,
+            child: Stack(
+              children: [
+                Column(
                   children: [
+                    // Top color
                     Expanded(
-                      flex: 1,
-                      child: AutoSizeText(
-                        _timeTableHour.getSubject().name,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
-                        style: TextStyle(color: theme.colors.text),
+                      child: Row(
+                        children: [
+                          // Phase color
+                          Expanded(
+                            flex: 4,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(connectTop ? 0 : 10.0),
+                                ),
+                                color: _colorPhaseTop,
+                              ),
+                            ),
+                          ),
+                          // Irregular color
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(connectTop ? 0 : 10.0),
+                                ),
+                                color: (_timeTableHour.getLessonCode() == Codes.irregular)
+                                    ? Colors.deepPurple.shade900
+                                    : (_timeTableHour.getLessonCode() == Codes.cancelled)
+                                        ? Colors.purpleAccent
+                                        : (timeTableHour.getTeacher().name == "---")
+                                            ? Colors.grey
+                                            : _colorPhaseTop,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
+                    // Bottom color
                     Expanded(
-                      flex: 1,
-                      child: Text(
-                        _timeTableHour.getTeacher().name,
-                        style: TextStyle(color: theme.colors.text),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        _timeTableHour.getRoom().name,
-                        style: TextStyle(color: theme.colors.text),
+                      child: Row(
+                        children: [
+                          // Phase color
+                          Expanded(
+                            flex: 4,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(connectBottom ? 0 : 10.0),
+                                ),
+                                color: _colorPhaseBottom,
+                              ),
+                            ),
+                          ),
+                          // Irregular color
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(connectBottom ? 0 : 10.0),
+                                ),
+                                color: (_timeTableHour.getLessonCode() == Codes.irregular)
+                                    ? Colors.deepPurple.shade900
+                                    : (_timeTableHour.getLessonCode() == Codes.cancelled)
+                                        ? Colors.purpleAccent
+                                        : (timeTableHour.getTeacher().name == "---")
+                                            ? Colors.grey
+                                            : _colorPhaseBottom,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ],
                 ),
-              )
-              : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0))
-          ],
+                // Info icon
+                (timeTableHour.getLessionInformation().isNotEmpty
+                    ? Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                            padding: const EdgeInsets.fromLTRB(1, 1, 4, 4),
+                            child: Icon(Icons.info, size: 15, color: theme.colors.text)),
+                      )
+                    : const Padding(padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0))),
+                // Card content - Only show if showHourText == true
+                showHourText
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 3.0),
+                        child: Column(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: AutoSizeText(
+                                _timeTableHour.getSubject().name,
+                                maxLines: 1,
+                                overflow: TextOverflow.fade,
+                                style: TextStyle(color: theme.colors.text),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                _timeTableHour.getTeacher().name,
+                                style: TextStyle(color: theme.colors.text),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                _timeTableHour.getRoom().name,
+                                style: TextStyle(color: theme.colors.text),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0))
+              ],
+            ),
+          ),
         ),
       ),
-      )
-      )
     );
   }
 }

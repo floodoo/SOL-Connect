@@ -78,7 +78,7 @@ class TimeTableDay {
   }
 
   String getFormattedDate() {
-   return _formattedDay + "." + _formattedMonth;
+    return _formattedDay + "." + _formattedMonth;
   }
 
   ///Gibt eine Liste der Stunden dieses Tages zurück. Diese Liste hat IMMER die Länge 10.

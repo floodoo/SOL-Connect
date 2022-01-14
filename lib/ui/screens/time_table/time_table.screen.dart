@@ -91,25 +91,28 @@ class TimeTableScreen extends ConsumerWidget {
         //bool hourBeforeLunch = false;
 
         TimeTableHour current = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1];
-        
-        if(timeColumnCounter-1 > 0) {
+
+        if (timeColumnCounter - 1 > 0) {
           TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
-          if(current.getTeacher().name == prev.getTeacher().name && current.getStartTimeString() != "13:30") { //Doppelstunde!
+          if (current.getTeacher().name == prev.getTeacher().name && current.getStartTimeString() != "13:30") {
+            //Doppelstunde!
             connectTop = true;
-          } 
+          }
         }
-        if(timeColumnCounter <  _timeTable.getDays()[schoolDayCounter].getHours().length) {
-           TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
-           if(current.getTeacher().name == next.getTeacher().name) { //Doppelstunde!
+        if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
+          TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
+          if (current.getTeacher().name == next.getTeacher().name) {
+            //Doppelstunde!
             connectBottom = true;
-          } 
-          if(current.getEndTime().hour == 13) {
-           // hourBeforeLunch = true;
+          }
+          if (current.getEndTime().hour == 13) {
+            // hourBeforeLunch = true;
             connectBottom = false;
           }
         }
 
-        bool showText = (connectBottom && !connectTop) || (!connectBottom && !connectTop); //Die erste stunde bei verbindungen
+        bool showText =
+            (connectBottom && !connectTop) || (!connectBottom && !connectTop); //Die erste stunde bei verbindungen
 
         timeTableList.add(
           CustomTimeTableInfoCard(
@@ -117,14 +120,17 @@ class TimeTableScreen extends ConsumerWidget {
             phase: (_phasedTimeTable != null)
                 ? _phasedTimeTable
                     .getPhaseForHour(_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1])
-                : null, connectBottom: connectBottom, connectTop: connectTop, showHourText: showText,
+                : null,
+            connectBottom: connectBottom,
+            connectTop: connectTop,
+            showHourText: showText,
           ),
         );
       }
     }
 
     //Überprüfe jetzt auf doppelstunden
-   /* TimeTableHour? previous;
+    /* TimeTableHour? previous;
     for(TimeTableDay day in _timeTable.getDays()) {
       for(TimeTableHour hour in day.getHours()) {
         if(previous == null) {
@@ -224,15 +230,12 @@ class TimeTableScreen extends ConsumerWidget {
                             children: buildFirstTimeTableRow(_timeTable, theme),
                           ),
                           Center(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                              child:  Text(
-                                "No school this week",
-                                style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
-                               )
-                            )
-                            
-                          ),
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                                  child: Text(
+                                    "No school this week",
+                                    style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                                  ))),
                         ],
                       ),
           ),

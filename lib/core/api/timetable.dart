@@ -8,7 +8,6 @@ import 'usersession.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
-
   RPCResponse response;
   final DateTime _startDate;
   final DateTime _endDate;
@@ -26,20 +25,24 @@ class TimeTableRange {
   int relativeToCurrent = 0;
 
   final UserSession _boundUser;
-  
+
   TimeTableRange(this._startDate, this._endDate, this._boundUser, this.response) {
     //Konstruiere die Tage
     if (response.isError()) {
-      if(response.getErrorCode() == -7004) { //"no allowed date"
+      if (response.getErrorCode() == -7004) {
+        //"no allowed date"
         //erzeuge eine leere Tabelle
-        for(int i = 0; i < _endDate.difference(_startDate).inDays; i++) {
+        for (int i = 0; i < _endDate.difference(_startDate).inDays; i++) {
           TimeTableDay day = TimeTableDay(_startDate.add(Duration(days: i)));
           _days.add(day);
         }
         return;
-
       } else {
-        throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " + response.getErrorMessage() + "(" + response.getErrorCode().toString() + ")");
+        throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " +
+            response.getErrorMessage() +
+            "(" +
+            response.getErrorCode().toString() +
+            ")");
       }
     }
 
@@ -144,23 +147,22 @@ class TimeTableRange {
         (_endDate.month < 10 ? "0" + _endDate.month.toString() : _endDate.month.toString());
   }
 
-  void setManualBlockBounds() {
-    
-  }
+  void setManualBlockBounds() {}
 
   ///Gibt den ersten Montag nach ende des Blockes zurück
   Future<DateTime> getNextBlockEndDate(int relativeToCurrent) async {
-    if(_blockEndDate != null) {
+    if (_blockEndDate != null) {
       return _blockEndDate!;
     }
 
-    if(_blockStartDate == null) {
+    if (_blockStartDate == null) {
       await getNextBlockStartDate(relativeToCurrent);
     }
     //Gehe Wochen nach vorne bis eine leere Woche kommt!
-    for(int i = relativeToCurrent; i < relativeToCurrent+8; i++) {
+    for (int i = relativeToCurrent; i < relativeToCurrent + 8; i++) {
       TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
-      if(week.isNonSchoolblockWeek() && week.getDays()[0].getDate().millisecondsSinceEpoch > _blockStartDate!.millisecondsSinceEpoch) {
+      if (week.isNonSchoolblockWeek() &&
+          week.getDays()[0].getDate().millisecondsSinceEpoch > _blockStartDate!.millisecondsSinceEpoch) {
         _blockEndDate = week.getDays()[0].getDate(); //Der erste Montag nach dem Block
         break;
       }
@@ -169,26 +171,27 @@ class TimeTableRange {
   }
 
   Future<DateTime> getNextBlockStartDate(int relativeToCurrent) async {
-    
-    if(_blockStartDate != null) {
+    if (_blockStartDate != null) {
       return _blockStartDate!;
-    } 
+    }
 
-    if(_blockIndex == -1) { //Man kommt um eine Abfrage nicht herum
+    if (_blockIndex == -1) {
+      //Man kommt um eine Abfrage nicht herum
       getCurrentBlockWeek(relativeToCurrent); //Das AKTUELLE DATUM!
     }
-    if(!isNonSchoolblockWeek()) {
-      if(_blockIndex == 0) {
+    if (!isNonSchoolblockWeek()) {
+      if (_blockIndex == 0) {
         _blockStartDate = getDays()[0].getDate();
         return _blockStartDate!;
-      } else if(_blockIndex >= 0) {
-        _blockStartDate = _boundUser.getRelativeWeekStartDate(- _blockIndex);
+      } else if (_blockIndex >= 0) {
+        _blockStartDate = _boundUser.getRelativeWeekStartDate(-_blockIndex);
         return _blockStartDate!;
-      } 
-    } else { //Suche in der Zukunft
-      for(int i = relativeToCurrent; i < relativeToCurrent+5; i++) {
+      }
+    } else {
+      //Suche in der Zukunft
+      for (int i = relativeToCurrent; i < relativeToCurrent + 5; i++) {
         TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
-        if(!week.isNonSchoolblockWeek()) {
+        if (!week.isNonSchoolblockWeek()) {
           _blockStartDate = week.getDays()[0].getDate();
           break;
         }
@@ -200,14 +203,13 @@ class TimeTableRange {
   ///Gibt den index zurück, in welcher Woche die Aktuelle range ist seitdem der neue Block gestartet ist.
   ///Schwere operation. Es wird empfolen diese Funktion nur aufzurufen wenn es wirklich sein muss
   Future<int> getCurrentBlockWeek(int relative) async {
-    
-    if(_blockIndex >= 0) return _blockIndex;
+    if (_blockIndex >= 0) return _blockIndex;
 
     //MAXIMAL 5 Wochen zurück
     int steps = -1;
-    for(int i = relative; i >= -5; i--, steps++) {
+    for (int i = relative; i >= -5; i--, steps++) {
       TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
-      if(week.isNonSchoolblockWeek()) {
+      if (week.isNonSchoolblockWeek()) {
         _blockIndex = steps;
         return _blockIndex;
       }

@@ -74,14 +74,14 @@ class SettingsScreen extends ConsumerWidget {
                     allowMultiple: false,
                     dialogTitle: "Phasierung laden");
 
-                  if (result != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      _createSnackbar(
-                        "Datei Überprüfen ...",
-                        theme.colors.elementBackground,
-                        duration: const Duration(minutes: 1),
-                      ),
-                    );
+                if (result != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    _createSnackbar(
+                      "Datei Überprüfen ...",
+                      theme.colors.elementBackground,
+                      duration: const Duration(minutes: 1),
+                    ),
+                  );
 
                   String errorMessage = "";
                   try {

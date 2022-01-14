@@ -6,7 +6,7 @@
 String convertToUntisDate(DateTime date) {
   return (date.year.toString() +
       (date.month < 10 ? '0' + date.month.toString() : date.month.toString()) +
-              (date.day < 10 ? '0' + date.day.toString() : date.day.toString()).toString());
+      (date.day < 10 ? '0' + date.day.toString() : date.day.toString()).toString());
 }
 
 DateTime convertToDateTime(String untisDate) {

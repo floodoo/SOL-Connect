@@ -84,7 +84,7 @@ class TimeTableHour {
       _code = Codes.regular;
     }
 
-    if(data['substText'] != null) {
+    if (data['substText'] != null) {
       _substText = data['substText'];
     }
   }
