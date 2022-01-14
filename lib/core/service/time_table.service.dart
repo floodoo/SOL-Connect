@@ -39,6 +39,7 @@ class TimeTableService with ChangeNotifier {
         log.i("Successfully logged in");
         isLoggedIn = true;
         await getTimeTable();
+        await loadPhaseFromFile();
         UserSecureStorage.setPassword(password);
         notifyListeners();
       },
