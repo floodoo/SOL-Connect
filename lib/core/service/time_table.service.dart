@@ -21,7 +21,7 @@ class TimeTableService with ChangeNotifier {
   bool isLoggedIn = false;
   bool isLoading = false;
   bool isSchool = true;
-
+  bool weekInBlock = false;
   int _weekCounter = 0;
 
   String username = "";
@@ -138,6 +138,8 @@ class TimeTableService with ChangeNotifier {
   }
 
   Future<void> loadPhase() async {
+    weekInBlock = true;
+
     if (validator != null) {
       try {
         DateTime? loadStart = await UserSecureStorage.getPhaseLoadBlockStart();
@@ -162,6 +164,7 @@ class TimeTableService with ChangeNotifier {
       } on CurrentPhaseplanOutOfRange {
         phaseTimeTable = null;
         log.e("Week not part of current block");
+        weekInBlock = false;
       }
     }
     notifyListeners();
