@@ -113,9 +113,6 @@ class TimeTableScreen extends ConsumerWidget {
           }
         }
 
-        bool showText =
-            (connectBottom && !connectTop) || (!connectBottom && !connectTop); //Die erste stunde bei verbindungen
-
         timeTableList.add(
           CustomTimeTableInfoCard(
             timeTableHour: current,
@@ -125,7 +122,6 @@ class TimeTableScreen extends ConsumerWidget {
                 : null,
             connectBottom: connectBottom,
             connectTop: connectTop,
-            showHourText: showText,
           ),
         );
       }
@@ -232,12 +228,14 @@ class TimeTableScreen extends ConsumerWidget {
                             children: buildFirstTimeTableRow(_timeTable, theme),
                           ),
                           Center(
-                              child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                                  child: Text(
-                                    "No school this week",
-                                    style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
-                                  ))),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                              child: Text(
+                                "No school this week",
+                                style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
           ),

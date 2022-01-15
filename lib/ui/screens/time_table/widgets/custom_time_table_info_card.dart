@@ -9,19 +9,17 @@ import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_tab
 import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
-  const CustomTimeTableInfoCard(
-      {Key? key,
-      required this.timeTableHour,
-      this.phase,
-      this.connectTop = false,
-      this.connectBottom = false,
-      this.showHourText = true})
-      : super(key: key);
+  const CustomTimeTableInfoCard({
+    Key? key,
+    required this.timeTableHour,
+    this.phase,
+    this.connectTop = false,
+    this.connectBottom = false,
+  }) : super(key: key);
   final TimeTableHour timeTableHour;
   final MappedPhase? phase;
   final bool connectTop;
   final bool connectBottom;
-  final bool showHourText;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -192,11 +190,10 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                         ),
                       )
                     : Container(),
-                // Card content - Only show if showHourText == true
-                showHourText
-                    ? Padding(
-                        padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 3.0),
-                        child: Column(
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 3.0),
+                  child: (connectTop == false && connectBottom == false)
+                      ? Column(
                           children: [
                             Expanded(
                               flex: 1,
@@ -222,9 +219,20 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                               ),
                             ),
                           ],
+                        )
+                      : Center(
+                          child: AutoSizeText(
+                            (connectTop == false && connectBottom == true)
+                                ? _timeTableHour.getSubject().name
+                                : (connectTop == true && connectBottom == true)
+                                    ? _timeTableHour.getTeacher().name
+                                    : _timeTableHour.getRoom().name,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(color: theme.colors.text),
+                          ),
                         ),
-                      )
-                    : Container(),
+                ),
               ],
             ),
           ),
