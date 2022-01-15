@@ -93,14 +93,17 @@ class TimeTableScreen extends ConsumerWidget {
 
         if (timeColumnCounter - 1 > 0) {
           TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
-          if (current.getTeacher().name == prev.getTeacher().name && current.getStartTimeString() != "13:30") {
+          if (current.getTeacher().name == prev.getTeacher().name &&
+              current.getSubject().longName == prev.getSubject().longName &&
+              current.getStartTimeString() != "13:30") {
             //Doppelstunde!
             connectTop = true;
           }
         }
         if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
           TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
-          if (current.getTeacher().name == next.getTeacher().name) {
+          if (current.getTeacher().name == next.getTeacher().name &&
+              current.getSubject().longName == next.getSubject().longName) {
             //Doppelstunde!
             connectBottom = true;
           }

@@ -180,14 +180,18 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                   ],
                 ),
                 // Info icon
-                (timeTableHour.getLessionInformation().isNotEmpty
+                (timeTableHour.getLessionInformation().isNotEmpty && connectTop && connectBottom == false ||
+                        timeTableHour.getLessionInformation().isNotEmpty &&
+                            connectTop == false &&
+                            connectBottom == false)
                     ? Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
-                            padding: const EdgeInsets.fromLTRB(1, 1, 4, 4),
-                            child: Icon(Icons.info, size: 15, color: theme.colors.text)),
+                          padding: const EdgeInsets.fromLTRB(1, 1, 4, 4),
+                          child: Icon(Icons.info, size: 15, color: theme.colors.icon),
+                        ),
                       )
-                    : const Padding(padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0))),
+                    : Container(),
                 // Card content - Only show if showHourText == true
                 showHourText
                     ? Padding(
@@ -220,7 +224,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                           ],
                         ),
                       )
-                    : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0))
+                    : Container(),
               ],
             ),
           ),
