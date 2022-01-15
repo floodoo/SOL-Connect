@@ -36,11 +36,15 @@ class TimeTableService with ChangeNotifier {
     session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
     session.createSession(username: username, password: password).then(
       (value) async {
-        log.i("Successfully logged in");
         isLoggedIn = true;
         await getTimeTable();
-        await loadPhaseFromFile();
+        try {
+          await loadPhaseFromFile();
+        } catch (e) {
+          log.e(e);
+        }
         UserSecureStorage.setPassword(password);
+        log.i("Successfully logged in");
         notifyListeners();
       },
     ).catchError(
