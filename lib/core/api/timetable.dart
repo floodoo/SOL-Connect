@@ -98,6 +98,14 @@ class TimeTableRange {
     }
   }
 
+  DateTime getStartDate() {
+    return _startDate;
+  }
+
+  DateTime getEndDate() {
+    return _endDate;
+  }
+
   ///Wenn man sich die Timetable als 2d Grid vorstellt, kann man hier die Stunden bekommen die einem solchem Grid entsprechen
   ///
   ///Das Grid ist ___`getDays().length * 10`___ Felder groß
