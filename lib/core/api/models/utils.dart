@@ -21,3 +21,12 @@ int daysSinceEpoch(int timestamp) {
 bool dateMatch(DateTime d1, DateTime d2) {
   return d1.day == d2.day && d1.month == d2.month && d1.year == d2.year;
 }
+
+String convertToDDMM(DateTime? date) {
+  if(date == null) {
+    return "?";
+  }
+
+  String d = convertToUntisDate(date);
+  return d.substring(6) + "." + d.substring(4, 6);
+}

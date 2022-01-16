@@ -8,6 +8,7 @@ import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_car
 import 'package:url_launcher/url_launcher.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import '../../../core/exceptions.dart';
+import '../../../core/api/models/utils.dart' as utils;
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -16,6 +17,9 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
+    final phaseLoaded = ref.watch(timeTableService).phaseVerified;
+    final validator = ref.watch(timeTableService).validator;
+
     bool lightMode;
     Logger log = getLogger();
 
@@ -52,22 +56,58 @@ class SettingsScreen extends ConsumerWidget {
         color: theme.colors.background,
         child: ListView(
           children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 25.0),
-                child: Text(
-                  "Phase plan",
-                  style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
-                ),
-              ),
-            ),
+            //Row(
+            //  children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 25.0),
+                    child: 
+                    Text.rich(
+                        TextSpan(
+                            children: <InlineSpan>[
+                                const TextSpan(text: "Phasierung  "),
+                                WidgetSpan(
+                                  child: Icon(Icons.info_outline, color: theme.colors.textInverted, size: 25)
+                                )
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 25
+                          ),
+                    )
+                   // Text(
+                   //   "Phasierung",
+                   //   style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
+                   // ),
+                  ),
+                ),  
+            //  ],
+           // ),
+          
             CustomSettingsCard(
+              padBottom: 0,
               leading: Icon(
-                Icons.add,
+                phaseLoaded ? Icons.delete_rounded : Icons.add_chart_rounded,
                 color: theme.colors.text,
+                size: 26,
               ),
-              text: "Add Phase Plan",
+              text: phaseLoaded ? "Phasierung entfernen" : "Phasierung laden",
               onTap: () async {
+
+                if(phaseLoaded) {
+                  ref.read(timeTableService).deletePhase();
+
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    _createSnackbar(
+                      "Phasierung entfernt",
+                      theme.colors.elementBackground,
+                    ),
+                  );
+                  return;
+                }
+
                 FilePickerResult? result = await FilePicker.platform.pickFiles(
                     type: FileType.custom,
                     allowedExtensions: ["xlsx"],
@@ -114,7 +154,26 @@ class SettingsScreen extends ConsumerWidget {
                 }
               },
             ),
-            CustomSettingsCard(
+            phaseLoaded ? 
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30, 6, 30, 0),
+                child: Container(
+                  color: theme.colors.successColor,
+                  child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 8, 5, 10),
+                        child: Text(
+                          validator != null 
+                          ? "Phasierung geladen für Block " + utils.convertToDDMM(validator.getBlockStart()) + " bis " + utils.convertToDDMM(validator.getBlockEnd())
+                          : "Phasierung geladen für Block ? - ?",
+                          style: const TextStyle(fontSize: 13)
+                        )
+                      ),
+                  )
+              )
+            : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+
+
+           /* CustomSettingsCard(
               leading: Icon(
                 Icons.delete,
                 color: theme.colors.text,
@@ -132,7 +191,10 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 );
               },
-            ),
+            ),*/
+
+
+
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 25.0),

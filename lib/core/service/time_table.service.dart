@@ -170,7 +170,7 @@ class TimeTableService with ChangeNotifier {
     var nextBlockweeks = await timeTable!.getNextBlockWeeks(0);
     //Überprüfe alle nächsten Block Wochen!
     validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
-
+    
     for(TimeTableRange blockWeek in nextBlockweeks) {
       log.d("Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
       await validator!.mergeExcelWithTimetable(blockWeek);
