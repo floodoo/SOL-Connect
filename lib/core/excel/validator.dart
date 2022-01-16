@@ -123,7 +123,7 @@ class ExcelValidator {
   ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
   ///* `CurrentPhaseplanOutOfRange`: Wenn die timetable Stunden hat die aber außerhalb des aktuellen Blockes sind.
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {
-    //TODO Noch nicht voll debuggt. Bitte überwachen. Das Datum soll den ersten und letzten Tag des nächsten oder aktuellen Blocks sein
+    
     _validDateStart ??= await timetable.getNextBlockStartDate(0);
     _validDateEnd ??= await timetable.getNextBlockEndDate(0);
 
@@ -146,7 +146,7 @@ class ExcelValidator {
     }
 
     if(refresh || _mapped.isEmpty) {
-      await _verifySheet(timetable);
+      _mapped = await _verifySheet(timetable);
     }
 
     if (_mapped.isNotEmpty) {
