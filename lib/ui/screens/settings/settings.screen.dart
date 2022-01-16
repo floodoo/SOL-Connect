@@ -83,33 +83,18 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   );
 
-                  String errorMessage = "";
-                  try {
-                    await ref.read(timeTableService).loadPhaseFromFile(result.files.first.path!);
-                    await ref.read(timeTableService).loadPhase();
-                  } on ExcelMergeFileNotVerified {
-                    errorMessage = "Kein Stundenplan in Datei gefunden!";
-                  } on ExcelConversionAlreadyActive {
-                    errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
-                  } on ExcelConversionServerError {
-                    errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
-                  } on FailedToEstablishExcelServerConnection {
-                    errorMessage = "Bitte überprüfe deine Internetverbindung";
-                  } on ExcelMergeNonSchoolBlockException {
-                    // Doesn't matter
-                  } catch (e) {
-                    errorMessage = "Unbekannter Fehler: " + e.toString();
-                    log.e(e);
-                    e.toString();
-                  }
+                  String errorMessage = await ref.read(timeTableService).verifyPhaseFileForNextBlock(result.files.first.path!);
 
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    _createSnackbar(
-                      errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
-                      errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
-                    ),
-                  );
+                  ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
+                  if(state != null) {
+                    ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      _createSnackbar(
+                        errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
+                        errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
+                      ),
+                    );
+                  }          
                 }
               },
             ),
@@ -218,3 +203,4 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 }
+

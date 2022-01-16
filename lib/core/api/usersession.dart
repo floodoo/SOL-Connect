@@ -39,7 +39,7 @@ class UserSession {
   News _cachedNewsData = News(null);
 
   //Gecachte timetables
-  var _cachedTimetables = <TimeTableRange>[];
+  final _cachedTimetables = <TimeTableRange>[];
   //Wie viele timetables gecache werden dürfen bis alte recycled werden
   final int maxTimetableCacheSize = 10;
   //Ob caching überhaubt benutzt werden soll. Wird im Konstruktor festgelegt
@@ -295,7 +295,6 @@ class UserSession {
       _cachedTimetables.removeAt(0);
       _cachedTimetables.add(range);
     }
-    print(_cachedTimetables.length.toString());
   }
 
   ///Löscht den Timetable cache. Falls useCaching true ist
