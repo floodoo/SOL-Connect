@@ -83,7 +83,23 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   );
 
-                  String errorMessage = await ref.read(timeTableService).verifyPhaseFileForNextBlock(result.files.first.path!);
+                  String errorMessage = "";
+                  try {
+                     await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(result.files.first.path!);
+                  } on ExcelMergeFileNotVerified {
+                    errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
+                  } on ExcelConversionAlreadyActive {
+                    errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
+                  } on ExcelConversionServerError {
+                    errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
+                  } on FailedToEstablishExcelServerConnection {
+                    errorMessage = "Bitte überprüfe deine Internetverbindung";
+                  } on ExcelMergeNonSchoolBlockException {
+                    // Doesn't matter
+                  } catch (e) {
+                    log.e(e.toString());
+                    errorMessage = "Unbekannter Fehler: " + e.toString();
+                  }
 
                   ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
                   if(state != null) {

@@ -42,7 +42,7 @@ class TimeTableService with ChangeNotifier {
         isLoggedIn = true;
         await getTimeTable();
         try {
-          await loadPhaseFromFile();
+          await loadCheckedPhaseFileForNextBlock();
         } catch (e) {
           log.e(e);
         }
@@ -128,11 +128,25 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> verifyPhaseFileForNextBlock(String path) async {
+  ///Es wird davon ausgegangen, dass die geladene Datei gültig ist
+  loadUncheckedPhaseFileForNextBlock() async {
+    await loadPhaseFromFile();
+    await loadPhase();
+  }
+
+  ///Die Datei wird mit ausführlichen checks geladen und getestet.
+  Future<String> loadCheckedPhaseFileForNextBlock([String? phaseFilePath]) async {
     phaseVerified = false;
-    //weekCounter = 0;
-    //Wo weekcounter auf 0 setzen?
-    loadPhaseFromFile(path);
+
+    if (phaseFilePath != null) {
+      prefs!.setString("phasePlan", phaseFilePath);
+      validator = ExcelValidator("flo-dev.me", phaseFilePath);
+    } else {
+      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
+      if (phaseFilePath != "empty") {
+        validator = ExcelValidator("flo-dev.me", phaseFilePath);
+      }
+    }
 
     log.d("Verifying phaseplan for next/current block ...");
 
@@ -158,23 +172,8 @@ class TimeTableService with ChangeNotifier {
     validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
 
     for(TimeTableRange blockWeek in nextBlockweeks) {
-      try {
-        log.d("Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
-        await validator!.mergeExcelWithTimetable(blockWeek);
-      } on ExcelMergeFileNotVerified {
-        return "Kein passender Block- Stundenplan in Datei gefunden!";
-      } on ExcelConversionAlreadyActive {
-        return "Unbekannter Fehler. Bitte starte die App neu!";
-      } on ExcelConversionServerError {
-        return "Ein ExcelServer Fehler ist aufgetreten";
-      } on FailedToEstablishExcelServerConnection {
-        return "Bitte überprüfe deine Internetverbindung";
-      } on ExcelMergeNonSchoolBlockException {
-        // Doesn't matter
-      } catch (e) {
-        log.e(e.toString());
-        return "Unbekannter Fehler: " + e.toString();
-      }
+      log.d("Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
+      await validator!.mergeExcelWithTimetable(blockWeek);
     }
     phaseVerified = true;
     log.i("File verified!");
@@ -201,10 +200,6 @@ class TimeTableService with ChangeNotifier {
 
   ///Ladet die Phase zu einem Stundenplan
   Future<void> loadPhase() async {
-    if(!phaseVerified) {
-      return;
-    }
-
     weekInBlock = true;
 
     if (validator != null) {
