@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
-import 'package:untis_phasierung/core/api/models/timetable.day.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
@@ -94,14 +93,17 @@ class TimeTableScreen extends ConsumerWidget {
 
         if (timeColumnCounter - 1 > 0) {
           TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
-          if (current.getTeacher().name == prev.getTeacher().name && current.getStartTimeString() != "13:30") {
+          if (current.getTeacher().name == prev.getTeacher().name &&
+              current.getSubject().longName == prev.getSubject().longName &&
+              current.getStartTimeString() != "13:30") {
             //Doppelstunde!
             connectTop = true;
           }
         }
         if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
           TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
-          if (current.getTeacher().name == next.getTeacher().name) {
+          if (current.getTeacher().name == next.getTeacher().name &&
+              current.getSubject().longName == next.getSubject().longName) {
             //Doppelstunde!
             connectBottom = true;
           }
@@ -110,9 +112,6 @@ class TimeTableScreen extends ConsumerWidget {
             connectBottom = false;
           }
         }
-
-        bool showText =
-            (connectBottom && !connectTop) || (!connectBottom && !connectTop); //Die erste stunde bei verbindungen
 
         timeTableList.add(
           CustomTimeTableInfoCard(
@@ -123,7 +122,6 @@ class TimeTableScreen extends ConsumerWidget {
                 : null,
             connectBottom: connectBottom,
             connectTop: connectTop,
-            showHourText: showText,
           ),
         );
       }
@@ -230,12 +228,14 @@ class TimeTableScreen extends ConsumerWidget {
                             children: buildFirstTimeTableRow(_timeTable, theme),
                           ),
                           Center(
-                              child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                                  child: Text(
-                                    "No school this week",
-                                    style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
-                                  ))),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                              child: Text(
+                                "No school this week",
+                                style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
           ),

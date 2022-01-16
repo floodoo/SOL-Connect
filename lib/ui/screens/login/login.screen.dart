@@ -41,6 +41,10 @@ class LoginScreen extends ConsumerWidget {
       _timeTableService.login(usernameController.text, passwordController.text);
     }
 
+    if (usernameController.text != "" && passwordController.text != "" && _isLoading == false) {
+      _login();
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(

@@ -27,28 +27,28 @@ class CustomPhaseCard extends ConsumerWidget {
             children: [
               Container(
                 color: (!blockWeek
-                  ? theme.colors.phaseOutOfBlock
-                  : phase == null
-                    ? theme.colors.phaseUnknown
-                    : phase == PhaseCodes.feedback
-                        ? theme.colors.phaseFeedback
-                        : phase == PhaseCodes.free
-                          ? theme.colors.phaseFree
-                          : phase == PhaseCodes.orienting
-                              ? theme.colors.phaseOrienting
-                              : phase == PhaseCodes.reflection
-                                  ? theme.colors.phaseOrienting
-                                  : phase == PhaseCodes.structured
-                                      ? theme.colors.phaseStructured
-                                      : theme.colors.phaseUnknown),
+                    ? theme.colors.phaseOutOfBlock
+                    : phase == null
+                        ? theme.colors.phaseUnknown
+                        : phase == PhaseCodes.feedback
+                            ? theme.colors.phaseFeedback
+                            : phase == PhaseCodes.free
+                                ? theme.colors.phaseFree
+                                : phase == PhaseCodes.orienting
+                                    ? theme.colors.phaseOrienting
+                                    : phase == PhaseCodes.reflection
+                                        ? theme.colors.phaseOrienting
+                                        : phase == PhaseCodes.structured
+                                            ? theme.colors.phaseStructured
+                                            : theme.colors.phaseUnknown),
                 padding: const EdgeInsets.fromLTRB(25, 5, 0, 5),
                 alignment: const Alignment(-1, 0),
                 child: Text(
                   !blockWeek
-                    ? "Woche außerhab des Blocks" 
-                    : phase == null
-                      ? "Keine Phasierung geladen" 
-                      : phase!.readableName,
+                      ? "Woche außerhab des Blocks"
+                      : phase == null
+                          ? "Keine Phasierung geladen"
+                          : phase!.readableName,
                   textAlign: TextAlign.left,
                   style: TextStyle(color: theme.colors.textInverted, fontSize: 23),
                 ),
@@ -56,11 +56,11 @@ class CustomPhaseCard extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 15, 10, 20),
                 child: Text(
-                  !blockWeek 
+                  !blockWeek
                       ? "Diese Woche ist nicht teil des Blocks für den die Phasierung geladen wurde."
-                      : phase == null 
-                        ? "Du kannst die Phasierung für diesen Block unter \"Einstellungen\" > \"Add Phase Plan\" laden"
-                        : phase!.description,
+                      : phase == null
+                          ? "Du kannst die Phasierung für diesen Block unter \"Einstellungen\" > \"Add Phase Plan\" laden"
+                          : phase!.description,
                   textAlign: TextAlign.left,
                   style: TextStyle(color: theme.colors.textInverted),
                 ),
