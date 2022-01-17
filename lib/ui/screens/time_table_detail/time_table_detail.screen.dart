@@ -1,6 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
@@ -60,6 +60,8 @@ class TimeTableDetailScreen extends ConsumerWidget {
     PhaseCodes? firstHalf;
     PhaseCodes? secondHalf;
 
+    Color statusCodeColor = Colors.black38;
+
     if (phase != null) {
       firstHalf = phase.getFirstHalf();
       secondHalf = phase.getSecondHalf();
@@ -67,8 +69,13 @@ class TimeTableDetailScreen extends ConsumerWidget {
 
     if (args.timeTableHour.isIrregular()) {
       _timeTableHour = args.timeTableHour.getReplacement();
+      statusCodeColor = theme.colors.irregular;
     } else {
       _timeTableHour = args.timeTableHour;
+    }
+
+    if (_timeTableHour.getLessonCode() == Codes.cancelled) {
+      statusCodeColor = theme.colors.cancelled;
     }
 
     return Scaffold(
@@ -77,79 +84,105 @@ class TimeTableDetailScreen extends ConsumerWidget {
             style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.adaptive.share_rounded,
-              color: theme.colors.icon,
-            ),
-            onPressed: () {
-              ShareFilesAndScreenshotWidgets().shareScreenshot(
-                previewContainer,
-                MediaQuery.of(context).devicePixelRatio.toInt() * 10000,
-                "TimeTableDetail",
-                "TimeTableDetail.png",
-                "image/png",
-                text: "Shared via Untis Phasierung",
-              );
-            },
-          )
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(
+        //       Icons.adaptive.share_rounded,
+        //       color: theme.colors.icon,
+        //     ),
+        //     onPressed: () {
+        //       ShareFilesAndScreenshotWidgets().shareScreenshot(
+        //         previewContainer,
+        //         MediaQuery.of(context).devicePixelRatio.toInt() * 10000,
+        //         "TimeTableDetail",
+        //         "TimeTableDetail.png",
+        //         "image/png",
+        //         text: "Shared via Untis Phasierung",
+        //       );
+        //     },
+        //   )
+        // ],
       ),
       body: RepaintBoundary(
         key: previewContainer,
         child: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(10.0),
               child: Card(
                 elevation: 10,
-                child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
-                          child: Text(
-                            _timeTableHour.getSubject().longName,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                ),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                      child: Container(
+                        color: statusCodeColor,
+                        padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                        alignment: const Alignment(-1, 0),
+                        child: Text(
+                          _timeTableHour.getSubject().longName,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                AutoSizeText(
                                   "Lehrer: ${_timeTableHour.getTeacher().longName}",
-                                  style: TextStyle(color: theme.colors.textInverted),
+                                  style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
                                 ),
-                                Text(
+                                const SizedBox(
+                                  height: 7,
+                                ),
+                                AutoSizeText(
                                   "Raum: ${_timeTableHour.getRoom().name}",
-                                  style: TextStyle(color: theme.colors.textInverted),
+                                  style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
                                 ),
                               ],
                             ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    "Typ: ${_timeTableHour.getActivityType()}",
-                                    style: TextStyle(color: theme.colors.textInverted),
-                                  ),
-                                  Text(
-                                    "Status: ${_timeTableHour.getLessonCode()}",
-                                    style: TextStyle(color: theme.colors.textInverted),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    )),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                AutoSizeText(
+                                  "Typ: ${_timeTableHour.getActivityType()}",
+                                  style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                ),
+                                const SizedBox(
+                                  height: 7,
+                                ),
+                                AutoSizeText(
+                                  "Status: ${_timeTableHour.getLessonCode()}",
+                                  style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             _timeTableHour.getLessionInformation().isNotEmpty
