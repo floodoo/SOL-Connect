@@ -98,6 +98,14 @@ class TimeTableRange {
     }
   }
 
+  DateTime getStartDate() {
+    return _startDate;
+  }
+
+  DateTime getEndDate() {
+    return _endDate;
+  }
+
   ///Wenn man sich die Timetable als 2d Grid vorstellt, kann man hier die Stunden bekommen die einem solchem Grid entsprechen
   ///
   ///Das Grid ist ___`getDays().length * 10`___ Felder groß
@@ -161,6 +169,11 @@ class TimeTableRange {
     //Gehe Wochen nach vorne bis eine leere Woche kommt!
     for (int i = relativeToCurrent; i < relativeToCurrent + 8; i++) {
       TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
+      
+      if(!week.isNonSchoolblockWeek()) {
+        blockWeeks.add(week);
+      }
+
       if (week.isNonSchoolblockWeek() &&
           week.getDays()[0].getDate().millisecondsSinceEpoch > _blockStartDate!.millisecondsSinceEpoch) {
         _blockEndDate = week.getDays()[0].getDate(); //Der erste Montag nach dem Block
@@ -168,6 +181,16 @@ class TimeTableRange {
       }
     }
     return _blockEndDate!;
+  }
+
+  var blockWeeks = <TimeTableRange>[];
+
+  //TODO verbessern
+  Future<List<TimeTableRange>> getNextBlockWeeks(int relativeToCurrent) async {
+    if(_blockEndDate == null) {
+      await getNextBlockEndDate(relativeToCurrent);
+    }
+    return blockWeeks;
   }
 
   Future<DateTime> getNextBlockStartDate(int relativeToCurrent) async {

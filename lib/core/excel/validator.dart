@@ -69,9 +69,8 @@ class ExcelValidator {
   ///Startdatum des Blocks
   ///Das gemappte Sheet ist automatisch nicht mehr gültig wenn:
   ///* Das Datum größer als das Startdatum des Blocks ist und die Woche keine Schulwoche ist
-  static DateTime? _validDateStart;
-  static DateTime?
-      _validDateEnd; //TODO static wegmachen wenn nicht bei jedem Stundenplanladen eine neue ExcelValidator instanz erstellt wird ...
+  DateTime? _validDateStart;
+  DateTime?  _validDateEnd; 
 
   ///Der Excel Validator dient dazu den Stundenplan mit der angegebenen Phasierung zu verbinden.
   ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
@@ -83,7 +82,6 @@ class ExcelValidator {
 
     var bytes = File(_path).readAsBytesSync();
     _excel = Excel.decodeBytes(bytes);
-    print("Creating new validator instance ...");
   }
 
   ///Mit dieser Funktion kann ein geladener Phasierungsplan auf einen Schulblock beschränkt werden.
@@ -125,7 +123,7 @@ class ExcelValidator {
   ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
   ///* `CurrentPhaseplanOutOfRange`: Wenn die timetable Stunden hat die aber außerhalb des aktuellen Blockes sind.
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {
-    //TODO Noch nicht voll debuggt. Bitte überwachen. Das Datum soll den ersten und letzten Tag des nächsten oder aktuellen Blocks sein
+    
     _validDateStart ??= await timetable.getNextBlockStartDate(0);
     _validDateEnd ??= await timetable.getNextBlockEndDate(0);
 
@@ -147,7 +145,7 @@ class ExcelValidator {
       }
     }
 
-    if (_mapped.isEmpty || refresh) {
+    if(refresh || _mapped.isEmpty) {
       _mapped = await _verifySheet(timetable);
     }
 

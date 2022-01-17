@@ -18,6 +18,9 @@ class TimeTableService with ChangeNotifier {
   MergedTimeTable? phaseTimeTable;
   ExcelValidator? validator;
 
+  //True wenn eine Phasierungsdatei erfolgreich geladen und verifiziert werden konnte
+  bool phaseVerified = false;
+  
   bool isLoggedIn = false;
   bool isLoading = false;
   bool isSchool = true;
@@ -39,7 +42,7 @@ class TimeTableService with ChangeNotifier {
         isLoggedIn = true;
         await getTimeTable();
         try {
-          await loadPhaseFromFile();
+          await loadCheckedPhaseFileForNextBlock();
         } catch (e) {
           log.e(e);
         }
@@ -126,6 +129,64 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
+  ///Es wird davon ausgegangen, dass die geladene Datei gültig ist
+  loadUncheckedPhaseFileForNextBlock() async {
+    await loadPhaseFromFile();
+    await loadPhase();
+  }
+
+  ///Die Datei wird mit ausführlichen checks geladen und getestet.
+  Future<String> loadCheckedPhaseFileForNextBlock([String? phaseFilePath]) async {
+    phaseVerified = false;
+
+    if (phaseFilePath != null) {
+      prefs!.setString("phasePlan", phaseFilePath);
+      validator = ExcelValidator("flo-dev.me", phaseFilePath);
+    } else {
+      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
+      if (phaseFilePath != "empty") {
+        validator = ExcelValidator("flo-dev.me", phaseFilePath);
+      }
+    }
+
+    log.d("Verifying phaseplan for next/current block ...");
+
+    await session.clearTimetableCache();
+
+    timeTable = await session.getRelativeTimeTableWeek(0);
+    //Block ausmappen
+
+    DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
+    DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
+
+    log.d("Limiting Phaseplan to block " +
+      blockStart.toString() +
+      " -> " +
+      blockEnd.toString() +
+      " until a new file is loaded.");
+
+    UserSecureStorage.setPhaseLoadDateStart(blockStart);
+    UserSecureStorage.setPhaseLoadDateEnd(blockEnd);
+
+    var nextBlockweeks = await timeTable!.getNextBlockWeeks(0);
+    //Überprüfe alle nächsten Block Wochen!
+    validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
+    
+    for(TimeTableRange blockWeek in nextBlockweeks) {
+      log.d("Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
+      await validator!.mergeExcelWithTimetable(blockWeek);
+    }
+    phaseVerified = true;
+    log.i("File verified!");
+    //Success!
+    
+    getTimeTable(weekCounter: _weekCounter);
+
+    session.clearTimetableCache();
+    return "";
+  }
+
+  ///Ladet ein neuen ExcelValidator aus einer Datei
   Future<void> loadPhaseFromFile([String? phaseFilePath]) async {
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
@@ -138,42 +199,26 @@ class TimeTableService with ChangeNotifier {
     }
   }
 
+  ///Ladet die Phase zu einem Stundenplan
   Future<void> loadPhase() async {
     weekInBlock = true;
 
     if (validator != null) {
       try {
-        DateTime? loadStart = await UserSecureStorage.getPhaseLoadBlockStart();
-        DateTime? loadEnd = await UserSecureStorage.getPhaseLoadBlockEnd();
-
-        if (loadStart != null && loadEnd != null) {
-          validator!.limitPhasePlanToCurrentBlock(loadStart, loadEnd);
-          log.d("Limiting Phaseplan to block " +
-              loadStart.toString() +
-              " -> " +
-              loadEnd.toString() +
-              " until a new file is loaded.");
-          phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
-        } else {
-          phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
-          DateTime start = validator!.getBlockStart()!;
-          DateTime end = validator!.getBlockEnd()!;
-          log.d("Setting Phaseplan limitation to current block: " + start.toString() + " -> " + end.toString());
-          UserSecureStorage.setPhaseLoadDateStart(start);
-          UserSecureStorage.setPhaseLoadDateEnd(end);
-        }
+        phaseTimeTable = await validator!.mergeExcelWithTimetable(timeTable!);
       } on CurrentPhaseplanOutOfRange {
         phaseTimeTable = null;
         log.e("Week not part of current block");
         weekInBlock = false;
-      }
+      } 
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void deletePhase() {
     prefs!.remove("phasePlan");
     validator = null;
+    phaseVerified = false;
     phaseTimeTable = null;
 
     UserSecureStorage.clearPhaseDates();
