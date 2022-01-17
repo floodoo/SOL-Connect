@@ -289,7 +289,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               padTop: 10,
               padBottom: 30,
-              text: "Build Number",
+              text: "Version 1.0.0",
             ),
           ],
         ),
