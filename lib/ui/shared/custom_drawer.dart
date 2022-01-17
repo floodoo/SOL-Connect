@@ -51,7 +51,7 @@ class CustomDrawer extends ConsumerWidget {
               ),
             ),
             ListTile(
-              title: Text("Timetable", style: TextStyle(color: theme.colors.textBackground)),
+              title: Text("Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
               onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
             ),
             // ListTile(
@@ -72,7 +72,7 @@ class CustomDrawer extends ConsumerWidget {
             ),
             Expanded(child: Container()),
             ListTile(
-              title: Text("Settings", style: TextStyle(color: theme.colors.textBackground)),
+              title: Text("Einstellungen", style: TextStyle(color: theme.colors.textBackground)),
               onTap: () => Navigator.pushNamed(context, SettingsScreen.routeName),
             ),
             ListTile(

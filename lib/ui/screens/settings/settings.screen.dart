@@ -48,7 +48,7 @@ class SettingsScreen extends ConsumerWidget {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings', style: TextStyle(color: theme.colors.text)),
+        title: Text('Einstellungen', style: TextStyle(color: theme.colors.text)),
         backgroundColor: theme.colors.primary,
         leading: BackButton(
           color: theme.colors.icon,
@@ -215,7 +215,7 @@ class SettingsScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 25.0),
                 child: Text(
-                  "Appearance",
+                  "Erscheinungsbild",
                   style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                 ),
               ),
@@ -259,7 +259,7 @@ class SettingsScreen extends ConsumerWidget {
                 FontAwesome.github_circled,
                 color: theme.colors.text,
               ),
-              text: "Github Project",
+              text: "Github Projekt",
               onTap: () async {
                 String _url = "https://github.com/floodoo/untis_phasierung";
                 if (!await launch(_url)) {
@@ -273,7 +273,7 @@ class SettingsScreen extends ConsumerWidget {
                 color: theme.colors.text,
               ),
               padTop: 10,
-              text: "Report Bug",
+              text: "Fehler Melden",
               onTap: () async {
                 String _url =
                     "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";

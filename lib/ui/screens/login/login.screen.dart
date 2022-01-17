@@ -32,11 +32,11 @@ class LoginScreen extends ConsumerWidget {
 
     if (_loginError != null) {
       if (_loginError is WrongCredentialsException) {
-        loginErrorMessage = "Incorrect username or password";
+        loginErrorMessage = "Benutzername oder Passwort falsch";
       } else if (_loginError is MissingCredentialsException) {
-        loginErrorMessage = "Missing username or password";
+        loginErrorMessage = "Fehlender Benutzername oder Passwort";
       } else {
-        loginErrorMessage = "Please check your internet connection";
+        loginErrorMessage = "Bitte überprüfe deine Internetverbindung";
       }
     }
 
