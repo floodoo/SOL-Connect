@@ -205,7 +205,7 @@ class TimeTableScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Timetable", style: TextStyle(color: theme.colors.text)),
+        title: Text("Stundenplan", style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
         // actions: [
