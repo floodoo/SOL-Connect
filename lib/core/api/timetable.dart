@@ -185,7 +185,6 @@ class TimeTableRange {
 
   var blockWeeks = <TimeTableRange>[];
 
-  //TODO verbessern
   Future<List<TimeTableRange>> getNextBlockWeeks(int relativeToCurrent) async {
     if(_blockEndDate == null) {
       await getNextBlockEndDate(relativeToCurrent);

@@ -51,8 +51,6 @@ class UserSession {
     _school = school;
     _schoolBase64 = base64Encode(utf8.encode(school));
     rpcUrl += apiBaseUrl + "/WebUntis/jsonrpc.do?school=" + school.toString();
-
-    print("Use Timetable Caching: $useCaching");
   }
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
