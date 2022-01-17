@@ -121,6 +121,7 @@ class TimeTableService with ChangeNotifier {
     timeTable = null;
     phaseTimeTable = null;
     loginError = null;
+    password = "";
     session.logout();
     notifyListeners();
   }
