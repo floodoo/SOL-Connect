@@ -78,19 +78,23 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
           _colorPhaseBottom = theme.colors.phaseUnknown;
       }
     }
-    
+
     List<Expanded> generateLessonTextWidget() {
       var expanded = <Expanded>[];
-      for(String s in hourInfo) {
-        expanded.add(Expanded(
-          flex: 1,
-          child: AutoSizeText(
-            s,
-            maxLines: 1,
-            overflow: TextOverflow.fade,
-            style: TextStyle(color: theme.colors.text),
+      for (String s in hourInfo) {
+        expanded.add(
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: AutoSizeText(
+                s,
+                maxLines: 1,
+                overflow: TextOverflow.clip,
+                style: TextStyle(color: theme.colors.text),
+              ),
+            ),
           ),
-        ));
+        );
       }
       return expanded;
     }
@@ -210,10 +214,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                       )
                     : Container(),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 3.0),
-                  child: Column(
-                          children: generateLessonTextWidget()
-                        ),
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(children: generateLessonTextWidget()),
                 ),
               ],
             ),

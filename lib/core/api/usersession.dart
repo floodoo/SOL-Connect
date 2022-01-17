@@ -60,7 +60,6 @@ class UserSession {
   ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
   Future<rh.RPCResponse> createSession({String username = "", String password = ""}) async {
-
     clearTimetableCache();
 
     if (_sessionValid) {
@@ -274,19 +273,19 @@ class UserSession {
 
   ///Gibt null zurück wenn timetable nicht in cache vorhanden ist
   TimeTableRange? _getCachedTimetable(DateTime from, DateTime to) {
-    for(TimeTableRange range in _cachedTimetables) {
-      if(utils.dateMatch(range.getStartDate(), from) && utils.dateMatch(range.getEndDate(), to)) {
+    for (TimeTableRange range in _cachedTimetables) {
+      if (utils.dateMatch(range.getStartDate(), from) && utils.dateMatch(range.getEndDate(), to)) {
         return range;
       }
     }
   }
 
   _addTimetableToCache(TimeTableRange range) {
-    if(_getCachedTimetable(range.getStartDate(), range.getEndDate()) != null) {
+    if (_getCachedTimetable(range.getStartDate(), range.getEndDate()) != null) {
       return;
     }
 
-    if(_cachedTimetables.length < maxTimetableCacheSize) {
+    if (_cachedTimetables.length < maxTimetableCacheSize) {
       _cachedTimetables.add(range);
     } else {
       //Lösche das erste element (Das sollte am längsten nicht mehr benutzt worden sein)
@@ -303,41 +302,41 @@ class UserSession {
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to) async {
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
 
-    if(useCaching) {
+    if (useCaching) {
       TimeTableRange? cached = _getCachedTimetable(from, to);
-      if(cached != null) {
+      if (cached != null) {
         return cached;
       }
     }
 
     TimeTableRange loaded = TimeTableRange(
-      from,
-      to,
-      this,
-      await _queryRPC("getTimetable", {
-        "options": {
-          "startDate": utils.convertToUntisDate(from),
-          "endDate": utils.convertToUntisDate(to),
-          "element": {"id": _personId, "type": _type},
-          "showLsText": true,
-          "showPeText": true,
-          "showStudentgroup": true,
-          "showLsNumber": true,
-          "showSubstText": true,
-          "showInfo": true,
-          "showBooking": true,
-          "klasseFields": ['id', 'name', 'longname', 'externalkey'],
-          "roomFields": ['id', 'name', 'longname', 'externalkey'],
-          "subjectFields": ['id', 'name', 'longname', 'externalkey'],
-          "teacherFields": ['id', 'name', 'longname', 'externalkey']
-        }
-      }));
-      
-      if(useCaching) {
-        _addTimetableToCache(loaded);
-      }
+        from,
+        to,
+        this,
+        await _queryRPC("getTimetable", {
+          "options": {
+            "startDate": utils.convertToUntisDate(from),
+            "endDate": utils.convertToUntisDate(to),
+            "element": {"id": _personId, "type": _type},
+            "showLsText": true,
+            "showPeText": true,
+            "showStudentgroup": true,
+            "showLsNumber": true,
+            "showSubstText": true,
+            "showInfo": true,
+            "showBooking": true,
+            "klasseFields": ['id', 'name', 'longname', 'externalkey'],
+            "roomFields": ['id', 'name', 'longname', 'externalkey'],
+            "subjectFields": ['id', 'name', 'longname', 'externalkey'],
+            "teacherFields": ['id', 'name', 'longname', 'externalkey']
+          }
+        }));
 
-      return loaded;
+    if (useCaching) {
+      _addTimetableToCache(loaded);
+    }
+
+    return loaded;
   }
 
   /// Diese müssen in den Header gelegt werden

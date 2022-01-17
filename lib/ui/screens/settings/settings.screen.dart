@@ -60,33 +60,28 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             //Row(
             //  children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 25.0),
-                    child: 
-                    Text.rich(
-                        TextSpan(
-                            children: <InlineSpan>[
-                                const TextSpan(text: "Phasierung  "),
-                                WidgetSpan(
-                                  child: Icon(Icons.info_outline, color: theme.colors.textInverted, size: 25)
-                                )
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 25
-                          ),
-                    )
-                   // Text(
-                   //   "Phasierung",
-                   //   style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
-                   // ),
+            Center(
+              child: Padding(
+                  padding: const EdgeInsets.only(top: 25.0),
+                  child: Text.rich(
+                    TextSpan(
+                      children: <InlineSpan>[
+                        const TextSpan(text: "Phasierung  "),
+                        WidgetSpan(child: Icon(Icons.info_outline, color: theme.colors.textInverted, size: 25))
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 25),
+                  )
+                  // Text(
+                  //   "Phasierung",
+                  //   style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
+                  // ),
                   ),
-                ),  
+            ),
             //  ],
-           // ),
-          
+            // ),
+
             CustomSettingsCard(
               padBottom: 0,
               leading: Icon(
@@ -96,8 +91,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               text: phaseLoaded ? "Phasierung entfernen" : "Phasierung laden",
               onTap: () async {
-
-                if(phaseLoaded) {
+                if (phaseLoaded) {
                   ref.read(timeTableService).deletePhase();
 
                   ScaffoldMessenger.of(context).clearSnackBars();
@@ -127,7 +121,7 @@ class SettingsScreen extends ConsumerWidget {
 
                   String errorMessage = "";
                   try {
-                     await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(result.files.first.path!);
+                    await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(result.files.first.path!);
                   } on ExcelMergeFileNotVerified {
                     errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
                   } on ExcelConversionAlreadyActive {
@@ -146,7 +140,7 @@ class SettingsScreen extends ConsumerWidget {
                   }
 
                   ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
-                  if(state != null) {
+                  if (state != null) {
                     ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
                       _createSnackbar(
@@ -154,30 +148,29 @@ class SettingsScreen extends ConsumerWidget {
                         errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
                       ),
                     );
-                  }          
+                  }
                 }
               },
             ),
-            phaseLoaded ? 
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30, 6, 30, 0),
-                child: Container(
-                  color: theme.colors.successColor,
-                  child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 8, 5, 10),
-                        child: Text(
-                          validator != null 
-                          ? "Phasierung geladen für Block " + utils.convertToDDMM(validator.getBlockStart()) + " bis " + utils.convertToDDMM(validator.getBlockEnd())
-                          : "Phasierung geladen für Block ? - ?",
-                          style: const TextStyle(fontSize: 13)
-                        )
-                      ),
-                  )
-              )
-            : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+            phaseLoaded
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 6, 30, 0),
+                    child: Container(
+                      color: theme.colors.successColor,
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 8, 5, 10),
+                          child: Text(
+                              validator != null
+                                  ? "Phasierung geladen für Block " +
+                                      utils.convertToDDMM(validator.getBlockStart()) +
+                                      " bis " +
+                                      utils.convertToDDMM(validator.getBlockEnd())
+                                  : "Phasierung geladen für Block ? - ?",
+                              style: const TextStyle(fontSize: 13))),
+                    ))
+                : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
 
-
-           /* CustomSettingsCard(
+            /* CustomSettingsCard(
               leading: Icon(
                 Icons.delete,
                 color: theme.colors.text,
@@ -196,8 +189,6 @@ class SettingsScreen extends ConsumerWidget {
                 );
               },
             ),*/
-
-
 
             Center(
               child: Padding(
@@ -285,4 +276,3 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 }
-

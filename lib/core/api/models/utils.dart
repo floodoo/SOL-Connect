@@ -23,7 +23,7 @@ bool dateMatch(DateTime d1, DateTime d2) {
 }
 
 String convertToDDMM(DateTime? date) {
-  if(date == null) {
+  if (date == null) {
     return "?";
   }
 
