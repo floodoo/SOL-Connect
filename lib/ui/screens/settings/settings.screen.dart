@@ -62,25 +62,46 @@ class SettingsScreen extends ConsumerWidget {
             //  children: [
             Center(
               child: Padding(
-                  padding: const EdgeInsets.only(top: 25.0),
-                  child: Text.rich(
-                    TextSpan(
-                      children: <InlineSpan>[
-                        const TextSpan(text: "Phasierung  "),
-                        WidgetSpan(child: Icon(Icons.info_outline, color: theme.colors.textInverted, size: 25))
-                      ],
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Phasierung",
+                      style: TextStyle(fontSize: 25),
                     ),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 25),
-                  )
-                  // Text(
-                  //   "Phasierung",
-                  //   style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
-                  // ),
-                  ),
+                    IconButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          _createSnackbar("Wähle eine excel Datei aus", theme.colors.primary),
+                        );
+                      },
+                      icon: const Icon(Icons.info_outline),
+                      iconSize: 25,
+                    )
+                  ],
+                ),
+                // child: Text.rich(
+                //   TextSpan(
+                //     children: <InlineSpan>[
+                //       const TextSpan(text: "Phasierung  "),
+                //       WidgetSpan(
+                //         child: IconButton(
+                //           icon: const Icon(Icons.info_outline),
+                //           color: theme.colors.textInverted,
+                //           iconSize: 25,
+                //           onPressed: () {
+                //             _createSnackbar("Wähle eine excel Datei aus", theme.colors.background);
+                //           },
+                //         ),
+                //       )
+                //     ],
+                //   ),
+                //   textAlign: TextAlign.center,
+                //   style: const TextStyle(fontSize: 25),
+                // ),
+              ),
             ),
-            //  ],
-            // ),
 
             CustomSettingsCard(
               padBottom: 0,
