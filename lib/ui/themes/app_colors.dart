@@ -79,8 +79,10 @@ class AppColors {
       phaseOutOfBlock: Colors.red.shade300,
       successColor: Colors.green.shade600,
       // Status colors
-      irregular: Colors.deepPurple.shade900,
-      cancelled: Colors.purpleAccent,
+      irregular: Colors.blue.shade900,
+      cancelled: Colors.purple.shade400,
+      //irregular: Colors.deepPurple.shade900,
+      //cancelled: Colors.purpleAccent,
     );
   }
 
@@ -109,8 +111,8 @@ class AppColors {
       phaseOutOfBlock: Colors.red.shade900,
       successColor: Colors.green.shade800,
       // Status colors
-      irregular: Colors.deepPurple.shade900,
-      cancelled: Colors.purpleAccent,
+      irregular: Colors.blue.shade900,
+      cancelled: Colors.purple.shade700,
     );
   }
 }
