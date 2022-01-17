@@ -54,18 +54,22 @@ class CustomDrawer extends ConsumerWidget {
               title: Text("Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
               onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
             ),
+            // ListTile(
+            //   title: Text("Info-Center", style: TextStyle(color: theme.colors.textBackground)),
+            //   onTap: () => Navigator.of(context).pop(),
+            // ),
+            // ListTile(
+            //   title: Text("Notifications", style: TextStyle(color: theme.colors.textBackground)),
+            //   onTap: () => Navigator.of(context).pop(),
+            // ),
+            // ListTile(
+            //   title: Text("Messages: {0}", style: TextStyle(color: theme.colors.textBackground)),
+            //   onTap: () => Navigator.of(context).pop(),
+            // ),
             ListTile(
-              title: Text("Info-Center", style: TextStyle(color: theme.colors.textBackground)),
-              onTap: () => Navigator.of(context).pop(),
+              title: Text("🚧 Weitere Features kommen noch 🚧", style: TextStyle(color: theme.colors.textBackground)),
+              onTap: null,
             ),
-           /* ListTile(
-              title: Text("Notifications", style: TextStyle(color: theme.colors.textBackground)),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            ListTile(
-              title: Text("Messages: {0}", style: TextStyle(color: theme.colors.textBackground)),
-              onTap: () => Navigator.of(context).pop(),
-            ),*/
             Expanded(child: Container()),
             ListTile(
               title: Text("Einstellungen", style: TextStyle(color: theme.colors.textBackground)),
