@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
@@ -5,10 +7,12 @@ import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
 import 'package:untis_phasierung/ui/screens/settings/settings.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
+import 'dart:math';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({Key? key}) : super(key: key);
   static final routeName = (CustomDrawer).toString();
+  static Random r = Random();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,9 +26,19 @@ class CustomDrawer extends ConsumerWidget {
     );
 
     if (session.isAPIAuthorized()) {
-      profilePictureUrl = session.getCachedProfilePictureUrl();
+
+      ImageProvider pp;
+      if(r.nextInt(69) == 20) {
+        pp = const Image(image: AssetImage('assets/images/trollface.png')).image;
+      } else {
+        profilePictureUrl = session.getCachedProfilePictureUrl();
+        pp = Image.network(profilePictureUrl).image;
+      }
+
       profilePicture = CircleAvatar(
-          backgroundColor: theme.colors.background, backgroundImage: Image.network(profilePictureUrl).image);
+          backgroundColor: theme.colors.background, 
+          backgroundImage: pp,    
+        );
     } else {
       profilePicture = CircleAvatar(
         backgroundColor: theme.colors.background,
