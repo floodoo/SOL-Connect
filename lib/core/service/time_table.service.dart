@@ -8,7 +8,6 @@ import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import 'package:untis_phasierung/util/user_secure_stotage.dart';
-import 'package:untis_phasierung/util/user_storage.dart';
 
 class TimeTableService with ChangeNotifier {
   final Logger log = getLogger();

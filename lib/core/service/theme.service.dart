@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untis_phasierung/ui/themes/app_theme.dart';
 
 class ThemeService with ChangeNotifier {
-  AppTheme _theme = AppTheme.light();
+  AppTheme _theme = AppTheme.dark();
 
   AppTheme get theme => _theme;
   bool loaded = false;
@@ -22,7 +22,7 @@ class ThemeService with ChangeNotifier {
   void loadAppearence() async {
     if (loaded == false) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool lightMode = prefs.getBool("lightMode") ?? true;
+      bool lightMode = prefs.getBool("lightMode") ?? false;
       _theme = lightMode ? AppTheme.light() : AppTheme.dark();
       loaded = true;
       notifyListeners();

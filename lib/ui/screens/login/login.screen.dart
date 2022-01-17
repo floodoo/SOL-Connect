@@ -65,12 +65,7 @@ class LoginScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.jpg"),
-            fit: BoxFit.cover,
-          ),
-        ),
+        color: theme.colors.background,
         child: ListView(
           physics: const NeverScrollableScrollPhysics(),
           children: [

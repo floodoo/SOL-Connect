@@ -53,9 +53,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  assets:
-    - assets/images/background.jpg
-    - assets/images/example_profile_picture.jpeg
+  # assets:
 
 flutter_icons:
   android: true
