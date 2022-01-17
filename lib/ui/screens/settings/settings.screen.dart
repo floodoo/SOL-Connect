@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -290,6 +291,46 @@ class SettingsScreen extends ConsumerWidget {
               padTop: 10,
               padBottom: 30,
               text: "Version 1.0.0",
+            ),
+            Center(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Created with 🔥 by ",
+                      style: TextStyle(color: theme.colors.textInverted, fontStyle: FontStyle.italic),
+                    ),
+                    TextSpan(
+                      text: "floodoo",
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontStyle: FontStyle.italic,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launch("https://github.com/floodoo");
+                        },
+                    ),
+                    TextSpan(
+                      text: " & ",
+                      style: TextStyle(color: theme.colors.textInverted, fontStyle: FontStyle.italic),
+                    ),
+                    TextSpan(
+                      text: "DevKevYT",
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontStyle: FontStyle.italic,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launch("https://github.com/DevKevYT");
+                        },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
