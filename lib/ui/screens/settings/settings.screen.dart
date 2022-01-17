@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -136,6 +138,8 @@ class SettingsScreen extends ConsumerWidget {
                     errorMessage = "Bitte überprüfe deine Internetverbindung";
                   } on ExcelMergeNonSchoolBlockException {
                     // Doesn't matter
+                  } on SocketException {
+                    errorMessage = "Bitte überprüfe deine Internetverbindung";
                   } catch (e) {
                     log.e(e.toString());
                     errorMessage = "Unbekannter Fehler: " + e.toString();

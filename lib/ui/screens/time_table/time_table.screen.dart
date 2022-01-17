@@ -151,7 +151,6 @@ class TimeTableScreen extends ConsumerWidget {
               }
           }  
         }
-        print(currentTeacher + ": " + doubleLessonIndex.toString() + ", " + doubleLessonCount.toString());
 
         if(current.getLessonCode() != Codes.irregular) {
           if(doubleLessonCount == 1) {

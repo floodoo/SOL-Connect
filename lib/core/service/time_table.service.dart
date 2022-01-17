@@ -8,6 +8,7 @@ import 'package:untis_phasierung/core/excel/validator.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 import 'package:untis_phasierung/util/user_secure_stotage.dart';
+import 'package:untis_phasierung/util/user_storage.dart';
 
 class TimeTableService with ChangeNotifier {
   final Logger log = getLogger();
@@ -166,9 +167,6 @@ class TimeTableService with ChangeNotifier {
         blockEnd.toString() +
         " until a new file is loaded.");
 
-    UserSecureStorage.setPhaseLoadDateStart(blockStart);
-    UserSecureStorage.setPhaseLoadDateEnd(blockEnd);
-
     var nextBlockweeks = await timeTable!.getNextBlockWeeks(0);
     //Überprüfe alle nächsten Block Wochen!
     validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
@@ -223,7 +221,6 @@ class TimeTableService with ChangeNotifier {
     phaseVerified = false;
     phaseTimeTable = null;
 
-    UserSecureStorage.clearPhaseDates();
     log.i("Deleted Phase block limitation");
 
     notifyListeners();

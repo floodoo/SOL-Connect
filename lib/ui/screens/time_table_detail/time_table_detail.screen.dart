@@ -55,7 +55,6 @@ class TimeTableDetailScreen extends ConsumerWidget {
     final TimeTableDetailArgument args = ModalRoute.of(context)!.settings.arguments as TimeTableDetailArgument;
     final MappedPhase? phase = args.phase;
     late TimeTableHour _timeTableHour;
-    final bool weekInBlock = ref.watch(timeTableService).weekInBlock;
 
     PhaseCodes? firstHalf;
     PhaseCodes? secondHalf;
