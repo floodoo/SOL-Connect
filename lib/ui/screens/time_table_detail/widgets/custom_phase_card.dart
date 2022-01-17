@@ -37,7 +37,7 @@ class CustomPhaseCard extends ConsumerWidget {
                                 : phase == PhaseCodes.orienting
                                     ? theme.colors.phaseOrienting
                                     : phase == PhaseCodes.reflection
-                                        ? theme.colors.phaseOrienting
+                                        ? theme.colors.phaseReflection
                                         : phase == PhaseCodes.structured
                                             ? theme.colors.phaseStructured
                                             : theme.colors.phaseUnknown),

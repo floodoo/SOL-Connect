@@ -15,11 +15,14 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
     this.phase,
     this.connectTop = false,
     this.connectBottom = false,
+    this.hourInfo = const <String>[],
   }) : super(key: key);
+
   final TimeTableHour timeTableHour;
   final MappedPhase? phase;
   final bool connectTop;
   final bool connectBottom;
+  final List<String> hourInfo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -74,6 +77,22 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
         default:
           _colorPhaseBottom = theme.colors.phaseUnknown;
       }
+    }
+    
+    List<Expanded> generateLessonTextWidget() {
+      var expanded = <Expanded>[];
+      for(String s in hourInfo) {
+        expanded.add(Expanded(
+          flex: 1,
+          child: AutoSizeText(
+            s,
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+            style: TextStyle(color: theme.colors.text),
+          ),
+        ));
+      }
+      return expanded;
     }
 
     return InkWell(
@@ -192,45 +211,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                     : Container(),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 3.0),
-                  child: (connectTop == false && connectBottom == false)
-                      ? Column(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: AutoSizeText(
-                                _timeTableHour.getSubject().name,
-                                maxLines: 1,
-                                overflow: TextOverflow.fade,
-                                style: TextStyle(color: theme.colors.text),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                _timeTableHour.getTeacher().name,
-                                style: TextStyle(color: theme.colors.text),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                _timeTableHour.getRoom().name,
-                                style: TextStyle(color: theme.colors.text),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Center(
-                          child: AutoSizeText(
-                            (connectTop == false && connectBottom == true)
-                                ? _timeTableHour.getSubject().name
-                                : (connectTop == true && connectBottom == true)
-                                    ? _timeTableHour.getTeacher().name
-                                    : _timeTableHour.getRoom().name,
-                            maxLines: 1,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(color: theme.colors.text),
-                          ),
+                  child: Column(
+                          children: generateLessonTextWidget()
                         ),
                 ),
               ],

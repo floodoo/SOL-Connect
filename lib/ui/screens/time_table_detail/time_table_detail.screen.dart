@@ -14,7 +14,7 @@ extension PhaseReadables on PhaseCodes {
       case PhaseCodes.orienting:
         return "Orientierungsphase";
       case PhaseCodes.reflection:
-        return "Reflektionsphase";
+        return "Planungsphase";
       case PhaseCodes.structured:
         return "Strukturierte Phase";
       case PhaseCodes.free:
@@ -29,17 +29,17 @@ extension PhaseReadables on PhaseCodes {
   String get description {
     switch (this) {
       case PhaseCodes.orienting:
-        return "In dieser Phase spricht der Lehrer";
+        return "In dieser Phase spricht der Lehrer und gibt Infos für den Block / die nächsten Arbeitsauftrage.\nAußerdem wird organisatorisches erledigt.";
       case PhaseCodes.reflection:
-        return "In dieser Phase macht man was wiß ich";
+        return "In dieser Phase setzt man seine Ziele und erstellt einen Smart Plan.\nDiese Phase kann auch zur Reflexion von Zielen genutzt werden";
       case PhaseCodes.structured:
-        return "In dieser Phase spricht der Lehrer";
+        return "Diese Phase ist durch den Lehrer Strukturiert.\nEs gibt feste Materialien / Arbeitsformen für diese Phase.";
       case PhaseCodes.free:
-        return "In dieser Phase kann man machen was man will";
+        return "In dieser Phase kann man gemäß der Kann- Listen und SMART- Plänen frei Lernen.\nEs gilt keine Anwesenheitspflicht.";
       case PhaseCodes.feedback:
-        return "In dieser Phase macht man was weiß ich";
+        return "In dieser Phase gibt man rückmeldung zum Wochen- oder Blockverlauf.";
       default:
-        return "Dieser Lehrer hat sich wohl nicht in die Excel eingetragen";
+        return "Entweder wurde für dieses Fach keine Phasierung eingetragen, oder diese Phase ist der APP unbekannt.";
     }
   }
 }
