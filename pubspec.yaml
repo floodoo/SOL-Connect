@@ -53,11 +53,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+    - assets/images/background.jpg
+    - assets/images/example_profile_picture.jpeg
+
 flutter_icons:
   android: true
   ios: true
   image_path: "assets/images/launcher_icon.png"
-  
-  assets:
-    - assets/images/background.jpg
-    - assets/images/example_profile_picture.jpeg
