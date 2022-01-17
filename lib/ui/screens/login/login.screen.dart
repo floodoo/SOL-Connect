@@ -19,6 +19,8 @@ class LoginScreen extends ConsumerWidget {
     final _isLoading = ref.watch(timeTableService).isLoading;
     final _loginError = ref.watch(timeTableService).loginError;
     final theme = ref.watch(themeService).theme;
+    usernameController.selection = TextSelection.fromPosition(TextPosition(offset: usernameController.text.length));
+    passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
 
     String? loginErrorMessage;
 

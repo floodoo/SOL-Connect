@@ -119,7 +119,7 @@ class TimeTableService with ChangeNotifier {
   }
 
   void logout() {
-    UserSecureStorage.clear();
+    UserSecureStorage.clearPassword();
     isLoggedIn = false;
     isLoading = false;
     timeTable = null;

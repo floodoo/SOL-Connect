@@ -89,7 +89,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
       },
       child: Center(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(5, connectTop ? 1 : 5, 5, connectBottom ? 1 : 5),
+          padding: EdgeInsets.fromLTRB(5, connectTop ? 0.7 : 5, 5, connectBottom ? 0.7 : 5),
           child: Card(
             margin: EdgeInsets.zero,
             elevation: 0,

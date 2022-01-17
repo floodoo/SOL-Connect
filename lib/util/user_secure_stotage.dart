@@ -36,5 +36,13 @@ class UserSecureStorage {
     _storage.delete(key: _keyPhaseLoadBlockEnd);
   }
 
+  static Future clearPassword() async {
+    _storage.delete(key: _keyPassword);
+  }
+
+  static Future clearUsername() async {
+    _storage.delete(key: _keyUsername);
+  }
+
   static Future clear() async => await _storage.deleteAll();
 }
