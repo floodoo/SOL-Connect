@@ -158,24 +158,24 @@ class TimeTableScreen extends ConsumerWidget {
         title: Text("Timetable", style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.adaptive.share_rounded,
-              color: theme.colors.icon,
-            ),
-            onPressed: () {
-              ShareFilesAndScreenshotWidgets().shareScreenshot(
-                previewContainer,
-                MediaQuery.of(context).devicePixelRatio.toInt() * 10000,
-                "TimeTable",
-                "TimeTable.png",
-                "image/png",
-                text: "Shared via Untis Phasierung",
-              );
-            },
-          )
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(
+        //       Icons.adaptive.share_rounded,
+        //       color: theme.colors.icon,
+        //     ),
+        //     onPressed: () {
+        //       ShareFilesAndScreenshotWidgets().shareScreenshot(
+        //         previewContainer,
+        //         MediaQuery.of(context).devicePixelRatio.toInt() * 10000,
+        //         "TimeTable",
+        //         "TimeTable.png",
+        //         "image/png",
+        //         text: "Shared via Untis Phasierung",
+        //       );
+        //     },
+        //   )
+        // ],
       ),
       drawer: const CustomDrawer(),
       body: GestureDetector(
