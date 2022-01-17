@@ -3,10 +3,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
+import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
 class LoginScreen extends ConsumerWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
+  int autoLoginCounter = 0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,14 +38,27 @@ class LoginScreen extends ConsumerWidget {
       }
     }
 
-    void _login() {
+    void _login(String username, String password) {
       _timeTableService.toggleLoading(true);
-      _timeTableService.login(usernameController.text, passwordController.text);
+      _timeTableService.login(username, password);
     }
 
-    if (usernameController.text != "" && passwordController.text != "" && _isLoading == false) {
-      _login();
+    void checkAutoLogin() async {
+      UserSecureStorage.getPassword().then(
+        (password) {
+          UserSecureStorage.getUsername().then(
+            (username) {
+              if (password != null && username != null && _isLoading == false && autoLoginCounter <= 1) {
+                _login(username, password);
+                autoLoginCounter++;
+              }
+            },
+          );
+        },
+      );
     }
+
+    checkAutoLogin();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -109,7 +124,7 @@ class LoginScreen extends ConsumerWidget {
                         },
                         child: TextField(
                           controller: passwordController,
-                          onEditingComplete: () => _login(),
+                          onEditingComplete: () => _login(usernameController.text, passwordController.text),
                           obscureText: true,
                           autocorrect: false,
                           decoration: const InputDecoration(
@@ -152,7 +167,7 @@ class LoginScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        onTap: () => _login(),
+                        onTap: () => _login(usernameController.text, passwordController.text),
                       ),
                     )
                   ],

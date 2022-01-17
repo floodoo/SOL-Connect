@@ -20,7 +20,7 @@ class TimeTableService with ChangeNotifier {
 
   //True wenn eine Phasierungsdatei erfolgreich geladen und verifiziert werden konnte
   bool phaseVerified = false;
-  
+
   bool isLoggedIn = false;
   bool isLoading = false;
   bool isSchool = true;
@@ -119,6 +119,7 @@ class TimeTableService with ChangeNotifier {
   }
 
   void logout() {
+    UserSecureStorage.clear();
     isLoggedIn = false;
     isLoading = false;
     timeTable = null;
@@ -160,10 +161,10 @@ class TimeTableService with ChangeNotifier {
     DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
 
     log.d("Limiting Phaseplan to block " +
-      blockStart.toString() +
-      " -> " +
-      blockEnd.toString() +
-      " until a new file is loaded.");
+        blockStart.toString() +
+        " -> " +
+        blockEnd.toString() +
+        " until a new file is loaded.");
 
     UserSecureStorage.setPhaseLoadDateStart(blockStart);
     UserSecureStorage.setPhaseLoadDateEnd(blockEnd);
@@ -171,15 +172,16 @@ class TimeTableService with ChangeNotifier {
     var nextBlockweeks = await timeTable!.getNextBlockWeeks(0);
     //Überprüfe alle nächsten Block Wochen!
     validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
-    
-    for(TimeTableRange blockWeek in nextBlockweeks) {
-      log.d("Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
+
+    for (TimeTableRange blockWeek in nextBlockweeks) {
+      log.d(
+          "Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
       await validator!.mergeExcelWithTimetable(blockWeek);
     }
     phaseVerified = true;
     log.i("File verified!");
     //Success!
-    
+
     getTimeTable(weekCounter: _weekCounter);
 
     session.clearTimetableCache();
@@ -210,7 +212,7 @@ class TimeTableService with ChangeNotifier {
         phaseTimeTable = null;
         log.e("Week not part of current block");
         weekInBlock = false;
-      } 
+      }
       notifyListeners();
     }
   }
