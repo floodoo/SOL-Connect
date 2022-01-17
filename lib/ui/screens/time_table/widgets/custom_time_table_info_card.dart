@@ -126,9 +126,9 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                   topRight: Radius.circular(connectTop ? 0 : 10.0),
                                 ),
                                 color: (_timeTableHour.getLessonCode() == Codes.irregular)
-                                    ? Colors.deepPurple.shade900
+                                    ? theme.colors.irregular
                                     : (_timeTableHour.getLessonCode() == Codes.cancelled)
-                                        ? Colors.purpleAccent
+                                        ? theme.colors.cancelled
                                         : (timeTableHour.getTeacher().name == "---")
                                             ? Colors.grey
                                             : _colorPhaseTop,
@@ -163,9 +163,9 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                   bottomRight: Radius.circular(connectBottom ? 0 : 10.0),
                                 ),
                                 color: (_timeTableHour.getLessonCode() == Codes.irregular)
-                                    ? Colors.deepPurple.shade900
+                                    ? theme.colors.irregular
                                     : (_timeTableHour.getLessonCode() == Codes.cancelled)
-                                        ? Colors.purpleAccent
+                                        ? theme.colors.cancelled
                                         : (timeTableHour.getTeacher().name == "---")
                                             ? Colors.grey
                                             : _colorPhaseBottom,

@@ -60,6 +60,8 @@ class TimeTableDetailScreen extends ConsumerWidget {
     PhaseCodes? firstHalf;
     PhaseCodes? secondHalf;
 
+    Color statusCodeColor = Colors.black38;
+
     if (phase != null) {
       firstHalf = phase.getFirstHalf();
       secondHalf = phase.getSecondHalf();
@@ -67,8 +69,13 @@ class TimeTableDetailScreen extends ConsumerWidget {
 
     if (args.timeTableHour.isIrregular()) {
       _timeTableHour = args.timeTableHour.getReplacement();
+      statusCodeColor = theme.colors.irregular;
     } else {
       _timeTableHour = args.timeTableHour;
+    }
+
+    if (_timeTableHour.getLessonCode() == Codes.cancelled) {
+      statusCodeColor = theme.colors.cancelled;
     }
 
     return Scaffold(
@@ -112,7 +119,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
                       child: Container(
-                        color: Colors.blue,
+                        color: statusCodeColor,
                         padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
                         alignment: const Alignment(-1, 0),
                         child: Text(
