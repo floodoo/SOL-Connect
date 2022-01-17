@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
