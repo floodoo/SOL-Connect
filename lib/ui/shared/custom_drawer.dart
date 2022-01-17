@@ -1,55 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:untis_phasierung/core/api/usersession.dart';
+import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
+import 'package:untis_phasierung/ui/screens/settings/settings.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({Key? key}) : super(key: key);
   static final routeName = (CustomDrawer).toString();
 
   @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: Column(
-        children: [
-          const UserAccountsDrawerHeader(
-            accountName: Text("{User name}"),
-            accountEmail: Text("{Schhol name}"),
-            currentAccountPicture: CircleAvatar(
-              foregroundImage: AssetImage("assets/images/example_profile_picture.jpeg"),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeService).theme;
+    String username = ref.watch(timeTableService).username;
+    String profilePictureUrl = "";
+    UserSession session = ref.watch(timeTableService).session;
+
+    CircleAvatar profilePicture = CircleAvatar(
+      child: CircularProgressIndicator(color: theme.colors.text),
+    );
+
+    if (session.isAPIAuthorized()) {
+      profilePictureUrl = session.getCachedProfilePictureUrl();
+      profilePicture = CircleAvatar(
+          backgroundColor: theme.colors.background, backgroundImage: Image.network(profilePictureUrl).image);
+    } else {
+      profilePicture = CircleAvatar(
+        backgroundColor: theme.colors.background,
+        child: Icon(
+          Icons.person,
+          color: theme.colors.circleAvatar,
+        ),
+      );
+    }
+
+    return Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: theme.colors.background,
+      ),
+      child: Drawer(
+        child: Column(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(username, style: TextStyle(color: theme.colors.text)),
+              accountEmail: Text("bbs1-mainz", style: TextStyle(color: theme.colors.text)),
+              currentAccountPicture: profilePicture,
+              decoration: BoxDecoration(
+                color: theme.colors.primary,
+              ),
             ),
-            decoration: BoxDecoration(
-              color: Colors.black87,
+            ListTile(
+              title: Text("Timetable", style: TextStyle(color: theme.colors.textBackground)),
+              onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
             ),
-          ),
-          ListTile(
-            title: const Text("Timetable"),
-            onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
-          ),
-          ListTile(
-            title: const Text("Info-Center"),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          ListTile(
-            title: const Text("Notifications"),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          ListTile(
-            title: const Text("Messages: {0}"),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          Expanded(child: Container()),
-          ListTile(
-            title: const Text("Settings"),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-          ListTile(
-            title: const Text(
-              "Logout",
-              style: TextStyle(color: Colors.red),
+            ListTile(
+              title: Text("Info-Center", style: TextStyle(color: theme.colors.textBackground)),
+              onTap: () => Navigator.of(context).pop(),
             ),
-            onTap: () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
-          ),
-        ],
+            ListTile(
+              title: Text("Notifications", style: TextStyle(color: theme.colors.textBackground)),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            ListTile(
+              title: Text("Messages: {0}", style: TextStyle(color: theme.colors.textBackground)),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            Expanded(child: Container()),
+            ListTile(
+              title: Text("Settings", style: TextStyle(color: theme.colors.textBackground)),
+              onTap: () => Navigator.pushNamed(context, SettingsScreen.routeName),
+            ),
+            ListTile(
+              title: Text(
+                "Logout",
+                style: TextStyle(color: theme.colors.error),
+              ),
+              onTap: () {
+                ref.read(timeTableService).logout();
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

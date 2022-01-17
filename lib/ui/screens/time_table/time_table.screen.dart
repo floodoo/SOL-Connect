@@ -1,176 +1,245 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:share_files_and_screenshot_widgets/share_files_and_screenshot_widgets.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
+import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_card.dart';
+import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
+import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
-import 'package:untis_phasierung/ui/screens/time_table/widgets/time_table.arguments.dart';
 import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
-import 'package:untis_phasierung/util/logger.util.dart';
+import 'package:untis_phasierung/ui/themes/app_theme.dart';
 
-class TimeTableScreen extends StatefulWidget {
-  TimeTableScreen({Key? key}) : super(key: key);
+class TimeTableScreen extends ConsumerWidget {
+  const TimeTableScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableScreen).toString();
-  late TimeTableRange timeTable;
-  bool _isLoading = true;
 
-  @override
-  State<TimeTableScreen> createState() => _TimeTableScreenState();
-}
+  buildFirstTimeTableRow(TimeTableRange _timeTable, AppTheme theme) {
+    List<Widget> timeTableList = [];
+    for (int i = 0; i <= 5; i++) {
+      if (i == 0) {
+        timeTableList.add(
+          CustomTimeTableCard(
+            child: Icon(
+              Icons.calendar_today_rounded,
+              color: theme.colors.icon,
+            ),
+            color: theme.colors.primaryLight,
+          ),
+        );
 
-class _TimeTableScreenState extends State<TimeTableScreen> {
-  @override
-  Widget build(BuildContext context) {
-    final Logger log = getLogger();
+        // The first row
+      } else {
+        timeTableList.add(
+          CustomTimeTableDayCard(timeTableDay: _timeTable.getDays()[i - 1], cardColor: theme.colors.primaryLight),
+        );
+      }
+    }
+    return timeTableList;
+  }
 
-    final args = ModalRoute.of(context)!.settings.arguments as TimetableArguments;
-
-    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
-
+  buildTimeTable(TimeTableRange _timeTable, MergedTimeTable? _phasedTimeTable, AppTheme theme, BuildContext context) {
+    List<Widget> timeTableList = [];
     int timeColumnCounter = 0;
     int schoolDayCounter = 0;
-    int subjectRowCounter = 0;
+    List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
-    if (widget._isLoading) {
-      args.userSession.getTimeTableForThisWeek().then((value) {
-        widget.timeTable = value;
-        setState(() {
-          widget._isLoading = false;
-        });
-        log.i("TimeTable loaded");
-      });
-    }
-
-    List<Widget> buildTimeTable() {
-      List<Widget> timeTableList = [];
-
-      for (int i = 0; i < 54; i++) {
-        if (hourList.contains(i)) {
-          timeColumnCounter++;
+    for (int i = 6; i < 54; i++) {
+      // don't calculate first row
+      if (i > 7) {
+        //reset counter for the first left column
+        if (schoolDayCounter >= 5) {
+          schoolDayCounter = 0;
+        } else {
+          schoolDayCounter++;
         }
-        // erste reihe auschließen
-        if (i > 7) {
-          // schultage zurücksezten
-          if (schoolDayCounter >= 5) {
-            schoolDayCounter = 0;
-            subjectRowCounter++;
-          } else {
-            schoolDayCounter++;
+      }
+
+      if (hourList.contains(i)) {
+        timeColumnCounter++;
+      }
+
+      // left column with hours
+      if (hourList.contains(i)) {
+        timeTableList.add(
+          CustomTimeTableHourCard(
+            timeTableHour: _timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
+            customColor: theme.colors.primaryLight,
+          ),
+        );
+
+        // If holiday  or weekend
+      } else if (_timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
+        timeTableList.add(
+          CustomTimeTableCard(
+            child: const Text("Holiday"),
+            color: theme.colors.phaseUnknown,
+          ),
+        );
+
+        // If no subject
+      } else if (_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty()) {
+        timeTableList.add(CustomTimeTableCard(color: theme.colors.background));
+
+        // subject
+      } else {
+        bool connectBottom = false;
+        bool connectTop = false;
+        //bool hourBeforeLunch = false;
+
+        TimeTableHour current = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1];
+
+        if (timeColumnCounter - 1 > 0) {
+          TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
+          if (current.getTeacher().name == prev.getTeacher().name &&
+              current.getSubject().longName == prev.getSubject().longName &&
+              current.getStartTimeString() != "13:30") {
+            //Doppelstunde!
+            connectTop = true;
+          }
+        }
+        if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
+          TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
+          if (current.getTeacher().name == next.getTeacher().name &&
+              current.getSubject().longName == next.getSubject().longName) {
+            //Doppelstunde!
+            connectBottom = true;
+          }
+          if (current.getEndTime().hour == 13) {
+            // hourBeforeLunch = true;
+            connectBottom = false;
           }
         }
 
-        if (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
-                Codes.regular ||
-            widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
-                Codes.cancelled ||
-            i == 0 ||
-            i <= 5 ||
-            hourList.contains(i)) {
-          (i == 0)
-              ? timeTableList.add(
-                  CustomTimeTableCard(
-                    text: "Icon",
-                    icon: Icons.calendar_today,
-                    center: true,
-                  ),
-                )
-              : (i <= 5)
-                  ? timeTableList.add(
-                      CustomTimeTableCard(
-                        text: widget.timeTable.getDays()[i - 1].getShortName(),
-                        textMaxLines: 1,
-                        center: true,
-                      ),
-                    )
-                  : (hourList.contains(i))
-                      ? timeTableList.add(
-                          CustomTimeTableHourCard(
-                            centerText: timeColumnCounter.toString(),
-                            topText:
-                                widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getStartTimeString(),
-                            bottomText:
-                                widget.timeTable.getDays()[0].getHours()[timeColumnCounter - 1].getEndTimeString(),
-                          ),
-                        )
-                      : (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend())
-                          ? timeTableList.add(
-                              CustomTimeTableCard(
-                                text: "Holiday",
-                                center: true,
-                                textMaxLines: 1,
-                              ),
-                            )
-                          : (subjectRowCounter >= widget.timeTable.getDays()[schoolDayCounter].getHours().length)
-                              ? timeTableList.add(
-                                  Container(),
-                                )
-                              : timeTableList.add(
-                                  CustomTimeTableCard(
-                                    text:
-                                        "${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getRoom().name}",
-                                    divider: true,
-                                    topColor: (widget.timeTable
-                                                .getDays()[schoolDayCounter]
-                                                .getHours()[subjectRowCounter]
-                                                .getLessonCode() ==
-                                            Codes.cancelled)
-                                        ? Colors.red
-                                        : Colors.black87,
-                                    bottomColor: (widget.timeTable
-                                                .getDays()[schoolDayCounter]
-                                                .getHours()[subjectRowCounter]
-                                                .getLessonCode() ==
-                                            Codes.cancelled)
-                                        ? Colors.red
-                                        : Colors.black87,
-                                  ),
-                                );
-        } else if (widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getLessonCode() ==
-            Codes.irregular) {
-          timeTableList.add(
-            CustomTimeTableCard(
-              text:
-                  "${widget.timeTable.getHourByIndex(schoolDayCounter, subjectRowCounter).getReplacement().getSubject().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getTeacher().name} \n${widget.timeTable.getDays()[schoolDayCounter].getHours()[subjectRowCounter].getReplacement().getRoom().name}",
-              topColor: Colors.purple.shade900,
-              bottomColor: Colors.purple.shade900,
-            ),
-          );
-        } else {
-          timeTableList.add(
-            CustomTimeTableCard(
-              text: (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? "Holiday/Weekend" : "",
-              center: true,
-              topColor:
-                  (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? Colors.blue : Colors.black87,
-              bottomColor:
-                  (widget.timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) ? Colors.blue : Colors.black87,
-              textMaxLines: 2,
-            ),
-          );
+        timeTableList.add(
+          CustomTimeTableInfoCard(
+            timeTableHour: current,
+            phase: (_phasedTimeTable != null)
+                ? _phasedTimeTable
+                    .getPhaseForHour(_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1])
+                : null,
+            connectBottom: connectBottom,
+            connectTop: connectTop,
+          ),
+        );
+      }
+    }
+
+    //Überprüfe jetzt auf doppelstunden
+    /* TimeTableHour? previous;
+    for(TimeTableDay day in _timeTable.getDays()) {
+      for(TimeTableHour hour in day.getHours()) {
+        if(previous == null) {
+          previous = hour;
+          continue;
+        }
+        if(hour.getTeacher().name == previous.getTeacher().name) {
+          //Verbinden!
+
         }
       }
-      return timeTableList;
-    }
+      
+    }*/
+    return timeTableList;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _timeTableService = ref.read(timeTableService);
+    final _timeTable = ref.watch(timeTableService).timeTable;
+    final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
+    final theme = ref.watch(themeService).theme;
+    GlobalKey previewContainer = GlobalKey();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Timetable"),
-        backgroundColor: Colors.black87,
+        title: Text("Timetable", style: TextStyle(color: theme.colors.text)),
+        iconTheme: IconThemeData(color: theme.colors.icon),
+        backgroundColor: theme.colors.primary,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.adaptive.share_rounded,
+              color: theme.colors.icon,
+            ),
+            onPressed: () {
+              ShareFilesAndScreenshotWidgets().shareScreenshot(
+                previewContainer,
+                MediaQuery.of(context).devicePixelRatio.toInt() * 10000,
+                "TimeTable",
+                "TimeTable.png",
+                "image/png",
+                text: "Shared via Untis Phasierung",
+              );
+            },
+          )
+        ],
       ),
       drawer: const CustomDrawer(),
-      body: Container(
-        color: Colors.black,
-        child: widget._isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              )
-            : GridView.count(
-                crossAxisCount: 6,
-                childAspectRatio: 0.5,
-                children: buildTimeTable(),
-              ),
+      body: GestureDetector(
+        onHorizontalDragEnd: (dragEndDetails) {
+          if (dragEndDetails.primaryVelocity! < 0) {
+            // Page forwards
+            _timeTableService.resetTimeTable();
+            _timeTableService.getTimeTableNextWeek();
+          } else if (dragEndDetails.primaryVelocity! > 0) {
+            // Page backwards
+            _timeTableService.resetTimeTable();
+            _timeTableService.getTimeTablePreviousWeek();
+          }
+        },
+        child: RepaintBoundary(
+          key: previewContainer,
+          child: Container(
+            color: theme.colors.background,
+            child: (_timeTable == null)
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: theme.colors.progressIndicator,
+                    ),
+                  )
+                : (ref.watch(timeTableService).isSchool)
+                    ? ListView(
+                        children: [
+                          GridView.count(
+                            crossAxisCount: 6,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: buildFirstTimeTableRow(_timeTable, theme),
+                          ),
+                          GridView.count(
+                            crossAxisCount: 6,
+                            crossAxisSpacing: 0,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            childAspectRatio: 0.75,
+                            children: buildTimeTable(_timeTable, _phaseTimeTable, theme, context),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          GridView.count(
+                            crossAxisCount: 6,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: buildFirstTimeTableRow(_timeTable, theme),
+                          ),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                              child: Text(
+                                "No school this week",
+                                style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+          ),
+        ),
       ),
     );
   }

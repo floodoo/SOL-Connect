@@ -29,12 +29,20 @@ environment:
 dependencies:
   auto_size_text: ^3.0.0
   cupertino_icons: ^1.0.2
+  excel: 2.0.0-null-safety-3
+  file_picker: ^4.3.1
   flutter:
     sdk: flutter
   flutter_secure_storage: ^5.0.2
+  fluttericon: ^2.0.0
+  google_fonts: ^2.2.0
+  hooks_riverpod: ^1.0.3
   http: ^0.13.4
+  intl: ^0.17.0
   logger: ^1.1.0
-  excel: 2.0.0-null-safety-3
+  share_files_and_screenshot_widgets: ^1.0.6
+  shared_preferences: ^2.0.11
+  url_launcher: ^6.0.17
 
 dev_dependencies:
   flutter_lints: ^1.0.0

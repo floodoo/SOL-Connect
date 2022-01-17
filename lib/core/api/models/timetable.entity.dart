@@ -1,4 +1,5 @@
-///Kleiner Wrapper für mehr Lesbarkeit
+/*Author Philipp Gersch */
+
 class TimeTableEntity {
   String typeName = "";
   String name = "";

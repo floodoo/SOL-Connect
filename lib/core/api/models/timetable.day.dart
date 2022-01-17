@@ -1,3 +1,5 @@
+/*Author Philipp Gersch */
+
 import 'timetable.hour.dart';
 import 'utils.dart' as utils;
 
@@ -5,12 +7,14 @@ class TimeTableDay {
   final DateTime _date;
 
   final _lessonTimes = <String>["800", "845", "945", "1030", "1130", "1215", "1330", "1415", "1515", "1600"];
-  final int _minHoursPerDay = 10;
+  final int minHoursPerDay = 10;
 
   ///Jeder Tag hat 8 Tage fest.
   final _hours = <TimeTableHour>[];
   String _dayName = "";
   String _shortDayName = "";
+  String _formattedDay = "";
+  String _formattedMonth = "";
 
   int daysSinceEpoch = 0;
   bool outOfScope = false;
@@ -53,12 +57,15 @@ class TimeTableDay {
 
     daysSinceEpoch = utils.daysSinceEpoch(_date.millisecondsSinceEpoch);
 
-    //TODO einfach etwas schöner machen
-    for (int i = 0; i < _minHoursPerDay; i++) {
+    for (int i = 0; i < minHoursPerDay; i++) {
       TimeTableHour t = TimeTableHour(null);
       t.startAsString = _lessonTimes[i];
       _hours.add(TimeTableHour(null)); //Leere Stunden
     }
+
+    String date = utils.convertToUntisDate(_date);
+    _formattedDay = date.substring(6);
+    _formattedMonth = date.substring(4, 6);
   }
 
   ///Ob der Tag an einem Wochenende oder in den Ferien liegt
@@ -68,6 +75,10 @@ class TimeTableDay {
 
   DateTime getDate() {
     return _date;
+  }
+
+  String getFormattedDate() {
+    return _formattedDay + "." + _formattedMonth;
   }
 
   ///Gibt eine Liste der Stunden dieses Tages zurück. Diese Liste hat IMMER die Länge 10.
