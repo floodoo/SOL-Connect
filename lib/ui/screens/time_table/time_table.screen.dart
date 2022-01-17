@@ -113,22 +113,22 @@ class TimeTableScreen extends ConsumerWidget {
             connectBottom = false;
           }
         }
-        
+
         doubleLesson = !connectBottom && doubleLesson;
 
         bool connectedToCurrent(int index) {
-          if(timeColumnCounter-1 == index) {
+          if (timeColumnCounter - 1 == index) {
             return true;
           }
-          if(index < timeColumnCounter-1) {
-            for(int i = index; i < timeColumnCounter-1; i++) {
-              if(_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name != current.getTeacher().name) {
+          if (index < timeColumnCounter - 1) {
+            for (int i = index; i < timeColumnCounter - 1; i++) {
+              if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name != current.getTeacher().name) {
                 return false;
               }
             }
           } else {
-            for(int i = timeColumnCounter-1; i < index; i++) {
-              if(_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name != current.getTeacher().name) {
+            for (int i = timeColumnCounter - 1; i < index; i++) {
+              if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name != current.getTeacher().name) {
                 return false;
               }
             }
@@ -141,49 +141,35 @@ class TimeTableScreen extends ConsumerWidget {
         int doubleLessonCount = 0;
         int counter = -1;
         String currentTeacher = current.getTeacher().name;
-        for(int i = 0; i < 8; i++) {
-          if(_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name == currentTeacher &&
-            connectedToCurrent(i) && _timeTable.getDays()[schoolDayCounter].getHours()[i].getLessonCode() != Codes.irregular) {
-              doubleLessonCount++;
-              counter++;
-              if(i == timeColumnCounter-1) {
-                doubleLessonIndex = counter;
-              }
-          }  
+        for (int i = 0; i < 8; i++) {
+          if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name == currentTeacher &&
+              connectedToCurrent(i) &&
+              _timeTable.getDays()[schoolDayCounter].getHours()[i].getLessonCode() != Codes.irregular) {
+            doubleLessonCount++;
+            counter++;
+            if (i == timeColumnCounter - 1) {
+              doubleLessonIndex = counter;
+            }
+          }
         }
         print(currentTeacher + ": " + doubleLessonIndex.toString() + ", " + doubleLessonCount.toString());
 
-        if(current.getLessonCode() != Codes.irregular) {
-          if(doubleLessonCount == 1) {
-            lessonInfo = [
-              current.getSubject().name,
-              current.getTeacher().name,
-              current.getRoom().name
-            ];
-          } else if(doubleLessonCount == 2) {
-            if(doubleLessonIndex == 0) {
-              lessonInfo = [
-                current.getSubject().name,
-                current.getTeacher().name
-              ];
+        if (current.getLessonCode() != Codes.irregular) {
+          if (doubleLessonCount == 1) {
+            lessonInfo = [current.getSubject().name, current.getTeacher().name, current.getRoom().name];
+          } else if (doubleLessonCount == 2) {
+            if (doubleLessonIndex == 0) {
+              lessonInfo = [current.getSubject().name, current.getTeacher().name];
             } else {
-              lessonInfo = [
-                current.getRoom().name
-              ];
+              lessonInfo = [current.getRoom().name];
             }
-          } else if(doubleLessonCount >= 3) {
-            if(doubleLessonIndex == 0) {
-              lessonInfo = [
-                current.getSubject().name
-              ];
-            } else if(doubleLessonIndex == 1) {
-              lessonInfo = [
-                current.getTeacher().name
-              ];
-            } else if(doubleLessonIndex == 2) {
-              lessonInfo = [
-                current.getRoom().name
-              ];
+          } else if (doubleLessonCount >= 3) {
+            if (doubleLessonIndex == 0) {
+              lessonInfo = [current.getSubject().name];
+            } else if (doubleLessonIndex == 1) {
+              lessonInfo = [current.getTeacher().name];
+            } else if (doubleLessonIndex == 2) {
+              lessonInfo = [current.getRoom().name];
             }
           }
         } else {

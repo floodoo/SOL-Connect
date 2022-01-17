@@ -169,8 +169,8 @@ class TimeTableRange {
     //Gehe Wochen nach vorne bis eine leere Woche kommt!
     for (int i = relativeToCurrent; i < relativeToCurrent + 8; i++) {
       TimeTableRange week = await _boundUser.getRelativeTimeTableWeek(i);
-      
-      if(!week.isNonSchoolblockWeek()) {
+
+      if (!week.isNonSchoolblockWeek()) {
         blockWeeks.add(week);
       }
 
@@ -187,7 +187,7 @@ class TimeTableRange {
 
   //TODO verbessern
   Future<List<TimeTableRange>> getNextBlockWeeks(int relativeToCurrent) async {
-    if(_blockEndDate == null) {
+    if (_blockEndDate == null) {
       await getNextBlockEndDate(relativeToCurrent);
     }
     return blockWeeks;
