@@ -200,7 +200,7 @@ class TimeTableRange {
 
     if (_blockIndex == -1) {
       //Man kommt um eine Abfrage nicht herum
-      getCurrentBlockWeek(relativeToCurrent); //Das AKTUELLE DATUM!
+      await getCurrentBlockWeek(relativeToCurrent); //Das AKTUELLE DATUM!
     }
     if (!isNonSchoolblockWeek()) {
       if (_blockIndex == 0) {
