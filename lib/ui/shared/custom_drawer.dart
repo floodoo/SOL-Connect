@@ -24,9 +24,8 @@ class CustomDrawer extends ConsumerWidget {
     );
 
     if (session.isAPIAuthorized()) {
-
       ImageProvider pp;
-      if(r.nextInt(69) == 20) {
+      if (r.nextInt(69) == 20) {
         pp = const Image(image: AssetImage('assets/images/trollface.png')).image;
       } else {
         profilePictureUrl = session.getCachedProfilePictureUrl();
@@ -34,9 +33,9 @@ class CustomDrawer extends ConsumerWidget {
       }
 
       profilePicture = CircleAvatar(
-          backgroundColor: theme.colors.background, 
-          backgroundImage: pp,    
-        );
+        backgroundColor: theme.colors.background,
+        backgroundImage: pp,
+      );
     } else {
       profilePicture = CircleAvatar(
         backgroundColor: theme.colors.background,
