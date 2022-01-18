@@ -1,6 +1,6 @@
 /*Author Philipp Gersch */
 
-import 'timetable.entity.dart';
+import 'package:untis_phasierung/core/api/models/timetable.entity.dart';
 
 enum Codes { regular, irregular, cancelled, empty, unknown }
 

@@ -1,7 +1,7 @@
 /*Author Philipp Gersch */
 
-import '../validator.dart';
 import 'package:excel/excel.dart';
+import 'package:untis_phasierung/core/excel/validator.dart';
 
 ///Enthält gemappte Daten von einem Stundenplan in der Excel Datei
 class MappedSheet {

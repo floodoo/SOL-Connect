@@ -65,7 +65,7 @@ class TimeTableService with ChangeNotifier {
     );
   }
 
-  getTimeTable({int weekCounter = 0}) async {
+  Future<void> getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
 
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
@@ -131,7 +131,7 @@ class TimeTableService with ChangeNotifier {
   }
 
   ///Es wird davon ausgegangen, dass die geladene Datei gültig ist
-  loadUncheckedPhaseFileForNextBlock() async {
+  void loadUncheckedPhaseFileForNextBlock() async {
     await loadPhaseFromFile();
     await loadPhase();
   }

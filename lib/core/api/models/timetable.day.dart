@@ -1,6 +1,7 @@
 /*Author Philipp Gersch */
 
-import 'timetable.hour.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+
 import 'utils.dart' as utils;
 
 class TimeTableDay {

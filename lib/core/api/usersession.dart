@@ -1,13 +1,13 @@
 /*Author Philipp Gersch */
 
 import 'package:http/http.dart' as http;
+import 'package:untis_phasierung/core/api/models/news.dart';
+import 'package:untis_phasierung/core/api/models/profiledata.dart';
+import 'package:untis_phasierung/core/api/rpcresponse.dart' as rh;
+import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 import 'dart:convert';
-import 'models/news.dart';
-import 'rpcresponse.dart' as rh;
 import 'models/utils.dart' as utils;
-import 'timetable.dart';
-import 'models/profiledata.dart';
-import '../exceptions.dart';
 
 class UserSession {
   String _appName = "adw8638ordfgq37qp98";
@@ -280,7 +280,7 @@ class UserSession {
     }
   }
 
-  _addTimetableToCache(TimeTableRange range) {
+  void _addTimetableToCache(TimeTableRange range) {
     if (_getCachedTimetable(range.getStartDate(), range.getEndDate()) != null) {
       return;
     }
@@ -295,7 +295,7 @@ class UserSession {
   }
 
   ///Löscht den Timetable cache. Falls useCaching true ist
-  clearTimetableCache() {
+  void clearTimetableCache() {
     _cachedTimetables.clear();
   }
 

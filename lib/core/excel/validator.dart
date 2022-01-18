@@ -3,13 +3,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
-import '../api/timetable.dart';
-import '../api/models/timetable.hour.dart';
-import '../exceptions.dart';
-import 'models/cellcolors.dart';
-import 'models/phaseelement.dart';
-import 'models/mergedtimetable.dart';
-import 'models/mappedsheet.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/excel/models/cellcolors.dart';
+import 'package:untis_phasierung/core/excel/models/mappedsheet.dart';
+import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
+import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
 class MappedPhase {

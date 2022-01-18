@@ -10,12 +10,12 @@ import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
   const CustomTimeTableInfoCard({
-    Key? key,
     required this.timeTableHour,
     this.phase,
     this.connectTop = false,
     this.connectBottom = false,
     this.hourInfo = const <String>[],
+    Key? key,
   }) : super(key: key);
 
   final TimeTableHour timeTableHour;
