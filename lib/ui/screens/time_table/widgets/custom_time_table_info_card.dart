@@ -9,7 +9,7 @@ import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_tab
 import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
-  const CustomTimeTableInfoCard({
+  const   CustomTimeTableInfoCard({
     Key? key,
     required this.timeTableHour,
     this.phase,
@@ -130,7 +130,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                         children: [
                           // Phase color
                           Expanded(
-                            flex: 4,
+                            flex: 3,
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.only(
@@ -152,8 +152,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                     ? theme.colors.irregular
                                     : (_timeTableHour.getLessonCode() == Codes.cancelled)
                                         ? theme.colors.cancelled
-                                        : (timeTableHour.getTeacher().name == "---")
-                                            ? Colors.grey
+                                        : (!timeTableHour.hasTeacher())
+                                            ? theme.colors.noTeacher
                                             : _colorPhaseTop,
                               ),
                             ),
@@ -167,7 +167,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                         children: [
                           // Phase color
                           Expanded(
-                            flex: 4,
+                            flex: 3,
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.only(
@@ -189,8 +189,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                     ? theme.colors.irregular
                                     : (_timeTableHour.getLessonCode() == Codes.cancelled)
                                         ? theme.colors.cancelled
-                                        : (timeTableHour.getTeacher().name == "---")
-                                            ? Colors.grey
+                                        : (!timeTableHour.hasTeacher())
+                                            ? theme.colors.noTeacher
                                             : _colorPhaseBottom,
                               ),
                             ),
