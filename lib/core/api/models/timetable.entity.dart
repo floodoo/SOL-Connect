@@ -6,7 +6,7 @@ class TimeTableEntity {
   String longName = "";
   int identifier = -1;
 
-  TimeTableEntity(String typeName, dynamic data) {
+  TimeTableEntity(this.typeName, dynamic data) {
     if (data == null) return;
 
     name = data[0]['name'].toString();
