@@ -152,7 +152,7 @@ class TimeTableService with ChangeNotifier {
 
     log.d("Verifying phaseplan for next/current block ...");
 
-    await session.clearTimetableCache();
+    session.clearTimetableCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
     //Block ausmappen

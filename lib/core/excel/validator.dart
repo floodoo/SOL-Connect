@@ -219,40 +219,44 @@ class ExcelValidator {
       socket.writeln("convertxssf");
       await socket.flush();
 
-      var subscription = socket.listen((event) async {
-        // String message = String.fromCharCodes(event);
-        // print(String.fromCharCodes(event));
-        dynamic decodedMessage = "";
-        try {
-          decodedMessage = jsonDecode(String.fromCharCodes(event));
-        } on FormatException {
-          _colorData = CellColors(data: null, failed: true);
-          socket.close();
-          return;
-        }
-
-        if (decodedMessage['error'] != null) {
-          throw ExcelConversionServerError(
-              "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
-        }
-
-        if (decodedMessage['message'] != null) {
-          if (decodedMessage['message'] == "ready-for-file") {
-            await socket.addStream(File(_path).openRead());
-          } else {
-            _colorData = CellColors(data: decodedMessage['data']);
+      var subscription = socket.listen(
+        (event) async {
+          // String message = String.fromCharCodes(event);
+          // print(String.fromCharCodes(event));
+          dynamic decodedMessage = "";
+          try {
+            decodedMessage = jsonDecode(String.fromCharCodes(event));
+          } on FormatException {
+            _colorData = CellColors(data: null, failed: true);
+            socket.close();
+            return;
           }
-        }
-      }, onError: (error) {
-        _queryActive = false;
-        throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
-      }, onDone: () {
-        //Alles OK!
-        _queryActive = false;
-      });
+
+          if (decodedMessage['error'] != null) {
+            throw ExcelConversionServerError(
+                "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
+          }
+
+          if (decodedMessage['message'] != null) {
+            if (decodedMessage['message'] == "ready-for-file") {
+              await socket.addStream(File(_path).openRead());
+            } else {
+              _colorData = CellColors(data: decodedMessage['data']);
+            }
+          }
+        },
+        onError: (error) {
+          _queryActive = false;
+          throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+        },
+        onDone: () {
+          //Alles OK!
+          _queryActive = false;
+        },
+      );
 
       await subscription.asFuture<void>();
-      await socket.close();
+      await subscription.cancel();
       _queryActive = false;
       return _colorData;
     } on Exception {

@@ -6,9 +6,8 @@ import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
 class LoginScreen extends ConsumerWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
-  int autoLoginCounter = 0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,9 +49,8 @@ class LoginScreen extends ConsumerWidget {
         (password) {
           UserSecureStorage.getUsername().then(
             (username) {
-              if (password != null && username != null && _isLoading == false && autoLoginCounter <= 1) {
+              if (password != null && username != null && _isLoading == false) {
                 _login(username, password);
-                autoLoginCounter++;
               }
             },
           );

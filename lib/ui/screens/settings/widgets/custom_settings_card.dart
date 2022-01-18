@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 
 class CustomSettingsCard extends ConsumerWidget {
-  CustomSettingsCard({
+  const CustomSettingsCard({
     required this.text,
     this.leading,
     this.onTap,
@@ -14,11 +14,11 @@ class CustomSettingsCard extends ConsumerWidget {
     Key? key,
   }) : super(key: key);
 
-  double padTop, padLeft, padRight, padBottom;
-  String text;
-  Widget? leading;
-  void Function()? onTap;
-  bool disabled = false;
+  final double padTop, padLeft, padRight, padBottom;
+  final String text;
+  final Widget? leading;
+  final void Function()? onTap;
+  final bool disabled = false;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

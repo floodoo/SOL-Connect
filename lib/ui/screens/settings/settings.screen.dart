@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:untis_phasierung/core/api/models/utils.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
-import '../../../core/api/models/utils.dart' as utils;
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -184,9 +184,9 @@ class SettingsScreen extends ConsumerWidget {
                           child: Text(
                               validator != null
                                   ? "Phasierung geladen für Block " +
-                                      utils.convertToDDMM(validator.getBlockStart()) +
+                                      Utils().convertToDDMM(validator.getBlockStart()) +
                                       " bis " +
-                                      utils.convertToDDMM(validator.getBlockEnd())
+                                      Utils().convertToDDMM(validator.getBlockEnd())
                                   : "Phasierung geladen für Block ? - ?",
                               style: const TextStyle(fontSize: 13))),
                     ))

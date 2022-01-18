@@ -3,11 +3,11 @@
 import 'package:http/http.dart' as http;
 import 'package:untis_phasierung/core/api/models/news.dart';
 import 'package:untis_phasierung/core/api/models/profiledata.dart';
+import 'package:untis_phasierung/core/api/models/utils.dart';
 import 'package:untis_phasierung/core/api/rpcresponse.dart' as rh;
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'dart:convert';
-import 'models/utils.dart' as utils;
 
 class UserSession {
   String _appName = "adw8638ordfgq37qp98";
@@ -173,7 +173,7 @@ class UserSession {
   Future<News> getNewsData(DateTime date, {bool loadFromCache = true}) async {
     if (!loadFromCache || _cachedNewsData.getRssUrl() == "") {
       http.Response r = await _queryURL(
-          "/WebUntis/api/public/news/newsWidgetData?date=" + utils.convertToUntisDate(date),
+          "/WebUntis/api/public/news/newsWidgetData?date=" + Utils().convertToUntisDate(date),
           needsAuthorization: true);
       _cachedNewsData = News(jsonDecode(r.body));
     }
@@ -274,7 +274,7 @@ class UserSession {
   ///Gibt null zurück wenn timetable nicht in cache vorhanden ist
   TimeTableRange? _getCachedTimetable(DateTime from, DateTime to) {
     for (TimeTableRange range in _cachedTimetables) {
-      if (utils.dateMatch(range.getStartDate(), from) && utils.dateMatch(range.getEndDate(), to)) {
+      if (Utils().dateMatch(range.getStartDate(), from) && Utils().dateMatch(range.getEndDate(), to)) {
         return range;
       }
     }
@@ -315,8 +315,8 @@ class UserSession {
         this,
         await _queryRPC("getTimetable", {
           "options": {
-            "startDate": utils.convertToUntisDate(from),
-            "endDate": utils.convertToUntisDate(to),
+            "startDate": Utils().convertToUntisDate(from),
+            "endDate": Utils().convertToUntisDate(to),
             "element": {"id": _personId, "type": _type},
             "showLsText": true,
             "showPeText": true,

@@ -1,8 +1,7 @@
 /*Author Philipp Gersch */
 
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-
-import 'utils.dart' as utils;
+import 'package:untis_phasierung/core/api/models/utils.dart';
 
 class TimeTableDay {
   final DateTime _date;
@@ -56,7 +55,7 @@ class TimeTableDay {
         "";
     }
 
-    daysSinceEpoch = utils.daysSinceEpoch(_date.millisecondsSinceEpoch);
+    daysSinceEpoch = Utils().daysSinceEpoch(_date.millisecondsSinceEpoch);
 
     for (int i = 0; i < minHoursPerDay; i++) {
       TimeTableHour t = TimeTableHour(null);
@@ -64,7 +63,7 @@ class TimeTableDay {
       _hours.add(TimeTableHour(null)); //Leere Stunden
     }
 
-    String date = utils.convertToUntisDate(_date);
+    String date = Utils().convertToUntisDate(_date);
     _formattedDay = date.substring(6);
     _formattedMonth = date.substring(4, 6);
   }
