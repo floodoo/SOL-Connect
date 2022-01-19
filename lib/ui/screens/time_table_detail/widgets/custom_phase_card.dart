@@ -5,7 +5,7 @@ import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomPhaseCard extends ConsumerWidget {
-  const CustomPhaseCard({Key? key, required this.phase}) : super(key: key);
+  const CustomPhaseCard({required this.phase, Key? key}) : super(key: key);
   final PhaseCodes? phase;
 
   @override

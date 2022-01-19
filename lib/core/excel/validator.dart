@@ -3,13 +3,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
-import '../api/timetable.dart';
-import '../api/models/timetable.hour.dart';
-import '../exceptions.dart';
-import 'models/cellcolors.dart';
-import 'models/phaseelement.dart';
-import 'models/mergedtimetable.dart';
-import 'models/mappedsheet.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/excel/models/cellcolors.dart';
+import 'package:untis_phasierung/core/excel/models/mappedsheet.dart';
+import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
+import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
 class MappedPhase {
@@ -219,40 +219,44 @@ class ExcelValidator {
       socket.writeln("convertxssf");
       await socket.flush();
 
-      var subscription = socket.listen((event) async {
-        // String message = String.fromCharCodes(event);
-        // print(String.fromCharCodes(event));
-        dynamic decodedMessage = "";
-        try {
-          decodedMessage = jsonDecode(String.fromCharCodes(event));
-        } on FormatException {
-          _colorData = CellColors(data: null, failed: true);
-          socket.close();
-          return;
-        }
-
-        if (decodedMessage['error'] != null) {
-          throw ExcelConversionServerError(
-              "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
-        }
-
-        if (decodedMessage['message'] != null) {
-          if (decodedMessage['message'] == "ready-for-file") {
-            await socket.addStream(File(_path).openRead());
-          } else {
-            _colorData = CellColors(data: decodedMessage['data']);
+      var subscription = socket.listen(
+        (event) async {
+          // String message = String.fromCharCodes(event);
+          // print(String.fromCharCodes(event));
+          dynamic decodedMessage = "";
+          try {
+            decodedMessage = jsonDecode(String.fromCharCodes(event));
+          } on FormatException {
+            _colorData = CellColors(data: null, failed: true);
+            socket.close();
+            return;
           }
-        }
-      }, onError: (error) {
-        _queryActive = false;
-        throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
-      }, onDone: () {
-        //Alles OK!
-        _queryActive = false;
-      });
+
+          if (decodedMessage['error'] != null) {
+            throw ExcelConversionServerError(
+                "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
+          }
+
+          if (decodedMessage['message'] != null) {
+            if (decodedMessage['message'] == "ready-for-file") {
+              await socket.addStream(File(_path).openRead());
+            } else {
+              _colorData = CellColors(data: decodedMessage['data']);
+            }
+          }
+        },
+        onError: (error) {
+          _queryActive = false;
+          throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+        },
+        onDone: () {
+          //Alles OK!
+          _queryActive = false;
+        },
+      );
 
       await subscription.asFuture<void>();
-      await socket.close();
+      await subscription.cancel();
       _queryActive = false;
       return _colorData;
     } on Exception {

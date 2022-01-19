@@ -1,10 +1,10 @@
 /*Author Philipp Gersch */
 
-import 'rpcresponse.dart';
-import 'models/timetable.day.dart';
-import 'models/utils.dart' as utils;
-import 'models/timetable.hour.dart';
-import 'usersession.dart';
+import 'package:untis_phasierung/core/api/models/timetable.day.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+import 'package:untis_phasierung/core/api/models/utils.dart';
+import 'package:untis_phasierung/core/api/rpcresponse.dart';
+import 'package:untis_phasierung/core/api/usersession.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
@@ -21,7 +21,7 @@ class TimeTableRange {
   DateTime? _blockEndDate; //Block enddatum dem die timetable woche gehört
   bool _isEmpty = true;
 
-  //TODO wird bis jetzt nur in `UserSession.getRelativeTimeTableForWeek()` gesetzt
+  // TODO(philipp): wird bis jetzt nur in `UserSession.getRelativeTimeTableForWeek()` gesetzt
   int relativeToCurrent = 0;
 
   final UserSession _boundUser;
@@ -48,7 +48,7 @@ class TimeTableRange {
 
     outer:
     for (dynamic entry in response.getPayloadData()) {
-      DateTime current = utils.convertToDateTime(entry['date'].toString());
+      DateTime current = Utils().convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
       for (TimeTableDay day in _days) {
         if (day.getDate().day == current.day) {
@@ -64,7 +64,7 @@ class TimeTableRange {
     }
 
     var finalList = <TimeTableDay>[];
-    int day1 = utils.daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+    int day1 = Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
 
     int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");

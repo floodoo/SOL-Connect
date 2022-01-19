@@ -5,7 +5,7 @@ import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 
 class CustomTimeTableHourCard extends ConsumerWidget {
-  const CustomTimeTableHourCard({Key? key, required this.timeTableHour, this.customColor}) : super(key: key);
+  const CustomTimeTableHourCard({required this.timeTableHour, this.customColor, Key? key}) : super(key: key);
 
   final Color? customColor;
   final TimeTableHour timeTableHour;
