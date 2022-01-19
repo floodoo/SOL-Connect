@@ -61,26 +61,31 @@ class TimeTableDetailScreen extends ConsumerWidget {
 
     Color statusCodeColor = Colors.black38;
 
-    String statusText = "";
+    _timeTableHour = args.timeTableHour;
 
     if (phase != null) {
       firstHalf = phase.getFirstHalf();
       secondHalf = phase.getSecondHalf();
     }
+    print(_timeTableHour.getLessonCode());
+    if(_timeTableHour.getLessonCode() == Codes.noteacher) {
+      statusCodeColor = theme.colors.noTeacher;
+    } else if(_timeTableHour.getLessonCode() == Codes.cancelled) {
+      statusCodeColor = theme.colors.cancelled;
+    }
 
-    if (args.timeTableHour.isIrregular()) {
+    if (_timeTableHour.isIrregular()) {
       _timeTableHour = args.timeTableHour.getReplacement();
       statusCodeColor = theme.colors.irregular;
-      statusText = "Vertretung";
-    } else {
-      _timeTableHour = args.timeTableHour;
+    } 
+    /*else {
       statusText = "Normal";
     }
 
     if (_timeTableHour.getLessonCode() == Codes.cancelled) {
       statusCodeColor = theme.colors.cancelled;
       statusText = "Entfall";
-    }
+    }*/
 
     return Scaffold(
       appBar: AppBar(
@@ -174,7 +179,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                   height: 7,
                                 ),
                                 AutoSizeText(
-                                  "Status: $statusText",
+                                  "Status: ${_timeTableHour.getLessonCode().readableName}",
                                   style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                   maxLines: 1,
                                   overflow: TextOverflow.clip,

@@ -283,7 +283,7 @@ class TimeTableScreen extends ConsumerWidget {
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                               child: Text(
-                                "No school this week",
+                                "Keine Schulwoche",
                                 style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
                               ),
                             ),

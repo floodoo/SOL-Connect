@@ -26,6 +26,7 @@ class AppColors {
     required this.successColor,
     required this.primaryLight,
     required this.phaseOutOfBlock,
+    required this.noTeacher,
   });
 
   final Color primary;
@@ -53,6 +54,7 @@ class AppColors {
   // Status colors
   final Color irregular;
   final Color cancelled;
+  final Color noTeacher;
 
   factory AppColors.light() {
     return AppColors(
@@ -81,8 +83,7 @@ class AppColors {
       // Status colors
       irregular: Colors.blue.shade900,
       cancelled: Colors.purple.shade400,
-      //irregular: Colors.deepPurple.shade900,
-      //cancelled: Colors.purpleAccent,
+      noTeacher: Colors.purple.shade400
     );
   }
 
@@ -113,6 +114,7 @@ class AppColors {
       // Status colors
       irregular: Colors.blue.shade900,
       cancelled: Colors.purple.shade700,
+      noTeacher: Colors.purple.shade700
     );
   }
 }

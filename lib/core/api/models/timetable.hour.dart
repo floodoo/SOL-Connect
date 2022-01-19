@@ -2,9 +2,40 @@
 
 import 'package:untis_phasierung/core/api/models/timetable.entity.dart';
 
-enum Codes { regular, irregular, cancelled, empty, unknown }
+enum Codes { 
+  //untis given
+  regular, 
+  irregular, 
+  cancelled, 
+  empty, 
+  unknown, 
+
+  //custom
+  noteacher
+}
+
+extension CodeReadables on Codes {
+  String get readableName {
+    switch (this) {
+      case Codes.cancelled:
+        return "Entfall";
+      case Codes.regular:
+        return "Regulär";
+      case Codes.irregular:
+        return "Vertretung";
+      case Codes.empty:
+        return "Unbekannt";
+      case Codes.noteacher:
+        return "Lehrer Entfall";
+      default:
+        return "Unbekannt";
+    }
+  }
+} 
 
 class TimeTableHour {
+  static const noTeacherDisplayname = "---";
+
   TimeTableEntity _klasse = TimeTableEntity("", null);
   TimeTableEntity _teacher = TimeTableEntity("", null);
   TimeTableEntity _subject = TimeTableEntity("", null);
@@ -60,19 +91,24 @@ class TimeTableHour {
     if (data['te'] != null) {
       _teacher = TimeTableEntity("te", data['te']);
     } else {
-      _teacher.name = "---";
-      _teacher.longName = "Ausfall/SOL/Vertretung";
+      _teacher.name = noTeacherDisplayname;
+      _teacher.longName = "Kein Lehrer";
     }
 
     _subject = TimeTableEntity("su", data['su']);
 
     _room = TimeTableEntity("ro", data['ro']);
-
+    
     if (data['code'] != null) {
       String c = data['code'];
 
       if (c == "regular") {
-        _code = Codes.regular;
+        //Ziele den speziellen case "Lehrer entfall" nur in Betracht, wenn sonst kein anderer code speziell angegeben sind"
+        if(!hasTeacher()) {
+          _code = Codes.noteacher;
+        } else {
+          _code = Codes.regular;
+        }
       } else if (c == "cancelled") {
         _code = Codes.cancelled;
       } else if (c == "irregular") {
@@ -81,7 +117,12 @@ class TimeTableHour {
         _code = Codes.unknown;
       }
     } else {
-      _code = Codes.regular;
+
+      if(!hasTeacher()) {
+        _code = Codes.noteacher;
+      } else {
+        _code = Codes.regular;
+      }
     }
 
     if (data['substText'] != null) {
@@ -99,6 +140,10 @@ class TimeTableHour {
         (time.length == 3
             ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
             : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
+  }
+
+  bool hasTeacher() {
+    return _teacher.name != noTeacherDisplayname;
   }
 
   ///Gibt die Stundeninformation zurück, die ein Lehere bei Ausfall vielleicht notiert hat.

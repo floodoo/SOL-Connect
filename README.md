@@ -3,6 +3,9 @@ Dies ist eine App, die den Untis Stundenplan mit der SOL Phasierung mithilfe ber
 Diese App ist kompatibel mit Android und IOS.
 <br>
 <br>
+Diese App wird auch zukünftig für Windows und MacOS zur verfügung gestellt werden.
+<br>
+<br>
 Zum Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
 
 ## Weitere Projekte:
