@@ -11,13 +11,7 @@ class UserSecureStorage {
   static Future<String?> getUsername() async => await _storage.read(key: _keyUsername);
   static Future<String?> getPassword() async => await _storage.read(key: _keyPassword);
 
-  static Future clearPassword() async {
-    _storage.delete(key: _keyPassword);
-  }
-
-  static Future clearUsername() async {
-    _storage.delete(key: _keyUsername);
-  }
-
-  static Future clear() async => await _storage.deleteAll();
+  static Future clearUsername() async => await _storage.delete(key: _keyUsername);
+  static Future clearPassword() async => await _storage.delete(key: _keyPassword);
+  static Future clearAll() async => await _storage.deleteAll();
 }

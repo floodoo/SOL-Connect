@@ -14,11 +14,10 @@ class CustomSettingsCard extends ConsumerWidget {
     Key? key,
   }) : super(key: key);
 
-  final double padTop, padLeft, padRight, padBottom;
   final String text;
   final Widget? leading;
   final void Function()? onTap;
-  final bool disabled = false;
+  final double padTop, padLeft, padRight, padBottom;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,9 +26,7 @@ class CustomSettingsCard extends ConsumerWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(padLeft, padTop, padRight, padBottom),
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         color: theme.colors.primary,
         child: ListTile(
           title: Text(

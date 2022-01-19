@@ -8,42 +8,6 @@ import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_table_detail.argument.dart';
 import 'package:untis_phasierung/ui/screens/time_table_detail/widgets/custom_phase_card.dart';
 
-extension PhaseReadables on PhaseCodes {
-  String get readableName {
-    switch (this) {
-      case PhaseCodes.orienting:
-        return "Orientierungsphase";
-      case PhaseCodes.reflection:
-        return "Planungsphase";
-      case PhaseCodes.structured:
-        return "Strukturierte Phase";
-      case PhaseCodes.free:
-        return "Freie Phase";
-      case PhaseCodes.feedback:
-        return "Feedback Phase";
-      default:
-        return "Keine Info verfügbar";
-    }
-  }
-
-  String get description {
-    switch (this) {
-      case PhaseCodes.orienting:
-        return "In dieser Phase spricht der Lehrer und gibt Infos für den Block / die nächsten Arbeitsaufträge.\nAußerdem wird organisatorisches erledigt.";
-      case PhaseCodes.reflection:
-        return "In dieser Phase setzt man seine Ziele und erstellt einen SMART Plan.\nDiese Phase kann auch zur Reflexion von Zielen genutzt werden.";
-      case PhaseCodes.structured:
-        return "Diese Phase ist durch den Lehrer strukturiert.\nEs gibt feste Materialien / Arbeitsformen für diese Phase.";
-      case PhaseCodes.free:
-        return "In dieser Phase kann man gemäß der Kann-Listen und SMART-Plänen frei Lernen.\nEs gilt keine Anwesenheitspflicht.";
-      case PhaseCodes.feedback:
-        return "In dieser Phase gibt man Rückmeldung zum Wochen- oder Blockverlauf.";
-      default:
-        return "Entweder wurde für dieses Fach keine Phasierung eingetragen, oder diese Phase ist der App unbekannt.";
-    }
-  }
-}
-
 class TimeTableDetailScreen extends ConsumerWidget {
   const TimeTableDetailScreen({Key? key}) : super(key: key);
   static final routeName = (TimeTableDetailScreen).toString();
@@ -51,9 +15,11 @@ class TimeTableDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
-    GlobalKey previewContainer = GlobalKey();
     final TimeTableDetailArgument args = ModalRoute.of(context)!.settings.arguments as TimeTableDetailArgument;
+
     final MappedPhase? phase = args.phase;
+    final GlobalKey previewContainer = GlobalKey();
+
     late TimeTableHour _timeTableHour;
 
     PhaseCodes? firstHalf;
@@ -67,25 +33,17 @@ class TimeTableDetailScreen extends ConsumerWidget {
       firstHalf = phase.getFirstHalf();
       secondHalf = phase.getSecondHalf();
     }
-    
-    if(_timeTableHour.getLessonCode() == Codes.noteacher) {
+
+    if (_timeTableHour.getLessonCode() == Codes.noteacher) {
       statusCodeColor = theme.colors.noTeacher;
-    } else if(_timeTableHour.getLessonCode() == Codes.cancelled) {
+    } else if (_timeTableHour.getLessonCode() == Codes.cancelled) {
       statusCodeColor = theme.colors.cancelled;
     }
 
     if (_timeTableHour.isIrregular()) {
       _timeTableHour = args.timeTableHour.getReplacement();
       statusCodeColor = theme.colors.irregular;
-    } 
-    /*else {
-      statusText = "Normal";
     }
-
-    if (_timeTableHour.getLessonCode() == Codes.cancelled) {
-      statusCodeColor = theme.colors.cancelled;
-      statusText = "Entfall";
-    }*/
 
     return Scaffold(
       appBar: AppBar(
@@ -93,6 +51,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
             style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
+        // TODO(floodoo): Repair share button
         // actions: [
         //   IconButton(
         //     icon: Icon(
@@ -120,9 +79,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(10.0),
               child: Card(
                 elevation: 10,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                ),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
                 child: Column(
                   children: [
                     ClipRRect(

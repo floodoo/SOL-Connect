@@ -28,6 +28,42 @@ extension Phase on PhaseCodes {
   }
 }
 
+extension PhaseReadables on PhaseCodes {
+  String get readableName {
+    switch (this) {
+      case PhaseCodes.orienting:
+        return "Orientierungsphase";
+      case PhaseCodes.reflection:
+        return "Planungsphase";
+      case PhaseCodes.structured:
+        return "Strukturierte Phase";
+      case PhaseCodes.free:
+        return "Freie Phase";
+      case PhaseCodes.feedback:
+        return "Feedback Phase";
+      default:
+        return "Keine Info verfügbar";
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case PhaseCodes.orienting:
+        return "In dieser Phase spricht der Lehrer und gibt Infos für den Block / die nächsten Arbeitsaufträge.\nAußerdem wird organisatorisches erledigt.";
+      case PhaseCodes.reflection:
+        return "In dieser Phase setzt man seine Ziele und erstellt einen SMART Plan.\nDiese Phase kann auch zur Reflexion von Zielen genutzt werden.";
+      case PhaseCodes.structured:
+        return "Diese Phase ist durch den Lehrer strukturiert.\nEs gibt feste Materialien / Arbeitsformen für diese Phase.";
+      case PhaseCodes.free:
+        return "In dieser Phase kann man gemäß der Kann-Listen und SMART-Plänen frei Lernen.\nEs gilt keine Anwesenheitspflicht.";
+      case PhaseCodes.feedback:
+        return "In dieser Phase gibt man Rückmeldung zum Wochen- oder Blockverlauf.";
+      default:
+        return "Entweder wurde für dieses Fach keine Phasierung eingetragen, oder diese Phase ist der App unbekannt.";
+    }
+  }
+}
+
 class PhaseColor {
   ///Maximale Abweichung der angegebenen Farbe
   static const int maxRGBDeviation = 5;

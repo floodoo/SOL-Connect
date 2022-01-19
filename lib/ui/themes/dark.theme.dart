@@ -8,8 +8,13 @@ ThemeData get darkTheme {
     scaffoldBackgroundColor: colors.background,
     iconTheme: IconThemeData(color: colors.text),
     primaryColor: colors.primary,
-    textTheme: ThemeData.dark()
-        .textTheme
-        .copyWith(subtitle2: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400))),
+    textTheme: ThemeData.dark().textTheme.copyWith(
+          subtitle2: GoogleFonts.inter(
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
   );
 }

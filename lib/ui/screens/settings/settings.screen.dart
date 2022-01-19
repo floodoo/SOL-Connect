@@ -19,12 +19,14 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Logger log = getLogger();
+
     final theme = ref.watch(themeService).theme;
+
     final phaseLoaded = ref.watch(timeTableService).phaseVerified;
     final validator = ref.watch(timeTableService).validator;
 
     bool lightMode;
-    Logger log = getLogger();
 
     SnackBar _createSnackbar(String message, Color backgroundColor, {Duration duration = const Duration(seconds: 4)}) {
       return SnackBar(
@@ -33,34 +35,28 @@ class SettingsScreen extends ConsumerWidget {
         backgroundColor: backgroundColor,
         content: Text(message, style: TextStyle(fontSize: 17, color: theme.colors.text)),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            topRight: Radius.circular(15.0),
-          ),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
         ),
       );
     }
 
-    // on app start the saved appearance is loaded. This is only for the switch
+    // The saved appearance is loaded on App start. This is only for the switch.
     if (theme.mode == ThemeMode.light) {
       lightMode = true;
     } else {
       lightMode = false;
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Einstellungen', style: TextStyle(color: theme.colors.text)),
         backgroundColor: theme.colors.primary,
-        leading: BackButton(
-          color: theme.colors.icon,
-        ),
+        leading: BackButton(color: theme.colors.icon),
       ),
       body: Container(
         color: theme.colors.background,
         child: ListView(
           children: [
-            //Row(
-            //  children: [
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 25.0),
@@ -72,38 +68,16 @@ class SettingsScreen extends ConsumerWidget {
                       style: TextStyle(fontSize: 25),
                     ),
                     IconButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          _createSnackbar("Wähle eine Excel Datei aus", theme.colors.primary),
-                        );
-                      },
+                      onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                        _createSnackbar("Wähle eine Excel Datei aus", theme.colors.primary),
+                      ),
                       icon: const Icon(Icons.info_outline),
                       iconSize: 25,
                     )
                   ],
                 ),
-                // child: Text.rich(
-                //   TextSpan(
-                //     children: <InlineSpan>[
-                //       const TextSpan(text: "Phasierung  "),
-                //       WidgetSpan(
-                //         child: IconButton(
-                //           icon: const Icon(Icons.info_outline),
-                //           color: theme.colors.textInverted,
-                //           iconSize: 25,
-                //           onPressed: () {
-                //             _createSnackbar("Wähle eine excel Datei aus", theme.colors.background);
-                //           },
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                //   textAlign: TextAlign.center,
-                //   style: const TextStyle(fontSize: 25),
-                // ),
               ),
             ),
-
             CustomSettingsCard(
               padBottom: 0,
               leading: Icon(
@@ -118,10 +92,7 @@ class SettingsScreen extends ConsumerWidget {
 
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    _createSnackbar(
-                      "Phasierung entfernt",
-                      theme.colors.elementBackground,
-                    ),
+                    _createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
                   );
                   return;
                 }
@@ -142,6 +113,7 @@ class SettingsScreen extends ConsumerWidget {
                   );
 
                   String errorMessage = "";
+
                   try {
                     await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(result.files.first.path!);
                   } on ExcelMergeFileNotVerified {
@@ -191,26 +163,6 @@ class SettingsScreen extends ConsumerWidget {
                               style: const TextStyle(fontSize: 13))),
                     ))
                 : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
-
-            /* CustomSettingsCard(
-              leading: Icon(
-                Icons.delete,
-                color: theme.colors.text,
-              ),
-              padTop: 10,
-              text: "Delete Phase Plan",
-              onTap: () {
-                ref.read(timeTableService).deletePhase();
-
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  _createSnackbar(
-                    "Phasierung entfernt",
-                    theme.colors.elementBackground,
-                  ),
-                );
-              },
-            ),*/
 
             Center(
               child: Padding(

@@ -27,8 +27,10 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    late TimeTableHour _timeTableHour;
     final theme = ref.watch(themeService).theme;
+
+    late TimeTableHour _timeTableHour;
+    
     Color _colorPhaseTop = theme.colors.primary;
     Color _colorPhaseBottom = theme.colors.primary;
 

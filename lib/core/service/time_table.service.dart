@@ -54,7 +54,7 @@ class TimeTableService with ChangeNotifier {
       (error) {
         log.e("Error logging in: $error");
         log.d("Clearing user data");
-        UserSecureStorage.clear();
+        UserSecureStorage.clearAll();
         loginError = true;
         isLoading = false;
         this.username = "";
