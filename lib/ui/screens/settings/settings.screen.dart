@@ -74,7 +74,7 @@ class SettingsScreen extends ConsumerWidget {
                     IconButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          _createSnackbar("Wähle eine excel Datei aus", theme.colors.primary),
+                          _createSnackbar("Wähle eine Excel Datei aus", theme.colors.primary),
                         );
                       },
                       icon: const Icon(Icons.info_outline),
