@@ -21,7 +21,6 @@ class TimeTableRange {
   DateTime? _blockEndDate; //Block enddatum dem die timetable woche gehört
   bool _isEmpty = true;
 
-  // TODO(philipp): wird bis jetzt nur in `UserSession.getRelativeTimeTableForWeek()` gesetzt
   int relativeToCurrent = 0;
 
   final UserSession _boundUser;
