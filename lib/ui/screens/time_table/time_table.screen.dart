@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
@@ -17,10 +18,8 @@ class TimeTableScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _timeTableService = ref.read(timeTableService);
-    final _timeTable = ref.watch(timeTableService).timeTable;
-    final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
     final theme = ref.watch(themeService).theme;
+    final _timeTableService = ref.read(timeTableService);
     GlobalKey previewContainer = GlobalKey();
 
     List<Widget> buildFirstTimeTableRow(TimeTableRange _timeTable, AppTheme theme) {
@@ -47,7 +46,12 @@ class TimeTableScreen extends ConsumerWidget {
       return timeTableList;
     }
 
-    List<Widget> buildTimeTable(TimeTableRange _timeTable, MergedTimeTable? _phasedTimeTable, AppTheme theme, BuildContext context) {
+    List<Widget> buildTimeTable(
+      TimeTableRange _timeTable,
+      MergedTimeTable? _phasedTimeTable,
+      AppTheme theme,
+      BuildContext context,
+    ) {
       List<Widget> timeTableList = [];
       int timeColumnCounter = 0;
       int schoolDayCounter = 0;
@@ -244,52 +248,66 @@ class TimeTableScreen extends ConsumerWidget {
         },
         child: RepaintBoundary(
           key: previewContainer,
-          child: Container(
-            color: theme.colors.background,
-            child: (_timeTable == null)
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: theme.colors.progressIndicator,
-                    ),
-                  )
-                : (ref.watch(timeTableService).isSchool)
-                    ? ListView(
-                        children: [
-                          GridView.count(
-                            crossAxisCount: 6,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: buildFirstTimeTableRow(_timeTable, theme),
-                          ),
-                          GridView.count(
-                            crossAxisCount: 6,
-                            crossAxisSpacing: 0,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            childAspectRatio: 0.75,
-                            children: buildTimeTable(_timeTable, _phaseTimeTable, theme, context),
-                          ),
-                        ],
+          child: LiquidPullToRefresh(
+            showChildOpacityTransition: false,
+            color: theme.colors.primary,
+            backgroundColor: Colors.white,
+            onRefresh: () async {
+              ref.read(timeTableService).session.clearTimetableCache();
+              ref.read(timeTableService).getTimeTable();
+            },
+            child: HookConsumer(builder: (context, ref, child) {
+              final _timeTable = ref.watch(timeTableService).timeTable;
+              final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
+
+              return Container(
+                color: theme.colors.background,
+                child: (_timeTable == null)
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: theme.colors.progressIndicator,
+                        ),
                       )
-                    : Column(
-                        children: [
-                          GridView.count(
-                            crossAxisCount: 6,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: buildFirstTimeTableRow(_timeTable, theme),
-                          ),
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                              child: Text(
-                                "Keine Schulwoche",
-                                style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                    : (ref.watch(timeTableService).isSchool)
+                        ? ListView(
+                            children: [
+                              GridView.count(
+                                crossAxisCount: 6,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                children: buildFirstTimeTableRow(_timeTable, theme),
                               ),
-                            ),
+                              GridView.count(
+                                crossAxisCount: 6,
+                                crossAxisSpacing: 0,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                childAspectRatio: 0.75,
+                                children: buildTimeTable(_timeTable, _phaseTimeTable, theme, context),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              GridView.count(
+                                crossAxisCount: 6,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                children: buildFirstTimeTableRow(_timeTable, theme),
+                              ),
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                                  child: Text(
+                                    "Keine Schulwoche",
+                                    style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+              );
+            }),
           ),
         ),
       ),
