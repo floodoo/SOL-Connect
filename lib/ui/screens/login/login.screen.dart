@@ -41,7 +41,7 @@ class LoginScreen extends ConsumerWidget {
     }
 
     void _login(String username, String password) {
-      _timeTableService.toggleLoading(true);
+      _timeTableService.toggleIsLoading(true);
       _timeTableService.login(username, password);
     }
 

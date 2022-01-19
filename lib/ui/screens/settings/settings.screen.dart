@@ -23,7 +23,7 @@ class SettingsScreen extends ConsumerWidget {
 
     final theme = ref.watch(themeService).theme;
 
-    final phaseLoaded = ref.watch(timeTableService).phaseVerified;
+    final phaseLoaded = ref.watch(timeTableService).isPhaseVerified;
     final validator = ref.watch(timeTableService).validator;
 
     bool lightMode;

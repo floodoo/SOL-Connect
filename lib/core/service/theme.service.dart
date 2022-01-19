@@ -8,7 +8,7 @@ class ThemeService with ChangeNotifier {
   AppTheme get theme => _theme;
   bool loaded = false;
 
-  void toggle() {
+  void toggleTheming() {
     _theme = _theme.mode == ThemeMode.light ? AppTheme.dark() : AppTheme.light();
     notifyListeners();
   }
@@ -16,7 +16,7 @@ class ThemeService with ChangeNotifier {
   Future<void> saveAppearence(bool lightMode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("lightMode", lightMode);
-    toggle();
+    toggleTheming();
   }
 
   void loadAppearence() async {

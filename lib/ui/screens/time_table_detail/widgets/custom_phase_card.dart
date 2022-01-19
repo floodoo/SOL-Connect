@@ -10,7 +10,7 @@ class CustomPhaseCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
-    final blockWeek = ref.watch(timeTableService).weekInBlock;
+    final blockWeek = ref.watch(timeTableService).isWeekInBlock;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
