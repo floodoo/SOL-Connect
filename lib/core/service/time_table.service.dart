@@ -225,4 +225,9 @@ class TimeTableService with ChangeNotifier {
 
     notifyListeners();
   }
+
+  void resetWeekCounter() {
+    _weekCounter = 0;
+    notifyListeners();
+  }
 }
