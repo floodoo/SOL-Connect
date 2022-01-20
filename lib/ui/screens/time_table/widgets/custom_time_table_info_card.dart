@@ -9,7 +9,6 @@ import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_tab
 import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
-
   const CustomTimeTableInfoCard({
     required this.timeTableHour,
     this.phase,
@@ -30,7 +29,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
     final theme = ref.watch(themeService).theme;
 
     late TimeTableHour _timeTableHour;
-    
+
     Color _colorPhaseTop = theme.colors.primary;
     Color _colorPhaseBottom = theme.colors.primary;
 
