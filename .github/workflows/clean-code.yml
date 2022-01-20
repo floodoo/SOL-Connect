@@ -1,4 +1,4 @@
-name: Flutter CI
+name: Clean code
 
 on: [push, pull_request]
     
