@@ -163,7 +163,6 @@ class SettingsScreen extends ConsumerWidget {
                               style: const TextStyle(fontSize: 13))),
                     ))
                 : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
-
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 25.0),

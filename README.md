@@ -13,4 +13,5 @@ Zum Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
 
 <br>
 <br>
-<i>Created by <a href="https://github.com/floodoo">floodoo</a> & <a href="https://github.com/DevKevYT">DevKevYT</a></i>
+<i>Logo Created by <a href="https://github.com/Teshiification">Teshiification</a><br>
+<i>App Created by <a href="https://github.com/floodoo">floodoo</a> & <a href="https://github.com/DevKevYT">DevKevYT</a></i>
