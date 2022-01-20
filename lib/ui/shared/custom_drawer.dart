@@ -10,46 +10,38 @@ import 'dart:math';
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({Key? key}) : super(key: key);
   static final routeName = (CustomDrawer).toString();
-  static Random r = Random();
+  static Random random = Random();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
-    String username = ref.watch(timeTableService).username;
-    String profilePictureUrl = "";
-    UserSession session = ref.watch(timeTableService).session;
 
-    CircleAvatar profilePicture = CircleAvatar(
-      child: CircularProgressIndicator(color: theme.colors.text),
-    );
+    UserSession session = ref.watch(timeTableService).session;
+    String username = ref.watch(timeTableService).username;
+
+    String profilePictureUrl = "";
+
+    CircleAvatar profilePicture = CircleAvatar(child: CircularProgressIndicator(color: theme.colors.text));
 
     if (session.isAPIAuthorized()) {
-      ImageProvider pp;
-      if (r.nextInt(69) == 20) {
-        pp = const Image(image: AssetImage('assets/images/trollface.png')).image;
+      ImageProvider imageProvider;
+      if (random.nextInt(100) == 20) {
+        imageProvider = const Image(image: AssetImage('assets/images/trollface.png')).image;
       } else {
         profilePictureUrl = session.getCachedProfilePictureUrl();
-        pp = Image.network(profilePictureUrl).image;
+        imageProvider = Image.network(profilePictureUrl).image;
       }
 
-      profilePicture = CircleAvatar(
-        backgroundColor: theme.colors.background,
-        backgroundImage: pp,
-      );
+      profilePicture = CircleAvatar(backgroundColor: theme.colors.background, backgroundImage: imageProvider);
     } else {
       profilePicture = CircleAvatar(
         backgroundColor: theme.colors.background,
-        child: Icon(
-          Icons.person,
-          color: theme.colors.circleAvatar,
-        ),
+        child: Icon(Icons.person, color: theme.colors.circleAvatar),
       );
     }
 
     return Theme(
-      data: Theme.of(context).copyWith(
-        canvasColor: theme.colors.background,
-      ),
+      data: Theme.of(context).copyWith(canvasColor: theme.colors.background),
       child: Drawer(
         child: Column(
           children: [
@@ -65,22 +57,11 @@ class CustomDrawer extends ConsumerWidget {
               title: Text("Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
               onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
             ),
-            // ListTile(
-            //   title: Text("Info-Center", style: TextStyle(color: theme.colors.textBackground)),
-            //   onTap: () => Navigator.of(context).pop(),
-            // ),
-            // ListTile(
-            //   title: Text("Notifications", style: TextStyle(color: theme.colors.textBackground)),
-            //   onTap: () => Navigator.of(context).pop(),
-            // ),
-            // ListTile(
-            //   title: Text("Messages: {0}", style: TextStyle(color: theme.colors.textBackground)),
-            //   onTap: () => Navigator.of(context).pop(),
-            // ),
             ListTile(
               title: Text("🚧 Weitere Features kommen noch 🚧", style: TextStyle(color: theme.colors.textBackground)),
               onTap: null,
             ),
+            // For white space
             Expanded(child: Container()),
             ListTile(
               title: Text("Einstellungen", style: TextStyle(color: theme.colors.textBackground)),

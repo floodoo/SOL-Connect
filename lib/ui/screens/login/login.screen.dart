@@ -11,22 +11,23 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController usernameController = TextEditingController(text: ref.watch(timeTableService).username);
-    final TextEditingController passwordController = TextEditingController(text: ref.watch(timeTableService).password);
+    final theme = ref.watch(themeService).theme;
+
     final _timeTableService = ref.read(timeTableService);
+
     final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
     final _isLoading = ref.watch(timeTableService).isLoading;
     final _loginError = ref.watch(timeTableService).loginError;
-    final theme = ref.watch(themeService).theme;
+
+    final TextEditingController usernameController = TextEditingController(text: ref.watch(timeTableService).username);
+    final TextEditingController passwordController = TextEditingController(text: ref.watch(timeTableService).password);
     usernameController.selection = TextSelection.fromPosition(TextPosition(offset: usernameController.text.length));
     passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
 
     String? loginErrorMessage;
 
     if (_isLoggedIn) {
-      Future.delayed(Duration.zero, () {
-        Navigator.pushReplacementNamed(context, TimeTableScreen.routeName);
-      });
+      Future.delayed(Duration.zero, () => Navigator.pushReplacementNamed(context, TimeTableScreen.routeName));
     }
 
     if (_loginError != null) {
@@ -40,7 +41,7 @@ class LoginScreen extends ConsumerWidget {
     }
 
     void _login(String username, String password) {
-      _timeTableService.toggleLoading(true);
+      _timeTableService.toggleIsLoading(true);
       _timeTableService.login(username, password);
     }
 
@@ -140,9 +141,7 @@ class LoginScreen extends ConsumerWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             color: theme.colors.primary,
-                            borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(20),
-                            ),
+                            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 20.0),
                           child: Row(

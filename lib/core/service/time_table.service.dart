@@ -11,20 +11,19 @@ import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
 class TimeTableService with ChangeNotifier {
   final Logger log = getLogger();
-  SharedPreferences? prefs;
 
   late UserSession session;
+
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
   ExcelValidator? validator;
-
-  //True wenn eine Phasierungsdatei erfolgreich geladen und verifiziert werden konnte
-  bool phaseVerified = false;
+  SharedPreferences? prefs;
 
   bool isLoggedIn = false;
   bool isLoading = false;
   bool isSchool = true;
-  bool weekInBlock = false;
+  bool isPhaseVerified = false;
+  bool isWeekInBlock = false;
   int _weekCounter = 0;
 
   String username = "";
@@ -54,15 +53,32 @@ class TimeTableService with ChangeNotifier {
       (error) {
         log.e("Error logging in: $error");
         log.d("Clearing user data");
-        UserSecureStorage.clear();
+
+        UserSecureStorage.clearAll();
+
         loginError = true;
         isLoading = false;
+
         this.username = "";
         this.password = "";
+
         loginError = error;
+
         notifyListeners();
       },
     );
+  }
+
+   void logout() {
+    UserSecureStorage.clearPassword();
+    isLoggedIn = false;
+    isLoading = false;
+    timeTable = null;
+    phaseTimeTable = null;
+    loginError = null;
+    password = "";
+    session.logout();
+    notifyListeners();
   }
 
   Future<void> getTimeTable({int weekCounter = 0}) async {
@@ -80,7 +96,7 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleLoading(bool value) {
+  void toggleIsLoading(bool value) {
     isLoading = value;
     notifyListeners();
   }
@@ -118,27 +134,13 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  void logout() {
-    UserSecureStorage.clearPassword();
-    isLoggedIn = false;
-    isLoading = false;
-    timeTable = null;
-    phaseTimeTable = null;
-    loginError = null;
-    password = "";
-    session.logout();
-    notifyListeners();
-  }
-
-  ///Es wird davon ausgegangen, dass die geladene Datei gültig ist
   void loadUncheckedPhaseFileForNextBlock() async {
     await loadPhaseFromFile();
     await loadPhase();
   }
 
-  ///Die Datei wird mit ausführlichen checks geladen und getestet.
   Future<String> loadCheckedPhaseFileForNextBlock([String? phaseFilePath]) async {
-    phaseVerified = false;
+    isPhaseVerified = false;
 
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
@@ -155,7 +157,6 @@ class TimeTableService with ChangeNotifier {
     session.clearTimetableCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
-    //Block ausmappen
 
     DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
     DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
@@ -167,7 +168,8 @@ class TimeTableService with ChangeNotifier {
         " until a new file is loaded.");
 
     var nextBlockweeks = await timeTable!.getNextBlockWeeks(0);
-    //Überprüfe alle nächsten Block Wochen!
+
+    // Check all next school weeks
     validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
 
     for (TimeTableRange blockWeek in nextBlockweeks) {
@@ -175,9 +177,9 @@ class TimeTableService with ChangeNotifier {
           "Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
       await validator!.mergeExcelWithTimetable(blockWeek);
     }
-    phaseVerified = true;
+    
+    isPhaseVerified = true;
     log.i("File verified!");
-    //Success!
 
     getTimeTable(weekCounter: _weekCounter);
 
@@ -185,7 +187,6 @@ class TimeTableService with ChangeNotifier {
     return "";
   }
 
-  ///Ladet ein neuen ExcelValidator aus einer Datei
   Future<void> loadPhaseFromFile([String? phaseFilePath]) async {
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
@@ -198,9 +199,8 @@ class TimeTableService with ChangeNotifier {
     }
   }
 
-  ///Ladet die Phase zu einem Stundenplan
   Future<void> loadPhase() async {
-    weekInBlock = true;
+    isWeekInBlock = true;
 
     if (validator != null) {
       try {
@@ -208,25 +208,21 @@ class TimeTableService with ChangeNotifier {
       } on CurrentPhaseplanOutOfRange {
         phaseTimeTable = null;
         log.e("Week not part of current block");
-        weekInBlock = false;
+        isWeekInBlock = false;
       }
       notifyListeners();
     }
   }
 
   void deletePhase() {
-    prefs!.remove("phasePlan");
     validator = null;
-    phaseVerified = false;
+    isPhaseVerified = false;
     phaseTimeTable = null;
+
+    prefs!.remove("phasePlan");
 
     log.i("Deleted Phase block limitation");
 
-    notifyListeners();
-  }
-
-  void toggleSchool() {
-    isSchool = isSchool ? false : true;
     notifyListeners();
   }
 }

@@ -7,20 +7,18 @@ import 'package:untis_phasierung/core/service/services.dart';
 class CustomTimeTableHourCard extends ConsumerWidget {
   const CustomTimeTableHourCard({required this.timeTableHour, this.customColor, Key? key}) : super(key: key);
 
-  final Color? customColor;
   final TimeTableHour timeTableHour;
+  final Color? customColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
-    late int hour;
-    hour = timeTableHour.yIndex + 1;
+
+    int hour = timeTableHour.yIndex + 1;
 
     return Card(
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       color: customColor ?? theme.colors.primary,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
