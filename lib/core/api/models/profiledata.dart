@@ -1,6 +1,5 @@
 /*Author Philipp Gersch */
 
-
 import 'package:untis_phasierung/core/exceptions.dart';
 
 class ProfileData {

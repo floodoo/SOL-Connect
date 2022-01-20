@@ -69,7 +69,7 @@ class TimeTableService with ChangeNotifier {
     );
   }
 
-   void logout() {
+  void logout() {
     UserSecureStorage.clearPassword();
     isLoggedIn = false;
     isLoading = false;
@@ -177,7 +177,7 @@ class TimeTableService with ChangeNotifier {
           "Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
       await validator!.mergeExcelWithTimetable(blockWeek);
     }
-    
+
     isPhaseVerified = true;
     log.i("File verified!");
 

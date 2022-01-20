@@ -2,13 +2,13 @@
 
 import 'package:untis_phasierung/core/api/models/timetable.entity.dart';
 
-enum Codes { 
+enum Codes {
   //untis given
-  regular, 
-  irregular, 
-  cancelled, 
-  empty, 
-  unknown, 
+  regular,
+  irregular,
+  cancelled,
+  empty,
+  unknown,
 
   //custom
   noteacher
@@ -31,7 +31,7 @@ extension CodeReadables on Codes {
         return "Unbekannt";
     }
   }
-} 
+}
 
 class TimeTableHour {
   static const noTeacherDisplayname = "---";
@@ -98,13 +98,13 @@ class TimeTableHour {
     _subject = TimeTableEntity("su", data['su']);
 
     _room = TimeTableEntity("ro", data['ro']);
-    
+
     if (data['code'] != null) {
       String c = data['code'];
 
       if (c == "regular") {
         //Ziele den speziellen case "Lehrer entfall" nur in Betracht, wenn sonst kein anderer code speziell angegeben sind"
-        if(!hasTeacher()) {
+        if (!hasTeacher()) {
           _code = Codes.noteacher;
         } else {
           _code = Codes.regular;
@@ -117,8 +117,7 @@ class TimeTableHour {
         _code = Codes.unknown;
       }
     } else {
-
-      if(!hasTeacher()) {
+      if (!hasTeacher()) {
         _code = Codes.noteacher;
       } else {
         _code = Codes.regular;
