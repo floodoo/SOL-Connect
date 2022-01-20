@@ -1,0 +1,11 @@
+# Um was zu updaten bzw. änderungen wirksam zu machen
+# Diesen Befehl ausführen:
+#
+# flutter pub run flutter_native_splash:create --path=flutter_native_splash.yaml
+#
+# Package: flutter_native_splash: v1.3.3
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/icons/app_icon.png
+  branding: assets/images/icons/brand_icon.png
