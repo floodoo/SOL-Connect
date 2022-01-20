@@ -24,7 +24,7 @@ class TimeTableService with ChangeNotifier {
   bool isSchool = true;
   bool isPhaseVerified = false;
   bool isWeekInBlock = false;
-  int _weekCounter = 0;
+  int weekCounter = 0;
 
   String username = "";
   String password = "";
@@ -102,15 +102,15 @@ class TimeTableService with ChangeNotifier {
   }
 
   Future<void> getTimeTableNextWeek() async {
-    _weekCounter++;
-    await getTimeTable(weekCounter: _weekCounter);
-    log.d(_weekCounter.toString());
+    weekCounter++;
+    await getTimeTable(weekCounter: weekCounter);
+    log.d(weekCounter.toString());
   }
 
   Future<void> getTimeTablePreviousWeek() async {
-    _weekCounter--;
-    await getTimeTable(weekCounter: _weekCounter);
-    log.d(_weekCounter.toString());
+    weekCounter--;
+    await getTimeTable(weekCounter: weekCounter);
+    log.d(weekCounter.toString());
   }
 
   void resetTimeTable() {
@@ -181,7 +181,7 @@ class TimeTableService with ChangeNotifier {
     isPhaseVerified = true;
     log.i("File verified!");
 
-    getTimeTable(weekCounter: _weekCounter);
+    getTimeTable(weekCounter: weekCounter);
 
     session.clearTimetableCache();
     return "";
@@ -227,7 +227,7 @@ class TimeTableService with ChangeNotifier {
   }
 
   void resetWeekCounter() {
-    _weekCounter = 0;
+    weekCounter = 0;
     notifyListeners();
   }
 }

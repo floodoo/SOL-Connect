@@ -269,7 +269,7 @@ class TimeTableScreen extends ConsumerWidget {
             backgroundColor: Colors.white,
             onRefresh: () async {
               ref.read(timeTableService).session.clearTimetableCache();
-              ref.read(timeTableService).getTimeTable();
+              ref.read(timeTableService).getTimeTable(weekCounter: _timeTableService.weekCounter);
             },
             child: HookConsumer(
               builder: (context, ref, child) {
