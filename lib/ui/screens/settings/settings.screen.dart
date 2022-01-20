@@ -241,7 +241,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               padTop: 10,
               padBottom: 30,
-              text: "Version 1.0.1",
+              text: "Version Alpha 1.0.1",
             ),
             Center(
               child: RichText(
