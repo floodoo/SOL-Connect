@@ -236,6 +236,17 @@ class TimeTableScreen extends ConsumerWidget {
         //     },
         //   )
         // ],
+        actions: [
+          IconButton(
+            onPressed: () {
+              _timeTableService.resetWeekCounter();
+              _timeTableService.resetTimeTable();
+              _timeTableService.getTimeTable();
+            },
+            icon: const Icon(Icons.today),
+            tooltip: "Spring zur aktuellen Woche",
+          )
+        ],
       ),
       drawer: const CustomDrawer(),
       body: GestureDetector(
