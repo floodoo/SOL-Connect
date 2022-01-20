@@ -163,7 +163,6 @@ class SettingsScreen extends ConsumerWidget {
                               style: const TextStyle(fontSize: 13))),
                     ))
                 : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
-
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 25.0),
@@ -242,7 +241,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               padTop: 10,
               padBottom: 30,
-              text: "Version 1.0.0",
+              text: "Version 1.0.1",
             ),
             Center(
               child: RichText(
