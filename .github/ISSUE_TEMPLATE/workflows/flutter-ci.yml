@@ -1,4 +1,4 @@
-name: check-code-quality
+name: Flutter CI
 
 on: [push, pull_request]
     
