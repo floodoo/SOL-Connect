@@ -1,5 +1,7 @@
 /*Author Philipp Gersch */
 
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:untis_phasierung/core/api/models/news.dart';
 import 'package:untis_phasierung/core/api/models/profiledata.dart';
@@ -72,6 +74,7 @@ class UserSession {
     }
 
     if(username == UserSession.demoAccountName && password == UserSession.demoAccountName) {
+      _sessionValid = true;
       _un = UserSession.demoAccountName;
       _pwd = UserSession.demoAccountName;
       return;
@@ -113,8 +116,6 @@ class UserSession {
 
     await regenerateSessionBearerToken();
     _cachedProfileData = await getProfileData(loadFromCache: false);
-
-    return response;
   }
 
   bool isDemoSession() {
@@ -248,21 +249,34 @@ class UserSession {
     DateTime from = getRelativeWeekStartDate(relative);
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
 
+    if (useCaching) {
+      TimeTableRange? cached = _getCachedTimetable(from, lastDayOfWeek);
+      if (cached != null) {
+        return cached;
+      }
+    }
+
     if(isDemoSession()) {
       if(relative == 1) {
-        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable2.json');
+         sleep(Duration(seconds: 1));
+        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable3.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
+        _addTimetableToCache(rng);
         return rng;
       } else if(relative == 0) {
+        sleep(Duration(seconds: 1));
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable1.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
+         _addTimetableToCache(rng);
         return rng;
       } else {
+        sleep(Duration(seconds: 1));
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/empty-timetable.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
+         _addTimetableToCache(rng);
         return rng;
       }
     }
@@ -362,7 +376,6 @@ class UserSession {
       _addTimetableToCache(loaded);
     }
 
-    
     return loaded;
   }
 

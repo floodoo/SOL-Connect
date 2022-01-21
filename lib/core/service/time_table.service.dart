@@ -39,6 +39,7 @@ class TimeTableService with ChangeNotifier {
     session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
     
     try { 
+      
       await session.createSession(username: username, password: password);
       
       isLoggedIn = true;
@@ -178,6 +179,8 @@ class TimeTableService with ChangeNotifier {
 
   Future<String> loadCheckedPhaseFileForNextBlock([String? phaseFilePath]) async {
     isPhaseVerified = false;
+    
+    log.d("Loading phaseplan ...");
 
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
@@ -194,6 +197,8 @@ class TimeTableService with ChangeNotifier {
     session.clearTimetableCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
+    
+    print("What the fuck");
 
     DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
     DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
