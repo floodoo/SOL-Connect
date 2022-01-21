@@ -11,21 +11,16 @@ class RPCResponse {
   String appId = "";
   String rpcVersion = "2.0";
 
-  http.Response originalResponse;
+  http.Response? originalResponse;
 
   RPCResponse(this.originalResponse);
 
-  static RPCResponse handle(http.Response httpResponse) {
-    RPCResponse response = RPCResponse(httpResponse);
-
-    //Erstmal den Statuscode checken
-    if (httpResponse.statusCode != 200) {
-      response._errorCode = httpResponse.statusCode;
-      response._statusMessage = "http error";
-      return response;
-    }
-
-    dynamic json = jsonDecode(httpResponse.body);
+  //Simuliert eine künstliche Abfrage mit einem bereits gegebenen http body
+  static RPCResponse handleArtifical(dynamic httpResponseBody) {
+    
+    RPCResponse response = RPCResponse(null);
+    
+    dynamic json = jsonDecode(httpResponseBody);
 
     //Standart Daten auszulesen
     if (json['id'].runtimeType == int) {
@@ -53,6 +48,25 @@ class RPCResponse {
 
     //Die Antwort hat nicht den HTTP statuscode 200!
     return response;
+  }
+
+  static RPCResponse handle(http.Response httpResponse) {
+    
+    print(httpResponse.body + "\n\n\n\n\n\n");
+
+    //Erstmal den Statuscode checken
+    if (httpResponse.statusCode != 200) {
+      RPCResponse err = RPCResponse(httpResponse);
+      err._statusMessage = "http error";
+      err._errorCode = httpResponse.statusCode;
+      return err;
+    }
+    
+
+    RPCResponse generated = handleArtifical(httpResponse.body);
+    generated.originalResponse = httpResponse;
+    generated._errorCode = httpResponse.statusCode;
+    return generated;
   }
 
   /// @return true - Wenn der Fehler am http liegt

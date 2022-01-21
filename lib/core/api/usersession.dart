@@ -8,8 +8,12 @@ import 'package:untis_phasierung/core/api/rpcresponse.dart' as rh;
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 class UserSession {
+  static const demoAccountName = "demo";
+  
+
   String _appName = "adw8638ordfgq37qp98";
   String _sessionId = "";
   int _personId = -1;
@@ -59,7 +63,7 @@ class UserSession {
   ///* `MissingCredentialsException` Bei fehlendem Benutzer oder Passwort
   ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
-  Future<rh.RPCResponse> createSession({String username = "", String password = ""}) async {
+  Future createSession({String username = "", String password = ""}) async {
     clearTimetableCache();
 
     if (_sessionValid) {
@@ -67,13 +71,18 @@ class UserSession {
           "Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
     }
 
-    if (username == "" || password == "") {
+    if(username == UserSession.demoAccountName) {
+      _un = UserSession.demoAccountName;
+      return;
+    }
+
+    if ((username == "" || password == "") && username != UserSession.demoAccountName) {
       throw MissingCredentialsException("Bitte gib einen Benutzenamen und ein Passwort an");
     }
 
     rh.RPCResponse response =
         await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
-
+  
     if (response.isHttpError()) {
       throw ApiConnectionError("Ein http Fehler ist aufegteten: " +
           response.getErrorMessage().toString() +
@@ -91,7 +100,7 @@ class UserSession {
             ")");
       }
     }
-
+    
     _sessionId = response.getPayloadData()['sessionId'];
     _personId = response.getPayloadData()['personId'];
     _klasseId = response.getPayloadData()['klasseId'];
@@ -105,6 +114,10 @@ class UserSession {
     _cachedProfileData = await getProfileData(loadFromCache: false);
 
     return response;
+  }
+
+  bool isDemoSession() {
+    return _un == UserSession.demoAccountName;
   }
 
   ///Muss üblicherweise nicht aufgerufen werden.
@@ -231,17 +244,25 @@ class UserSession {
   ///* `getRelativeTimeTableWeek(1);` gibt die nächste Woche zurück.
   ///* `getRelativeTimeTableWeek(0);` entspricht `getTimeTableForThisWeek()`
   Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
-    /*DateTime from = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-
-    if (relative < 0) {
-      //Ziehe die duration ab und gehe in die Vergangenheit
-      from = from.subtract(Duration(days: DateTime.daysPerWeek * relative.abs()));
-    } else if (relative > 0) {
-      //Addiere die Duration und gehe in die Zukunft.
-      from = from.add(Duration(days: DateTime.daysPerWeek * relative));
-    }*/
     DateTime from = getRelativeWeekStartDate(relative);
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
+
+    if(isDemoSession()) {
+      if(relative == 0 || relative == 1) {
+        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable1.json');
+        TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
+        rng.relativeToCurrent = relative;
+        print("Generating timetable from file");
+        return rng;
+      } else {
+        String timetabledata = await rootBundle.loadString('assets/demo/timetables/empty-timetable.json');
+        TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
+        rng.relativeToCurrent = relative;
+        print("Generating empty timetable");
+        return rng;
+      }
+    }
+
     TimeTableRange rng = await getTimeTable(from, lastDayOfWeek);
     rng.relativeToCurrent = relative;
     return rng;
@@ -300,6 +321,7 @@ class UserSession {
   }
 
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to) async {
+
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
 
     if (useCaching) {
@@ -336,6 +358,7 @@ class UserSession {
       _addTimetableToCache(loaded);
     }
 
+    
     return loaded;
   }
 
