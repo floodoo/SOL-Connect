@@ -33,7 +33,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: LoginScreen.routeName,
       routes: {
-        LoginScreen.routeName: (context) => const LoginScreen(),
+        LoginScreen.routeName: (context) => LoginScreen(),
         CustomDrawer.routeName: (context) => const CustomDrawer(),
         TimeTableScreen.routeName: (context) => const TimeTableScreen(),
         TimeTableDetailScreen.routeName: (context) => const TimeTableDetailScreen(),
