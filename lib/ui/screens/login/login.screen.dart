@@ -171,7 +171,11 @@ class LoginScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          onTap: () => _login(usernameController.text, passwordController.text),
+                          onTap: () {
+                            if (_isLoading == false) {
+                              _login(usernameController.text, passwordController.text);
+                            }
+                          },
                         ),
                       )
                     ],
