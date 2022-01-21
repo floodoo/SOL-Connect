@@ -1,7 +1,5 @@
 /*Author Philipp Gersch */
 
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:untis_phasierung/core/api/models/news.dart';
 import 'package:untis_phasierung/core/api/models/profiledata.dart';
@@ -14,7 +12,6 @@ import 'package:flutter/services.dart' show rootBundle;
 
 class UserSession {
   static const demoAccountName = "demo";
-  
 
   String _appName = "adw8638ordfgq37qp98";
   String _sessionId = "";
@@ -67,13 +64,13 @@ class UserSession {
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
   Future createSession({String username = "", String password = ""}) async {
     clearTimetableCache();
-    
+
     if (_sessionValid) {
       throw UserAlreadyLoggedInException(
           "Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
     }
 
-    if(username == UserSession.demoAccountName && password == UserSession.demoAccountName) {
+    if (username == UserSession.demoAccountName && password == UserSession.demoAccountName) {
       _sessionValid = true;
       _un = UserSession.demoAccountName;
       _pwd = UserSession.demoAccountName;
@@ -86,7 +83,7 @@ class UserSession {
 
     rh.RPCResponse response =
         await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
-  
+
     if (response.isHttpError()) {
       throw ApiConnectionError("Ein http Fehler ist aufegteten: " +
           response.getErrorMessage().toString() +
@@ -104,7 +101,7 @@ class UserSession {
             ")");
       }
     }
-    
+
     _sessionId = response.getPayloadData()['sessionId'];
     _personId = response.getPayloadData()['personId'];
     _klasseId = response.getPayloadData()['klasseId'];
@@ -256,27 +253,27 @@ class UserSession {
       }
     }
 
-    if(isDemoSession()) {
-      if(relative == 1) {
-         sleep(Duration(seconds: 1));
+    if (isDemoSession()) {
+      if (relative == 1) {
+        await Future.delayed(const Duration(seconds: 1));
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable3.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
         _addTimetableToCache(rng);
         return rng;
-      } else if(relative == 0) {
-        sleep(Duration(seconds: 1));
+      } else if (relative == 0) {
+        await Future.delayed(const Duration(seconds: 1));
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable1.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
-         _addTimetableToCache(rng);
+        _addTimetableToCache(rng);
         return rng;
       } else {
-        sleep(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/empty-timetable.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
-         _addTimetableToCache(rng);
+        _addTimetableToCache(rng);
         return rng;
       }
     }
@@ -339,7 +336,6 @@ class UserSession {
   }
 
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to) async {
-
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
 
     if (useCaching) {

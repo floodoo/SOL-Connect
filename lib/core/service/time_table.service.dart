@@ -198,8 +198,6 @@ class TimeTableService with ChangeNotifier {
 
     timeTable = await session.getRelativeTimeTableWeek(0);
     
-    print("What the fuck");
-
     DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
     DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
 
