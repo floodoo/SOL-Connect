@@ -6,8 +6,10 @@ import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
 import 'package:untis_phasierung/util/user_secure_stotage.dart';
 
 class LoginScreen extends ConsumerWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,8 +21,8 @@ class LoginScreen extends ConsumerWidget {
     final _isLoading = ref.watch(timeTableService).isLoading;
     final _loginError = ref.watch(timeTableService).loginError;
 
-    final TextEditingController usernameController = TextEditingController(text: ref.watch(timeTableService).username);
-    final TextEditingController passwordController = TextEditingController(text: ref.watch(timeTableService).password);
+    usernameController.text = ref.watch(timeTableService).username;
+    passwordController.text = ref.watch(timeTableService).password;
     usernameController.selection = TextSelection.fromPosition(TextPosition(offset: usernameController.text.length));
     passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
 
@@ -102,6 +104,9 @@ class LoginScreen extends ConsumerWidget {
                         },
                         child: TextField(
                           controller: usernameController,
+                          onChanged: (value) {
+                            ref.read(timeTableService).setUsername(value);
+                          },
                           autocorrect: false,
                           decoration: const InputDecoration(
                             hintText: "Benutzername",
@@ -121,6 +126,9 @@ class LoginScreen extends ConsumerWidget {
                         child: TextField(
                           controller: passwordController,
                           onEditingComplete: () => _login(usernameController.text, passwordController.text),
+                          onChanged: (value) {
+                            ref.read(timeTableService).setPassword(value);
+                          },
                           obscureText: true,
                           autocorrect: false,
                           decoration: const InputDecoration(
