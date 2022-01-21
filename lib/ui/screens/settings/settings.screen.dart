@@ -271,45 +271,55 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     showDeveloperOptions
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child: Card(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                              color: theme.colors.primary,
-                              child: ListTile(
-                                // Idk why but on emulator it doesn't work with PC keyboard
-                                title: TextField(
-                                  focusNode: textFieldFocus,
-                                  controller: serverAdressTextController,
-                                  onEditingComplete: () {
-                                    if (serverAdressTextController.text != "") {
-                                      ref.read(settingsService).saveServerAdress(serverAdressTextController.text);
-                                    }
-                                    serverAdressTextController.clear();
-                                    FocusManager.instance.primaryFocus?.unfocus();
-                                    textFieldFocus.unfocus();
-                                  },
-                                  textAlignVertical: TextAlignVertical.center,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    hintText: ref.watch(settingsService).serverAddress,
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        ref.read(settingsService).saveServerAdress("flo-dev.me");
-                                        FocusManager.instance.primaryFocus?.unfocus();
-                                        textFieldFocus.unfocus();
-                                      },
-                                      icon: Icon(Icons.settings_backup_restore, color: theme.colors.textBackground),
-                                      tooltip: "Setzte Server URL zurück",
+                        ? Column(
+                            children: [
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10, bottom: 10.0),
+                                  child: Text(
+                                    "Server adresse",
+                                    style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
+                                  ),
+                                ),
+                              ),
+                              Card(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                color: theme.colors.primary,
+                                child: ListTile(
+                                  // Idk why but on emulator it doesn't work with PC keyboard
+                                  title: TextField(
+                                    focusNode: textFieldFocus,
+                                    controller: serverAdressTextController,
+                                    onEditingComplete: () {
+                                      if (serverAdressTextController.text != "") {
+                                        ref.read(settingsService).saveServerAdress(serverAdressTextController.text);
+                                      }
+                                      serverAdressTextController.clear();
+                                      FocusManager.instance.primaryFocus?.unfocus();
+                                      textFieldFocus.unfocus();
+                                    },
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      hintText: ref.watch(settingsService).serverAddress,
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          ref.read(settingsService).saveServerAdress("flo-dev.me");
+                                          FocusManager.instance.primaryFocus?.unfocus();
+                                          textFieldFocus.unfocus();
+                                        },
+                                        icon: Icon(Icons.settings_backup_restore, color: theme.colors.textBackground),
+                                        tooltip: "Setzte Server URL zurück",
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           )
                         : Container(),
                   ],
