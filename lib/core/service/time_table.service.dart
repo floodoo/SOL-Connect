@@ -32,11 +32,47 @@ class TimeTableService with ChangeNotifier {
   dynamic loginError;
 
   Future<void> login(String username, String password) async {
+
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
 
     session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
-    session.createSession(username: username, password: password).then(
+    
+    try { 
+      await session.createSession(username: username, password: password);
+      
+      isLoggedIn = true;
+      await getTimeTable();
+
+      try {
+        await loadCheckedPhaseFileForNextBlock();
+      } catch (e) {
+        log.e(e);
+      }
+
+      UserSecureStorage.setPassword(password);
+      log.i("Successfully logged in");
+      notifyListeners();
+
+    } catch(error) {
+      log.e("Error logging in: $error");
+      log.d("Clearing user data");
+
+      UserSecureStorage.clearAll();
+
+      loginError = true;
+      isLoading = false;
+
+      this.username = "";
+      this.password = "";
+
+      loginError = error;
+
+      notifyListeners();
+    } 
+
+
+    /*await session.createSession(username: username, password: password).then(
       (value) async {
         isLoggedIn = true;
         await getTimeTable();
@@ -66,7 +102,7 @@ class TimeTableService with ChangeNotifier {
 
         notifyListeners();
       },
-    );
+    );*/
   }
 
   void logout() {
@@ -79,6 +115,7 @@ class TimeTableService with ChangeNotifier {
     password = "";
     session.logout();
     notifyListeners();
+    log.i("Logged out.");
   }
 
   Future<void> getTimeTable({int weekCounter = 0}) async {

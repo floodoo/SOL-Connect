@@ -65,18 +65,19 @@ class UserSession {
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
   Future createSession({String username = "", String password = ""}) async {
     clearTimetableCache();
-
+    
     if (_sessionValid) {
       throw UserAlreadyLoggedInException(
           "Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
     }
 
-    if(username == UserSession.demoAccountName) {
+    if(username == UserSession.demoAccountName && password == UserSession.demoAccountName) {
       _un = UserSession.demoAccountName;
+      _pwd = UserSession.demoAccountName;
       return;
     }
 
-    if ((username == "" || password == "") && username != UserSession.demoAccountName) {
+    if (username == "" || password == "") {
       throw MissingCredentialsException("Bitte gib einen Benutzenamen und ein Passwort an");
     }
 
@@ -248,17 +249,20 @@ class UserSession {
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
 
     if(isDemoSession()) {
-      if(relative == 0 || relative == 1) {
+      if(relative == 1) {
+        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable2.json');
+        TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
+        rng.relativeToCurrent = relative;
+        return rng;
+      } else if(relative == 0) {
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable1.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
-        print("Generating timetable from file");
         return rng;
       } else {
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/empty-timetable.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
-        print("Generating empty timetable");
         return rng;
       }
     }

@@ -44,6 +44,9 @@ class TimeTableRange {
             ")");
       }
     }
+    
+    DateTime? realStartDate ;
+    DateTime? realEndDate;
 
     outer:
     for (dynamic entry in response.getPayloadData()) {
@@ -53,6 +56,14 @@ class TimeTableRange {
         if (day.getDate().day == current.day) {
           //Wenn ja, füge die Stunde in den Tag
           day.insertHour(entry);
+
+          if(current.millisecondsSinceEpoch < realStartDate!.millisecondsSinceEpoch) {
+            realStartDate = current;
+          }
+          if(current.millisecondsSinceEpoch > realEndDate!.millisecondsSinceEpoch) {
+            realEndDate = current;
+          }
+
           continue outer;
         }
       }
@@ -60,13 +71,27 @@ class TimeTableRange {
       TimeTableDay day = TimeTableDay(current);
       day.insertHour(entry);
       _days.add(day);
+
+      realStartDate ??= current;
+      realEndDate ??= current;
+
+      if(current.millisecondsSinceEpoch < realStartDate.millisecondsSinceEpoch) {
+            realStartDate = current;
+      }
+      if(current.millisecondsSinceEpoch > realEndDate.millisecondsSinceEpoch) {
+        realEndDate = current;
+      }
     }
 
-    var finalList = <TimeTableDay>[];
-    int day1 =
-        Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+    realStartDate ??= _startDate;
+    realEndDate ??= _endDate;
 
-    int diff = _endDate.difference(_startDate).inDays;
+    var finalList = <TimeTableDay>[];
+    //int day1 = Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+    int day1 = Utils().daysSinceEpoch(DateTime(realStartDate.year, realStartDate.month, realStartDate.day).millisecondsSinceEpoch);
+    
+    //int diff = _endDate.difference(_startDate).inDays;
+    int diff = _endDate.difference(realStartDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");
 
     main:
@@ -88,12 +113,15 @@ class TimeTableRange {
     _days.clear();
     _days.addAll(finalList);
 
-    //Setze die Stundenkoordinaten
+    //Setze die Stundenkoordinaten und das Datum endgültig
     for (int i = 0; i < _days.length; i++) {
       _days[i].xIndex = i;
+      _days[i].modifyDate(_startDate.add(Duration(days: i)));
+
       for (int j = 0; j < _days[i].getHours().length; j++) {
         _days[i].getHours()[j].xIndex = _days[i].xIndex;
         _days[i].getHours()[j].yIndex = j;
+        _days[i].getHours()[j].modifyDate(_days[i].getDate().year, _days[i].getDate().month, _days[i].getDate().day);
       }
     }
   }

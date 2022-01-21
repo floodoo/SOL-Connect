@@ -18,6 +18,7 @@ class RPCResponse {
   //Simuliert eine künstliche Abfrage mit einem bereits gegebenen http body
   static RPCResponse handleArtifical(dynamic httpResponseBody) {
     
+    //print(httpResponseBody + "\n\n\n_____________________");
     RPCResponse response = RPCResponse(null);
     
     dynamic json = jsonDecode(httpResponseBody);
@@ -51,8 +52,6 @@ class RPCResponse {
   }
 
   static RPCResponse handle(http.Response httpResponse) {
-    
-    print(httpResponse.body + "\n\n\n\n\n\n");
 
     //Erstmal den Statuscode checken
     if (httpResponse.statusCode != 200) {
