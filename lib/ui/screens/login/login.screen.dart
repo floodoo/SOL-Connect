@@ -63,120 +63,123 @@ class LoginScreen extends ConsumerWidget {
 
     checkAutoLogin();
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        color: theme.mode == ThemeMode.light ? theme.colors.primary : theme.colors.background,
-        child: ListView(
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: MediaQuery.of(context).size.height / 6),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: theme.colors.background,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black87,
-                      blurRadius: 7,
-                      offset: Offset(0, 0.8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
-                      child: Text(
-                        "Untis Login",
-                        style: TextStyle(fontSize: 30, color: theme.colors.textBackground),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          color: theme.mode == ThemeMode.light ? theme.colors.primary : theme.colors.background,
+          child: ListView(
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: MediaQuery.of(context).size.height / 6),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: theme.colors.background,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black87,
+                        blurRadius: 7,
+                        offset: Offset(0, 0.8),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                      child: Focus(
-                        onFocusChange: (value) {
-                          if (value == false) {
-                            ref.read(timeTableService).setUsername(usernameController.text);
-                          }
-                        },
-                        child: TextField(
-                          controller: usernameController,
-                          onChanged: (value) {
-                            ref.read(timeTableService).setUsername(value);
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                        child: Text(
+                          "Untis Login",
+                          style: TextStyle(fontSize: 30, color: theme.colors.textBackground),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
+                        child: Focus(
+                          onFocusChange: (value) {
+                            if (value == false) {
+                              ref.read(timeTableService).setUsername(usernameController.text);
+                            }
                           },
-                          autocorrect: false,
-                          decoration: const InputDecoration(
-                            hintText: "Benutzername",
-                            prefixIcon: Icon(Icons.person),
+                          child: TextField(
+                            controller: usernameController,
+                            onChanged: (value) {
+                              ref.read(timeTableService).setUsername(value);
+                            },
+                            autocorrect: false,
+                            decoration: const InputDecoration(
+                              hintText: "Benutzername",
+                              prefixIcon: Icon(Icons.person),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                      child: Focus(
-                        onFocusChange: (value) {
-                          if (value == false) {
-                            ref.read(timeTableService).setPassword(passwordController.text);
-                          }
-                        },
-                        child: TextField(
-                          controller: passwordController,
-                          onEditingComplete: () => _login(usernameController.text, passwordController.text),
-                          onChanged: (value) {
-                            ref.read(timeTableService).setPassword(value);
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
+                        child: Focus(
+                          onFocusChange: (value) {
+                            if (value == false) {
+                              ref.read(timeTableService).setPassword(passwordController.text);
+                            }
                           },
-                          obscureText: true,
-                          autocorrect: false,
-                          decoration: const InputDecoration(
-                            hintText: "Passwort",
-                            prefixIcon: Icon(Icons.lock),
+                          child: TextField(
+                            controller: passwordController,
+                            onEditingComplete: () => _login(usernameController.text, passwordController.text),
+                            onChanged: (value) {
+                              ref.read(timeTableService).setPassword(value);
+                            },
+                            obscureText: true,
+                            autocorrect: false,
+                            decoration: const InputDecoration(
+                              hintText: "Passwort",
+                              prefixIcon: Icon(Icons.lock),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    if (loginErrorMessage != null)
-                      Text(
-                        loginErrorMessage,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: InkWell(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: theme.colors.primary,
-                            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              (_isLoading)
-                                  ? CircularProgressIndicator(
-                                      color: theme.colors.icon,
-                                    )
-                                  : Text(
-                                      "Login",
-                                      style: TextStyle(
-                                        color: theme.colors.text,
-                                        fontSize: 20,
+                      if (loginErrorMessage != null)
+                        Text(
+                          loginErrorMessage,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: theme.colors.primary,
+                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                (_isLoading)
+                                    ? CircularProgressIndicator(
+                                        color: theme.colors.icon,
+                                      )
+                                    : Text(
+                                        "Login",
+                                        style: TextStyle(
+                                          color: theme.colors.text,
+                                          fontSize: 20,
+                                        ),
                                       ),
-                                    ),
-                            ],
+                              ],
+                            ),
                           ),
+                          onTap: () => _login(usernameController.text, passwordController.text),
                         ),
-                        onTap: () => _login(usernameController.text, passwordController.text),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
