@@ -31,6 +31,11 @@ class TimeTableService with ChangeNotifier {
 
   dynamic loginError;
 
+  Future<String> getServerAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("serverAddress") ?? "flo-dev.me";
+  }
+
   Future<void> login(String username, String password) async {
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
@@ -41,7 +46,7 @@ class TimeTableService with ChangeNotifier {
         isLoggedIn = true;
         await getTimeTable();
         try {
-          await loadCheckedPhaseFileForNextBlock();
+          await loadCheckedPhaseFileForNextBlock(serverAdress: await getServerAddress());
         } catch (e) {
           log.e(e);
         }
@@ -135,20 +140,20 @@ class TimeTableService with ChangeNotifier {
   }
 
   void loadUncheckedPhaseFileForNextBlock() async {
-    await loadPhaseFromFile();
+    await loadPhaseFromFile(serverAdress: await getServerAddress());
     await loadPhase();
   }
 
-  Future<String> loadCheckedPhaseFileForNextBlock([String? phaseFilePath]) async {
+  Future<String> loadCheckedPhaseFileForNextBlock({required String serverAdress, String? phaseFilePath}) async {
     isPhaseVerified = false;
 
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator("flo-dev.me", phaseFilePath);
+      validator = ExcelValidator(serverAdress, phaseFilePath);
     } else {
       phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
       if (phaseFilePath != "empty") {
-        validator = ExcelValidator("flo-dev.me", phaseFilePath);
+        validator = ExcelValidator(serverAdress, phaseFilePath);
       }
     }
 
@@ -187,14 +192,14 @@ class TimeTableService with ChangeNotifier {
     return "";
   }
 
-  Future<void> loadPhaseFromFile([String? phaseFilePath]) async {
+  Future<void> loadPhaseFromFile({required String serverAdress, String? phaseFilePath}) async {
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator("flo-dev.me", phaseFilePath);
+      validator = ExcelValidator(serverAdress, phaseFilePath);
     } else {
       phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
       if (phaseFilePath != "empty") {
-        validator = ExcelValidator("flo-dev.me", phaseFilePath);
+        validator = ExcelValidator(serverAdress, phaseFilePath);
       }
     }
   }
