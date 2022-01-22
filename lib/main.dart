@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:untis_phasierung/core/service/notification.service.dart';
 import 'package:untis_phasierung/core/service/services.dart';
