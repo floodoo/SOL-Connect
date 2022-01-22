@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:untis_phasierung/core/service/notification.service.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/settings.screen.dart';
 import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
@@ -8,8 +10,10 @@ import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
 
-void main() {
+Future<void> main() async {
   Logger.level = Level.debug;
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().init();
   runApp(
     const ProviderScope(
       child: MyApp(),

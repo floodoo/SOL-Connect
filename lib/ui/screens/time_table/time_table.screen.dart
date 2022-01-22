@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
+import 'package:untis_phasierung/core/service/notification.service.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_card.dart';
 import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
@@ -245,7 +247,13 @@ class TimeTableScreen extends ConsumerWidget {
             },
             icon: const Icon(Icons.today),
             tooltip: "Spring zur aktuellen Woche",
-          )
+          ),
+          IconButton(
+            onPressed: () {
+              NotificationService().sendAndoidNotification(title: "Test", body: "lol");
+            },
+            icon: const Icon(Icons.notification_add),
+          ),
         ],
       ),
       drawer: const CustomDrawer(),
