@@ -214,6 +214,8 @@ class TimeTableService with ChangeNotifier {
     isPhaseVerified = true;
     log.i("File verified!");
 
+    getTimeTable(weekCounter: 0);
+
     return "";
   }
 

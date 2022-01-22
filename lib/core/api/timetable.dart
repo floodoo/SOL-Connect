@@ -74,8 +74,9 @@ class TimeTableRange {
     realStartDate ??= _startDate;
 
     if(_boundFrame.getManager().userSession.isDemoSession()) {
-    int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
-    //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
+      
+      int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
+      //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
       for(TimeTableDay day in _days) {
         int weekdayIndex = Utils().daysSinceEpoch(day.getDate().millisecondsSinceEpoch) - realStartDateDays;
         day.modifyDate(_startDate.add(Duration(days: weekdayIndex)));

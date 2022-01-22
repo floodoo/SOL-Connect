@@ -67,11 +67,10 @@ class UserSession {
           "Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
     }
 
-    if (username == UserSession.demoAccountName && password == UserSession.demoAccountName) {
+    if (username == UserSession.demoAccountName) {
       _sessionValid = true;
       _un = UserSession.demoAccountName;
       _pwd = UserSession.demoAccountName;
-      print("LOGGING IN AS DEMO ACCOUNT!");
       return;
     }
 
@@ -160,6 +159,7 @@ class UserSession {
     _klasseId = -1;
     _type = -1;
     _bearerToken = "";
+    clearManagerCache();
     return response;
   }
 
