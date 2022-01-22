@@ -47,8 +47,6 @@ class TimeTableRange {
     for (dynamic entry in response.getPayloadData()) {
       DateTime current = Utils().convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
-      //Man kann schon sicher sagen, dass einträge vorhanden sind
-      _isEmpty = false;
 
       for (TimeTableDay day in _days) {
         if (day.getDate().day == current.day) {
@@ -68,18 +66,21 @@ class TimeTableRange {
 
       realStartDate ??= current;
       if(Utils().dayGreaterOrEqual(realStartDate, current)) {
-            realStartDate = current;
+        realStartDate = current;
       }
     }
     
     //Das "echte" Startdatum. Wie es in der timetable drin ist
     realStartDate ??= _startDate;
-    int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
 
+    if(_boundFrame.getManager().userSession.isDemoSession()) {
+    int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
     //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
-    for(TimeTableDay day in _days) {
-      int weekdayIndex = Utils().daysSinceEpoch(day.getDate().millisecondsSinceEpoch) - realStartDateDays;
-      day.modifyDate(_startDate.add(Duration(days: weekdayIndex)));
+      for(TimeTableDay day in _days) {
+        int weekdayIndex = Utils().daysSinceEpoch(day.getDate().millisecondsSinceEpoch) - realStartDateDays;
+        day.modifyDate(_startDate.add(Duration(days: weekdayIndex)));
+      }
+
     }
 
     var finalList = <TimeTableDay>[];
@@ -92,6 +93,7 @@ class TimeTableRange {
     for (int i = 0; i < diff; i++) {
       for (TimeTableDay d in _days) {
         if (d.daysSinceEpoch - day1 == i) {
+          _isEmpty = false;
           finalList.add(d);
           _days.remove(d);
           continue main;
