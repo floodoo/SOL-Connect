@@ -30,6 +30,7 @@ class LoginScreen extends ConsumerWidget {
 
     if (_isLoggedIn) {
       Future.delayed(Duration.zero, () => Navigator.pushReplacementNamed(context, TimeTableScreen.routeName));
+      ref.read(timeTableService).isLoggedIn = false;
     }
 
     if (_loginError != null) {
