@@ -215,8 +215,7 @@ class TimeTableService with ChangeNotifier {
           "Verifying block week phase merge " + blockWeek.getFrameStart().toString() 
           + " -> " + blockWeek.getFrameEnd().toString());
       
-     //blockWeek.getCurrentBlockWeek(0);
-
+      await blockWeek.getCurrentBlockWeek();
       await validator!.mergeExcelWithTimetable(await blockWeek.getWeekData());
     }
 

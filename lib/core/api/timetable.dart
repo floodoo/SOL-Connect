@@ -38,9 +38,6 @@ class TimeTableRange {
             ")");
       }
     }
-    
-    DateTime? realStartDate ;
-    DateTime? realEndDate;
 
     outer:
     for (dynamic entry in response.getPayloadData()) {
@@ -51,13 +48,6 @@ class TimeTableRange {
           //Wenn ja, füge die Stunde in den Tag
           day.insertHour(entry);
 
-          if(current.millisecondsSinceEpoch < realStartDate!.millisecondsSinceEpoch) {
-            realStartDate = current;
-          }
-          if(current.millisecondsSinceEpoch > realEndDate!.millisecondsSinceEpoch) {
-            realEndDate = current;
-          }
-
           continue outer;
         }
       }
@@ -65,27 +55,11 @@ class TimeTableRange {
       TimeTableDay day = TimeTableDay(current);
       day.insertHour(entry);
       _days.add(day);
-
-      realStartDate ??= current;
-      realEndDate ??= current;
-
-      if(current.millisecondsSinceEpoch < realStartDate.millisecondsSinceEpoch) {
-            realStartDate = current;
-      }
-      if(current.millisecondsSinceEpoch > realEndDate.millisecondsSinceEpoch) {
-        realEndDate = current;
-      }
     }
 
-    realStartDate ??= _startDate;
-    realEndDate ??= _endDate;
-
     var finalList = <TimeTableDay>[];
-    //int day1 = Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
-    int day1 = Utils().daysSinceEpoch(DateTime(realStartDate.year, realStartDate.month, realStartDate.day).millisecondsSinceEpoch);
-    
-    //int diff = _endDate.difference(_startDate).inDays;
-    int diff = _endDate.difference(realStartDate).inDays;
+    int day1 = Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+    int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");
 
     main:
