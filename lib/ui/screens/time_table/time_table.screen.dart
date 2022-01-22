@@ -249,9 +249,15 @@ class TimeTableScreen extends ConsumerWidget {
           ),
           IconButton(
             onPressed: () {
-              NotificationService().sendAndoidNotification(title: "Test", body: "lol");
+              NotificationService().scheduleAndroidNotification(title: "Test", body: "lol");
             },
             icon: const Icon(Icons.notification_add),
+          ),
+          IconButton(
+            onPressed: () {
+              NotificationService().cancelNotification();
+            },
+            icon: const Icon(Icons.delete),
           ),
         ],
       ),

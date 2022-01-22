@@ -1,4 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static final NotificationService _notificationService = NotificationService._internal();
@@ -28,6 +30,8 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
+
+    tz.initializeTimeZones();
   }
 
   void sendAndoidNotification({required String title, required String body}) async {
@@ -38,5 +42,21 @@ class NotificationService {
       platformChannelSpecifics,
       payload: 'data',
     );
+  }
+
+  Future<void> scheduleAndroidNotification({required String title, required String body}) async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      title,
+      body,
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  void cancelNotification() async {
+    await flutterLocalNotificationsPlugin.cancel(0);
   }
 }
