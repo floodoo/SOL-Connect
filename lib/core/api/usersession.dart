@@ -7,7 +7,7 @@ import 'package:untis_phasierung/core/api/models/profiledata.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
 import 'package:untis_phasierung/core/api/rpcresponse.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/api/timetable_frame.dart';
+import 'package:untis_phasierung/core/api/timetable_manager.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 
 class UserSession {
@@ -233,45 +233,8 @@ class UserSession {
   int getKlasseId() {
     return _klasseId;
   }
-
-  /*
-  @deprecated
-  Future<TimeTableRange> DEPRECATED_getRelativeTimeTableWeek(int relative) async {
-    DateTime from = getRelativeWeekStartDate(relative);
-    DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
-
-    if (isDemoSession()) {
-
-      if (relative == 1) {
-        await Future.delayed(const Duration(seconds: 1));
-        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable2.json');
-        TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
-        rng.relativeToCurrent = relative;
-        print(relative);
-        return rng;
-      } else if (relative == 0) {
-        await Future.delayed(const Duration(seconds: 1));
-        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable1.json');
-        TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
-        rng.relativeToCurrent = relative;
-        print(relative);
-        return rng;
-      } else {
-        await Future.delayed(const Duration(seconds: 1));
-        String timetabledata = await rootBundle.loadString('assets/demo/timetables/empty-timetable.json');
-        TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
-        rng.relativeToCurrent = relative;
-        print(relative);
-        return rng;
-      }
-    }
-
-    TimeTableRange rng = await getTimeTable(from, lastDayOfWeek);
-    rng.relativeToCurrent = relative;
-    return rng;
-  }*/
   
-  //TODO automate frame assignment
+  // TODO(philipp): automate frame assignment
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to, TimetableFrame frame) async {
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
 

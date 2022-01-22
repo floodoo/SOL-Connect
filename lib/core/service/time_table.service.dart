@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/api/timetable_frame.dart';
+import 'package:untis_phasierung/core/api/timetable_manager.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
@@ -72,39 +72,6 @@ class TimeTableService with ChangeNotifier {
 
       notifyListeners();
     } 
-
-
-    /*await session.createSession(username: username, password: password).then(
-      (value) async {
-        isLoggedIn = true;
-        await getTimeTable();
-        try {
-          await loadCheckedPhaseFileForNextBlock();
-        } catch (e) {
-          log.e(e);
-        }
-        UserSecureStorage.setPassword(password);
-        log.i("Successfully logged in");
-        notifyListeners();
-      },
-    ).catchError(
-      (error) {
-        log.e("Error logging in: $error");
-        log.d("Clearing user data");
-
-        UserSecureStorage.clearAll();
-
-        loginError = true;
-        isLoading = false;
-
-        this.username = "";
-        this.password = "";
-
-        loginError = error;
-
-        notifyListeners();
-      },
-    );*/
   }
 
   void logout() {

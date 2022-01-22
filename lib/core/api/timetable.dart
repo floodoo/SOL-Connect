@@ -5,7 +5,7 @@ import 'package:untis_phasierung/core/api/models/timetable.day.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
 import 'package:untis_phasierung/core/api/rpcresponse.dart';
-import 'package:untis_phasierung/core/api/timetable_frame.dart';
+import 'package:untis_phasierung/core/api/timetable_manager.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
@@ -74,7 +74,7 @@ class TimeTableRange {
     realStartDate ??= _startDate;
 
     if(_boundFrame.getManager().userSession.isDemoSession()) {
-      
+
       int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
       //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
       for(TimeTableDay day in _days) {
