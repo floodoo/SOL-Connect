@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/api/timetable_frame.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
@@ -188,29 +189,35 @@ class TimeTableService with ChangeNotifier {
     }
 
     log.d("Verifying phaseplan for next/current block ...");
-
-    session.clearTimetableCache();
+    
+    session.clearManagerCache();
+    //session.clearTimetableCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
     
-    DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
-    DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
+    //DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
+    //DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
 
-    log.d("Limiting Phaseplan to block " +
-        blockStart.toString() +
-        " -> " +
-        blockEnd.toString() +
-        " until a new file is loaded.");
+    //log.d("Limiting Phaseplan to block " +
+    //    blockStart.toString() +
+    //    " -> " +
+    //    blockEnd.toString() +
+    //    " until a new file is loaded.");
 
-    var nextBlockweeks = await timeTable!.getNextBlockWeeks(0);
+    var nextBlockweeks = await timeTable!.getBoundFrame().getManager().getNextBlockWeeks();
 
     // Check all next school weeks
-    validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
+    //validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
 
-    for (TimeTableRange blockWeek in nextBlockweeks) {
+
+    for (TimetableFrame blockWeek in nextBlockweeks) {
       log.d(
-          "Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
-      await validator!.mergeExcelWithTimetable(blockWeek);
+          "Verifying block week phase merge " + blockWeek.getFrameStart().toString() 
+          + " -> " + blockWeek.getFrameEnd().toString());
+      
+     //blockWeek.getCurrentBlockWeek(0);
+
+      await validator!.mergeExcelWithTimetable(await blockWeek.getWeekData());
     }
 
     isPhaseVerified = true;
@@ -218,7 +225,7 @@ class TimeTableService with ChangeNotifier {
 
     getTimeTable(weekCounter: weekCounter);
 
-    session.clearTimetableCache();
+    //session.clearTimetableCache();
     return "";
   }
 

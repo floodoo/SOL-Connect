@@ -1,6 +1,6 @@
 /*Author Philipp Gersch */
 
-import 'package:untis_phasierung/core/api/models/timetable.entity.dart';
+import '../../api/models/timetable.entity.dart';
 
 enum Codes {
   //untis given

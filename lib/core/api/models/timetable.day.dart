@@ -1,7 +1,7 @@
 /*Author Philipp Gersch */
 
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/api/models/utils.dart';
+import '../../api/models/timetable.hour.dart';
+import '../../api/models/utils.dart';
 
 class TimeTableDay {
   DateTime _date;

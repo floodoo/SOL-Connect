@@ -123,8 +123,10 @@ class ExcelValidator {
   ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
   ///* `CurrentPhaseplanOutOfRange`: Wenn die timetable Stunden hat die aber außerhalb des aktuellen Blockes sind.
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {
-    _validDateStart ??= await timetable.getNextBlockStartDate(0);
-    _validDateEnd ??= await timetable.getNextBlockEndDate(0);
+   
+    _validDateStart ??= await timetable.getBoundFrame().getManager().getNextBlockStart();
+    _validDateEnd ??= await timetable.getBoundFrame().getManager().getNextBlockEnd();
+    
     
     print("Checking timetable date for merge");
     if (timetable.isNonSchoolblockWeek()) {
@@ -149,7 +151,7 @@ class ExcelValidator {
     }
 
     if (_mapped.isNotEmpty) {
-      int currentWeek = await timetable.getCurrentBlockWeek(timetable.relativeToCurrent);
+      int currentWeek = await timetable.getBoundFrame().getCurrentBlockWeek();
 
       for (MappedSheet mapped in _mapped) {
         mapped.estimateWeek();
