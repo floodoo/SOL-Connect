@@ -1,7 +1,7 @@
 /*Author Philipp Gersch */
 
-import '../../api/models/timetable.hour.dart';
-import '../../api/models/utils.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+import 'package:untis_phasierung/core/api/models/utils.dart';
 
 class TimeTableDay {
   DateTime _date;
@@ -75,7 +75,6 @@ class TimeTableDay {
     String date = Utils().convertToUntisDate(_date);
     _formattedDay = date.substring(6);
     _formattedMonth = date.substring(4, 6);
-    print("Timetable date modified");
   }
 
   ///Ob der Tag an einem Wochenende oder in den Ferien liegt

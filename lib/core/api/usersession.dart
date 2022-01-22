@@ -1,15 +1,14 @@
 /*Author Philipp Gersch */
 
 import 'package:http/http.dart' as http;
-import '../api/models/news.dart';
-import '../api/models/profiledata.dart';
-import '../api/models/utils.dart';
-import '../api/rpcresponse.dart' as rh;
-import '../api/timetable.dart';
-import '../api/timetable_frame.dart';
-import '../exceptions.dart';
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:untis_phasierung/core/api/models/news.dart';
+import 'package:untis_phasierung/core/api/models/profiledata.dart';
+import 'package:untis_phasierung/core/api/models/utils.dart';
+import 'package:untis_phasierung/core/api/rpcresponse.dart';
+import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/api/timetable_frame.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 
 class UserSession {
   static const demoAccountName = "demo";
@@ -80,7 +79,7 @@ class UserSession {
       throw MissingCredentialsException("Bitte gib einen Benutzenamen und ein Passwort an");
     }
 
-    rh.RPCResponse response =
+    RPCResponse response =
         await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
 
     if (response.isHttpError()) {
@@ -151,8 +150,8 @@ class UserSession {
 
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
-  Future<rh.RPCResponse> logout() async {
-    rh.RPCResponse response = await _queryRPC("logout", {}, validateSession: false);
+  Future<RPCResponse> logout() async {
+    RPCResponse response = await _queryRPC("logout", {}, validateSession: false);
     _sessionValid = false;
     _sessionId = "";
     _un = "";
@@ -308,7 +307,7 @@ class UserSession {
     return "JSESSIONID=" + _sessionId + "; schoolname=" + _schoolBase64.replaceAll("=", "%3D");
   }
 
-  Future<rh.RPCResponse> _validateSession() async {
+  Future<RPCResponse> _validateSession() async {
     _sessionValid = false;
     return await createSession(username: _un, password: _pwd);
   }
@@ -336,16 +335,16 @@ class UserSession {
     return http.Client().get(Uri.parse(apiBaseUrl + url), headers: header);
   }
 
-  Future<rh.RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
+  Future<RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
     Object build = {"id": _appName, "method": method, "params": params, "jsonrpc": 2.0};
 
-    rh.RPCResponse orig = rh.RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
+    RPCResponse orig = RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
 
     if (validateSession && orig.getErrorCode() == -8520 && _sessionValid) {
-      rh.RPCResponse r = await _validateSession();
+      RPCResponse r = await _validateSession();
       if (!r.isError()) {
-        return rh.RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
+        return RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
             headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
       } else {
         return r;

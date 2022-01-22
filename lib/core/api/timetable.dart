@@ -1,13 +1,11 @@
 /*Author Philipp Gersch */
 
 
+import 'package:untis_phasierung/core/api/models/timetable.day.dart';
+import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
+import 'package:untis_phasierung/core/api/models/utils.dart';
+import 'package:untis_phasierung/core/api/rpcresponse.dart';
 import 'package:untis_phasierung/core/api/timetable_frame.dart';
-
-import '../api/models/timetable.day.dart';
-import '../api/models/timetable.hour.dart';
-import '../api/models/utils.dart';
-import '../api/rpcresponse.dart';
-import '../api/usersession.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {
