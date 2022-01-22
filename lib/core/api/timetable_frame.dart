@@ -3,9 +3,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/services.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
 import 'package:untis_phasierung/core/api/rpcresponse.dart';
-
-import '../api/timetable.dart';
-import '../api/usersession.dart';
+import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/api/usersession.dart';
 
 
 class TimetableManager {
@@ -53,7 +52,7 @@ class TimetableManager {
       
       //Suche erst ob er bereits ein generiertes Frame gibt
       for(TimetableFrame frame in frames) {
-        if(frame.getCurrentBlockWeek() == 0) {
+        if(await frame.getCurrentBlockWeek() == 0) {
           nextBlockStart = (await frame.getWeekData()).getStartDate();
           return nextBlockStart!;
         }
@@ -185,7 +184,6 @@ class TimetableFrame {
   final DateTime _frameStart;
   final DateTime _frameEnd;
   
-  bool _inBlock = false;
   int _blockIndex = -1;
   int _relativeToCurrentWeek = 0;
   
@@ -204,10 +202,6 @@ class TimetableFrame {
 
   DateTime getFrameEnd() {
     return _frameEnd;
-  }
-
-  bool isWeekInBlock() {
-    return _inBlock;
   }
 
   int getRelativeToCurrentWeek() {

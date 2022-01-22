@@ -127,8 +127,6 @@ class ExcelValidator {
     _validDateStart ??= await timetable.getBoundFrame().getManager().getNextBlockStart();
     _validDateEnd ??= await timetable.getBoundFrame().getManager().getNextBlockEnd();
     
-    
-    print("Checking timetable date for merge");
     if (timetable.isNonSchoolblockWeek()) {
       throw ExcelMergeNonSchoolBlockException("Diese Woche enthält keine Schulstunden");
     } else {

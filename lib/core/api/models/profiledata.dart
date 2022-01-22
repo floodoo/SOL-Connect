@@ -1,6 +1,6 @@
 /*Author Philipp Gersch */
 
-import '../../exceptions.dart';
+import 'package:untis_phasierung/core/exceptions.dart';
 
 class ProfileData {
   String _displayName = "";
