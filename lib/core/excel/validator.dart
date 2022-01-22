@@ -132,13 +132,13 @@ class ExcelValidator {
     } else {
       if (_validDateStart != null) {
 
-        if (timetable.getDays()[0].getDate().millisecondsSinceEpoch < _validDateStart!.millisecondsSinceEpoch) {
+        if (timetable.getBoundFrame().getFrameStart().millisecondsSinceEpoch < _validDateStart!.millisecondsSinceEpoch) {
           throw CurrentPhaseplanOutOfRange("Dieser Schulblock gehört nicht mehr zur Phasierung!");
         }
       }
 
       if (_validDateEnd != null) {
-        if (timetable.getDays()[0].getDate().millisecondsSinceEpoch >= _validDateEnd!.millisecondsSinceEpoch) {
+        if (timetable.getBoundFrame().getFrameStart().millisecondsSinceEpoch >= _validDateEnd!.millisecondsSinceEpoch) {
           throw CurrentPhaseplanOutOfRange("Dieser Schulblock gehört nicht mehr zur Phasierung!");
         }
       }
