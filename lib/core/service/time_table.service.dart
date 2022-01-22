@@ -129,7 +129,7 @@ class TimeTableService with ChangeNotifier {
       isSchool = false;
     }
 
-    loadPhase().onError((error, stackTrace) => log.e(error));
+    await loadPhaseForCurrentTimetable().onError((error, stackTrace) => log.e(error));
 
     notifyListeners();
   }
@@ -170,11 +170,6 @@ class TimeTableService with ChangeNotifier {
   void setPassword(String value) {
     password = value;
     notifyListeners();
-  }
-
-  void loadUncheckedPhaseFileForNextBlock() async {
-    await loadPhaseFromFile();
-    await loadPhase();
   }
 
   Future<String> loadCheckedPhaseFileForNextBlock([String? phaseFilePath]) async {
@@ -239,7 +234,7 @@ class TimeTableService with ChangeNotifier {
     }
   }
 
-  Future<void> loadPhase() async {
+  Future<void> loadPhaseForCurrentTimetable() async {
     isWeekInBlock = true;
 
     if (validator != null) {

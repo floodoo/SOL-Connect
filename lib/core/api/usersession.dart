@@ -246,17 +246,18 @@ class UserSession {
     DateTime from = getRelativeWeekStartDate(relative);
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
 
-    if (useCaching) {
-      TimeTableRange? cached = _getCachedTimetable(from, lastDayOfWeek);
-      if (cached != null) {
-        return cached;
-      }
-    }
-
     if (isDemoSession()) {
+
+      if (useCaching) {
+        TimeTableRange? cached = _getCachedTimetable(from, lastDayOfWeek);
+        if (cached != null) {
+          return cached;
+        }
+      }
+
       if (relative == 1) {
         await Future.delayed(const Duration(seconds: 1));
-        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable3.json');
+        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable2.json');
         TimeTableRange rng = TimeTableRange(from, lastDayOfWeek, this, rh.RPCResponse.handleArtifical(timetabledata));
         rng.relativeToCurrent = relative;
         _addTimetableToCache(rng);

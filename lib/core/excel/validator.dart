@@ -125,11 +125,13 @@ class ExcelValidator {
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {
     _validDateStart ??= await timetable.getNextBlockStartDate(0);
     _validDateEnd ??= await timetable.getNextBlockEndDate(0);
-
+    
+    print("Checking timetable date for merge");
     if (timetable.isNonSchoolblockWeek()) {
       throw ExcelMergeNonSchoolBlockException("Diese Woche enthält keine Schulstunden");
     } else {
       if (_validDateStart != null) {
+
         if (timetable.getDays()[0].getDate().millisecondsSinceEpoch < _validDateStart!.millisecondsSinceEpoch) {
           throw CurrentPhaseplanOutOfRange("Dieser Schulblock gehört nicht mehr zur Phasierung!");
         }
