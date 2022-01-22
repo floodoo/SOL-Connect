@@ -20,6 +20,8 @@ class TimeTableRange {
   final TimetableFrame _boundFrame;
   
   TimeTableRange(this._startDate, this._endDate, this._boundFrame, this.response) {
+
+
     //Konstruiere die Tage
     if (response.isError()) {
       if (response.getErrorCode() == -7004) {
@@ -38,15 +40,23 @@ class TimeTableRange {
             ")");
       }
     }
+    //Das "echte" Startdatum. Stundenpläne an sich haben ein festes Datum. Diese können jedoch durch _startDate beeinflusst werden.
+    DateTime? realStartDate;
 
     outer:
     for (dynamic entry in response.getPayloadData()) {
       DateTime current = Utils().convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
+      //Man kann schon sicher sagen, dass einträge vorhanden sind
+      _isEmpty = false;
+
       for (TimeTableDay day in _days) {
         if (day.getDate().day == current.day) {
           //Wenn ja, füge die Stunde in den Tag
           day.insertHour(entry);
+          if(Utils().dayGreaterOrEqual(realStartDate!, current)) {
+            realStartDate = current;
+          }
 
           continue outer;
         }
@@ -55,9 +65,25 @@ class TimeTableRange {
       TimeTableDay day = TimeTableDay(current);
       day.insertHour(entry);
       _days.add(day);
+
+      realStartDate ??= current;
+      if(Utils().dayGreaterOrEqual(realStartDate, current)) {
+            realStartDate = current;
+      }
+    }
+    
+    //Das "echte" Startdatum. Wie es in der timetable drin ist
+    realStartDate ??= _startDate;
+    int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
+
+    //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
+    for(TimeTableDay day in _days) {
+      int weekdayIndex = Utils().daysSinceEpoch(day.getDate().millisecondsSinceEpoch) - realStartDateDays;
+      day.modifyDate(_startDate.add(Duration(days: weekdayIndex)));
     }
 
     var finalList = <TimeTableDay>[];
+
     int day1 = Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
     int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");
@@ -66,7 +92,6 @@ class TimeTableRange {
     for (int i = 0; i < diff; i++) {
       for (TimeTableDay d in _days) {
         if (d.daysSinceEpoch - day1 == i) {
-          _isEmpty = false;
           finalList.add(d);
           _days.remove(d);
           continue main;
@@ -84,12 +109,10 @@ class TimeTableRange {
     //Setze die Stundenkoordinaten und das Datum endgültig
     for (int i = 0; i < _days.length; i++) {
       _days[i].xIndex = i;
-      _days[i].modifyDate(_startDate.add(Duration(days: i)));
 
       for (int j = 0; j < _days[i].getHours().length; j++) {
         _days[i].getHours()[j].xIndex = _days[i].xIndex;
         _days[i].getHours()[j].yIndex = j;
-        _days[i].getHours()[j].modifyDate(_days[i].getDate().year, _days[i].getDate().month, _days[i].getDate().day);
       }
     }
   }

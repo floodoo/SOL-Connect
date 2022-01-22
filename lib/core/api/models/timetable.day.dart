@@ -75,6 +75,8 @@ class TimeTableDay {
     String date = Utils().convertToUntisDate(_date);
     _formattedDay = date.substring(6);
     _formattedMonth = date.substring(4, 6);
+
+    daysSinceEpoch = Utils().daysSinceEpoch(_date.millisecondsSinceEpoch);
   }
 
   ///Ob der Tag an einem Wochenende oder in den Ferien liegt

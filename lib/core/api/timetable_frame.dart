@@ -224,7 +224,7 @@ class TimetableFrame {
         return TimeTableRange(getFrameStart(), getFrameEnd(), this, RPCResponse.handleArtifical(timetabledata));
 
       } else if (_relativeToCurrentWeek == 0) {
-        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable1.json'); 
+        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable3.json'); 
         return TimeTableRange(getFrameStart(), getFrameEnd(), this, RPCResponse.handleArtifical(timetabledata));
 
       } else {

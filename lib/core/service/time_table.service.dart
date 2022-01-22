@@ -191,12 +191,8 @@ class TimeTableService with ChangeNotifier {
     log.d("Verifying phaseplan for next/current block ...");
     
     session.clearManagerCache();
-    //session.clearTimetableCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
-    
-    //DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
-    //DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
 
     //log.d("Limiting Phaseplan to block " +
     //    blockStart.toString() +
@@ -205,10 +201,6 @@ class TimeTableService with ChangeNotifier {
     //    " until a new file is loaded.");
 
     var nextBlockweeks = await timeTable!.getBoundFrame().getManager().getNextBlockWeeks();
-
-    // Check all next school weeks
-    //validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
-
 
     for (TimetableFrame blockWeek in nextBlockweeks) {
       log.d(
@@ -222,9 +214,6 @@ class TimeTableService with ChangeNotifier {
     isPhaseVerified = true;
     log.i("File verified!");
 
-    getTimeTable(weekCounter: weekCounter);
-
-    //session.clearTimetableCache();
     return "";
   }
 
