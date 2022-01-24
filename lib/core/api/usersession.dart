@@ -14,7 +14,7 @@ import 'package:untis_phasierung/util/logger.util.dart';
 
 class UserSession {
   final Logger log = getLogger();
-  
+
   static const demoAccountName = "demo";
 
   String _appName = "adw8638ordfgq37qp98";
