@@ -155,6 +155,7 @@ class TimeTableService with ChangeNotifier {
     }
 
     if (validator == null) {
+      deletePhase();
       log.d("No phase file specified. Skipping phase loading ...");
       return "";
     }

@@ -1,6 +1,7 @@
 /*Author Philipp Gersch */
 
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'dart:convert';
 import 'package:untis_phasierung/core/api/models/news.dart';
 import 'package:untis_phasierung/core/api/models/profiledata.dart';
@@ -9,8 +10,11 @@ import 'package:untis_phasierung/core/api/rpcresponse.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/api/timetable_manager.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
+import 'package:untis_phasierung/util/logger.util.dart';
 
 class UserSession {
+  final Logger log = getLogger();
+  
   static const demoAccountName = "demo";
 
   String _appName = "adw8638ordfgq37qp98";
@@ -270,9 +274,10 @@ class UserSession {
     return "JSESSIONID=" + _sessionId + "; schoolname=" + _schoolBase64.replaceAll("=", "%3D");
   }
 
-  Future<RPCResponse> _validateSession() async {
+  Future _validateSession() async {
     _sessionValid = false;
-    return await createSession(username: _un, password: _pwd);
+    log.i("Re- validating session ...");
+    await createSession(username: _un, password: _pwd);
   }
 
   Future<http.Response> _queryURL(String url, {bool needsAuthorization = false}) async {
@@ -305,12 +310,12 @@ class UserSession {
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
 
     if (validateSession && orig.getErrorCode() == -8520 && _sessionValid) {
-      RPCResponse r = await _validateSession();
-      if (!r.isError()) {
+      await _validateSession();
+      if (_sessionValid) {
         return RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
             headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
       } else {
-        return r;
+        throw Exception("Failed to revalidate session. Please log out and in again manually");
       }
     } else {
       return orig;

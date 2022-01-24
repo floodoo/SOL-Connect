@@ -46,7 +46,6 @@ class RPCResponse {
       return response;
     }
 
-    //Die Antwort hat nicht den HTTP statuscode 200!
     return response;
   }
 
@@ -61,7 +60,6 @@ class RPCResponse {
 
     RPCResponse generated = handleArtifical(httpResponse.body);
     generated.originalResponse = httpResponse;
-    generated._errorCode = httpResponse.statusCode;
     return generated;
   }
 
