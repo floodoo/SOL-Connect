@@ -48,13 +48,6 @@ class TimetableManager {
     if (nextBlockStart != null) {
       return nextBlockStart!;
     } else {
-      //Suche erst ob er bereits ein generiertes Frame gibt
-      for (TimetableFrame frame in frames) {
-        if (await frame.getCurrentBlockWeek() == 0) {
-          nextBlockStart = (await frame.getWeekData()).getStartDate();
-          return nextBlockStart!;
-        }
-      }
 
       if (!(await getFrameRelativeToCurrent(0).getWeekData()).isNonSchoolblockWeek()) {
         //Aktuelle Woche ist eine Schulwoche. Suche in der Vergangenheit
@@ -150,7 +143,7 @@ class TimetableManager {
     frame._cachedWeekData = rng;
   }
 
-  TimetableFrame getFrameRelativeToCurrent(int relative) {
+  TimetableFrame getFrameRelativeToCurrent(int relative, {bool locked = false}) {
     DateTime from = _getRelativeWeekStartDate(relative);
     from = Utils().normalizeDate(from);
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
@@ -234,13 +227,13 @@ class TimetableFrame {
 
   ///Gibt den index zurück, in welcher Woche die Aktuelle range ist seitdem der neue Block gestartet ist.
   ///Schwere operation. Es wird empfolen diese Funktion nur aufzurufen wenn es wirklich sein muss
-  Future<int> getCurrentBlockWeek() async {
+  Future<int> getCurrentBlockWeek({bool concurrentSave = false}) async {
     if (_blockIndex >= 0) return _blockIndex;
 
     //MAXIMAL 5 Wochen zurück
     int steps = -1;
     for (int i = _relativeToCurrentWeek; i >= -5; i--, steps++) {
-      TimeTableRange week = await _mgr.getFrameRelativeToCurrent(i).getWeekData();
+      TimeTableRange week = await _mgr.getFrameRelativeToCurrent(i, locked: concurrentSave).getWeekData();
       if (week.isNonSchoolblockWeek()) {
         _blockIndex = steps;
         return _blockIndex;
