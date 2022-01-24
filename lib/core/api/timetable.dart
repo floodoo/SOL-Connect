@@ -1,6 +1,5 @@
 /*Author Philipp Gersch */
 
-
 import 'package:untis_phasierung/core/api/models/timetable.day.dart';
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
@@ -18,9 +17,9 @@ class TimeTableRange {
   bool _isEmpty = true;
 
   final TimetableFrame _boundFrame;
-  
-  TimeTableRange(this._startDate, this._endDate, this._boundFrame, this.response) {
 
+  TimeTableRange(this._startDate, this._endDate, this._boundFrame, this.response) {
+    // print(this.response.originalResponse!.body + "------");
 
     //Konstruiere die Tage
     if (response.isError()) {
@@ -52,7 +51,7 @@ class TimeTableRange {
         if (day.getDate().day == current.day) {
           //Wenn ja, füge die Stunde in den Tag
           day.insertHour(entry);
-          if(Utils().dayGreaterOrEqual(realStartDate!, current)) {
+          if (Utils().dayGreaterOrEqual(realStartDate!, current)) {
             realStartDate = current;
           }
 
@@ -65,28 +64,27 @@ class TimeTableRange {
       _days.add(day);
 
       realStartDate ??= current;
-      if(Utils().dayGreaterOrEqual(realStartDate, current)) {
+      if (Utils().dayGreaterOrEqual(realStartDate, current)) {
         realStartDate = current;
       }
     }
-    
+
     //Das "echte" Startdatum. Wie es in der timetable drin ist
     realStartDate ??= _startDate;
 
-    if(_boundFrame.getManager().userSession.isDemoSession()) {
-
+    if (_boundFrame.getManager().userSession.isDemoSession()) {
       int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
       //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
-      for(TimeTableDay day in _days) {
+      for (TimeTableDay day in _days) {
         int weekdayIndex = Utils().daysSinceEpoch(day.getDate().millisecondsSinceEpoch) - realStartDateDays;
         day.modifyDate(_startDate.add(Duration(days: weekdayIndex)));
       }
-
     }
 
     var finalList = <TimeTableDay>[];
 
-    int day1 = Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+    int day1 =
+        Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
     int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");
 

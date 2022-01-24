@@ -33,16 +33,14 @@ class TimeTableService with ChangeNotifier {
   dynamic loginError;
 
   Future<void> login(String username, String password) async {
-
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
 
     session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
-    
-    try { 
-      
+
+    try {
       await session.createSession(username: username, password: password);
-      
+
       isLoggedIn = true;
       await getTimeTable();
 
@@ -50,13 +48,13 @@ class TimeTableService with ChangeNotifier {
         await loadCheckedPhaseFileForNextBlock();
       } catch (e) {
         log.e(e);
+        deletePhase();
       }
 
       UserSecureStorage.setPassword(password);
       log.i("Successfully logged in");
       notifyListeners();
-
-    } catch(error) {
+    } catch (error) {
       log.e("Error logging in: $error");
       log.d("Clearing user data");
 
@@ -71,7 +69,7 @@ class TimeTableService with ChangeNotifier {
       loginError = error;
 
       notifyListeners();
-    } 
+    }
   }
 
   void logout() {
@@ -83,6 +81,7 @@ class TimeTableService with ChangeNotifier {
     loginError = null;
     password = "";
     session.logout();
+    deletePhase();
     notifyListeners();
     log.i("Logged out.");
   }
@@ -142,7 +141,7 @@ class TimeTableService with ChangeNotifier {
 
   Future<String> loadCheckedPhaseFileForNextBlock([String? phaseFilePath]) async {
     isPhaseVerified = false;
-    
+
     log.d("Loading phaseplan ...");
 
     if (phaseFilePath != null) {
@@ -155,25 +154,24 @@ class TimeTableService with ChangeNotifier {
       }
     }
 
+    if (validator == null) {
+      log.d("No phase file specified. Skipping phase loading ...");
+      return "";
+    }
+
     log.d("Verifying phaseplan for next/current block ...");
-    
+
     session.clearManagerCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
-
-    //log.d("Limiting Phaseplan to block " +
-    //    blockStart.toString() +
-    //    " -> " +
-    //    blockEnd.toString() +
-    //    " until a new file is loaded.");
-
     var nextBlockweeks = await timeTable!.getBoundFrame().getManager().getNextBlockWeeks();
 
     for (TimetableFrame blockWeek in nextBlockweeks) {
-      log.d(
-          "Verifying block week phase merge " + blockWeek.getFrameStart().toString() 
-          + " -> " + blockWeek.getFrameEnd().toString());
-      
+      log.d("Verifying block week phase merge " +
+          blockWeek.getFrameStart().toString() +
+          " -> " +
+          blockWeek.getFrameEnd().toString());
+
       await blockWeek.getCurrentBlockWeek();
       await validator!.mergeExcelWithTimetable(await blockWeek.getWeekData());
     }

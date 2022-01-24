@@ -118,7 +118,7 @@ class SettingsScreen extends ConsumerWidget {
                     await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(result.files.first.path!);
                   } on ExcelMergeFileNotVerified {
                     errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
-                  } on ExcelMergeTimetableNotMatchException catch(e) {
+                  } on ExcelMergeTimetableNotMatchException catch (e) {
                     errorMessage = e.toString();
                   } on ExcelConversionAlreadyActive {
                     errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";

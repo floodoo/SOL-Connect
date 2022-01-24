@@ -64,7 +64,7 @@ class ExcelValidator {
 
   //Speichere die Farben um beim mehrfachen aufrufen der mergeExcelWithTimetable() Funktion keinen unnötigen traffic zu erzeugen.
   CellColors _colorData = CellColors();
-  var _mapped = <MappedSheet>[];
+  final _collectedTimetables = <MappedSheet>[];
 
   ///Startdatum des Blocks
   ///Das gemappte Sheet ist automatisch nicht mehr gültig wenn:
@@ -106,6 +106,15 @@ class ExcelValidator {
     return _validDateEnd;
   }
 
+  void addTimetableToCollected(MappedSheet mapped) async {
+    for (MappedSheet sheets in _collectedTimetables) {
+      if (sheets.blockWeek == mapped.blockWeek) {
+        return;
+      }
+    }
+    _collectedTimetables.add(mapped);
+  }
+
   ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.
   ///Diese funktion kann mehrmals mit verschiedenen Stundenplänen aufgerufen werden.
   ///
@@ -123,16 +132,19 @@ class ExcelValidator {
   ///* `FailedToEstablishExcelServerConnection`: Wenn keine Verbindung zum Excel Server hergestellt werden konnte
   ///* `CurrentPhaseplanOutOfRange`: Wenn die timetable Stunden hat die aber außerhalb des aktuellen Blockes sind.
   Future<MergedTimeTable> mergeExcelWithTimetable(TimeTableRange timetable, {bool refresh = false}) async {
-   
+    if (refresh) {
+      _collectedTimetables.clear();
+    }
+
     _validDateStart ??= await timetable.getBoundFrame().getManager().getNextBlockStart();
     _validDateEnd ??= await timetable.getBoundFrame().getManager().getNextBlockEnd();
-    
+
     if (timetable.isNonSchoolblockWeek()) {
       throw ExcelMergeNonSchoolBlockException("Diese Woche enthält keine Schulstunden");
     } else {
       if (_validDateStart != null) {
-
-        if (timetable.getBoundFrame().getFrameStart().millisecondsSinceEpoch < _validDateStart!.millisecondsSinceEpoch) {
+        if (timetable.getBoundFrame().getFrameStart().millisecondsSinceEpoch <
+            _validDateStart!.millisecondsSinceEpoch) {
           throw CurrentPhaseplanOutOfRange("Dieser Schulblock gehört nicht mehr zur Phasierung!");
         }
       }
@@ -144,27 +156,29 @@ class ExcelValidator {
       }
     }
 
-    if (refresh || _mapped.isEmpty) {
-      _mapped = await _verifySheet(timetable);
-    }
+    //if (refresh || _mapped.isEmpty) {
+    List<MappedSheet> foundExcelTimetablesForGivenTimetable = await _verifySheet(timetable);
+    //}
 
-    if (_mapped.isNotEmpty) {
+    if (foundExcelTimetablesForGivenTimetable.isNotEmpty) {
       int currentWeek = await timetable.getBoundFrame().getCurrentBlockWeek();
 
-      for (MappedSheet mapped in _mapped) {
+      for (MappedSheet mapped in foundExcelTimetablesForGivenTimetable) {
         mapped.estimateWeek();
 
         if (currentWeek + 1 == mapped.blockWeek) {
           //+1 weil currentWeek nur der Index ist der bei 0 anfängt
 
           //Schließlich vergleiche und verifiziere diesen stundenplan mit dem gemappten Index
-          MappedSheet verified =
-              _searchRange(_mapped[currentWeek].sheet, timetable, startX: mapped.rawX, startY: mapped.rawY);
+          MappedSheet verified = _searchRange(mapped.sheet, timetable, startX: mapped.rawX, startY: mapped.rawY);
 
           if (verified.startX == mapped.startX &&
               verified.startY == mapped.startY &&
               verified.width == mapped.width &&
               verified.height == mapped.height) {
+            //Man kann sicher sagen dass dieser Stunenplan auf den gemappten passt
+            addTimetableToCollected(mapped);
+
             //Nicht super schön, aber fürs erste ok
             while (_colorData.isEmpty() || _colorData.failed) {
               await _loadColorData(forceReload: false);
@@ -270,6 +284,12 @@ class ExcelValidator {
 
   ///Das sheet konnte nicht verifiziert werden, wenn das gemappte sheet leer ist
   Future<List<MappedSheet>> _verifySheet(TimeTableRange range) async {
+    for (MappedSheet saved in _collectedTimetables) {
+      if ((await range.getBoundFrame().getCurrentBlockWeek() + 1) == saved.blockWeek) {
+        return [saved];
+      }
+    }
+
     //Alle Stundenpläne die in der Excel enthalten sind
     var mappedSheets = <MappedSheet>[];
 
@@ -339,7 +359,8 @@ class ExcelValidator {
         if (cellValueString.toLowerCase().contains(hour.getTeacher().name.toString().toLowerCase()) ||
             hour.getTeacher().name == "---" ||
             cellValueString == "null" ||
-            hour.getLessonCode() == Codes.empty) {
+            hour.getLessonCode() == Codes.empty ||
+            hour.getLessonCode() == Codes.cancelled) {
           MappedPhase phase = MappedPhase();
 
           phase._excelXIndex = excelX;

@@ -3,42 +3,6 @@
   "id": "untis-phasierung",
   "result": [
     {
-      "id": 1504322,
-      "date": 20220121,
-      "startTime": 945,
-      "endTime": 1030,
-      "kl": [
-        {
-          "id": 2323,
-          "name": "BS FI 21A",
-          "longname": "Fachinformatiker Industrie"
-        }
-      ],
-      "te": [
-        {
-          "id": 308,
-          "name": "CAG",
-          "longname": "Caglar"
-        }
-      ],
-      "su": [
-        {
-          "id": 58,
-          "name": "E",
-          "longname": "Englisch"
-        }
-      ],
-      "ro": [
-        {
-          "id": 392,
-          "name": "A2 12",
-          "longname": "Klassenraum BS FI"
-        }
-      ],
-      "lsnumber": 410700,
-      "activityType": "Unterricht"
-    },
-    {
       "id": 1504327,
       "date": 20220121,
       "startTime": 1030,
@@ -53,8 +17,8 @@
       "te": [
         {
           "id": 308,
-          "name": "CAG",
-          "longname": "Caglar"
+          "name": "KAG",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -89,8 +53,8 @@
       "te": [
         {
           "id": 308,
-          "name": "CAG",
-          "longname": "Caglar"
+          "name": "KAG",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -125,8 +89,8 @@
       "te": [
         {
           "id": 308,
-          "name": "CAG",
-          "longname": "Caglar"
+          "name": "KAG",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -161,8 +125,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -197,8 +161,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -233,8 +197,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -269,8 +233,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -305,8 +269,8 @@
       "te": [
         {
           "id": 214,
-          "name": "FUE",
-          "longname": "F\u00fchrich-Albert",
+          "name": "LPT",
+          "longname": "Lehrername",
           "externalkey": "10001068"
         }
       ],
@@ -342,8 +306,8 @@
       "te": [
         {
           "id": 214,
-          "name": "FUE",
-          "longname": "F\u00fchrich-Albert",
+          "name": "LPT",
+          "longname": "Lehrername",
           "externalkey": "10001068"
         }
       ],
@@ -379,8 +343,8 @@
       "te": [
         {
           "id": 214,
-          "name": "FUE",
-          "longname": "F\u00fchrich-Albert",
+          "name": "LPT",
+          "longname": "Lehrername",
           "externalkey": "10001068"
         }
       ],
@@ -416,8 +380,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -452,8 +416,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -489,8 +453,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -526,8 +490,8 @@
       "te": [
         {
           "id": 474,
-          "name": "RUF",
-          "longname": "Ruf"
+          "name": "ETZ",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -548,78 +512,6 @@
       "activityType": "Unterricht"
     },
     {
-      "id": 1862485,
-      "date": 20220117,
-      "startTime": 800,
-      "endTime": 845,
-      "kl": [
-        {
-          "id": 2323,
-          "name": "BS FI 21A",
-          "longname": "Fachinformatiker Industrie"
-        }
-      ],
-      "te": [
-        {
-          "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
-        }
-      ],
-      "su": [
-        {
-          "id": 615,
-          "name": "BBU_Inf",
-          "longname": "Fachtheorie Informatik"
-        }
-      ],
-      "ro": [
-        {
-          "id": 392,
-          "name": "A2 12",
-          "longname": "Klassenraum BS FI"
-        }
-      ],
-      "lsnumber": 411000,
-      "activityType": "Unterricht"
-    },
-    {
-      "id": 1862490,
-      "date": 20220117,
-      "startTime": 845,
-      "endTime": 930,
-      "kl": [
-        {
-          "id": 2323,
-          "name": "BS FI 21A",
-          "longname": "Fachinformatiker Industrie"
-        }
-      ],
-      "te": [
-        {
-          "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
-        }
-      ],
-      "su": [
-        {
-          "id": 615,
-          "name": "BBU_Inf",
-          "longname": "Fachtheorie Informatik"
-        }
-      ],
-      "ro": [
-        {
-          "id": 392,
-          "name": "A2 12",
-          "longname": "Klassenraum BS FI"
-        }
-      ],
-      "lsnumber": 411000,
-      "activityType": "Unterricht"
-    },
-    {
       "id": 1862495,
       "date": 20220117,
       "startTime": 945,
@@ -634,8 +526,8 @@
       "te": [
         {
           "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
+          "name": "DOE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -670,8 +562,8 @@
       "te": [
         {
           "id": 224,
-          "name": "HEY",
-          "longname": "Heyeckhaus",
+          "name": "WAW",
+          "longname": "Lehrername",
           "externalkey": "10001099"
         }
       ],
@@ -707,8 +599,8 @@
       "te": [
         {
           "id": 203,
-          "name": "DEC",
-          "longname": "Decker",
+          "name": "GrL",
+          "longname": "Lehrername",
           "externalkey": "10001107"
         }
       ],
@@ -744,8 +636,8 @@
       "te": [
         {
           "id": 203,
-          "name": "DEC",
-          "longname": "Decker",
+          "name": "GrL",
+          "longname": "Lehrername",
           "externalkey": "10001107"
         }
       ],
@@ -781,8 +673,8 @@
       "te": [
         {
           "id": 224,
-          "name": "HEY",
-          "longname": "Heyeckhaus",
+          "name": "WAW",
+          "longname": "Lehrername",
           "externalkey": "10001099"
         }
       ],
@@ -818,8 +710,8 @@
       "te": [
         {
           "id": 224,
-          "name": "HEY",
-          "longname": "Heyeckhaus",
+          "name": "WAW",
+          "longname": "Lehrername",
           "externalkey": "10001099"
         }
       ],
@@ -855,8 +747,8 @@
       "te": [
         {
           "id": 317,
-          "name": "SCADI",
-          "longname": "Sch\u00e4fer"
+          "name": "SDI",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -891,8 +783,8 @@
       "te": [
         {
           "id": 317,
-          "name": "SCADI",
-          "longname": "Sch\u00e4fer"
+          "name": "SDI",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -927,8 +819,8 @@
       "te": [
         {
           "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
+          "name": "DOE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -963,8 +855,8 @@
       "te": [
         {
           "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
+          "name": "DOE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -999,8 +891,8 @@
       "te": [
         {
           "id": 224,
-          "name": "HEY",
-          "longname": "Heyeckhaus",
+          "name": "WAW",
+          "longname": "Lehrername",
           "externalkey": "10001099"
         }
       ],
@@ -1036,8 +928,8 @@
       "te": [
         {
           "id": 224,
-          "name": "HEY",
-          "longname": "Heyeckhaus",
+          "name": "WAW",
+          "longname": "Lehrername",
           "externalkey": "10001099"
         }
       ],
@@ -1073,8 +965,8 @@
       "te": [
         {
           "id": 224,
-          "name": "HEY",
-          "longname": "Heyeckhaus",
+          "name": "WAW",
+          "longname": "Lehrername",
           "externalkey": "10001099"
         }
       ],
@@ -1110,8 +1002,8 @@
       "te": [
         {
           "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
+          "name": "DOE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1146,8 +1038,8 @@
       "te": [
         {
           "id": 448,
-          "name": "BEI",
-          "longname": "Beicht"
+          "name": "DLE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1182,8 +1074,8 @@
       "te": [
         {
           "id": 448,
-          "name": "BEI",
-          "longname": "Beicht"
+          "name": "DLE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1218,8 +1110,8 @@
       "te": [
         {
           "id": 317,
-          "name": "SCADI",
-          "longname": "Sch\u00e4fer"
+          "name": "SDI",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1254,8 +1146,8 @@
       "te": [
         {
           "id": 203,
-          "name": "DEC",
-          "longname": "Decker",
+          "name": "GrL",
+          "longname": "Lehrername",
           "externalkey": "10001107"
         }
       ],
@@ -1291,8 +1183,8 @@
       "te": [
         {
           "id": 203,
-          "name": "DEC",
-          "longname": "Decker",
+          "name": "GrL",
+          "longname": "Lehrername",
           "externalkey": "10001107"
         }
       ],
@@ -1328,8 +1220,8 @@
       "te": [
         {
           "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
+          "name": "DOE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1364,8 +1256,8 @@
       "te": [
         {
           "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
+          "name": "DOE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1400,8 +1292,8 @@
       "te": [
         {
           "id": 27,
-          "name": "DON",
-          "longname": "Donnarumma"
+          "name": "DOE",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1436,8 +1328,8 @@
       "te": [
         {
           "id": 224,
-          "name": "HEY",
-          "longname": "Heyeckhaus",
+          "name": "WAW",
+          "longname": "Lehrername",
           "externalkey": "10001099"
         }
       ],
@@ -1473,8 +1365,8 @@
       "te": [
         {
           "id": 322,
-          "name": "GAU",
-          "longname": "Gau"
+          "name": "MUS",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1509,8 +1401,8 @@
       "te": [
         {
           "id": 322,
-          "name": "GAU",
-          "longname": "Gau"
+          "name": "MUS",
+          "longname": "Lehrername"
         }
       ],
       "su": [
@@ -1545,7 +1437,7 @@
       "te": [
         {
           "id": 333,
-          "name": "UHL",
+          "name": "PPT",
           "longname": "Uhl"
         }
       ],
@@ -1581,7 +1473,7 @@
       "te": [
         {
           "id": 333,
-          "name": "UHL",
+          "name": "PPT",
           "longname": "Uhl"
         }
       ],

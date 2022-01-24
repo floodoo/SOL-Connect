@@ -22,7 +22,6 @@ class TimeTableDay {
   int xIndex = -1;
 
   TimeTableDay(this._date) {
-
     switch (_date.weekday) {
       case 1:
         _dayName = "Montag";

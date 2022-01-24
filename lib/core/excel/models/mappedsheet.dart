@@ -15,6 +15,7 @@ class MappedSheet {
 
   bool _valid = false;
   final _hours = <MappedPhase>[];
+  //Die Block Woche wie sie in der Excel über der Tabelle steht
   int blockWeek = -1;
 
   MappedSheet(this.sheet);

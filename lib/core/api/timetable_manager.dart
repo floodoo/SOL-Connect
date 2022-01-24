@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:flutter/services.dart' show rootBundle;
@@ -8,9 +7,7 @@ import 'package:untis_phasierung/core/api/rpcresponse.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 
-
 class TimetableManager {
-
   DateTime? nextBlockStart;
   DateTime? nextBlockEnd;
 
@@ -20,7 +17,7 @@ class TimetableManager {
   TimetableManager(this.userSession);
 
   void clearFrameCache() {
-    for(TimetableFrame frame in frames) {
+    for (TimetableFrame frame in frames) {
       frame._cachedWeekData = null;
     }
   }
@@ -34,10 +31,10 @@ class TimetableManager {
 
     var blockWeeks = <TimetableFrame>[];
 
-    for(TimetableFrame frame in frames) {
-      if(frame._frameStart.millisecondsSinceEpoch >= nextBlockStart!.millisecondsSinceEpoch
-        && frame._frameEnd.millisecondsSinceEpoch <= nextBlockEnd!.millisecondsSinceEpoch) {
-          blockWeeks.add(frame);
+    for (TimetableFrame frame in frames) {
+      if (frame._frameStart.millisecondsSinceEpoch >= nextBlockStart!.millisecondsSinceEpoch &&
+          frame._frameEnd.millisecondsSinceEpoch <= nextBlockEnd!.millisecondsSinceEpoch) {
+        blockWeeks.add(frame);
       }
     }
 
@@ -48,32 +45,32 @@ class TimetableManager {
 
   //Der Blockstart des aktuellen Datums
   Future<DateTime> getNextBlockStart() async {
-    if(nextBlockStart != null) {
+    if (nextBlockStart != null) {
       return nextBlockStart!;
     } else {
-      
       //Suche erst ob er bereits ein generiertes Frame gibt
-      for(TimetableFrame frame in frames) {
-        if(await frame.getCurrentBlockWeek() == 0) {
+      for (TimetableFrame frame in frames) {
+        if (await frame.getCurrentBlockWeek() == 0) {
           nextBlockStart = (await frame.getWeekData()).getStartDate();
           return nextBlockStart!;
         }
       }
 
-      if(!(await getFrameRelativeToCurrent(0).getWeekData()).isNonSchoolblockWeek()) { 
+      if (!(await getFrameRelativeToCurrent(0).getWeekData()).isNonSchoolblockWeek()) {
         //Aktuelle Woche ist eine Schulwoche. Suche in der Vergangenheit
-        for(int i = 0; i >= -5; i--) {
+        for (int i = 0; i >= -5; i--) {
           TimetableFrame frame = getFrameRelativeToCurrent(i);
-          if((await frame.getWeekData()).isNonSchoolblockWeek()) {
-            nextBlockStart = frame._frameEnd; 
+          if ((await frame.getWeekData()).isNonSchoolblockWeek()) {
+            nextBlockStart = frame._frameEnd;
             return nextBlockStart!;
           }
         }
-      } else { //Aktuelle Woche ist keine Schulwoche. Suche in der Zukunft
-        for(int i = 0; i < 5; i++) {
+      } else {
+        //Aktuelle Woche ist keine Schulwoche. Suche in der Zukunft
+        for (int i = 0; i < 5; i++) {
           TimetableFrame frame = getFrameRelativeToCurrent(i);
-          if(!(await frame.getWeekData()).isNonSchoolblockWeek()) {
-            nextBlockStart = frame._frameStart; 
+          if (!(await frame.getWeekData()).isNonSchoolblockWeek()) {
+            nextBlockStart = frame._frameStart;
             return nextBlockStart!;
           }
         }
@@ -82,31 +79,31 @@ class TimetableManager {
     throw Exception("Kann Block start nicht feststellen");
   }
 
- Future<DateTime> getNextBlockEnd() async {
-    if(nextBlockEnd != null) {
+  Future<DateTime> getNextBlockEnd() async {
+    if (nextBlockEnd != null) {
       return nextBlockEnd!;
     } else {
       //Hier wird nur in der zukunft gesucht.
 
       //Aktuelle Woche ist eine Schulwoche. Suche bis eine nicht Schulwoche kommt
-      if(!(await getFrameRelativeToCurrent(0).getWeekData()).isNonSchoolblockWeek()) {
-        for(int i = 0; i < 5; i++) {
+      if (!(await getFrameRelativeToCurrent(0).getWeekData()).isNonSchoolblockWeek()) {
+        for (int i = 0; i < 5; i++) {
           TimetableFrame frame = getFrameRelativeToCurrent(i);
-          if((await frame.getWeekData()).isNonSchoolblockWeek()) {
-            nextBlockEnd = frame._frameStart; 
+          if ((await frame.getWeekData()).isNonSchoolblockWeek()) {
+            nextBlockEnd = frame._frameStart;
             return nextBlockEnd!;
           }
         }
       } else {
         //Aktuelle Woche ist keine Schulwoche. Suche bis "wieder" keine Schulwoche kommt nachdem schulwochen gefunden wurden
         bool weekFound = false;
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
           TimetableFrame frame = getFrameRelativeToCurrent(i);
-          if(!(await frame.getWeekData()).isNonSchoolblockWeek()) {
+          if (!(await frame.getWeekData()).isNonSchoolblockWeek()) {
             weekFound = true;
           }
-          if((await frame.getWeekData()).isNonSchoolblockWeek() && weekFound){
-            nextBlockEnd = frame._frameStart; 
+          if ((await frame.getWeekData()).isNonSchoolblockWeek() && weekFound) {
+            nextBlockEnd = frame._frameStart;
             return nextBlockEnd!;
           }
         }
@@ -128,15 +125,14 @@ class TimetableManager {
     }
     return from;
   }
-  
+
   TimetableFrame? _getCachedFrame(DateTime from, DateTime to) {
-    for(TimetableFrame frame in frames) {
-      if(Utils().dayMatch(frame._frameStart, from)
-        && Utils().dayMatch(frame._frameEnd, to)) {
-          return frame;
+    for (TimetableFrame frame in frames) {
+      if (Utils().dayMatch(frame._frameStart, from) && Utils().dayMatch(frame._frameEnd, to)) {
+        return frame;
       }
     }
-  } 
+  }
 
   // TODO(philipp): Fertig machen
   /*TimetableFrame getFramefromRange(DateTime startDate, DateTime endDate) {
@@ -155,7 +151,6 @@ class TimetableManager {
   }
 
   TimetableFrame getFrameRelativeToCurrent(int relative) {
-
     DateTime from = _getRelativeWeekStartDate(relative);
     from = Utils().normalizeDate(from);
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
@@ -163,12 +158,10 @@ class TimetableManager {
 
     //Checke ob der Frame schon existiert
     TimetableFrame? cached = _getCachedFrame(from, lastDayOfWeek);
-    if(cached == null) {
-
+    if (cached == null) {
       TimetableFrame newFrame = TimetableFrame(from, lastDayOfWeek, relative, this, userSession);
       frames.add(newFrame);
       return newFrame;
-
     } else {
       return cached;
     }
@@ -177,18 +170,17 @@ class TimetableManager {
 
 ///Ein timetable frame ist immer im cache und beinhaltet Persistente Informationen die
 ///sich über eine Instanz nicht verändern.
-///Dazu zählen: 
+///Dazu zählen:
 ///* Block Start - End Informationen
 ///* Wochen Start - und End Informationen
 ///* Index der Woche im aktuellen Block
 class TimetableFrame {
-
   final DateTime _frameStart;
   final DateTime _frameEnd;
-  
+
   int _blockIndex = -1;
   int _relativeToCurrentWeek = 0;
-  
+
   final TimetableManager _mgr;
   final UserSession _activeSession;
 
@@ -215,24 +207,22 @@ class TimetableFrame {
   }
 
   Future<TimeTableRange> getWeekData({bool reload = false}) async {
-    if(!reload && _cachedWeekData != null) {
+    if (!reload && _cachedWeekData != null) {
       return _cachedWeekData!;
     }
 
-    if(_activeSession.isDemoSession()) {
+    if (_activeSession.isDemoSession()) {
       await Future.delayed(Duration(milliseconds: Random().nextInt(300) + 200));
-      
+
       if (_relativeToCurrentWeek == 1) {
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable1.json');
         return TimeTableRange(getFrameStart(), getFrameEnd(), this, RPCResponse.handleArtifical(timetabledata));
-
       } else if (_relativeToCurrentWeek == 0) {
-        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable2.json'); 
+        String timetabledata = await rootBundle.loadString('assets/demo/timetables/timetable2.json');
         return TimeTableRange(getFrameStart(), getFrameEnd(), this, RPCResponse.handleArtifical(timetabledata));
-
       } else {
         String timetabledata = await rootBundle.loadString('assets/demo/timetables/empty-timetable.json');
-        return TimeTableRange(getFrameStart(), getFrameEnd(), this, RPCResponse.handleArtifical(timetabledata)); 
+        return TimeTableRange(getFrameStart(), getFrameEnd(), this, RPCResponse.handleArtifical(timetabledata));
       }
     }
 

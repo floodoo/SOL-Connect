@@ -233,7 +233,7 @@ class UserSession {
   int getKlasseId() {
     return _klasseId;
   }
-  
+
   // TODO(philipp): automate frame assignment
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to, TimetableFrame frame) async {
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
@@ -318,7 +318,7 @@ class UserSession {
   }
 
   void clearManagerCache() {
-    if(!isDemoSession()) {
+    if (!isDemoSession()) {
       getTimetableManager().clearFrameCache();
     }
   }

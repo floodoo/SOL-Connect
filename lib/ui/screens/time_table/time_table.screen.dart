@@ -20,6 +20,7 @@ class TimeTableScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     final _timeTableService = ref.read(timeTableService);
+    final _isDebugTimetable = ref.read(timeTableService).session.isDemoSession();
 
     GlobalKey previewContainer = GlobalKey();
 
@@ -214,7 +215,19 @@ class TimeTableScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Stundenplan", style: TextStyle(color: theme.colors.text)),
+        title: _isDebugTimetable
+            ? RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(text: "Stundenplan    ", style: TextStyle(fontSize: 19)),
+                    WidgetSpan(
+                      child: Icon(Icons.warning, size: 19, color: Colors.orange.shade600),
+                    ),
+                    TextSpan(text: " Debug Session", style: TextStyle(color: Colors.orange.shade600, fontSize: 19)),
+                  ],
+                ),
+              )
+            : Text("Stundenplan", style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
         // TODO(floodoo): Repair share button
