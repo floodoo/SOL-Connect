@@ -48,7 +48,6 @@ class TimetableManager {
     if (nextBlockStart != null) {
       return nextBlockStart!;
     } else {
-
       if (!(await getFrameRelativeToCurrent(0).getWeekData()).isNonSchoolblockWeek()) {
         //Aktuelle Woche ist eine Schulwoche. Suche in der Vergangenheit
         for (int i = 0; i >= -5; i--) {
