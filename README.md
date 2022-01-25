@@ -19,17 +19,13 @@ Zum Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
 ### Stundenplan mit und ohne Phasierung
 <p float="left">
   <img width="300" alt="Stundenplan ohne Phasierung" src="https://user-images.githubusercontent.com/59688267/150957237-b26a4592-5691-46ec-ac3f-8ad8a88ca7a6.png">
-  <img width="300" alt="Bildschirmfoto 2022-01-25 um 11 13 13" src="https://user-images.githubusercontent.com/59688267/150957414-47dbcb0e-f260-4c36-8df0-0c15a7ec722f.png">
+  <img width="300" alt="Stundenplan mit Phasierung" src="https://user-images.githubusercontent.com/59688267/150957414-47dbcb0e-f260-4c36-8df0-0c15a7ec722f.png">
 </p>
 
-### Stundendetails
+### Stundendetails und Einstellungen
 <p float="left">
-  <img width="300" alt="Bildschirmfoto 2022-01-25 um 11 17 00" src="https://user-images.githubusercontent.com/59688267/150958109-a3a4f242-ea3c-43fd-913e-86ef3eed4cd7.png">
-</p>
-
-### Einstellungen
-<p float="left">
-  <img width="300" alt="Bildschirmfoto 2022-01-25 um 11 15 37" src="https://user-images.githubusercontent.com/59688267/150957844-85e0f5dd-527b-4021-944c-9e20e091dea0.png">
+  <img width="300" alt="Stundendetails" src="https://user-images.githubusercontent.com/59688267/150958109-a3a4f242-ea3c-43fd-913e-86ef3eed4cd7.png">
+  <img width="300" alt="Einstellungen" src="https://user-images.githubusercontent.com/59688267/150957844-85e0f5dd-527b-4021-944c-9e20e091dea0.png">
 </p>
 
 ## Weitere Projekte:
