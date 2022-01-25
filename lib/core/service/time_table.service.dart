@@ -40,6 +40,7 @@ class TimeTableService with ChangeNotifier {
   Future<void> login(String username, String password) async {
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
+    session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
 
     try {
       await session.createSession(username: username, password: password);
@@ -48,7 +49,7 @@ class TimeTableService with ChangeNotifier {
       await getTimeTable();
 
       try {
-        await loadCheckedPhaseFileForNextBlock();
+        await loadCheckedPhaseFileForNextBlock(serverAdress: "flo-dev.me");
       } catch (e) {
         log.e(e);
         deletePhase();
@@ -140,11 +141,6 @@ class TimeTableService with ChangeNotifier {
   void setPassword(String value) {
     password = value;
     notifyListeners();
-  }
-
-  void loadUncheckedPhaseFileForNextBlock() async {
-    await loadPhaseFromFile(serverAdress: await getServerAddress());
-    await loadPhase();
   }
 
   Future<String> loadCheckedPhaseFileForNextBlock({required String serverAdress, String? phaseFilePath}) async {

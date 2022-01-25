@@ -94,7 +94,7 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () async {
                   if (phaseLoaded) {
                     ref.read(timeTableService).deletePhase();
-                    
+
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
                       _createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
