@@ -58,9 +58,8 @@ class TimeTableScreen extends ConsumerWidget {
       List<Widget> timeTableList = [];
       int timeColumnCounter = 0;
       int schoolDayCounter = 0;
-      List hourList = [6, 12, 18, 24, 30, 36, 42, 48];
 
-      for (int i = 6; i < 54; i++) {
+      for (int i = 6; i < 6 * _timeTable.schoolDayLength + 6; i++) {
         // don't calculate first row
         if (i > 7) {
           //reset counter for the first left column
@@ -71,12 +70,12 @@ class TimeTableScreen extends ConsumerWidget {
           }
         }
 
-        if (hourList.contains(i)) {
+        if (i % 6 == 0) {
           timeColumnCounter++;
         }
 
         // left column with hours
-        if (hourList.contains(i)) {
+        if (i % 6 == 0) {
           timeTableList.add(
             CustomTimeTableHourCard(
               timeTableHour: _timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
@@ -159,7 +158,7 @@ class TimeTableScreen extends ConsumerWidget {
           int counter = -1;
           String currentTeacher = current.getTeacher().name;
 
-          for (int i = 0; i < 8; i++) {
+          for (int i = 0; i < _timeTable.schoolDayLength; i++) {
             if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name == currentTeacher &&
                 connectedToCurrent(i) &&
                 _timeTable.getDays()[schoolDayCounter].getHours()[i].getLessonCode() != Codes.irregular) {

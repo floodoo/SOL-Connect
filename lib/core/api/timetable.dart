@@ -17,6 +17,7 @@ class TimeTableRange {
   bool _isEmpty = true;
 
   final TimetableFrame _boundFrame;
+  int _schoolhoursLength = TimeTableDay.minHoursPerDay;
 
   TimeTableRange(this._startDate, this._endDate, this._boundFrame, this.response) {
     // print(this.response.originalResponse!.body + "------");
@@ -27,7 +28,7 @@ class TimeTableRange {
         //"no allowed date"
         //erzeuge eine leere Tabelle
         for (int i = 0; i < _endDate.difference(_startDate).inDays; i++) {
-          TimeTableDay day = TimeTableDay(_startDate.add(Duration(days: i)));
+          TimeTableDay day = TimeTableDay(_startDate.add(Duration(days: i)), this);
           _days.add(day);
         }
         return;
@@ -59,7 +60,7 @@ class TimeTableRange {
         }
       }
       //Ansonsten erstelle einen neuen Tag mit der Stunde!
-      TimeTableDay day = TimeTableDay(current);
+      TimeTableDay day = TimeTableDay(current, this);
       day.insertHour(entry);
       _days.add(day);
 
@@ -91,6 +92,10 @@ class TimeTableRange {
     main:
     for (int i = 0; i < diff; i++) {
       for (TimeTableDay d in _days) {
+        if (d.getHours().length > _schoolhoursLength) {
+          _schoolhoursLength = d.getHours().length;
+        }
+
         if (d.daysSinceEpoch - day1 == i) {
           _isEmpty = false;
           finalList.add(d);
@@ -99,7 +104,7 @@ class TimeTableRange {
         }
       }
       //Nicht gefunden.
-      TimeTableDay outOfScope = TimeTableDay(_startDate.add(Duration(days: i)));
+      TimeTableDay outOfScope = TimeTableDay(_startDate.add(Duration(days: i)), this);
       outOfScope.outOfScope = true;
       finalList.add(outOfScope);
     }
@@ -111,12 +116,21 @@ class TimeTableRange {
     for (int i = 0; i < _days.length; i++) {
       _days[i].xIndex = i;
 
-      for (int j = 0; j < _days[i].getHours().length; j++) {
-        _days[i].getHours()[j].xIndex = _days[i].xIndex;
-        _days[i].getHours()[j].yIndex = j;
+      for (int j = 0; j < schoolDayLength; j++) {
+        if (j >= _days[i].getHours().length) {
+          TimeTableHour empty = TimeTableHour(null, this);
+          empty.setYIndex(yIndex: j);
+          empty.xIndex = _days[i].xIndex;
+          _days[i].appendHour(empty); //Da sortiert, füge diese Stunde am ende an
+        } else {
+          _days[i].getHours()[j].xIndex = _days[i].xIndex;
+          _days[i].getHours()[j].setYIndex(yIndex: j);
+        }
       }
     }
   }
+
+  int get schoolDayLength => _schoolhoursLength;
 
   DateTime getStartDate() {
     return _startDate;

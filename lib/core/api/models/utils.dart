@@ -5,8 +5,9 @@
 /// YYYYMMDD
 
 class Utils {
+  ///Gibt einen String im Format YYYYMMDD zurück
   String convertToUntisDate(DateTime date) {
-    return (date.year.toString() +
+    return ((date.year >= 1000 ? date.year.toString() : "1970") +
         (date.month < 10 ? '0' + date.month.toString() : date.month.toString()) +
         (date.day < 10 ? '0' + date.day.toString() : date.day.toString()).toString());
   }

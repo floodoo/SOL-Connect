@@ -1,6 +1,9 @@
 /*Author Philipp Gersch */
 
+import 'package:untis_phasierung/core/api/models/timegrid.dart';
 import 'package:untis_phasierung/core/api/models/timetable.entity.dart';
+import 'package:untis_phasierung/core/api/models/utils.dart';
+import 'package:untis_phasierung/core/api/timetable.dart';
 
 enum Codes {
   //untis given
@@ -62,9 +65,14 @@ class TimeTableHour {
   ///Index der Y-Koordinate wenn die Stunde auf einem Gridartigem Stundenplan liegt
   ///* xIndex=0, yIndex=0 wäre Montag erste Stunde
   ///* xIndex=1,yIndex=2 wäre Dienstag 3. Stunde
-  int yIndex = -1;
+  int _yIndex = -1;
 
-  TimeTableHour(dynamic data) {
+  ///Stundenindex. Ähnlich wie yIndex wird jedoch bei der Inizialisierung gesetzt und ist nicht abhängig von der fertigen Tabelle
+  int _hourIndex = -1;
+
+  final TimeTableRange _rng;
+
+  TimeTableHour(dynamic data, this._rng) {
     if (data == null) {
       _code = Codes.empty;
       return;
@@ -127,6 +135,13 @@ class TimeTableHour {
     if (data['substText'] != null) {
       _substText = data['substText'];
     }
+
+    for (int i = 0; i < _rng.getBoundFrame().getManager().timegrid.entries.length; i++) {
+      if (startAsString == _rng.getBoundFrame().getManager().timegrid.getEntryByYIndex(yIndex: i).startTime) {
+        _hourIndex = i;
+        break;
+      }
+    }
   }
 
   //Ändert das Datim dieser Stunde. Stunde und Minute dürfen nicht verändert werden
@@ -140,6 +155,18 @@ class TimeTableHour {
     start = DateTime(year, month, day, endHour, endMinute);
   }
 
+  void setYIndex({int yIndex = -1}) {
+    _yIndex = yIndex;
+    TimegridEntry grid = _rng.getBoundFrame().getManager().timegrid.getEntryByYIndex(yIndex: _yIndex);
+
+    startAsString = grid.startTime;
+    endAsString = grid.endTime;
+    start = _parseDate(Utils().convertToUntisDate(start), startAsString);
+    end = _parseDate(Utils().convertToUntisDate(end), endAsString);
+  }
+
+  int get yIndex => _yIndex;
+
   DateTime _parseDate(String date, String time) {
     return DateTime.parse(date.substring(0, 4) +
         "-" +
@@ -150,6 +177,11 @@ class TimeTableHour {
         (time.length == 3
             ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
             : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
+  }
+
+  ///Gibt den Index der Stunde zurück. Abhängig von der Startzeit der Stunde, nicht von der fertigen Tabelle
+  int getHourIndex() {
+    return _hourIndex;
   }
 
   bool hasTeacher() {
@@ -228,17 +260,17 @@ class TimeTableHour {
   ///Interne Funktion.
   void addIrregularHour(TimeTableHour entity) {
     entity.xIndex = xIndex;
-    entity.yIndex = yIndex;
+    entity._yIndex = _yIndex;
     entity._code = _code;
     replacement.add(entity);
   }
 
-  ///@return Die Startzeit im Format HH:mm
+  ///Die Startzeit im Format HH:mm
   String getStartTimeString() {
     return start.hour.toString() + ":" + (start.minute >= 10 ? start.minute.toString() : start.minute.toString() + "0");
   }
 
-  ///@return Die Endzeit im Format HH:mm
+  ///Die Endzeit im Format HH:mm
   String getEndTimeString() {
     return end.hour.toString() + ":" + (end.minute >= 10 ? end.minute.toString() : end.minute.toString() + "0");
   }

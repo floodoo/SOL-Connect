@@ -133,7 +133,6 @@ class TimeTableService with ChangeNotifier {
   Future<void> getTimeTablePreviousWeek() async {
     weekCounter--;
     await getTimeTable(weekCounter: weekCounter);
-    log.d(weekCounter.toString());
   }
 
   void resetTimeTable() {

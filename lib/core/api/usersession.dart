@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'dart:convert';
 import 'package:untis_phasierung/core/api/models/news.dart';
 import 'package:untis_phasierung/core/api/models/profiledata.dart';
+import 'package:untis_phasierung/core/api/models/timegrid.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
 import 'package:untis_phasierung/core/api/rpcresponse.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
@@ -46,6 +47,7 @@ class UserSession {
   News _cachedNewsData = News(null);
 
   TimetableManager? _manager;
+  Timegrid? _loadedTimegrid;
 
   UserSession({String school = "", String appID = ""}) {
     _appName = appID;
@@ -114,6 +116,15 @@ class UserSession {
 
     await regenerateSessionBearerToken();
     _cachedProfileData = await getProfileData(loadFromCache: false);
+
+    await getTimegrid().then((value) {
+      _loadedTimegrid = value;
+      if (_manager != null && _loadedTimegrid != null) {
+        _manager!.setTimegrid(_loadedTimegrid!);
+      } else {
+        log.w("Falling back to static timegrid.");
+      }
+    });
   }
 
   bool isDemoSession() {
@@ -192,6 +203,19 @@ class UserSession {
     }
 
     return _cachedNewsData;
+  }
+
+  Future<Timegrid?> getTimegrid() async {
+    if (isAPIAuthorized()) {
+      try {
+        http.Response r = await _queryURL("/WebUntis/api/rest/view/v1/timegrid", needsAuthorization: true);
+        log.i("Dynamic timegrid loaded from WebUntis");
+        return Timegrid(jsonDecode(r.body));
+      } catch (e) {
+        log.e("Failed to load timegrid: " + e.toString() + "");
+        return null;
+      }
+    }
   }
 
   ///Gibt Profil Daten wie Name, Profilbild etc. in einem `ProfileData` Objekt zurück.
