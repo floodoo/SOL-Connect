@@ -178,8 +178,38 @@ class LoginScreen extends ConsumerWidget {
                             }
                           },
                         ),
-                      )
+                      ),
                     ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: MediaQuery.of(context).size.height / 6),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: theme.colors.background,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black87,
+                        blurRadius: 7,
+                        offset: Offset(0, 0.8),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    title: TextField(
+                      onEditingComplete: () {},
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        hintText: "bbs1mainz",
+                      ),
+                    ),
                   ),
                 ),
               ),
