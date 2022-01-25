@@ -10,6 +10,7 @@ class LoginScreen extends ConsumerWidget {
   static final routeName = (LoginScreen).toString();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController schoolNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,8 +24,10 @@ class LoginScreen extends ConsumerWidget {
 
     usernameController.text = ref.watch(timeTableService).username;
     passwordController.text = ref.watch(timeTableService).password;
+    schoolNameController.text = ref.watch(timeTableService).schoolName;
     usernameController.selection = TextSelection.fromPosition(TextPosition(offset: usernameController.text.length));
     passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
+    schoolNameController.selection = TextSelection.fromPosition(TextPosition(offset: schoolNameController.text.length));
 
     String? loginErrorMessage;
 
@@ -199,15 +202,19 @@ class LoginScreen extends ConsumerWidget {
                   ),
                   child: ListTile(
                     title: TextField(
-                      onEditingComplete: () {},
+                      controller: schoolNameController,
+                      onChanged: (value) {
+                        ref.read(timeTableService).saveSchoolName(value);
+                      },
                       textAlignVertical: TextAlignVertical.center,
-                      decoration: const InputDecoration(
+                      autocorrect: false,
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         errorBorder: InputBorder.none,
                         disabledBorder: InputBorder.none,
-                        hintText: "bbs1mainz",
+                        hintText: ref.watch(timeTableService).schoolName,
                       ),
                     ),
                   ),

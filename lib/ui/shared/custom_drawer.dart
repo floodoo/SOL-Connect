@@ -47,7 +47,7 @@ class CustomDrawer extends ConsumerWidget {
           children: [
             UserAccountsDrawerHeader(
               accountName: Text(username, style: TextStyle(color: theme.colors.text)),
-              accountEmail: Text("bbs1-mainz", style: TextStyle(color: theme.colors.text)),
+              accountEmail: Text(ref.watch(timeTableService).schoolName, style: TextStyle(color: theme.colors.text)),
               currentAccountPicture: profilePicture,
               decoration: BoxDecoration(
                 color: theme.colors.primary,
