@@ -29,8 +29,22 @@ class TimeTableService with ChangeNotifier {
 
   String username = "";
   String password = "";
+  String schoolName = "";
 
   dynamic loginError;
+
+  Future<void> saveSchoolName(String schoolName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("schoolName", schoolName);
+    this.schoolName = schoolName;
+    notifyListeners();
+  }
+
+  Future<String?> getSchoolName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    schoolName = prefs.getString("schoolName") ?? "bbs1-mainz";
+    notifyListeners();
+  }
 
   Future<String> getServerAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,7 +54,7 @@ class TimeTableService with ChangeNotifier {
   Future<void> login(String username, String password) async {
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
-    session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
+    session = UserSession(school: schoolName, appID: "untis-phasierung");
 
     try {
       await session.createSession(username: username, password: password);

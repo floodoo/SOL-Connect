@@ -24,7 +24,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     ref.read(themeService).loadAppearence();
-
+    ref.read(timeTableService).getSchoolName();
     ref.read(timeTableService).getUserData();
 
     return MaterialApp(
