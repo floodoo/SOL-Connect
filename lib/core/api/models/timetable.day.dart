@@ -2,14 +2,15 @@
 
 import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
+import 'package:untis_phasierung/core/api/timetable.dart';
 
 class TimeTableDay {
   DateTime _date;
 
-  final _lessonTimes = <String>["800", "845", "945", "1030", "1130", "1215", "1330", "1415", "1515", "1600"];
-  final int minHoursPerDay = 10;
+  //Wie viele Stunden mindestens in einen Stundenplan geladen werden sollen, wenn er leer ist
+  static const int minHoursPerDay = 8;
 
-  ///Jeder Tag hat 8 Tage fest.
+  ///Jeder Tag hat (MINIMAL) 10 Stunden fest.
   final _hours = <TimeTableHour>[];
   String _dayName = "";
   String _shortDayName = "";
@@ -21,7 +22,9 @@ class TimeTableDay {
 
   int xIndex = -1;
 
-  TimeTableDay(this._date) {
+  final TimeTableRange _rng;
+
+  TimeTableDay(this._date, this._rng) {
     switch (_date.weekday) {
       case 1:
         _dayName = "Montag";
@@ -55,17 +58,13 @@ class TimeTableDay {
         "";
     }
 
-    daysSinceEpoch = Utils().daysSinceEpoch(_date.millisecondsSinceEpoch);
-
     for (int i = 0; i < minHoursPerDay; i++) {
-      TimeTableHour t = TimeTableHour(null);
-      t.startAsString = _lessonTimes[i];
-      _hours.add(TimeTableHour(null)); //Leere Stunden
+      TimeTableHour t = TimeTableHour(null, _rng);
+      t.startAsString = _rng.getBoundFrame().getManager().timegrid.getEntryByYIndex(yIndex: i).startTime;
+      _hours.add(TimeTableHour(null, _rng)); //Leere Stunden
     }
 
-    String date = Utils().convertToUntisDate(_date);
-    _formattedDay = date.substring(6);
-    _formattedMonth = date.substring(4, 6);
+    modifyDate(_date);
   }
 
   void modifyDate(DateTime newDate) {
@@ -91,7 +90,7 @@ class TimeTableDay {
     return _formattedDay + "." + _formattedMonth;
   }
 
-  ///Gibt eine Liste der Stunden dieses Tages zurück. Diese Liste hat IMMER die Länge 10.
+  ///Gibt eine Liste der Stunden dieses Tages zurück. Diese Liste hat minimal die Länge 10.
   ///Das bedeutet, Stunden, bei denen kein Unterricht ist haben den Wert isEmpty() auf true
   List<TimeTableHour> getHours() {
     return _hours;
@@ -107,18 +106,38 @@ class TimeTableDay {
     return _shortDayName;
   }
 
+  void appendHour(TimeTableHour hour) {
+    _hours.add(hour);
+  }
+
   //Fügt eine Stunde in die Liste ein. Wenn eine Stunde auf eine andere fällt und der Code IRREGULAR ist, wird sie der anderen hinzugefügt.
   void insertHour(dynamic data) {
-    TimeTableHour constructed = TimeTableHour(data);
+    TimeTableHour constructed = TimeTableHour(data, _rng);
 
-    for (int i = 0; i < _hours.length; i++) {
-      if (constructed.startAsString == _lessonTimes[i]) {
-        if (_hours[i].getLessonCode() == Codes.empty) {
-          _hours[i] = constructed;
-        } else {
-          _hours[i].addIrregularHour(constructed);
+    if (constructed.getHourIndex() < _hours.length) {
+      for (int i = 0; i < _hours.length; i++) {
+        if (constructed.startAsString ==
+            _rng.getBoundFrame().getManager().timegrid.getEntryByYIndex(yIndex: i).startTime) {
+          if (_hours[i].getLessonCode() == Codes.empty) {
+            _hours[i] = constructed;
+          } else {
+            _hours[i].addIrregularHour(constructed);
+          }
+          break;
         }
-        break;
+      }
+    } else {
+      //Ansonsten erweitere den Stundenplan gemäß dem Index
+      int diffToMax = (constructed.getHourIndex() + 1) - minHoursPerDay;
+
+      for (int i = 0; i < minHoursPerDay + diffToMax; i++) {
+        if (i >= _hours.length && i != constructed.getHourIndex()) {
+          _hours.add(TimeTableHour(null, _rng));
+        }
+        if (constructed.getHourIndex() == i) {
+          _hours.add(constructed);
+          break;
+        }
       }
     }
   }

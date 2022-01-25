@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/services.dart';
+import 'package:untis_phasierung/core/api/models/timegrid.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
 import 'package:untis_phasierung/core/api/rpcresponse.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
@@ -13,8 +14,13 @@ class TimetableManager {
 
   UserSession userSession;
   var frames = <TimetableFrame>[];
+  Timegrid? _timegrid = Timegrid.timegridFallback;
 
-  TimetableManager(this.userSession);
+  TimetableManager(this.userSession, [Timegrid? timegrid]) {
+    if (timegrid != null) {
+      _timegrid = timegrid;
+    }
+  }
 
   void clearFrameCache() {
     for (TimetableFrame frame in frames) {
@@ -157,6 +163,12 @@ class TimetableManager {
     } else {
       return cached;
     }
+  }
+
+  Timegrid get timegrid => _timegrid!;
+
+  void setTimegrid(Timegrid timegrid) {
+    _timegrid = timegrid;
   }
 }
 

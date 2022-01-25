@@ -55,7 +55,7 @@ extension PhaseReadables on PhaseCodes {
       case PhaseCodes.structured:
         return "Diese Phase ist durch den Lehrer strukturiert.\nEs gibt feste Materialien / Arbeitsformen für diese Phase.";
       case PhaseCodes.free:
-        return "In dieser Phase kann man gemäß der Kann-Listen und SMART-Plänen frei Lernen.\nEs gilt keine Anwesenheitspflicht.";
+        return "In dieser Phase kann man gemäß der Kann-Listen und SMART-Plänen frei Lernen.";
       case PhaseCodes.feedback:
         return "In dieser Phase gibt man Rückmeldung zum Wochen- oder Blockverlauf.";
       default:
