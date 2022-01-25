@@ -1,0 +1,1498 @@
+{
+  "jsonrpc": "2.0",
+  "id": "untis-phasierung",
+  "result": [
+    {
+      "id": 1504327,
+      "date": 20220121,
+      "startTime": 1030,
+      "endTime": 1115,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 308,
+          "name": "KAG",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 58,
+          "name": "E",
+          "longname": "Englisch"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 410700,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935289,
+      "date": 20220118,
+      "startTime": 800,
+      "endTime": 845,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 308,
+          "name": "KAG",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 223,
+          "name": "Dkom",
+          "longname": "Deutsch/Kommunikation"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 410900,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935294,
+      "date": 20220118,
+      "startTime": 845,
+      "endTime": 930,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 308,
+          "name": "KAG",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 223,
+          "name": "Dkom",
+          "longname": "Deutsch/Kommunikation"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 410900,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935419,
+      "date": 20220117,
+      "startTime": 1130,
+      "endTime": 1215,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935424,
+      "date": 20220117,
+      "startTime": 1215,
+      "endTime": 1300,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1512702,
+      "date": 20220117,
+      "startTime": 1330,
+      "endTime": 1415,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935429,
+      "date": 20220117,
+      "startTime": 1415,
+      "endTime": 1500,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1512707,
+      "date": 20220118,
+      "startTime": 1130,
+      "endTime": 1215,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 214,
+          "name": "LPT",
+          "longname": "Lehrername",
+          "externalkey": "10001068"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1512712,
+      "date": 20220118,
+      "startTime": 1215,
+      "endTime": 1300,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 214,
+          "name": "LPT",
+          "longname": "Lehrername",
+          "externalkey": "10001068"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1512717,
+      "date": 20220121,
+      "startTime": 1130,
+      "endTime": 1215,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 214,
+          "name": "LPT",
+          "longname": "Lehrername",
+          "externalkey": "10001068"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935434,
+      "date": 20220124,
+      "startTime": 1130,
+      "endTime": 1215,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935439,
+      "date": 20220124,
+      "startTime": 1215,
+      "endTime": 1300,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1512722,
+      "date": 20220124,
+      "startTime": 1330,
+      "endTime": 1415,
+      "code": "cancelled",
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1935444,
+      "date": 20220124,
+      "startTime": 1415,
+      "endTime": 1500,
+      "code": "cancelled",
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 474,
+          "name": "ETZ",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 228,
+          "name": "SkWil",
+          "longname": "Sozialkunde/Wirtschaftslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411400,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862495,
+      "date": 20220117,
+      "startTime": 945,
+      "endTime": 1030,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 27,
+          "name": "DOE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862500,
+      "date": 20220117,
+      "startTime": 1030,
+      "endTime": 1115,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 224,
+          "name": "WAW",
+          "longname": "Lehrername",
+          "externalkey": "10001099"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862515,
+      "date": 20220118,
+      "startTime": 1330,
+      "endTime": 1415,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 203,
+          "name": "GrL",
+          "longname": "Lehrername",
+          "externalkey": "10001107"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862520,
+      "date": 20220118,
+      "startTime": 1415,
+      "endTime": 1500,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 203,
+          "name": "GrL",
+          "longname": "Lehrername",
+          "externalkey": "10001107"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1937294,
+      "date": 20220119,
+      "startTime": 800,
+      "endTime": 845,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 224,
+          "name": "WAW",
+          "longname": "Lehrername",
+          "externalkey": "10001099"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1937299,
+      "date": 20220119,
+      "startTime": 845,
+      "endTime": 930,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 224,
+          "name": "WAW",
+          "longname": "Lehrername",
+          "externalkey": "10001099"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862525,
+      "date": 20220119,
+      "startTime": 945,
+      "endTime": 1030,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 317,
+          "name": "SDI",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862530,
+      "date": 20220119,
+      "startTime": 1030,
+      "endTime": 1115,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 317,
+          "name": "SDI",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862535,
+      "date": 20220120,
+      "startTime": 800,
+      "endTime": 845,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 27,
+          "name": "DOE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862540,
+      "date": 20220120,
+      "startTime": 845,
+      "endTime": 930,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 27,
+          "name": "DOE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862545,
+      "date": 20220120,
+      "startTime": 945,
+      "endTime": 1030,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 224,
+          "name": "WAW",
+          "longname": "Lehrername",
+          "externalkey": "10001099"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862550,
+      "date": 20220120,
+      "startTime": 1030,
+      "endTime": 1115,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 224,
+          "name": "WAW",
+          "longname": "Lehrername",
+          "externalkey": "10001099"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862555,
+      "date": 20220120,
+      "startTime": 1130,
+      "endTime": 1215,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 224,
+          "name": "WAW",
+          "longname": "Lehrername",
+          "externalkey": "10001099"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862560,
+      "date": 20220120,
+      "startTime": 1215,
+      "endTime": 1300,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 27,
+          "name": "DOE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862565,
+      "date": 20220121,
+      "startTime": 800,
+      "endTime": 845,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 448,
+          "name": "DLE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862570,
+      "date": 20220121,
+      "startTime": 845,
+      "endTime": 930,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 448,
+          "name": "DLE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862575,
+      "date": 20220121,
+      "startTime": 1215,
+      "endTime": 1300,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 317,
+          "name": "SDI",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862580,
+      "date": 20220121,
+      "startTime": 1330,
+      "endTime": 1415,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 203,
+          "name": "GrL",
+          "longname": "Lehrername",
+          "externalkey": "10001107"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862585,
+      "date": 20220121,
+      "startTime": 1415,
+      "endTime": 1500,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 203,
+          "name": "GrL",
+          "longname": "Lehrername",
+          "externalkey": "10001107"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862590,
+      "date": 20220124,
+      "startTime": 800,
+      "endTime": 845,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 27,
+          "name": "DOE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862595,
+      "date": 20220124,
+      "startTime": 845,
+      "endTime": 930,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 27,
+          "name": "DOE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862600,
+      "date": 20220124,
+      "startTime": 945,
+      "endTime": 1030,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 27,
+          "name": "DOE",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1862605,
+      "date": 20220124,
+      "startTime": 1030,
+      "endTime": 1115,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 224,
+          "name": "WAW",
+          "longname": "Lehrername",
+          "externalkey": "10001099"
+        }
+      ],
+      "su": [
+        {
+          "id": 615,
+          "name": "BBU_Inf",
+          "longname": "Fachtheorie Informatik"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411000,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1888975,
+      "date": 20220118,
+      "startTime": 945,
+      "endTime": 1030,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 322,
+          "name": "MUS",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 619,
+          "name": "BBU_Wi",
+          "longname": "Fachtheorie  Wirtschaft"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411600,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1888980,
+      "date": 20220118,
+      "startTime": 1030,
+      "endTime": 1115,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 322,
+          "name": "MUS",
+          "longname": "Lehrername"
+        }
+      ],
+      "su": [
+        {
+          "id": 619,
+          "name": "BBU_Wi",
+          "longname": "Fachtheorie  Wirtschaft"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 411600,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1839932,
+      "date": 20220119,
+      "startTime": 1130,
+      "endTime": 1215,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 333,
+          "name": "PPT",
+          "longname": "Uhl"
+        }
+      ],
+      "su": [
+        {
+          "id": 630,
+          "name": "ReEv",
+          "longname": "Evangelische Religionslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 412100,
+      "activityType": "Unterricht"
+    },
+    {
+      "id": 1839937,
+      "date": 20220119,
+      "startTime": 1215,
+      "endTime": 1300,
+      "kl": [
+        {
+          "id": 2323,
+          "name": "BS FI 21A",
+          "longname": "Fachinformatiker Industrie"
+        }
+      ],
+      "te": [
+        {
+          "id": 333,
+          "name": "PPT",
+          "longname": "Uhl"
+        }
+      ],
+      "su": [
+        {
+          "id": 630,
+          "name": "ReEv",
+          "longname": "Evangelische Religionslehre"
+        }
+      ],
+      "ro": [
+        {
+          "id": 392,
+          "name": "A2 12",
+          "longname": "Klassenraum BS FI"
+        }
+      ],
+      "lsnumber": 412100,
+      "activityType": "Unterricht"
+    }
+  ]
+}

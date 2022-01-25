@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/api/timetable_manager.dart';
 import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
 import 'package:untis_phasierung/core/excel/validator.dart';
@@ -39,39 +40,40 @@ class TimeTableService with ChangeNotifier {
   Future<void> login(String username, String password) async {
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
-
     session = UserSession(school: "bbs1-mainz", appID: "untis-phasierung");
-    session.createSession(username: username, password: password).then(
-      (value) async {
-        isLoggedIn = true;
-        await getTimeTable();
-        try {
-          await loadCheckedPhaseFileForNextBlock(serverAdress: await getServerAddress());
-        } catch (e) {
-          log.e(e);
-        }
-        UserSecureStorage.setPassword(password);
-        log.i("Successfully logged in");
-        notifyListeners();
-      },
-    ).catchError(
-      (error) {
-        log.e("Error logging in: $error");
-        log.d("Clearing user data");
 
-        UserSecureStorage.clearAll();
+    try {
+      await session.createSession(username: username, password: password);
 
-        loginError = true;
-        isLoading = false;
+      isLoggedIn = true;
+      await getTimeTable();
 
-        this.username = "";
-        this.password = "";
+      try {
+        await loadCheckedPhaseFileForNextBlock(serverAdress: "flo-dev.me");
+      } catch (e) {
+        log.e(e);
+        deletePhase();
+      }
 
-        loginError = error;
+      UserSecureStorage.setPassword(password);
+      log.i("Successfully logged in");
+      notifyListeners();
+    } catch (error) {
+      log.e("Error logging in: $error");
+      log.d("Clearing user data");
 
-        notifyListeners();
-      },
-    );
+      UserSecureStorage.clearAll();
+
+      loginError = true;
+      isLoading = false;
+
+      this.username = "";
+      this.password = "";
+
+      loginError = error;
+
+      notifyListeners();
+    }
   }
 
   void logout() {
@@ -83,7 +85,9 @@ class TimeTableService with ChangeNotifier {
     loginError = null;
     password = "";
     session.logout();
+    deletePhase();
     notifyListeners();
+    log.i("Logged out.");
   }
 
   Future<void> getTimeTable({int weekCounter = 0}) async {
@@ -96,7 +100,7 @@ class TimeTableService with ChangeNotifier {
       isSchool = false;
     }
 
-    loadPhase().onError((error, stackTrace) => log.e(error));
+    await loadPhaseForCurrentTimetable().onError((error, stackTrace) => log.e(error));
 
     notifyListeners();
   }
@@ -139,13 +143,10 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  void loadUncheckedPhaseFileForNextBlock() async {
-    await loadPhaseFromFile(serverAdress: await getServerAddress());
-    await loadPhase();
-  }
-
   Future<String> loadCheckedPhaseFileForNextBlock({required String serverAdress, String? phaseFilePath}) async {
     isPhaseVerified = false;
+
+    log.d("Loading phaseplan ...");
 
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
@@ -157,38 +158,34 @@ class TimeTableService with ChangeNotifier {
       }
     }
 
+    if (validator == null) {
+      deletePhase();
+      log.d("No phase file specified. Skipping phase loading ...");
+      return "";
+    }
+
     log.d("Verifying phaseplan for next/current block ...");
 
-    session.clearTimetableCache();
+    session.clearManagerCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
+    var nextBlockweeks = await timeTable!.getBoundFrame().getManager().getNextBlockWeeks();
 
-    DateTime blockStart = await timeTable!.getNextBlockStartDate(0);
-    DateTime blockEnd = await timeTable!.getNextBlockEndDate(0);
+    for (TimetableFrame blockWeek in nextBlockweeks) {
+      log.d("Verifying block week phase merge " +
+          blockWeek.getFrameStart().toString() +
+          " -> " +
+          blockWeek.getFrameEnd().toString());
 
-    log.d("Limiting Phaseplan to block " +
-        blockStart.toString() +
-        " -> " +
-        blockEnd.toString() +
-        " until a new file is loaded.");
-
-    var nextBlockweeks = await timeTable!.getNextBlockWeeks(0);
-
-    // Check all next school weeks
-    validator!.limitPhasePlanToCurrentBlock(blockStart, blockEnd);
-
-    for (TimeTableRange blockWeek in nextBlockweeks) {
-      log.d(
-          "Verifying block week phase merge " + blockWeek.getStartDateString() + " -> " + blockWeek.getEndDateString());
-      await validator!.mergeExcelWithTimetable(blockWeek);
+      await blockWeek.getCurrentBlockWeek();
+      await validator!.mergeExcelWithTimetable(await blockWeek.getWeekData());
     }
 
     isPhaseVerified = true;
     log.i("File verified!");
 
-    getTimeTable(weekCounter: weekCounter);
+    getTimeTable(weekCounter: 0);
 
-    session.clearTimetableCache();
     return "";
   }
 
@@ -204,7 +201,7 @@ class TimeTableService with ChangeNotifier {
     }
   }
 
-  Future<void> loadPhase() async {
+  Future<void> loadPhaseForCurrentTimetable() async {
     isWeekInBlock = true;
 
     if (validator != null) {

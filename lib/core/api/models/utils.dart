@@ -20,8 +20,18 @@ class Utils {
   }
 
   ///Gibt true zurück, wenn nur Tag, Monat und Jahr gleich sind. ZEiten können verschieden sein
-  bool dateMatch(DateTime d1, DateTime d2) {
+  bool dayMatch(DateTime d1, DateTime d2) {
     return d1.day == d2.day && d1.month == d2.month && d1.year == d2.year;
+  }
+
+  ///Gibt true zurück, wenn d1 mehr oder genauso viele Tage wie d2 seit 1970 hat
+  bool dayGreaterOrEqual(DateTime d1, DateTime d2) {
+    return daysSinceEpoch(d1.millisecondsSinceEpoch) >= daysSinceEpoch(d2.millisecondsSinceEpoch);
+  }
+
+  //Schneidet einfach die Zeit weg, sodass nurnoch jahre, monate und Tage im Datum enthalten sind (Alles andere wird 0)
+  DateTime normalizeDate(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
   }
 
   String convertToDDMM(DateTime? date) {

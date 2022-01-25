@@ -1,15 +1,22 @@
 /*Author Philipp Gersch */
 
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
+import 'dart:convert';
 import 'package:untis_phasierung/core/api/models/news.dart';
 import 'package:untis_phasierung/core/api/models/profiledata.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
-import 'package:untis_phasierung/core/api/rpcresponse.dart' as rh;
+import 'package:untis_phasierung/core/api/rpcresponse.dart';
 import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:untis_phasierung/core/api/timetable_manager.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
-import 'dart:convert';
+import 'package:untis_phasierung/util/logger.util.dart';
 
 class UserSession {
+  final Logger log = getLogger();
+
+  static const demoAccountName = "demo";
+
   String _appName = "adw8638ordfgq37qp98";
   String _sessionId = "";
   int _personId = -1;
@@ -38,14 +45,9 @@ class UserSession {
   ProfileData _cachedProfileData = ProfileData(null);
   News _cachedNewsData = News(null);
 
-  //Gecachte timetables
-  final _cachedTimetables = <TimeTableRange>[];
-  //Wie viele timetables gecache werden dürfen bis alte recycled werden
-  final int maxTimetableCacheSize = 10;
-  //Ob caching überhaubt benutzt werden soll. Wird im Konstruktor festgelegt
-  final bool useCaching;
+  TimetableManager? _manager;
 
-  UserSession({String school = "", String appID = "", this.useCaching = true}) {
+  UserSession({String school = "", String appID = ""}) {
     _appName = appID;
 
     _school = school;
@@ -59,19 +61,28 @@ class UserSession {
   ///* `MissingCredentialsException` Bei fehlendem Benutzer oder Passwort
   ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
-  Future<rh.RPCResponse> createSession({String username = "", String password = ""}) async {
-    clearTimetableCache();
+  Future createSession({String username = "", String password = ""}) async {
+    //clearTimetableCache();
+
+    _manager = TimetableManager(this);
 
     if (_sessionValid) {
       throw UserAlreadyLoggedInException(
           "Der Benutzer ist bereits eingeloggt. Veruche eine neues User Objekt zu erstellen oder die Funktion 'logout()' vorher aufzurufen!");
     }
 
+    if (username == UserSession.demoAccountName) {
+      _sessionValid = true;
+      _un = UserSession.demoAccountName;
+      _pwd = UserSession.demoAccountName;
+      return;
+    }
+
     if (username == "" || password == "") {
       throw MissingCredentialsException("Bitte gib einen Benutzenamen und ein Passwort an");
     }
 
-    rh.RPCResponse response =
+    RPCResponse response =
         await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
 
     if (response.isHttpError()) {
@@ -103,8 +114,10 @@ class UserSession {
 
     await regenerateSessionBearerToken();
     _cachedProfileData = await getProfileData(loadFromCache: false);
+  }
 
-    return response;
+  bool isDemoSession() {
+    return _un == UserSession.demoAccountName;
   }
 
   ///Muss üblicherweise nicht aufgerufen werden.
@@ -140,8 +153,8 @@ class UserSession {
 
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
-  Future<rh.RPCResponse> logout() async {
-    rh.RPCResponse response = await _queryRPC("logout", {}, validateSession: false);
+  Future<RPCResponse> logout() async {
+    RPCResponse response = await _queryRPC("logout", {}, validateSession: false);
     _sessionValid = false;
     _sessionId = "";
     _un = "";
@@ -150,7 +163,7 @@ class UserSession {
     _klasseId = -1;
     _type = -1;
     _bearerToken = "";
-    clearTimetableCache();
+    clearManagerCache();
     return response;
   }
 
@@ -225,94 +238,14 @@ class UserSession {
     return _klasseId;
   }
 
-  ///Gibt einen Wochenstundenplan relativ zur derzeitigen Woche zurück. Von Montag bis Sonntag
-  ///
-  ///* Das heißt `getRelativeTimeTableWeek(-1);` gibt die vorherige Woche zur aktuellen zurück
-  ///* `getRelativeTimeTableWeek(1);` gibt die nächste Woche zurück.
-  ///* `getRelativeTimeTableWeek(0);` entspricht `getTimeTableForThisWeek()`
-  Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
-    /*DateTime from = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-
-    if (relative < 0) {
-      //Ziehe die duration ab und gehe in die Vergangenheit
-      from = from.subtract(Duration(days: DateTime.daysPerWeek * relative.abs()));
-    } else if (relative > 0) {
-      //Addiere die Duration und gehe in die Zukunft.
-      from = from.add(Duration(days: DateTime.daysPerWeek * relative));
-    }*/
-    DateTime from = getRelativeWeekStartDate(relative);
-    DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
-    TimeTableRange rng = await getTimeTable(from, lastDayOfWeek);
-    rng.relativeToCurrent = relative;
-    return rng;
-  }
-
-  ///Gibt nur das Datum einers Wochenstartes relativ zum aktuellen Datum zurück ohne ein extra Timetable Objekt abzufragen und zu erzeugen
-  DateTime getRelativeWeekStartDate(int relative) {
-    DateTime from = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-
-    if (relative < 0) {
-      //Ziehe die duration ab und gehe in die Vergangenheit
-      from = from.subtract(Duration(days: DateTime.daysPerWeek * relative.abs()));
-    } else if (relative > 0) {
-      //Addiere die Duration und gehe in die Zukunft.
-      from = from.add(Duration(days: DateTime.daysPerWeek * relative));
-    }
-    return from;
-  }
-
-  Future<TimeTableRange> getTimeTableForThisWeek() async {
-    return getRelativeTimeTableWeek(0);
-  }
-
-  Future<TimeTableRange> getTimeTableForToday() async {
+  // TODO(philipp): automate frame assignment
+  Future<TimeTableRange> getTimeTable(DateTime from, DateTime to, TimetableFrame frame) async {
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
-
-    return getTimeTable(DateTime.now(), DateTime.now());
-  }
-
-  ///Gibt null zurück wenn timetable nicht in cache vorhanden ist
-  TimeTableRange? _getCachedTimetable(DateTime from, DateTime to) {
-    for (TimeTableRange range in _cachedTimetables) {
-      if (Utils().dateMatch(range.getStartDate(), from) && Utils().dateMatch(range.getEndDate(), to)) {
-        return range;
-      }
-    }
-  }
-
-  void _addTimetableToCache(TimeTableRange range) {
-    if (_getCachedTimetable(range.getStartDate(), range.getEndDate()) != null) {
-      return;
-    }
-
-    if (_cachedTimetables.length < maxTimetableCacheSize) {
-      _cachedTimetables.add(range);
-    } else {
-      //Lösche das erste element (Das sollte am längsten nicht mehr benutzt worden sein)
-      _cachedTimetables.removeAt(0);
-      _cachedTimetables.add(range);
-    }
-  }
-
-  ///Löscht den Timetable cache. Falls useCaching true ist
-  void clearTimetableCache() {
-    _cachedTimetables.clear();
-  }
-
-  Future<TimeTableRange> getTimeTable(DateTime from, DateTime to) async {
-    if (!_sessionValid) throw Exception("Die Session ist ungültig.");
-
-    if (useCaching) {
-      TimeTableRange? cached = _getCachedTimetable(from, to);
-      if (cached != null) {
-        return cached;
-      }
-    }
 
     TimeTableRange loaded = TimeTableRange(
         from,
         to,
-        this,
+        frame,
         await _queryRPC("getTimetable", {
           "options": {
             "startDate": Utils().convertToUntisDate(from),
@@ -332,23 +265,19 @@ class UserSession {
           }
         }));
 
-    if (useCaching) {
-      _addTimetableToCache(loaded);
-    }
-
     return loaded;
   }
 
   /// Diese müssen in den Header gelegt werden
   String _buildAuthCookie() {
     if (!_sessionValid) return "";
-
     return "JSESSIONID=" + _sessionId + "; schoolname=" + _schoolBase64.replaceAll("=", "%3D");
   }
 
-  Future<rh.RPCResponse> _validateSession() async {
+  Future _validateSession() async {
     _sessionValid = false;
-    return await createSession(username: _un, password: _pwd);
+    log.i("Re- validating session ...");
+    await createSession(username: _un, password: _pwd);
   }
 
   Future<http.Response> _queryURL(String url, {bool needsAuthorization = false}) async {
@@ -374,22 +303,43 @@ class UserSession {
     return http.Client().get(Uri.parse(apiBaseUrl + url), headers: header);
   }
 
-  Future<rh.RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
+  Future<RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
     Object build = {"id": _appName, "method": method, "params": params, "jsonrpc": 2.0};
 
-    rh.RPCResponse orig = rh.RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
+    RPCResponse orig = RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
 
     if (validateSession && orig.getErrorCode() == -8520 && _sessionValid) {
-      rh.RPCResponse r = await _validateSession();
-      if (!r.isError()) {
-        return rh.RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
+      await _validateSession();
+      if (_sessionValid) {
+        return RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
             headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
       } else {
-        return r;
+        throw Exception("Failed to revalidate session. Please log out and in again manually");
       }
     } else {
       return orig;
     }
+  }
+
+  void clearManagerCache() {
+    if (!isDemoSession()) {
+      getTimetableManager().clearFrameCache();
+    }
+  }
+
+  TimetableManager getTimetableManager() {
+    return _manager!;
+  }
+
+  ///Diese Funktion dient nur noch als Wrapper
+  ///Gibt einen Wochenstundenplan relativ zur derzeitigen Woche zurück. Von Montag bis Sonntag
+  ///
+  ///* `getRelativeTimeTableWeek(-1);` gibt die vorherige Woche zur aktuellen zurück
+  ///* `getRelativeTimeTableWeek(1);` gibt die nächste Woche zurück.
+  ///* `getRelativeTimeTableWeek(0);` entspricht `getTimeTableForThisWeek()`
+  Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
+    TimetableFrame frame = getTimetableManager().getFrameRelativeToCurrent(relative);
+    return await frame.getWeekData();
   }
 }

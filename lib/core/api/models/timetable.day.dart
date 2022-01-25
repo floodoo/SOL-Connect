@@ -4,7 +4,7 @@ import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
 
 class TimeTableDay {
-  final DateTime _date;
+  DateTime _date;
 
   final _lessonTimes = <String>["800", "845", "945", "1030", "1130", "1215", "1330", "1415", "1515", "1600"];
   final int minHoursPerDay = 10;
@@ -66,6 +66,16 @@ class TimeTableDay {
     String date = Utils().convertToUntisDate(_date);
     _formattedDay = date.substring(6);
     _formattedMonth = date.substring(4, 6);
+  }
+
+  void modifyDate(DateTime newDate) {
+    _date = newDate;
+
+    String date = Utils().convertToUntisDate(_date);
+    _formattedDay = date.substring(6);
+    _formattedMonth = date.substring(4, 6);
+
+    daysSinceEpoch = Utils().daysSinceEpoch(_date.millisecondsSinceEpoch);
   }
 
   ///Ob der Tag an einem Wochenende oder in den Ferien liegt

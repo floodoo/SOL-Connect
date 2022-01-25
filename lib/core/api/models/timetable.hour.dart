@@ -129,6 +129,17 @@ class TimeTableHour {
     }
   }
 
+  //Ändert das Datim dieser Stunde. Stunde und Minute dürfen nicht verändert werden
+  void modifyDate(int year, int month, int day) {
+    int startHour = start.hour;
+    int startMinute = start.minute;
+    start = DateTime(year, month, day, startHour, startMinute);
+
+    int endHour = end.hour;
+    int endMinute = end.minute;
+    start = DateTime(year, month, day, endHour, endMinute);
+  }
+
   DateTime _parseDate(String date, String time) {
     return DateTime.parse(date.substring(0, 4) +
         "-" +
