@@ -34,15 +34,17 @@ class TimeTableScreen extends ConsumerWidget {
               child: Icon(
                 Icons.calendar_today_rounded,
                 color: theme.colors.icon,
+                size: 37,
               ),
-              color: theme.colors.primaryLight,
+              color: theme.colors.timetableCardEdge,
             ),
           );
 
           // The first row
         } else {
           timeTableList.add(
-            CustomTimeTableDayCard(timeTableDay: _timeTable.getDays()[i - 1], cardColor: theme.colors.primaryLight),
+            CustomTimeTableDayCard(
+                timeTableDay: _timeTable.getDays()[i - 1], cardColor: theme.colors.timetableCardEdge),
           );
         }
       }
@@ -79,7 +81,7 @@ class TimeTableScreen extends ConsumerWidget {
           timeTableList.add(
             CustomTimeTableHourCard(
               timeTableHour: _timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
-              customColor: theme.colors.primaryLight,
+              customColor: theme.colors.timetableCardEdge,
             ),
           );
 
