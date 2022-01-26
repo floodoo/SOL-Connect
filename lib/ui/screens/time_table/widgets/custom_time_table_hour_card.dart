@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/service/services.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/service/services.dart';
 
 class CustomTimeTableHourCard extends ConsumerWidget {
   const CustomTimeTableHourCard({required this.timeTableHour, this.customColor, Key? key}) : super(key: key);

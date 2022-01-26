@@ -1,8 +1,7 @@
 /*Author Philipp Gersch */
-
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/api/models/utils.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/api/models/utils.dart';
+import 'package:sol_connect/core/api/timetable.dart';
 
 class TimeTableDay {
   DateTime _date;

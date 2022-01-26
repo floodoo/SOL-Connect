@@ -1,9 +1,8 @@
 /*Author Philipp Gersch */
-
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/excel/models/mappedsheet.dart';
-import 'package:untis_phasierung/core/excel/validator.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/excel/models/mappedsheet.dart';
+import 'package:sol_connect/core/excel/validator.dart';
 
 class MergedTimeTable {
   ///Gibt eine Fehlermeldung zurück, falls dieser Stundenplan nicht mit der Excel gemappt werden konnte.

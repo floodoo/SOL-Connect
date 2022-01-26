@@ -1,17 +1,17 @@
 /*Author Philipp Gersch */
-
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:sol_connect/core/api/models/news.dart';
+import 'package:sol_connect/core/api/models/profiledata.dart';
+import 'package:sol_connect/core/api/models/timegrid.dart';
+import 'package:sol_connect/core/api/models/utils.dart';
+import 'package:sol_connect/core/api/rpcresponse.dart';
+import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/api/timetable_manager.dart';
+import 'package:sol_connect/core/exceptions.dart';
 import 'dart:convert';
-import 'package:untis_phasierung/core/api/models/news.dart';
-import 'package:untis_phasierung/core/api/models/profiledata.dart';
-import 'package:untis_phasierung/core/api/models/timegrid.dart';
-import 'package:untis_phasierung/core/api/models/utils.dart';
-import 'package:untis_phasierung/core/api/rpcresponse.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/api/timetable_manager.dart';
-import 'package:untis_phasierung/core/exceptions.dart';
-import 'package:untis_phasierung/util/logger.util.dart';
+
+import 'package:sol_connect/util/logger.util.dart';
 
 enum PersonTypes { student, teacher }
 

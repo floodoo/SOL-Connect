@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:untis_phasierung/core/api/models/timetable.day.dart';
-import 'package:untis_phasierung/core/service/services.dart';
+import 'package:sol_connect/core/api/models/timetable.day.dart';
+import 'package:sol_connect/core/service/services.dart';
 
 class CustomTimeTableDayCard extends ConsumerWidget {
   const CustomTimeTableDayCard({required this.timeTableDay, this.cardColor, Key? key}) : super(key: key);

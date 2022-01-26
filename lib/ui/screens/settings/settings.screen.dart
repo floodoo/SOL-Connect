@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:untis_phasierung/core/api/models/utils.dart';
-import 'package:untis_phasierung/core/api/usersession.dart';
-import 'package:untis_phasierung/core/exceptions.dart';
-import 'package:untis_phasierung/core/service/services.dart';
-import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
-import 'package:untis_phasierung/ui/shared/created_by.text.dart';
+import 'package:sol_connect/core/api/models/utils.dart';
+import 'package:sol_connect/core/api/usersession.dart';
+import 'package:sol_connect/core/exceptions.dart';
+import 'package:sol_connect/core/service/services.dart';
+import 'package:sol_connect/ui/screens/settings/widgets/custom_settings_card.dart';
+import 'package:sol_connect/ui/shared/created_by.text.dart';
+import 'package:sol_connect/util/logger.util.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:untis_phasierung/util/logger.util.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);

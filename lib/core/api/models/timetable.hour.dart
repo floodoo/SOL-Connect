@@ -1,9 +1,8 @@
 /*Author Philipp Gersch */
-
-import 'package:untis_phasierung/core/api/models/timegrid.dart';
-import 'package:untis_phasierung/core/api/models/timetable.entity.dart';
-import 'package:untis_phasierung/core/api/models/utils.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
+import 'package:sol_connect/core/api/models/timegrid.dart';
+import 'package:sol_connect/core/api/models/timetable.entity.dart';
+import 'package:sol_connect/core/api/models/utils.dart';
+import 'package:sol_connect/core/api/timetable.dart';
 
 enum Codes {
   //untis given

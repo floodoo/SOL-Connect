@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:untis_phasierung/core/exceptions.dart';
-import 'package:untis_phasierung/core/service/services.dart';
-import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
-import 'package:untis_phasierung/util/user_secure_stotage.dart';
+import 'package:sol_connect/core/exceptions.dart';
+import 'package:sol_connect/core/service/services.dart';
+import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
+import 'package:sol_connect/util/user_secure_stotage.dart';
 
 class LoginScreen extends ConsumerWidget {
   LoginScreen({Key? key}) : super(key: key);

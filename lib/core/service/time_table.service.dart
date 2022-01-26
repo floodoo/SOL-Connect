@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/api/timetable_manager.dart';
-import 'package:untis_phasierung/core/api/usersession.dart';
-import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
-import 'package:untis_phasierung/core/excel/validator.dart';
-import 'package:untis_phasierung/core/exceptions.dart';
-import 'package:untis_phasierung/util/logger.util.dart';
-import 'package:untis_phasierung/util/user_secure_stotage.dart';
+import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/api/timetable_manager.dart';
+import 'package:sol_connect/core/api/usersession.dart';
+import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
+import 'package:sol_connect/core/excel/validator.dart';
+import 'package:sol_connect/core/exceptions.dart';
+import 'package:sol_connect/util/logger.util.dart';
+import 'package:sol_connect/util/user_secure_stotage.dart';
 
 class TimeTableService with ChangeNotifier {
   final Logger log = getLogger();

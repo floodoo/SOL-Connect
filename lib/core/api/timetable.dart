@@ -1,10 +1,9 @@
 /*Author Philipp Gersch */
-
-import 'package:untis_phasierung/core/api/models/timetable.day.dart';
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/api/models/utils.dart';
-import 'package:untis_phasierung/core/api/rpcresponse.dart';
-import 'package:untis_phasierung/core/api/timetable_manager.dart';
+import 'package:sol_connect/core/api/models/timetable.day.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/api/models/utils.dart';
+import 'package:sol_connect/core/api/rpcresponse.dart';
+import 'package:sol_connect/core/api/timetable_manager.dart';
 
 ///Diese Klasse wandelt die Antwort in ein TimeTable Objekt um
 class TimeTableRange {

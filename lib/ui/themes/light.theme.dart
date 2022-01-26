@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:untis_phasierung/ui/themes/app_colors.dart';
+import 'package:sol_connect/ui/themes/app_colors.dart';
 
 ThemeData get lightTheme {
   final colors = AppColors.light();

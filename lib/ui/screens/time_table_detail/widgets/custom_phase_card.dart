@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
-import 'package:untis_phasierung/core/service/services.dart';
+import 'package:sol_connect/core/excel/models/phaseelement.dart';
+import 'package:sol_connect/core/service/services.dart';
 
 class CustomPhaseCard extends ConsumerWidget {
   const CustomPhaseCard({required this.phase, Key? key}) : super(key: key);
