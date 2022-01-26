@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -76,9 +77,17 @@ class SettingsScreen extends ConsumerWidget {
                           style: TextStyle(fontSize: 25),
                         ),
                         IconButton(
-                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                            _createSnackbar("Wähle eine Excel Datei aus", theme.colors.primary),
-                          ),
+                          onPressed: () {
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.INFO,
+                              animType: AnimType.BOTTOMSLIDE,
+                              headerAnimationLoop: false,
+                              title: "Wie lade ich einen Phasenplan?",
+                              desc: "basldgasdad",
+                              btnOkOnPress: () {},
+                            ).show();
+                          },
                           icon: const Icon(Icons.info_outline),
                           iconSize: 25,
                         )
