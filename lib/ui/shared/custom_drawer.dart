@@ -24,15 +24,23 @@ class CustomDrawer extends ConsumerWidget {
     CircleAvatar profilePicture = CircleAvatar(child: CircularProgressIndicator(color: theme.colors.text));
 
     if (session.isAPIAuthorized()) {
-      ImageProvider imageProvider;
+      ImageProvider? imageProvider;
       if (random.nextInt(100) == 20) {
         imageProvider = const Image(image: AssetImage('assets/images/trollface.png')).image;
       } else {
         profilePictureUrl = session.getCachedProfilePictureUrl();
-        imageProvider = Image.network(profilePictureUrl).image;
+        if (profilePictureUrl.isNotEmpty) {
+          imageProvider = Image.network(profilePictureUrl).image;
+        }
       }
-
-      profilePicture = CircleAvatar(backgroundColor: theme.colors.background, backgroundImage: imageProvider);
+      if (imageProvider != null) {
+        profilePicture = CircleAvatar(backgroundColor: theme.colors.background, backgroundImage: imageProvider);
+      } else {
+        profilePicture = CircleAvatar(
+          backgroundColor: theme.colors.background,
+          child: Icon(Icons.person, color: theme.colors.circleAvatar),
+        );
+      }
     } else {
       profilePicture = CircleAvatar(
         backgroundColor: theme.colors.background,
@@ -46,7 +54,8 @@ class CustomDrawer extends ConsumerWidget {
         child: Column(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(username, style: TextStyle(color: theme.colors.text)),
+              accountName: Text(username + " (Rolle " + session.personType.readable + ")",
+                  style: TextStyle(color: theme.colors.text)),
               accountEmail: Text(ref.watch(timeTableService).schoolName, style: TextStyle(color: theme.colors.text)),
               currentAccountPicture: profilePicture,
               decoration: BoxDecoration(
