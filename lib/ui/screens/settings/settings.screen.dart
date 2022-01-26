@@ -5,6 +5,7 @@ import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
+import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
@@ -63,7 +64,7 @@ class SettingsScreen extends ConsumerWidget {
           child: ListView(
             children: [
               Visibility(
-                visible: ref.read(timeTableService).session.getPersonType() != "Lehrer",
+                visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 25.0),
@@ -87,7 +88,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               Visibility(
-                visible: ref.read(timeTableService).session.getPersonType() != "Lehrer",
+                visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
                 child: CustomSettingsCard(
                   padBottom: 0,
                   leading: Icon(
