@@ -13,6 +13,19 @@ import 'package:untis_phasierung/core/api/timetable_manager.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/util/logger.util.dart';
 
+enum PersonTypes { student, teacher }
+
+extension ReadablePersonType on PersonTypes {
+  String get readable {
+    if (this == PersonTypes.student) {
+      return "Schüler";
+    } else if (this == PersonTypes.teacher) {
+      return "Lehrer";
+    }
+    return "";
+  }
+}
+
 class UserSession {
   final Logger log = getLogger();
 
@@ -48,6 +61,9 @@ class UserSession {
 
   TimetableManager? _manager;
   Timegrid? _loadedTimegrid;
+
+  //Student by default
+  PersonTypes _ptype = PersonTypes.student;
 
   UserSession({String school = "", String appID = ""}) {
     _appName = appID;
@@ -110,6 +126,10 @@ class UserSession {
     _klasseId = response.getPayloadData()['klasseId'];
     _type = response.getPayloadData()['personType'];
 
+    if (_type == 2) {
+      _ptype = PersonTypes.teacher;
+    }
+
     _sessionValid = true;
     _un = username;
     _pwd = password;
@@ -153,14 +173,7 @@ class UserSession {
   }
 
   ///Die Rolle der eingeloggten Person. Es gibt "Schüler" und "Lehrer"
-  String getPersonType() {
-    if (_type == 2) {
-      return "Lehrer";
-    } else if (_type == 5) {
-      return "Schüler";
-    }
-    return _type.toString();
-  }
+  PersonTypes get personType => _ptype;
 
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/

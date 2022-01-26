@@ -5,6 +5,7 @@ import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:untis_phasierung/core/api/models/utils.dart';
+import 'package:untis_phasierung/core/api/usersession.dart';
 import 'package:untis_phasierung/core/exceptions.dart';
 import 'package:untis_phasierung/core/service/services.dart';
 import 'package:untis_phasierung/ui/screens/settings/widgets/custom_settings_card.dart';
@@ -62,96 +63,102 @@ class SettingsScreen extends ConsumerWidget {
           color: theme.colors.background,
           child: ListView(
             children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 25.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Phasierung",
-                        style: TextStyle(fontSize: 25),
-                      ),
-                      IconButton(
-                        onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                          _createSnackbar("Wähle eine Excel Datei aus", theme.colors.primary),
+              Visibility(
+                visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 25.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Phasierung",
+                          style: TextStyle(fontSize: 25),
                         ),
-                        icon: const Icon(Icons.info_outline),
-                        iconSize: 25,
-                      )
-                    ],
+                        IconButton(
+                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                            _createSnackbar("Wähle eine Excel Datei aus", theme.colors.primary),
+                          ),
+                          icon: const Icon(Icons.info_outline),
+                          iconSize: 25,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-              CustomSettingsCard(
-                padBottom: 0,
-                leading: Icon(
-                  phaseLoaded ? Icons.delete_rounded : Icons.add_chart_rounded,
-                  color: theme.colors.text,
-                  size: 26,
-                ),
-                text: phaseLoaded ? "Phasierung entfernen" : "Phasierung laden",
-                onTap: () async {
-                  if (phaseLoaded) {
-                    ref.read(timeTableService).deletePhase();
+              Visibility(
+                visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
+                child: CustomSettingsCard(
+                  padBottom: 0,
+                  leading: Icon(
+                    phaseLoaded ? Icons.delete_rounded : Icons.add_chart_rounded,
+                    color: theme.colors.text,
+                    size: 26,
+                  ),
+                  text: phaseLoaded ? "Phasierung entfernen" : "Phasierung laden",
+                  onTap: () async {
+                    if (phaseLoaded) {
+                      ref.read(timeTableService).deletePhase();
 
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      _createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
-                    );
-                    return;
-                  }
-
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(
-                      type: FileType.custom,
-                      allowedExtensions: ["xlsx"],
-                      allowMultiple: false,
-                      dialogTitle: "Phasierung laden");
-
-                  if (result != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      _createSnackbar(
-                        "Datei Überprüfen ...",
-                        theme.colors.elementBackground,
-                        duration: const Duration(minutes: 1),
-                      ),
-                    );
-
-                    String errorMessage = "";
-
-                    try {
-                      await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(
-                          phaseFilePath: result.files.first.path!,
-                          serverAdress: ref.read(settingsService).serverAddress);
-                    } on ExcelMergeFileNotVerified {
-                      errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
-                    } on ExcelConversionAlreadyActive {
-                      errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
-                    } on ExcelConversionServerError {
-                      errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
-                    } on FailedToEstablishExcelServerConnection {
-                      errorMessage = "Bitte überprüfe deine Internetverbindung";
-                    } on ExcelMergeNonSchoolBlockException {
-                      // Doesn't matter
-                    } on SocketException {
-                      errorMessage = "Bitte überprüfe deine Internetverbindung";
-                    } catch (e) {
-                      log.e(e.toString());
-                      errorMessage = "Unbekannter Fehler: " + e.toString();
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        _createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
+                      );
+                      return;
                     }
 
-                    ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
-                    if (state != null) {
-                      ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
+                    FilePickerResult? result = await FilePicker.platform.pickFiles(
+                        type: FileType.custom,
+                        allowedExtensions: ["xlsx"],
+                        allowMultiple: false,
+                        dialogTitle: "Phasierung laden");
+
+                    if (result != null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         _createSnackbar(
-                          errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
-                          errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
+                          "Datei Überprüfen ...",
+                          theme.colors.elementBackground,
+                          duration: const Duration(minutes: 1),
                         ),
                       );
+
+                      String errorMessage = "";
+
+                      try {
+                        await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(
+                            phaseFilePath: result.files.first.path!,
+                            serverAdress: ref.read(settingsService).serverAddress);
+                      } on ExcelMergeFileNotVerified {
+                        errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
+                      } on ExcelConversionAlreadyActive {
+                        errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
+                      } on ExcelConversionServerError {
+                        errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
+                      } on FailedToEstablishExcelServerConnection {
+                        errorMessage = "Bitte überprüfe deine Internetverbindung";
+                      } on ExcelMergeNonSchoolBlockException {
+                        // Doesn't matter
+                      } on SocketException {
+                        errorMessage = "Bitte überprüfe deine Internetverbindung";
+                      } catch (e) {
+                        log.e(e.toString());
+                        errorMessage = "Unbekannter Fehler: " + e.toString();
+                      }
+
+                      ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
+                      if (state != null) {
+                        ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          _createSnackbar(
+                            errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
+                            errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
+                          ),
+                        );
+                      }
                     }
-                  }
-                },
+                  },
+                ),
               ),
               phaseLoaded
                   ? Padding(
