@@ -186,7 +186,7 @@ class UserSession {
       }
     });
 
-    setTimetableBehavior(2162, PersonTypes.klasse);
+    //setTimetableBehavior(2162, PersonTypes.klasse);
   }
 
   bool isDemoSession() {
