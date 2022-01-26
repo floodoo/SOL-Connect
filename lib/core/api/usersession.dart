@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/news.dart';
 import 'package:sol_connect/core/api/models/profiledata.dart';
+import 'package:sol_connect/core/api/models/schoolclass.dart';
 import 'package:sol_connect/core/api/models/timegrid.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/rpcresponse.dart';
@@ -378,5 +379,30 @@ class UserSession {
   Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
     TimetableFrame frame = getTimetableManager().getFrameRelativeToCurrent(relative);
     return await frame.getWeekData();
+  }
+
+  ///Gibt alle Klassen zurück der der Lehrer als Klassen hat
+  Future<List<SchoolClass>> getOwnClassesAsClassteacher() async {
+    if(personType != PersonTypes.teacher) {
+      throw InsufficientPermissionsException("This user can't view his classes as a classteacher");
+    }
+
+    http.Response r = await _queryURL("/WebUntis/api/public/timetable/weekly/pageconfig?type=1&id=2323&date=2022-01-26&isMyTimetableSelected=false");
+    var klassen = <SchoolClass>[];
+
+    if(r.statusCode == 200) {
+      dynamic json = jsonDecode(r.body);
+
+      String displayName = (await getProfileData(loadFromCache: true)).getFirstAndLastName();
+      for(dynamic d in json["data"]["elements"]) {
+        SchoolClass klasse = SchoolClass(d);
+        if(klasse.classTeacherName == displayName || klasse.classTeacher2Name == displayName) {
+          klassen.add(klasse);
+        }
+      }
+    } else {
+      throw ApiConnectionError("Failed to fetch class info for school: Connection error");
+    }
+    return klassen;
   }
 }
