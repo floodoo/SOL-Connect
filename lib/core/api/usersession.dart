@@ -15,6 +15,17 @@ import 'package:untis_phasierung/util/logger.util.dart';
 
 enum PersonTypes { student, teacher }
 
+extension ReadablePersonType on PersonTypes {
+  String get readable {
+    if (this == PersonTypes.student) {
+      return "Schüler";
+    } else if (this == PersonTypes.teacher) {
+      return "Lehrer";
+    }
+    return "";
+  }
+}
+
 class UserSession {
   final Logger log = getLogger();
 
