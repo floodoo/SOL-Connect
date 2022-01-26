@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/login/login.screen.dart';
 import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
+import 'package:sol_connect/ui/screens/teacher_classes/teacher_classes.screen.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 
 class CustomDrawer extends ConsumerWidget {
@@ -68,10 +69,10 @@ class CustomDrawer extends ConsumerWidget {
               onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
             ),
             Visibility(
-              visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
+              visible: ref.read(timeTableService).session.personType == PersonTypes.teacher,
               child: ListTile(
                 title: Text("Alle Klasse", style: TextStyle(color: theme.colors.textBackground)),
-                onTap: null,
+                onTap: () => Navigator.pushNamed(context, TeacherClassesScreen.routeName),
               ),
             ),
             // For white space

@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/login/login.screen.dart';
 import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
+import 'package:sol_connect/ui/screens/teacher_classes/teacher_classes.screen.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 import 'package:sol_connect/ui/screens/time_table_detail/time_table_detail.screen.dart';
 import 'package:sol_connect/ui/shared/custom_drawer.dart';
@@ -38,6 +39,7 @@ class MyApp extends ConsumerWidget {
         TimeTableScreen.routeName: (context) => const TimeTableScreen(),
         TimeTableDetailScreen.routeName: (context) => const TimeTableDetailScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
+        TeacherClassesScreen.routeName: (context) => const TeacherClassesScreen(),
       },
     );
   }
