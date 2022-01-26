@@ -5,6 +5,7 @@ import 'package:sol_connect/core/api/models/news.dart';
 import 'package:sol_connect/core/api/models/profiledata.dart';
 import 'package:sol_connect/core/api/models/schoolclass.dart';
 import 'package:sol_connect/core/api/models/timegrid.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/rpcresponse.dart';
 import 'package:sol_connect/core/api/timetable.dart';
@@ -381,27 +382,79 @@ class UserSession {
     return await frame.getWeekData();
   }
 
-  ///Gibt alle Klassen zurück der der Lehrer als Klassen hat
-  Future<List<SchoolClass>> getOwnClassesAsClassteacher() async {
-    if(personType != PersonTypes.teacher) {
-      throw InsufficientPermissionsException("This user can't view his classes as a classteacher");
+  ///Gibt alle Klassen zurück, die der Lehrer unterrichtet in der gegebenen Range
+  Future<List<SchoolClass>> getClassesAsTeacher({int checkRange = 2}) async {
+    if (checkRange <= 0) {
+      checkRange = 2;
     }
 
-    http.Response r = await _queryURL("/WebUntis/api/public/timetable/weekly/pageconfig?type=1&id=2323&date=2022-01-26&isMyTimetableSelected=false");
+    var allClasses = await getSchoolClasses();
+    var filtered = <SchoolClass>[];
+
+    for (int i = -(checkRange - 1); i < checkRange + 1; i++) {
+      TimeTableRange rng = await getTimetableManager().getFrameRelativeToCurrent(i).getWeekData();
+      if (!rng.isNonSchoolblockWeek()) {
+        for (int x = 0; x < rng.getDays().length; x++) {
+          for (int y = 0; y < rng.getDays()[0].getHours().length; y++) {
+            TimeTableHour hour = rng.getHourByIndex(xIndex: x, yIndex: y);
+
+            if (hour.getLessonCode() != Codes.empty) {
+              if (hour.getTeacher().identifier == _personId) {
+                bool added = false;
+                for (int j = 0; j < filtered.length; j++) {
+                  if (filtered[j].name == hour.getClazz().name) {
+                    added = true;
+                    break;
+                  }
+                }
+                if (!added) {
+                  for (SchoolClass s in allClasses) {
+                    if (s.id == hour.getClazz().identifier) {
+                      filtered.add(s);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return filtered;
+  }
+
+  ///Gibt alle Klassen der Schule zurück
+  Future<List<SchoolClass>> getSchoolClasses() async {
+    if (personType != PersonTypes.teacher) {
+      throw InsufficientPermissionsException("This user is not a teacher");
+    }
+
+    http.Response r = await _queryURL("/WebUntis/api/public/timetable/weekly/pageconfig?type=1");
     var klassen = <SchoolClass>[];
 
-    if(r.statusCode == 200) {
+    if (r.statusCode == 200) {
       dynamic json = jsonDecode(r.body);
 
-      String displayName = (await getProfileData(loadFromCache: true)).getFirstAndLastName();
-      for(dynamic d in json["data"]["elements"]) {
-        SchoolClass klasse = SchoolClass(d);
-        if(klasse.classTeacherName == displayName || klasse.classTeacher2Name == displayName) {
-          klassen.add(klasse);
-        }
+      for (dynamic d in json["data"]["elements"]) {
+        klassen.add(SchoolClass(d));
       }
     } else {
       throw ApiConnectionError("Failed to fetch class info for school: Connection error");
+    }
+    return klassen;
+  }
+
+  ///Gibt alle Klassen zurück der der Lehrer als Klassen hat
+  Future<List<SchoolClass>> getOwnClassesAsClassteacher({String simulateTeacher = ""}) async {
+    var klassen = <SchoolClass>[];
+    var all = await getSchoolClasses();
+    String displayName =
+        simulateTeacher != "" ? simulateTeacher : (await getProfileData(loadFromCache: true)).getFirstAndLastName();
+
+    for (SchoolClass klasse in all) {
+      if (klasse.classTeacherName == displayName || klasse.classTeacher2Name == displayName) {
+        klassen.add(klasse);
+      }
     }
     return klassen;
   }

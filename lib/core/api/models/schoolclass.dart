@@ -1,5 +1,4 @@
 class SchoolClass {
-
   int _type = -1;
   int _id = -1;
   String _name = "";
@@ -11,7 +10,7 @@ class SchoolClass {
   String _classTeacher2LongName = "";
 
   SchoolClass(dynamic data) {
-    if(data == null) {
+    if (data == null) {
       return;
     }
 
@@ -20,12 +19,12 @@ class SchoolClass {
     _name = data["name"];
     _displayName = data["displayname"];
 
-    if(data["classteacher"] != null) {
+    if (data["classteacher"] != null) {
       _classTeacherName = data["classteacher"]["name"];
       _classTeacherLongName = data["classteacher"]["longName"];
     }
 
-    if(data["classteacher2"] != null) {
+    if (data["classteacher2"] != null) {
       _classTeacher2Name = data["classteacher2"]["name"];
       _classTeacher2LongName = data["classteacher2"]["longName"];
     }
