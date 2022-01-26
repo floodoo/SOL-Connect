@@ -1,4 +1,4 @@
-package sol_connect
+package sol.connect
 
 import io.flutter.embedding.android.FlutterActivity
 
