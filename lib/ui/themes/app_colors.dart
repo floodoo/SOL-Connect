@@ -105,6 +105,7 @@ class AppColors {
         irregular: Colors.blue.shade900,
         cancelled: const Color(0xffa545b5),
         noTeacher: const Color(0xffa545b5));
+        
   }
 
   factory AppColors.dark() {
