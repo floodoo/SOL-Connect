@@ -67,7 +67,7 @@ class CustomDrawer extends ConsumerWidget {
               onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
             ),
             Visibility(
-              visible: ref.read(timeTableService).session.getPersonType() == "Lehrer",
+              visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
               child: ListTile(
                 title: Text("Alle Klasse", style: TextStyle(color: theme.colors.textBackground)),
                 onTap: null,
