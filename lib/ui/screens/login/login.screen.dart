@@ -72,7 +72,16 @@ class LoginScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Container(
-          color: theme.mode == ThemeMode.light ? theme.colors.primary : theme.colors.background,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              theme.colors.loginBackgroundGradient1,
+              theme.colors.loginBackgroundGradient2,
+            ],
+          )),
+          //color: theme.mode == ThemeMode.light ? theme.colors.primary : theme.colors.background,
           child: ListView(
             physics: const NeverScrollableScrollPhysics(),
             children: [
@@ -81,11 +90,11 @@ class LoginScreen extends ConsumerWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: theme.colors.background,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(13),
                     boxShadow: const [
                       BoxShadow(
-                        color: Colors.black87,
-                        blurRadius: 7,
+                        color: Colors.black54,
+                        blurRadius: 8,
                         offset: Offset(0, 0.8),
                       ),
                     ],
@@ -94,10 +103,26 @@ class LoginScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
-                        child: Text(
-                          "Untis Login",
-                          style: TextStyle(fontSize: 30, color: theme.colors.textBackground),
+                        padding: const EdgeInsets.only(left: 30, right: 30),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0, top: 26.0),
+                              child: Text(
+                                "Login",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 30, color: theme.colors.textBackground, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 15),
+                              child: Text(
+                                "Melde dich mit deinem Schulkonto an.",
+                                style: TextStyle(fontSize: 13, color: theme.colors.textLightInverted),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Padding(
@@ -114,9 +139,9 @@ class LoginScreen extends ConsumerWidget {
                               ref.read(timeTableService).setUsername(value);
                             },
                             autocorrect: false,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: "Benutzername",
-                              prefixIcon: Icon(Icons.person),
+                              prefixIcon: Icon(Icons.person, color: theme.colors.textInverted),
                             ),
                           ),
                         ),
@@ -137,9 +162,12 @@ class LoginScreen extends ConsumerWidget {
                             },
                             obscureText: true,
                             autocorrect: false,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: "Passwort",
-                              prefixIcon: Icon(Icons.lock),
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: theme.colors.textInverted,
+                              ),
                             ),
                           ),
                         ),
@@ -155,7 +183,7 @@ class LoginScreen extends ConsumerWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               color: theme.colors.primary,
-                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(13)),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 20.0),
                             child: Row(

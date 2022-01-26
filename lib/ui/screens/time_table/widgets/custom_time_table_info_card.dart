@@ -30,8 +30,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
 
     late TimeTableHour _timeTableHour;
 
-    Color _colorPhaseTop = theme.colors.primary;
-    Color _colorPhaseBottom = theme.colors.primary;
+    Color _colorPhaseTop = theme.colors.timetableCardBackground;
+    Color _colorPhaseBottom = theme.colors.timetableCardBackground;
 
     if (timeTableHour.isIrregular()) {
       _timeTableHour = timeTableHour.getReplacement();

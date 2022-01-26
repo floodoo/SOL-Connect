@@ -16,6 +16,13 @@ class AppColors {
     required this.progressIndicator,
     required this.icon,
     required this.successColor,
+    required this.loginBackgroundGradient1,
+    required this.loginBackgroundGradient2,
+    required this.textLight,
+    required this.textLightInverted,
+    required this.timetableCardBackground,
+    required this.timetableCardEdge,
+
     // Phase colors
     required this.phaseFree,
     required this.phaseOrienting,
@@ -44,6 +51,13 @@ class AppColors {
   final Color progressIndicator;
   final Color icon;
   final Color successColor;
+  final Color loginBackgroundGradient1;
+  final Color loginBackgroundGradient2;
+  final Color textLight;
+  final Color textLightInverted;
+  final Color
+      timetableCardBackground; //Dunkle Kacheln des Stundenplanes. Haupsächlich wenn keine Phasierung geladen ist
+  final Color timetableCardEdge; //Kanten des Stundenplanes
   // Phase colors
   final Color phaseFree;
   final Color phaseOrienting;
@@ -65,6 +79,8 @@ class AppColors {
         elementBackground: Colors.grey.shade600,
         errorBackground: Colors.red.shade900,
         text: Colors.white,
+        textLight: Colors.grey.shade300,
+        textLightInverted: Colors.grey.shade800,
         textBackground: Colors.black,
         textInverted: Colors.black,
         hintText: Colors.black38,
@@ -73,28 +89,34 @@ class AppColors {
         progressIndicator: Colors.red.shade800,
         icon: Colors.white,
         successColor: Colors.green.shade600,
+        loginBackgroundGradient1: const Color(0xff96250f),
+        loginBackgroundGradient2: const Color(0xff750c0c),
+        timetableCardBackground: Colors.grey.shade800,
+        timetableCardEdge: Colors.grey.shade700,
         // Phase colors
-        phaseFree: Colors.green,
-        phaseOrienting: Colors.orange,
-        phaseReflection: Colors.yellow,
-        phaseStructured: Colors.blue,
-        phaseFeedback: Colors.red,
+        phaseFree: Colors.green.shade700,
+        phaseOrienting: Colors.orange.shade700,
+        phaseReflection: Colors.yellow.shade700,
+        phaseStructured: Colors.blue.shade700,
+        phaseFeedback: Colors.red.shade700,
         phaseUnknown: Colors.grey,
         phaseOutOfBlock: Colors.red.shade300,
         // Status colors
         irregular: Colors.blue.shade900,
-        cancelled: Colors.purple.shade400,
-        noTeacher: Colors.purple.shade400);
+        cancelled: const Color(0xffa545b5),
+        noTeacher: const Color(0xffa545b5));
   }
 
   factory AppColors.dark() {
     return AppColors(
         primary: Colors.grey.shade900,
         primaryLight: Colors.grey.shade800,
-        background: Colors.blueGrey.shade900,
+        background: const Color(0xff2b2e36),
         elementBackground: Colors.black,
         errorBackground: Colors.red.shade900,
         text: Colors.white,
+        textLight: Colors.grey.shade300,
+        textLightInverted: Colors.grey.shade300,
         textBackground: Colors.white,
         textInverted: Colors.white,
         hintText: Colors.white38,
@@ -103,17 +125,21 @@ class AppColors {
         progressIndicator: Colors.white,
         icon: Colors.white,
         successColor: Colors.green.shade800,
+        loginBackgroundGradient2: const Color(0xff181721),
+        loginBackgroundGradient1: const Color(0xff252426),
+        timetableCardBackground: Colors.grey.shade900,
+        timetableCardEdge: Colors.grey.shade800,
         // Phase color
-        phaseFree: Colors.green,
-        phaseOrienting: Colors.orange,
-        phaseReflection: Colors.yellow,
-        phaseStructured: Colors.blue,
-        phaseFeedback: Colors.red,
+        phaseFree: Colors.green.shade700,
+        phaseOrienting: Colors.orange.shade700,
+        phaseReflection: Colors.yellow.shade700,
+        phaseStructured: Colors.blue.shade700,
+        phaseFeedback: Colors.red.shade700,
         phaseUnknown: Colors.blueGrey.shade700,
         phaseOutOfBlock: Colors.red.shade900,
         // Status colors
         irregular: Colors.blue.shade900,
-        cancelled: Colors.purple.shade700,
-        noTeacher: Colors.purple.shade700);
+        cancelled: const Color(0xffa545b5),
+        noTeacher: const Color(0xffa545b5));
   }
 }
