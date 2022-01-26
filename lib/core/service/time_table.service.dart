@@ -72,7 +72,8 @@ class TimeTableService with ChangeNotifier {
       UserSecureStorage.setPassword(password);
       log.i("Successfully logged in");
       notifyListeners();
-    } catch (error) {
+    } catch (error, stacktrace) {
+      log.e(stacktrace);
       log.e("Error logging in: $error");
       log.d("Clearing user data");
 

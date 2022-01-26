@@ -332,7 +332,7 @@ class UserSession {
             "endDate": Utils().convertToUntisDate(to),
             "element": {
               "id": personId == -1 ? _personId : personId,
-              "type": personType == PersonTypes.unknown ? _type : personType.id
+              "type": personType == PersonTypes.unknown ? _type.id : personType.id
             },
             "showLsText": true,
             "showPeText": true,
