@@ -1,12 +1,11 @@
 import 'dart:math';
-
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/services.dart';
-import 'package:untis_phasierung/core/api/models/timegrid.dart';
-import 'package:untis_phasierung/core/api/models/utils.dart';
-import 'package:untis_phasierung/core/api/rpcresponse.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/api/usersession.dart';
+import 'package:sol_connect/core/api/models/timegrid.dart';
+import 'package:sol_connect/core/api/models/utils.dart';
+import 'package:sol_connect/core/api/rpcresponse.dart';
+import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 
 class TimetableManager {
   DateTime? nextBlockStart;

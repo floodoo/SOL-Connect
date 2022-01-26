@@ -1,4 +1,4 @@
-package com.example.untis_phasierung
+package sol_connect
 
 import io.flutter.embedding.android.FlutterActivity
 

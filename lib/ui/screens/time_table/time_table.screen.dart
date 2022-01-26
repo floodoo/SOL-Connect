@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
-import 'package:untis_phasierung/core/service/services.dart';
-import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_card.dart';
-import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
-import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
-import 'package:untis_phasierung/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
-import 'package:untis_phasierung/ui/shared/custom_drawer.dart';
-import 'package:untis_phasierung/ui/themes/app_theme.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
+import 'package:sol_connect/core/service/services.dart';
+import 'package:sol_connect/ui/screens/time_table/widgets/custom_time_table_card.dart';
+import 'package:sol_connect/ui/screens/time_table/widgets/custom_time_table_day_card.dart';
+import 'package:sol_connect/ui/screens/time_table/widgets/custom_time_table_hour_card.dart';
+import 'package:sol_connect/ui/screens/time_table/widgets/custom_time_table_info_card.dart';
+import 'package:sol_connect/ui/shared/custom_drawer.dart';
+import 'package:sol_connect/ui/themes/app_theme.dart';
 
 class TimeTableScreen extends ConsumerWidget {
   const TimeTableScreen({Key? key}) : super(key: key);

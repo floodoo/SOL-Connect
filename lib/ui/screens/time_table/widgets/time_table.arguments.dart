@@ -1,4 +1,4 @@
-import 'package:untis_phasierung/core/api/usersession.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 
 class TimetableArguments {
   final UserSession userSession;

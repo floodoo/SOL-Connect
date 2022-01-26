@@ -1,15 +1,14 @@
 /*Author Philipp Gersch */
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/api/timetable.dart';
-import 'package:untis_phasierung/core/excel/models/cellcolors.dart';
-import 'package:untis_phasierung/core/excel/models/mappedsheet.dart';
-import 'package:untis_phasierung/core/excel/models/mergedtimetable.dart';
-import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
-import 'package:untis_phasierung/core/exceptions.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/excel/models/cellcolors.dart';
+import 'package:sol_connect/core/excel/models/mappedsheet.dart';
+import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
+import 'package:sol_connect/core/excel/models/phaseelement.dart';
+import 'package:sol_connect/core/exceptions.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
 class MappedPhase {
