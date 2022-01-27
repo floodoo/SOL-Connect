@@ -1,6 +1,5 @@
 /*Author Philipp Gersch */
-
-import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
+import 'package:sol_connect/core/excel/models/phaseelement.dart';
 
 class _ColorEntry {
   int _xIndex = 0;

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:untis_phasierung/core/api/usersession.dart';
-import 'package:untis_phasierung/core/service/services.dart';
-import 'package:untis_phasierung/ui/screens/login/login.screen.dart';
-import 'package:untis_phasierung/ui/screens/settings/settings.screen.dart';
-import 'package:untis_phasierung/ui/screens/time_table/time_table.screen.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 import 'dart:math';
+
+import 'package:sol_connect/core/service/services.dart';
+import 'package:sol_connect/ui/screens/login/login.screen.dart';
+import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
+import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({Key? key}) : super(key: key);

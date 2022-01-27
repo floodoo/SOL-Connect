@@ -1,12 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/excel/models/phaseelement.dart';
-import 'package:untis_phasierung/core/excel/validator.dart';
-import 'package:untis_phasierung/core/service/services.dart';
-import 'package:untis_phasierung/ui/screens/time_table_detail/arguments/time_table_detail.argument.dart';
-import 'package:untis_phasierung/ui/screens/time_table_detail/time_table_detail.screen.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/excel/models/phaseelement.dart';
+import 'package:sol_connect/core/excel/validator.dart';
+import 'package:sol_connect/core/service/services.dart';
+import 'package:sol_connect/ui/screens/time_table_detail/arguments/time_table_detail.argument.dart';
+import 'package:sol_connect/ui/screens/time_table_detail/time_table_detail.screen.dart';
 
 class CustomTimeTableInfoCard extends ConsumerWidget {
   const CustomTimeTableInfoCard({
@@ -30,8 +30,8 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
 
     late TimeTableHour _timeTableHour;
 
-    Color _colorPhaseTop = theme.colors.primary;
-    Color _colorPhaseBottom = theme.colors.primary;
+    Color _colorPhaseTop = theme.colors.timetableCardBackground;
+    Color _colorPhaseBottom = theme.colors.timetableCardBackground;
 
     if (timeTableHour.isIrregular()) {
       _timeTableHour = timeTableHour.getReplacement();

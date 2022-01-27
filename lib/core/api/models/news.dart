@@ -1,6 +1,5 @@
 //Author Philipp Gersch
-
-import 'package:untis_phasierung/core/exceptions.dart';
+import 'package:sol_connect/core/exceptions.dart';
 
 class NewsMessage {
   int _id = -1;

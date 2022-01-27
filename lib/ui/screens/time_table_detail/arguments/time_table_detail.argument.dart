@@ -1,5 +1,5 @@
-import 'package:untis_phasierung/core/api/models/timetable.hour.dart';
-import 'package:untis_phasierung/core/excel/validator.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/excel/validator.dart';
 
 class TimeTableDetailArgument {
   final TimeTableHour timeTableHour;

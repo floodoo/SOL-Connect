@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:untis_phasierung/ui/themes/app_theme.dart';
+import 'package:sol_connect/ui/themes/app_theme.dart';
 
 class ThemeService with ChangeNotifier {
   AppTheme _theme = AppTheme.dark();
