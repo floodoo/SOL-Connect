@@ -80,15 +80,61 @@ class SettingsScreen extends ConsumerWidget {
                           onPressed: () {
                             AwesomeDialog(
                               context: context,
-                              dialogType: DialogType.INFO,
+                              dialogType: DialogType.NO_HEADER,
                               animType: AnimType.BOTTOMSLIDE,
                               headerAnimationLoop: false,
-                              title: "Wie lade ich einen Phasenplan?",
-                              desc: "basldgasdad",
+                             // title: "Was ist das?",
+                              body: Padding(
+                                padding: EdgeInsets.all(6),
+                                child: Column(
+                                  children: const [
+                                   Padding(
+                                      padding: EdgeInsets.only(bottom: 15),
+                                      child: Text("Die Phasierung",
+                                        style: TextStyle(fontSize: 23),
+                                      ),
+                                    ),
+                                    Text("Die Phasierung ist eine einfache Excel Datei die deinem Stundenplan gleicht und zusätzlich die SOL Phasen des aktuellen Blocks enthält.", 
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 15, top: 5),
+                                      child: Text("Welche Excel Datei?",
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Diese wird üblicherweise am anfang deines Schulblocks vorgestellt und von deinem Lehrer zur Verfügung gestellt."
+                                      "\nDiesen Plan kannst du dann als Excel Datei hier laden und in deinen Stundenplan einfügen.",
+                                        textAlign: TextAlign.left,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 15, top: 5),
+                                      child: Text("Ist die immer gültig?",
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Wenn du eine Phasierung laden willst, wird sie immer für den nächsten aktuellen Block geladen. "
+                                      "Der gültigkeits Zeitraum wird auch grün angezeigt."
+                                      "\nDu wirst benachrichtigt, wenn du noch die Phasierung eines alten Blocks geladen hast.",
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          
+                              //desc: "Die Phasierung ist eine einfache Excel Datei."
+                              //  "\n\nDiese wird üblicherweise am anfang deines Schulblocks vorgestellt und von einem Lehrer zur Verfügung gestellt."
+                              //  "\nDiesen Plan kannst du dann als Excel Datei hier laden und in deinen Stundenplan einfügen."
+                              //  "\n\n"
+                              //  ,
                               btnOkOnPress: () {},
                             ).show();
                           },
-                          icon: const Icon(Icons.info_outline),
+                          icon: Icon(Icons.info_outline, color: theme.colors.textInverted,),
                           iconSize: 25,
                         )
                       ],
