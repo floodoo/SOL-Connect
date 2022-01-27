@@ -33,13 +33,11 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
     Color _colorPhaseTop = theme.colors.timetableCardBackground;
     Color _colorPhaseBottom = theme.colors.timetableCardBackground;
 
-    if (timeTableHour.isIrregular()) {
-      _timeTableHour = timeTableHour.getReplacement();
-    } else {
-      _timeTableHour = timeTableHour;
-    }
+    _timeTableHour = timeTableHour;
 
-    if (phase != null) {
+    if (phase != null &&
+        _timeTableHour.getLessonCode() != Codes.cancelled &&
+        _timeTableHour.getLessonCode() != Codes.irregular) {
       switch (phase!.getFirstHalf()) {
         case PhaseCodes.free:
           _colorPhaseTop = theme.colors.phaseFree;
@@ -57,7 +55,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
           _colorPhaseTop = theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseTop = theme.colors.phaseUnknown;
+          _colorPhaseTop = theme.colors.timetableCardBackground;
       }
 
       switch (phase!.getSecondHalf()) {
@@ -77,7 +75,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
           _colorPhaseBottom = theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseBottom = theme.colors.phaseUnknown;
+          _colorPhaseBottom = theme.colors.timetableCardBackground;
       }
     }
 

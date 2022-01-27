@@ -104,6 +104,9 @@ class TimeTableScreen extends ConsumerWidget {
           //bool hourBeforeLunch = false;
 
           TimeTableHour current = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1];
+          if (current.getLessonCode() == Codes.cancelled && current.replacements.isNotEmpty) {
+            current = current.getReplacement();
+          }
 
           if (timeColumnCounter - 1 > 0) {
             TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
@@ -134,17 +137,20 @@ class TimeTableScreen extends ConsumerWidget {
             if (timeColumnCounter - 1 == index) {
               return true;
             }
+
             if (index < timeColumnCounter - 1) {
               for (int i = index; i < timeColumnCounter - 1; i++) {
                 if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name !=
-                    current.getTeacher().name) {
+                        current.getTeacher().name ||
+                    _timeTable.getDays()[schoolDayCounter].getHours()[i].getLessonCode() == Codes.irregular) {
                   return false;
                 }
               }
             } else {
               for (int i = timeColumnCounter - 1; i < index; i++) {
                 if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name !=
-                    current.getTeacher().name) {
+                        current.getTeacher().name ||
+                    _timeTable.getDays()[schoolDayCounter].getHours()[i].getLessonCode() == Codes.irregular) {
                   return false;
                 }
               }
@@ -157,11 +163,12 @@ class TimeTableScreen extends ConsumerWidget {
           int doubleLessonCount = 0;
           int counter = -1;
           String currentTeacher = current.getTeacher().name;
+          Codes currentCode = current.getLessonCode();
 
           for (int i = 0; i < _timeTable.schoolDayLength; i++) {
             if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name == currentTeacher &&
                 connectedToCurrent(i) &&
-                _timeTable.getDays()[schoolDayCounter].getHours()[i].getLessonCode() != Codes.irregular) {
+                currentCode == _timeTable.getDays()[schoolDayCounter].getHours()[i].getLessonCode()) {
               doubleLessonCount++;
               counter++;
               if (i == timeColumnCounter - 1) {
@@ -189,11 +196,7 @@ class TimeTableScreen extends ConsumerWidget {
               }
             }
           } else {
-            lessonInfo = [
-              current.getReplacement().getSubject().name,
-              current.getReplacement().getTeacher().name,
-              current.getReplacement().getRoom().name
-            ];
+            lessonInfo = [current.getSubject().name, current.getTeacher().name, current.getRoom().name];
           }
           timeTableList.add(
             CustomTimeTableInfoCard(

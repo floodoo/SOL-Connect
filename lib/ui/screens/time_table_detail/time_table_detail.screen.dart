@@ -39,10 +39,10 @@ class TimeTableDetailScreen extends ConsumerWidget {
       statusCodeColor = theme.colors.cancelled;
     }
 
-    if (_timeTableHour.isIrregular()) {
-      _timeTableHour = args.timeTableHour.getReplacement();
-      statusCodeColor = theme.colors.irregular;
-    }
+    //if (_timeTableHour.isIrregular()) {
+    //  _timeTableHour = args.timeTableHour.getReplacement();
+    //  statusCodeColor = theme.colors.irregular;
+    //}
 
     return Scaffold(
       appBar: AppBar(
