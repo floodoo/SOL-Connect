@@ -85,7 +85,7 @@ class SettingsScreen extends ConsumerWidget {
                               headerAnimationLoop: false,
                               // title: "Was ist das?",
                               body: Padding(
-                                padding: EdgeInsets.all(6),
+                                padding: const EdgeInsets.all(6),
                                 child: Column(
                                   children: const [
                                     Padding(
