@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   auto_size_text: ^3.0.0
+  awesome_dialog: ^2.1.2
   cupertino_icons: ^1.0.2
   excel: 2.0.0-null-safety-3
   file_picker: ^4.3.1
@@ -25,9 +26,9 @@ dependencies:
   url_launcher: ^6.0.17
 
 dev_dependencies:
-  flutter_native_splash: ^1.3.3
   flutter_launcher_icons: "^0.9.2"
   flutter_lints: ^1.0.0
+  flutter_native_splash: ^1.3.3
   change_app_package_name: ^1.0.0
   flutter_test:
     sdk: flutter
