@@ -83,23 +83,26 @@ class SettingsScreen extends ConsumerWidget {
                               dialogType: DialogType.NO_HEADER,
                               animType: AnimType.BOTTOMSLIDE,
                               headerAnimationLoop: false,
-                             // title: "Was ist das?",
+                              // title: "Was ist das?",
                               body: Padding(
                                 padding: EdgeInsets.all(6),
                                 child: Column(
                                   children: const [
-                                   Padding(
+                                    Padding(
                                       padding: EdgeInsets.only(bottom: 15),
-                                      child: Text("Die Phasierung",
+                                      child: Text(
+                                        "Die Phasierung",
                                         style: TextStyle(fontSize: 23),
                                       ),
                                     ),
-                                    Text("Die Phasierung ist eine einfache Excel Datei die deinem Stundenplan gleicht und zusätzlich die SOL Phasen des aktuellen Blocks enthält.", 
+                                    Text(
+                                      "Die Phasierung ist eine einfache Excel Datei die deinem Stundenplan gleicht und zusätzlich die SOL Phasen des aktuellen Blocks enthält.",
                                       textAlign: TextAlign.left,
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 15, top: 5),
-                                      child: Text("Welche Excel Datei?",
+                                      child: Text(
+                                        "Welche Excel Datei?",
                                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                         textAlign: TextAlign.left,
                                       ),
@@ -107,11 +110,12 @@ class SettingsScreen extends ConsumerWidget {
                                     Text(
                                       "Diese wird üblicherweise am anfang deines Schulblocks vorgestellt und von deinem Lehrer zur Verfügung gestellt."
                                       "\nDiesen Plan kannst du dann als Excel Datei hier laden und in deinen Stundenplan einfügen.",
-                                        textAlign: TextAlign.left,
+                                      textAlign: TextAlign.left,
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 15, top: 5),
-                                      child: Text("Ist die immer gültig?",
+                                      child: Text(
+                                        "Ist die immer gültig?",
                                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                         textAlign: TextAlign.left,
                                       ),
@@ -125,7 +129,7 @@ class SettingsScreen extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                          
+
                               //desc: "Die Phasierung ist eine einfache Excel Datei."
                               //  "\n\nDiese wird üblicherweise am anfang deines Schulblocks vorgestellt und von einem Lehrer zur Verfügung gestellt."
                               //  "\nDiesen Plan kannst du dann als Excel Datei hier laden und in deinen Stundenplan einfügen."
@@ -134,7 +138,10 @@ class SettingsScreen extends ConsumerWidget {
                               btnOkOnPress: () {},
                             ).show();
                           },
-                          icon: Icon(Icons.info_outline, color: theme.colors.textInverted,),
+                          icon: Icon(
+                            Icons.info_outline,
+                            color: theme.colors.textInverted,
+                          ),
                           iconSize: 25,
                         )
                       ],
