@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/service/services.dart';
+import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 import 'package:sol_connect/util/logger.util.dart';
 
 class TeacherClassesScreen extends ConsumerStatefulWidget {
@@ -44,7 +46,13 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         ListTile(
           title: Text(classesAsTeacher[i].name),
           subtitle: Text(classesAsTeacher[i].classTeacherName),
-          onTap: () {},
+          onTap: () {
+            ref.read(timeTableService).session.setTimetableBehavior(classesAsTeacher[i].id, PersonTypes.klasse);
+            ref.read(timeTableService).resetTimeTable();
+            ref.read(timeTableService).weekCounter = 0;
+            ref.read(timeTableService).getTimeTable();
+            Navigator.pushNamed(context, TimeTableScreen.routeName);
+          },
         ),
       );
       if (i == classesAsTeacher.length) {

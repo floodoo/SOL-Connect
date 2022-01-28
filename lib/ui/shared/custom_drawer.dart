@@ -65,13 +65,18 @@ class CustomDrawer extends ConsumerWidget {
               ),
             ),
             ListTile(
-              title: Text("Mein Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
-              onTap: () => Navigator.popAndPushNamed(context, TimeTableScreen.routeName),
-            ),
+                title: Text("Mein Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
+                onTap: () {
+                  ref.read(timeTableService).session.resetTimetableLoading();
+                  ref.read(timeTableService).resetTimeTable();
+                  ref.read(timeTableService).getTimeTable(weekCounter: 0);
+
+                  Navigator.popAndPushNamed(context, TimeTableScreen.routeName);
+                }),
             Visibility(
               visible: ref.read(timeTableService).session.personType == PersonTypes.teacher,
               child: ListTile(
-                title: Text("Alle Klasse", style: TextStyle(color: theme.colors.textBackground)),
+                title: Text("Ihre Klassen", style: TextStyle(color: theme.colors.textBackground)),
                 onTap: () => Navigator.pushNamed(context, TeacherClassesScreen.routeName),
               ),
             ),
