@@ -37,10 +37,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
       statusCodeColor = theme.colors.noTeacher;
     } else if (_timeTableHour.getLessonCode() == Codes.cancelled) {
       statusCodeColor = theme.colors.cancelled;
-    }
-
-    if (_timeTableHour.isIrregular()) {
-      _timeTableHour = args.timeTableHour.getReplacement();
+    } else if (_timeTableHour.isIrregular()) {
       statusCodeColor = theme.colors.irregular;
     }
 
@@ -114,8 +111,12 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                 height: 7,
                               ),
                               AutoSizeText(
-                                "Status: ${_timeTableHour.getLessonCode().readableName}",
-                                style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
+                                _timeTableHour.getLessonCode().readableName.toString(),
+                                style: TextStyle(
+                                    color: theme.colors.textInverted,
+                                    fontSize: 17,
+                                    backgroundColor:
+                                        _timeTableHour.getLessonCode() != Codes.regular ? statusCodeColor : null),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                               ),

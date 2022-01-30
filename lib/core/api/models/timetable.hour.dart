@@ -143,6 +143,8 @@ class TimeTableHour {
     }
   }
 
+  List<TimeTableHour> get replacements => replacement;
+
   //Ändert das Datim dieser Stunde. Stunde und Minute dürfen nicht verändert werden
   void modifyDate(int year, int month, int day) {
     int startHour = start.hour;
@@ -260,7 +262,7 @@ class TimeTableHour {
   void addIrregularHour(TimeTableHour entity) {
     entity.xIndex = xIndex;
     entity._yIndex = _yIndex;
-    entity._code = _code;
+    //entity._code = _code;
     replacement.add(entity);
   }
 

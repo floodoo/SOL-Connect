@@ -31,6 +31,12 @@ class AppColors {
     required this.phaseFeedback,
     required this.phaseUnknown,
     required this.phaseOutOfBlock,
+    required this.phaseOrientingDisabled,
+    required this.phaseReflectionDisabled,
+    required this.phaseStructuredDisabled,
+    required this.phaseFreeDisabled,
+    required this.phaseFeedbackDisabled,
+    required this.phaseUnknownDisabled,
     // Status colors
     required this.irregular,
     required this.cancelled,
@@ -65,6 +71,13 @@ class AppColors {
   final Color phaseStructured;
   final Color phaseFeedback;
   final Color phaseUnknown;
+  final Color phaseFreeDisabled;
+  final Color phaseOrientingDisabled;
+  final Color phaseReflectionDisabled;
+  final Color phaseStructuredDisabled;
+  final Color phaseFeedbackDisabled;
+  final Color phaseUnknownDisabled;
+
   final Color phaseOutOfBlock;
   // Status colors
   final Color irregular;
@@ -98,12 +111,18 @@ class AppColors {
         phaseOrienting: Colors.orange.shade700,
         phaseReflection: Colors.yellow.shade700,
         phaseStructured: Colors.blue.shade700,
-        phaseFeedback: Colors.red.shade700,
+        phaseFeedback: Colors.blue.shade700,
         phaseUnknown: Colors.grey,
         phaseOutOfBlock: Colors.red.shade300,
+        phaseFreeDisabled: const Color(0xff608a62),
+        phaseOrientingDisabled: const Color(0xffde9f5f),
+        phaseReflectionDisabled: const Color(0xffdec573),
+        phaseStructuredDisabled: const Color(0xff5e6591),
+        phaseFeedbackDisabled: const Color(0xffcf7070),
+        phaseUnknownDisabled: Colors.grey.shade700,
         // Status colors
-        irregular: Colors.blue.shade900,
-        cancelled: const Color(0xffa545b5),
+        irregular: const Color(0xffa545b5),
+        cancelled: const Color(0xffa80c0c),
         noTeacher: const Color(0xffa545b5));
   }
 
@@ -130,16 +149,28 @@ class AppColors {
         timetableCardBackground: Colors.grey.shade900,
         timetableCardEdge: Colors.grey.shade800,
         // Phase color
+        /*phaseFreeDisabled: const Color(0xff274629),
+        phaseOrientingDisabled: const Color(0xff854300),
+        phaseReflectionDisabled: const Color(0xff7C6732),
+        phaseStructuredDisabled: const Color(0xff1A3C5D),
+        phaseFeedbackDisabled: const Color(0xff5D2222),*/
+
+        phaseFreeDisabled: const Color(0xff142D15),
+        phaseOrientingDisabled: const Color(0xff63401C),
+        phaseReflectionDisabled: const Color(0xff635636),
+        phaseStructuredDisabled: const Color(0xff06213B),
+        phaseFeedbackDisabled: const Color(0xff380808),
+        phaseUnknownDisabled: Colors.grey.shade700,
+        phaseUnknown: Colors.blueGrey.shade700,
+        phaseOutOfBlock: Colors.red.shade900,
         phaseFree: Colors.green.shade700,
         phaseOrienting: Colors.orange.shade700,
         phaseReflection: Colors.yellow.shade700,
         phaseStructured: Colors.blue.shade700,
         phaseFeedback: Colors.red.shade700,
-        phaseUnknown: Colors.blueGrey.shade700,
-        phaseOutOfBlock: Colors.red.shade900,
         // Status colors
-        irregular: Colors.blue.shade900,
-        cancelled: const Color(0xffa545b5),
-        noTeacher: const Color(0xffa545b5));
+        irregular: const Color(0xffCB67DC),
+        cancelled: const Color(0xffE2222B),
+        noTeacher: const Color(0xffCB67DC));
   }
 }

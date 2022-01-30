@@ -33,51 +33,67 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
     Color _colorPhaseTop = theme.colors.timetableCardBackground;
     Color _colorPhaseBottom = theme.colors.timetableCardBackground;
 
-    if (timeTableHour.isIrregular()) {
-      _timeTableHour = timeTableHour.getReplacement();
-    } else {
-      _timeTableHour = timeTableHour;
-    }
+    _timeTableHour = timeTableHour;
 
     if (phase != null) {
+      // _timeTableHour.getLessonCode() != Codes.cancelled &&
+      //_timeTableHour.getLessonCode() != Codes.irregular) {
       switch (phase!.getFirstHalf()) {
         case PhaseCodes.free:
-          _colorPhaseTop = theme.colors.phaseFree;
+          _colorPhaseTop =
+              _timeTableHour.getLessonCode() != Codes.regular ? theme.colors.phaseFreeDisabled : theme.colors.phaseFree;
           break;
         case PhaseCodes.orienting:
-          _colorPhaseTop = theme.colors.phaseOrienting;
+          _colorPhaseTop = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseOrientingDisabled
+              : theme.colors.phaseOrienting;
           break;
         case PhaseCodes.reflection:
-          _colorPhaseTop = theme.colors.phaseReflection;
+          _colorPhaseTop = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseReflectionDisabled
+              : theme.colors.phaseReflection;
           break;
         case PhaseCodes.structured:
-          _colorPhaseTop = theme.colors.phaseStructured;
+          _colorPhaseTop = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseStructuredDisabled
+              : theme.colors.phaseStructured;
           break;
         case PhaseCodes.feedback:
-          _colorPhaseTop = theme.colors.phaseFeedback;
+          _colorPhaseTop = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseFeedbackDisabled
+              : theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseTop = theme.colors.phaseUnknown;
+          _colorPhaseTop = theme.colors.timetableCardBackground;
       }
 
       switch (phase!.getSecondHalf()) {
         case PhaseCodes.free:
-          _colorPhaseBottom = theme.colors.phaseFree;
+          _colorPhaseBottom =
+              _timeTableHour.getLessonCode() != Codes.regular ? theme.colors.phaseFreeDisabled : theme.colors.phaseFree;
           break;
         case PhaseCodes.orienting:
-          _colorPhaseBottom = theme.colors.phaseOrienting;
+          _colorPhaseBottom = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseOrientingDisabled
+              : theme.colors.phaseOrienting;
           break;
         case PhaseCodes.reflection:
-          _colorPhaseBottom = theme.colors.phaseReflection;
+          _colorPhaseBottom = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseReflectionDisabled
+              : theme.colors.phaseReflection;
           break;
         case PhaseCodes.structured:
-          _colorPhaseBottom = theme.colors.phaseStructured;
+          _colorPhaseBottom = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseStructuredDisabled
+              : theme.colors.phaseStructured;
           break;
         case PhaseCodes.feedback:
-          _colorPhaseBottom = theme.colors.phaseFeedback;
+          _colorPhaseBottom = _timeTableHour.getLessonCode() != Codes.regular
+              ? theme.colors.phaseFeedbackDisabled
+              : theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseBottom = theme.colors.phaseUnknown;
+          _colorPhaseBottom = theme.colors.timetableCardBackground;
       }
     }
 
