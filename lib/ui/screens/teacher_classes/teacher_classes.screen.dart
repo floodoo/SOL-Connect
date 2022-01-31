@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -43,41 +44,102 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
 
   Future<List<Widget>> buildAllTeacherClasses(String searchString) async {
     List<Widget> list = [];
-    List<SchoolClass> classesAsTeacher = await ref.read(timeTableService).session.getClassesAsTeacher();
+    List<SchoolClass> allClassesAsTeacher = await ref.read(timeTableService).session.getClassesAsTeacher();
+    List<SchoolClass> ownClassesAsTeacher =
+        await ref.read(timeTableService).session.getOwnClassesAsClassteacher(simulateTeacher: "CAG");
 
     if (searchString != "") {
-      classesAsTeacher = classesAsTeacher
+      allClassesAsTeacher = allClassesAsTeacher
           .where((element) =>
               element.name.toLowerCase().replaceAll(" ", "").contains(searchString.toLowerCase().replaceAll(" ", "")))
           .toList();
+      ownClassesAsTeacher.clear();
     }
 
-    if (classesAsTeacher.isEmpty) {
+    if (allClassesAsTeacher.isEmpty) {
       return list;
     }
-    for (var i = 0; i < classesAsTeacher.length; i++) {
+
+    if (ownClassesAsTeacher.isNotEmpty) {
       list.add(
-        ListTile(
-          title: Text(classesAsTeacher[i].name),
-          subtitle: Text(classesAsTeacher[i].classTeacherName),
-          onTap: () {
-            ref.read(timeTableService).session.setTimetableBehavior(classesAsTeacher[i].id, PersonTypes.klasse);
-            ref.read(timeTableService).resetTimeTable();
-            ref.read(timeTableService).weekCounter = 0;
-            ref.read(timeTableService).getTimeTable();
-            Navigator.pushNamed(context, TimeTableScreen.routeName);
-          },
-        ),
-      );
-      if (i == classesAsTeacher.length) {
-        list.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Divider(
-              color: ref.watch(themeService).theme.colors.textInverted,
+        const Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Center(
+            child: AutoSizeText(
+              "Ihre Klassen als Klassenlehrer:in",
+              style: TextStyle(fontSize: 20),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+        ),
+      );
+
+      for (var i = 0; i < ownClassesAsTeacher.length; i++) {
+        list.add(
+          ListTile(
+            title: Text(ownClassesAsTeacher[i].name),
+            subtitle: Text(ownClassesAsTeacher[i].classTeacherName),
+            onTap: () {
+              ref.read(timeTableService).session.setTimetableBehavior(ownClassesAsTeacher[i].id, PersonTypes.klasse);
+              ref.read(timeTableService).resetTimeTable();
+              ref.read(timeTableService).weekCounter = 0;
+              ref.read(timeTableService).getTimeTable();
+              Navigator.pushNamed(context, TimeTableScreen.routeName);
+            },
+          ),
         );
+        if (i != ownClassesAsTeacher.length - 1) {
+          list.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Divider(
+                color: ref.watch(themeService).theme.colors.textInverted,
+              ),
+            ),
+          );
+        }
+      }
+    }
+
+    if (allClassesAsTeacher.isNotEmpty) {
+      list.add(
+        const Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Center(
+            child: AutoSizeText(
+              "Alle Klassen, in denen Sie unterrichten",
+              style: TextStyle(fontSize: 20),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      );
+      for (var i = 0; i < allClassesAsTeacher.length; i++) {
+        list.add(
+          ListTile(
+            title: Text(allClassesAsTeacher[i].name),
+            subtitle: Text(allClassesAsTeacher[i].classTeacherName),
+            onTap: () {
+              ref.read(timeTableService).session.setTimetableBehavior(allClassesAsTeacher[i].id, PersonTypes.klasse);
+              ref.read(timeTableService).resetTimeTable();
+              ref.read(timeTableService).weekCounter = 0;
+              ref.read(timeTableService).getTimeTable();
+              Navigator.pushNamed(context, TimeTableScreen.routeName);
+            },
+          ),
+        );
+        if (i != allClassesAsTeacher.length - 1) {
+          list.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Divider(
+                color: ref.watch(themeService).theme.colors.textInverted,
+              ),
+            ),
+          );
+        }
       }
     }
 
@@ -100,7 +162,11 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
               future: buildAllTeacherClasses(widget.searchString),
               builder: (context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: theme.colors.progressIndicator,
+                    ),
+                  );
                 } else {
                   return (snapshot.data.length == 0)
                       ? Center(
