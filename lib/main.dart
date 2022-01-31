@@ -39,7 +39,7 @@ class MyApp extends ConsumerWidget {
         TimeTableScreen.routeName: (context) => const TimeTableScreen(),
         TimeTableDetailScreen.routeName: (context) => const TimeTableDetailScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
-        TeacherClassesScreen.routeName: (context) => const TeacherClassesScreen(),
+        TeacherClassesScreen.routeName: (context) => TeacherClassesScreen(),
       },
     );
   }
