@@ -26,16 +26,34 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
   @override
   void initState() {
     searchBar = SearchBar(
-      inBar: false,
       setState: setState,
       onSubmitted: (String value) {
         widget.searchString = value;
         ref.read(teacherService).toggleReloading();
+        setState(() {
+          widget.searchString = value;
+        });
+        searchBar.buildDefaultAppBar(context);
       },
+      showClearButton: true,
+      clearOnSubmit: false,
       buildDefaultAppBar: (BuildContext context) {
         return AppBar(
           title: const Text("Ihre Klassen"),
-          actions: [searchBar.getSearchAction(context)],
+          actions: [
+            widget.searchString == ""
+                ? searchBar.getSearchAction(context)
+                : IconButton(
+                    onPressed: () {
+                      searchBar.controller.clear();
+                      setState(() {
+                        widget.searchString = "";
+                      });
+                      searchBar.buildDefaultAppBar(context);
+                    },
+                    icon: const Icon(Icons.clear),
+                  )
+          ],
         );
       },
     );
@@ -45,8 +63,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
   Future<List<Widget>> buildAllTeacherClasses(String searchString) async {
     List<Widget> list = [];
     List<SchoolClass> allClassesAsTeacher = await ref.read(timeTableService).session.getClassesAsTeacher();
-    List<SchoolClass> ownClassesAsTeacher =
-        await ref.read(timeTableService).session.getOwnClassesAsClassteacher(simulateTeacher: "CAG");
+    List<SchoolClass> ownClassesAsTeacher = await ref.read(timeTableService).session.getOwnClassesAsClassteacher();
 
     if (searchString != "") {
       allClassesAsTeacher = allClassesAsTeacher
