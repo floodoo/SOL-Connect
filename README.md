@@ -6,7 +6,7 @@ Diese App ist kompatibel mit Android und IOS.
 Diese App wird auch zukünftig für Windows und MacOS zur verfügung gestellt werden.
 <br>
 <br>
-Zum Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
+Zur Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
 
 ## Screenshots
 
