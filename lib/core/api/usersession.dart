@@ -3,7 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/news.dart';
 import 'package:sol_connect/core/api/models/profiledata.dart';
+import 'package:sol_connect/core/api/models/schoolclass.dart';
 import 'package:sol_connect/core/api/models/timegrid.dart';
+import 'package:sol_connect/core/api/models/timetable.hour.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/rpcresponse.dart';
 import 'package:sol_connect/core/api/timetable.dart';
@@ -13,16 +15,58 @@ import 'dart:convert';
 
 import 'package:sol_connect/util/logger.util.dart';
 
-enum PersonTypes { student, teacher }
+enum PersonTypes { klasse, student, teacher, subject, room, unknown }
 
-extension ReadablePersonType on PersonTypes {
-  String get readable {
-    if (this == PersonTypes.student) {
-      return "Schüler";
-    } else if (this == PersonTypes.teacher) {
-      return "Lehrer";
+extension PersonTypeUtils on PersonTypes {
+  static PersonTypes parse(int type) {
+    switch (type) {
+      case 1:
+        return PersonTypes.klasse;
+      case 2:
+        return PersonTypes.teacher;
+      case 3:
+        return PersonTypes.subject;
+      case 4:
+        return PersonTypes.room;
+      case 5:
+        return PersonTypes.student;
+      default:
+        return PersonTypes.unknown;
     }
-    return "";
+  }
+
+  int get id {
+    switch (this) {
+      case PersonTypes.klasse:
+        return 1;
+      case PersonTypes.teacher:
+        return 2;
+      case PersonTypes.subject:
+        return 3;
+      case PersonTypes.room:
+        return 4;
+      case PersonTypes.student:
+        return 5;
+      default:
+        return -1;
+    }
+  }
+
+  String get readable {
+    switch (this) {
+      case PersonTypes.klasse:
+        return "Klasse";
+      case PersonTypes.teacher:
+        return "Lehrer";
+      case PersonTypes.subject:
+        return "Fach";
+      case PersonTypes.room:
+        return "Raum";
+      case PersonTypes.student:
+        return "Schüler";
+      default:
+        return "";
+    }
   }
 }
 
@@ -35,7 +79,10 @@ class UserSession {
   String _sessionId = "";
   int _personId = -1;
   int _klasseId = -1;
-  int _type = 0;
+  PersonTypes _type = PersonTypes.unknown;
+
+  int _timetablePersonId = -1;
+  PersonTypes _timetablePersonType = PersonTypes.unknown;
 
   String _school = "";
   String _schoolBase64 = "";
@@ -61,9 +108,6 @@ class UserSession {
 
   TimetableManager? _manager;
   Timegrid? _loadedTimegrid;
-
-  //Student by default
-  PersonTypes _ptype = PersonTypes.student;
 
   UserSession({String school = "", String appID = ""}) {
     _appName = appID;
@@ -124,17 +168,13 @@ class UserSession {
     _sessionId = response.getPayloadData()['sessionId'];
     _personId = response.getPayloadData()['personId'];
     _klasseId = response.getPayloadData()['klasseId'];
-    _type = response.getPayloadData()['personType'];
-
-    if (_type == 2) {
-      _ptype = PersonTypes.teacher;
-    }
+    _type = PersonTypeUtils.parse(response.getPayloadData()['personType']);
 
     _sessionValid = true;
     _un = username;
     _pwd = password;
 
-    await regenerateSessionBearerToken();
+    await regenerateSessionBearerToken(); //14375
     _cachedProfileData = await getProfileData(loadFromCache: false);
 
     await getTimegrid().then((value) {
@@ -145,6 +185,8 @@ class UserSession {
         log.w("Falling back to static timegrid.");
       }
     });
+
+    //setTimetableBehavior(2162, PersonTypes.klasse);
   }
 
   bool isDemoSession() {
@@ -173,7 +215,7 @@ class UserSession {
   }
 
   ///Die Rolle der eingeloggten Person. Es gibt "Schüler" und "Lehrer"
-  PersonTypes get personType => _ptype;
+  PersonTypes get personType => _type;
 
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
@@ -185,7 +227,7 @@ class UserSession {
     _pwd = "";
     _personId = -1;
     _klasseId = -1;
-    _type = -1;
+    _type = PersonTypes.unknown;
     _bearerToken = "";
     clearManagerCache();
     return response;
@@ -276,7 +318,8 @@ class UserSession {
   }
 
   // TODO(philipp): automate frame assignment
-  Future<TimeTableRange> getTimeTable(DateTime from, DateTime to, TimetableFrame frame) async {
+  Future<TimeTableRange> getTimeTable(DateTime from, DateTime to, TimetableFrame frame,
+      {int personId = -1, PersonTypes personType = PersonTypes.unknown}) async {
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
 
     TimeTableRange loaded = TimeTableRange(
@@ -287,7 +330,10 @@ class UserSession {
           "options": {
             "startDate": Utils().convertToUntisDate(from),
             "endDate": Utils().convertToUntisDate(to),
-            "element": {"id": _personId, "type": _type},
+            "element": {
+              "id": personId == -1 ? _personId : personId,
+              "type": personType == PersonTypes.unknown ? _type.id : personType.id
+            },
             "showLsText": true,
             "showPeText": true,
             "showStudentgroup": true,
@@ -372,11 +418,108 @@ class UserSession {
   ///Diese Funktion dient nur noch als Wrapper
   ///Gibt einen Wochenstundenplan relativ zur derzeitigen Woche zurück. Von Montag bis Sonntag
   ///
+  ///Um den Stundenplan von jemand anderen zu laden, können optional die Parameter personId und personType gesetzt werden
+  ///
   ///* `getRelativeTimeTableWeek(-1);` gibt die vorherige Woche zur aktuellen zurück
   ///* `getRelativeTimeTableWeek(1);` gibt die nächste Woche zurück.
   ///* `getRelativeTimeTableWeek(0);` entspricht `getTimeTableForThisWeek()`
-  Future<TimeTableRange> getRelativeTimeTableWeek(int relative) async {
+  Future<TimeTableRange> getRelativeTimeTableWeek(int relative,
+      {int personId = -1, PersonTypes personType = PersonTypes.unknown}) async {
     TimetableFrame frame = getTimetableManager().getFrameRelativeToCurrent(relative);
-    return await frame.getWeekData();
+    return await frame.getWeekData(personId: _timetablePersonId, personType: _timetablePersonType);
+  }
+
+  ///Gibt alle Klassen zurück, die der Lehrer unterrichtet in der gegebenen Range
+  Future<List<SchoolClass>> getClassesAsTeacher({int checkRange = 2}) async {
+    if (checkRange <= 0) {
+      checkRange = 2;
+    }
+
+    var allClasses = await getSchoolClasses();
+    var filtered = <SchoolClass>[];
+
+    for (int i = -(checkRange - 1); i < checkRange + 1; i++) {
+      TimeTableRange rng = await getTimetableManager().getFrameRelativeToCurrent(i).getWeekData();
+      if (!rng.isNonSchoolblockWeek()) {
+        for (int x = 0; x < rng.getDays().length; x++) {
+          for (int y = 0; y < rng.getDays()[0].getHours().length; y++) {
+            TimeTableHour hour = rng.getHourByIndex(xIndex: x, yIndex: y);
+
+            if (hour.getLessonCode() != Codes.empty) {
+              if (hour.getTeacher().identifier == _personId) {
+                bool added = false;
+                for (int j = 0; j < filtered.length; j++) {
+                  if (filtered[j].name == hour.getClazz().name) {
+                    added = true;
+                    break;
+                  }
+                }
+                if (!added) {
+                  for (SchoolClass s in allClasses) {
+                    if (s.id == hour.getClazz().identifier) {
+                      filtered.add(s);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return filtered;
+  }
+
+  ///Gibt alle Klassen der Schule zurück
+  Future<List<SchoolClass>> getSchoolClasses() async {
+    if (personType != PersonTypes.teacher) {
+      throw InsufficientPermissionsException("This user is not a teacher");
+    }
+
+    http.Response r = await _queryURL("/WebUntis/api/public/timetable/weekly/pageconfig?type=1");
+    var klassen = <SchoolClass>[];
+
+    if (r.statusCode == 200) {
+      dynamic json = jsonDecode(r.body);
+
+      for (dynamic d in json["data"]["elements"]) {
+        klassen.add(SchoolClass(d));
+      }
+    } else {
+      throw ApiConnectionError("Failed to fetch class info for school: Connection error");
+    }
+    return klassen;
+  }
+
+  ///Gibt alle Klassen zurück der der Lehrer als Klassen hat
+  Future<List<SchoolClass>> getOwnClassesAsClassteacher({String simulateTeacher = ""}) async {
+    var klassen = <SchoolClass>[];
+    var all = await getSchoolClasses();
+    String displayName =
+        simulateTeacher != "" ? simulateTeacher : (await getProfileData(loadFromCache: true)).getFirstAndLastName();
+
+    for (SchoolClass klasse in all) {
+      if (klasse.classTeacherName == displayName || klasse.classTeacher2Name == displayName) {
+        klassen.add(klasse);
+      }
+    }
+    return klassen;
+  }
+
+  void resetTimetableLoading() {
+    _timetablePersonId = _personId;
+    _timetablePersonType = _type;
+    getTimetableManager().clearFrameCache(hardReset: true);
+  }
+
+  ///Gibt an welcher Stundenplan geladen werden soll. Die Id ist egal. Das kann ein schüler, lehrer raum sein.
+  ///Wichtig ist, dass der [type] entsprechend passt
+  ///
+  ///Um das Stundenplanladen wieder auf die angemeldete Person zurückzusetzen,
+  ///benutze `resetTimetableLoading()`
+  void setTimetableBehavior(int id, PersonTypes type) {
+    getTimetableManager().clearFrameCache(hardReset: true);
+    _timetablePersonType = type;
+    _timetablePersonId = id;
   }
 }

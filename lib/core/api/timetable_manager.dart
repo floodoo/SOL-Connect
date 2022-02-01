@@ -21,7 +21,12 @@ class TimetableManager {
     }
   }
 
-  void clearFrameCache() {
+  void clearFrameCache({bool hardReset = false}) {
+    if (hardReset) {
+      frames.clear();
+      return;
+    }
+
     for (TimetableFrame frame in frames) {
       frame._cachedWeekData = null;
     }
@@ -209,7 +214,8 @@ class TimetableFrame {
     return _mgr;
   }
 
-  Future<TimeTableRange> getWeekData({bool reload = false}) async {
+  Future<TimeTableRange> getWeekData(
+      {bool reload = false, int personId = -1, PersonTypes personType = PersonTypes.unknown}) async {
     if (!reload && _cachedWeekData != null) {
       return _cachedWeekData!;
     }
@@ -229,7 +235,8 @@ class TimetableFrame {
       }
     }
 
-    TimeTableRange rng = await _activeSession.getTimeTable(_frameStart, _frameEnd, this);
+    TimeTableRange rng =
+        await _activeSession.getTimeTable(_frameStart, _frameEnd, this, personId: personId, personType: personType);
     _cachedWeekData = rng;
 
     return rng;
