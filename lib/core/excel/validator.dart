@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:sol_connect/core/api/models/timetable.hour.dart';
 import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/mappedsheet.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
@@ -112,6 +113,14 @@ class ExcelValidator {
       }
     }
     _collectedTimetables.add(mapped);
+  }
+
+  ///Uploads the file with the given logged in user
+  void uploadFile(UserSession authentification) {
+    if(!authentification.isRPCAuthroized()) {
+      throw MissingCredentialsException("Client not authenticated to upload files");
+    }
+    
   }
 
   ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.
@@ -274,10 +283,10 @@ class ExcelValidator {
       await subscription.cancel();
       _queryActive = false;
       return _colorData;
-    } on Exception {
+    } on Exception catch(error) {
       _queryActive = false;
       throw FailedToEstablishExcelServerConnection(
-          "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen.");
+          "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen: " + error.toString());
     }
   }
 

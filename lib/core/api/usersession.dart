@@ -147,6 +147,16 @@ class UserSession {
     });
   }
 
+  ///Erzeugt eine neue Session ID
+  void regenerateSessionId() async {
+    if(!_sessionValid) {
+      return;
+    }
+
+    await _queryRPC("logout", {}, validateSession: false);
+    await _queryRPC("authenticate", {"user": _un, "password": _pwd, "client": _appName});
+  }
+
   bool isDemoSession() {
     return _un == UserSession.demoAccountName;
   }
@@ -190,6 +200,8 @@ class UserSession {
     clearManagerCache();
     return response;
   }
+
+  String get sessionId => _sessionId;
 
   ///Gibt true zurück, wenn in diesem Objekt ein Benutzer eingeloggt ist
   bool isLoggedIn() {
