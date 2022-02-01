@@ -132,7 +132,7 @@ class SettingsScreen extends ConsumerWidget {
                                         ],
                                       ),
                                     ),
-              
+
                                     //desc: "Die Phasierung ist eine einfache Excel Datei."
                                     //  "\n\nDiese wird üblicherweise am anfang deines Schulblocks vorgestellt und von einem Lehrer zur Verfügung gestellt."
                                     //  "\nDiesen Plan kannst du dann als Excel Datei hier laden und in deinen Stundenplan einfügen."
@@ -165,20 +165,20 @@ class SettingsScreen extends ConsumerWidget {
                         onTap: () async {
                           if (phaseLoaded) {
                             ref.read(timeTableService).deletePhase();
-              
+
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
                               _createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
                             );
                             return;
                           }
-              
+
                           FilePickerResult? result = await FilePicker.platform.pickFiles(
                               type: FileType.custom,
                               allowedExtensions: ["xlsx"],
                               allowMultiple: false,
                               dialogTitle: "Phasierung laden");
-              
+
                           if (result != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               _createSnackbar(
@@ -187,9 +187,9 @@ class SettingsScreen extends ConsumerWidget {
                                 duration: const Duration(minutes: 1),
                               ),
                             );
-              
+
                             String errorMessage = "";
-              
+
                             try {
                               await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(
                                   phaseFilePath: result.files.first.path!,
@@ -210,7 +210,7 @@ class SettingsScreen extends ConsumerWidget {
                               log.e(e.toString());
                               errorMessage = "Unbekannter Fehler: " + e.toString();
                             }
-              
+
                             ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
                             if (state != null) {
                               ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
@@ -364,7 +364,9 @@ class SettingsScreen extends ConsumerWidget {
                                           controller: serverAdressTextController,
                                           onEditingComplete: () {
                                             if (serverAdressTextController.text != "") {
-                                              ref.read(settingsService).saveServerAdress(serverAdressTextController.text);
+                                              ref
+                                                  .read(settingsService)
+                                                  .saveServerAdress(serverAdressTextController.text);
                                             }
                                             serverAdressTextController.clear();
                                             FocusManager.instance.primaryFocus?.unfocus();
@@ -384,7 +386,8 @@ class SettingsScreen extends ConsumerWidget {
                                                 FocusManager.instance.primaryFocus?.unfocus();
                                                 textFieldFocus.unfocus();
                                               },
-                                              icon: Icon(Icons.settings_backup_restore, color: theme.colors.textBackground),
+                                              icon: Icon(Icons.settings_backup_restore,
+                                                  color: theme.colors.textBackground),
                                               tooltip: "Setzte Server URL zurück",
                                             ),
                                           ),
