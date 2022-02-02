@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:sol_connect/core/api/models/timetable.hour.dart';
@@ -32,7 +33,6 @@ class TimeTableScreen extends ConsumerWidget {
               child: Icon(
                 Icons.calendar_today_rounded,
                 color: theme.colors.icon,
-                size: 37,
               ),
               color: theme.colors.timetableCardEdge,
             ),
@@ -277,6 +277,18 @@ class TimeTableScreen extends ConsumerWidget {
             builder: (context, ref, child) {
               final _timeTable = ref.watch(timeTableService).timeTable;
               final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
+              List<Widget> timeTableList = [];
+              List<Widget> firstTimeTableRowList = [];
+
+              if (_timeTable != null) {
+                firstTimeTableRowList = buildFirstTimeTableRow(_timeTable, theme);
+                timeTableList = buildTimeTable(
+                  _timeTable,
+                  _phaseTimeTable,
+                  theme,
+                  context,
+                );
+              }
 
               return Container(
                 color: theme.colors.background,
@@ -289,29 +301,77 @@ class TimeTableScreen extends ConsumerWidget {
                     : (ref.watch(timeTableService).isSchool)
                         ? ListView(
                             children: [
-                              GridView.count(
-                                crossAxisCount: 6,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                children: buildFirstTimeTableRow(_timeTable, theme),
+                              AnimationLimiter(
+                                child: GridView.count(
+                                  crossAxisCount: 6,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  children: List.generate(
+                                    firstTimeTableRowList.length,
+                                    (int index) {
+                                      return AnimationConfiguration.staggeredGrid(
+                                        position: index,
+                                        duration: const Duration(milliseconds: 375),
+                                        columnCount: 6,
+                                        child: ScaleAnimation(
+                                          child: FadeInAnimation(
+                                            child: firstTimeTableRowList[index],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
-                              GridView.count(
-                                crossAxisCount: 6,
-                                crossAxisSpacing: 0,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                childAspectRatio: 0.75,
-                                children: buildTimeTable(_timeTable, _phaseTimeTable, theme, context),
+                              AnimationLimiter(
+                                child: GridView.count(
+                                  crossAxisCount: 6,
+                                  crossAxisSpacing: 0,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  childAspectRatio: 0.75,
+                                  children: List.generate(
+                                    timeTableList.length,
+                                    (int index) {
+                                      return AnimationConfiguration.staggeredGrid(
+                                        position: index,
+                                        duration: const Duration(milliseconds: 375),
+                                        columnCount: 6,
+                                        child: ScaleAnimation(
+                                          child: FadeInAnimation(
+                                            child: timeTableList[index],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
                             ],
                           )
                         : Column(
                             children: [
-                              GridView.count(
-                                crossAxisCount: 6,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                children: buildFirstTimeTableRow(_timeTable, theme),
+                              AnimationLimiter(
+                                child: GridView.count(
+                                  crossAxisCount: 6,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  children: List.generate(
+                                    firstTimeTableRowList.length,
+                                    (int index) {
+                                      return AnimationConfiguration.staggeredGrid(
+                                        position: index,
+                                        duration: const Duration(milliseconds: 375),
+                                        columnCount: 6,
+                                        child: ScaleAnimation(
+                                          child: FadeInAnimation(
+                                            child: firstTimeTableRowList[index],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
                               Center(
                                 child: Padding(
