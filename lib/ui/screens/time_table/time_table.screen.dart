@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -311,7 +312,7 @@ class TimeTableScreen extends ConsumerWidget {
                                     (int index) {
                                       return AnimationConfiguration.staggeredGrid(
                                         position: index,
-                                        duration: const Duration(milliseconds: 375),
+                                        duration: const Duration(milliseconds: 220),
                                         columnCount: 6,
                                         child: ScaleAnimation(
                                           child: FadeInAnimation(
@@ -335,7 +336,7 @@ class TimeTableScreen extends ConsumerWidget {
                                     (int index) {
                                       return AnimationConfiguration.staggeredGrid(
                                         position: index,
-                                        duration: const Duration(milliseconds: 375),
+                                        duration: const Duration(milliseconds: 220),
                                         columnCount: 6,
                                         child: ScaleAnimation(
                                           child: FadeInAnimation(
@@ -361,7 +362,7 @@ class TimeTableScreen extends ConsumerWidget {
                                     (int index) {
                                       return AnimationConfiguration.staggeredGrid(
                                         position: index,
-                                        duration: const Duration(milliseconds: 375),
+                                        duration: const Duration(milliseconds: 220),
                                         columnCount: 6,
                                         child: ScaleAnimation(
                                           child: FadeInAnimation(
