@@ -271,6 +271,7 @@ class UserSession {
         return null;
       }
     }
+    return null;
   }
 
   ///Gibt Profil Daten wie Name, Profilbild etc. in einem `ProfileData` Objekt zurück.

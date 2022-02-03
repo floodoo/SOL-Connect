@@ -134,6 +134,7 @@ class TimetableManager {
         return frame;
       }
     }
+    return null;
   }
 
   // TODO(philipp): Fertig machen

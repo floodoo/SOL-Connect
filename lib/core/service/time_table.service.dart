@@ -40,7 +40,7 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> getSchoolName() async {
+  void getSchoolName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     schoolName = prefs.getString("schoolName") ?? "bbs1-mainz";
     notifyListeners();
