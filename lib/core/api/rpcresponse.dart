@@ -4,37 +4,35 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RPCResponse {
-  String _statusMessage = "success";
+  //Fehlercodes
+  static const rpcWrongCredentials = -8504;
+
+  String _statusMessage = "";
   int _errorCode = 0;
-  dynamic payload = {};
+  int _httpResponse = 0;
+  dynamic _payload = {};
 
-  String appId = "";
-  String rpcVersion = "2.0";
+  String _appId = "";
+  String _rpcVersion = "2.0";
 
-  http.Response? originalResponse;
+  http.Response? _originalResponse;
 
-  RPCResponse(this.originalResponse);
+  RPCResponse(this._originalResponse);
 
   //Simuliert eine künstliche Abfrage mit einem bereits gegebenen http body
   static RPCResponse handleArtifical(dynamic httpResponseBody) {
-    //print(httpResponseBody + "\n\n\n_____________________");
     RPCResponse response = RPCResponse(null);
 
     dynamic json = jsonDecode(httpResponseBody);
 
     //Standart Daten auszulesen
-    if (json['id'].runtimeType == int) {
-      response.appId = json['id'];
-    } else {
-      response.appId = "null";
-    }
-
-    response.rpcVersion = json['jsonrpc'];
+    response._appId = json['id'];
+    response._rpcVersion = json['jsonrpc'];
 
     //Lese die Daten aus
     var result = json['result'];
     if (result != null) {
-      response.payload = result;
+      response._payload = result;
       return response;
     }
 
@@ -54,34 +52,41 @@ class RPCResponse {
     if (httpResponse.statusCode != 200) {
       RPCResponse err = RPCResponse(httpResponse);
       err._statusMessage = "http error";
-      err._errorCode = httpResponse.statusCode;
+      err._httpResponse = httpResponse.statusCode;
       return err;
     }
 
     RPCResponse generated = handleArtifical(httpResponse.body);
-    generated.originalResponse = httpResponse;
+    generated._originalResponse = httpResponse;
     return generated;
   }
 
-  /// @return true - Wenn der Fehler am http liegt
-  bool isHttpError() {
-    return payload.isEmpty && _statusMessage == "http error";
-  }
+  ///Könnte null sein wenn die Abfrage simuliert wurde
+  http.Response? get originalResponse => _originalResponse;
 
-  /// @return true - Wenn der Handler einen Error hat
-  bool isError() {
-    return _statusMessage != "success" || isHttpError();
-  }
+  ///Sollte immer 2.0 sein
+  String get rpcVersion => _rpcVersion;
 
-  String getErrorMessage() {
-    return _statusMessage;
-  }
+  ///Name der App wie sie in der Anfrage angegeben ist. Hier: SOL-Connect
+  String get appName => _appId;
 
-  int getErrorCode() {
-    return _errorCode;
-  }
+  ///Gibt true zurück, wenn der Fehler API bedingt ist
+  bool get isApiError => _statusMessage.isNotEmpty && _payload.isNotEmpty;
 
-  dynamic getPayloadData() {
-    return payload;
-  }
+  ///Gibt true zurück, wenn der Fehler http bedingt ist
+  bool get isHttpError => _payload.isEmpty && _statusMessage == "http error";
+
+  ///Gibt true zurück, wenn ein API oder HTTP Fehler aufgetreten ist
+  bool get isError => _statusMessage.isNotEmpty || isHttpError;
+
+  ///Lesbare Fehlermeldung. Leer wenn erfolgreich
+  String get errorMessage => _statusMessage;
+
+  ///Fehlercode der von der JSONRPC API generiert wurde. (0 bedeutet kein Error)
+  int get rpcResponseCode => _errorCode;
+
+  ///Standart http codes. 404 wenn nicht gefunden, 501 wenn down und 200 wenn erfolg etc...
+  int get httpResponseCode => _httpResponse;
+
+  dynamic get payloadData => _payload;
 }
