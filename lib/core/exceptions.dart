@@ -1,8 +1,8 @@
 /*Author Philipp Gersch */
 
-class FailedToEstablishExcelServerConnection implements Exception {
+class FailedToEstablishSOLCServerConnection implements Exception {
   String cause = "";
-  FailedToEstablishExcelServerConnection(this.cause);
+  FailedToEstablishSOLCServerConnection(this.cause);
 
   @override
   String toString() {
@@ -30,9 +30,9 @@ class ExcelConversionAlreadyActive implements Exception {
   }
 }
 
-class ExcelConversionServerError implements Exception {
+class SOLCServerError implements Exception {
   String cause = "";
-  ExcelConversionServerError(this.cause);
+  SOLCServerError(this.cause);
 
   @override
   String toString() {

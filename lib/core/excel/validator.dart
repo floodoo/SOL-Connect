@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:sol_connect/core/api/models/timetable.hour.dart';
+import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/timetable.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/mappedsheet.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
 import 'package:sol_connect/core/excel/models/phaseelement.dart';
+import 'package:sol_connect/core/excel/models/phasestatus.dart';
+import 'package:sol_connect/core/excel/solcresponse.dart';
 import 'package:sol_connect/core/exceptions.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
@@ -257,7 +260,7 @@ class ExcelValidator {
           }
 
           if (decodedMessage['error'] != null) {
-            throw ExcelConversionServerError(
+            throw SOLCServerError(
                 "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
           }
 
@@ -271,7 +274,7 @@ class ExcelValidator {
         },
         onError: (error) {
           _queryActive = false;
-          throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+          throw SOLCServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
         },
         onDone: () {
           //Alles OK!
@@ -285,7 +288,7 @@ class ExcelValidator {
       return _colorData;
     } on Exception catch(error) {
       _queryActive = false;
-      throw FailedToEstablishExcelServerConnection(
+      throw FailedToEstablishSOLCServerConnection(
           "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen: " + error.toString());
     }
   }
@@ -396,5 +399,118 @@ class ExcelValidator {
 
     mapped.setValid();
     return mapped;
+  }
+
+  ///Wirft eine Exception wenn ein Fehlercode auftritt
+  Future<PhaseStatus> getKlasseInfo({required int klasseId}) async {
+    SOLCResponse? response = await _querySOLC(command: "phase-status <" + klasseId.toString() + ">");
+    return PhaseStatus(response!.payload);
+  }
+
+  ///Wirft eine Exception wenn ein Fehlercode auftritt
+  Future<void> downloadSheet({required int klasseId, required File targetFile}) async {
+    await _querySOLC(
+      command: "download-file <" + klasseId.toString() + ">", 
+      downloadFileTarget: targetFile
+    );
+  }
+
+  ///Wirft eine Exception wenn ein Fehlercode auftritt
+  ///
+  ///**ACHTUNG! Bei erfolgreichem hochladen wird der user automatisch serverseitig abgemeldet!**
+  Future<void> uploadSheet({required UserSession authenticatedUser, required int klasseId, required DateTime blockStart, required DateTime blockEnd, required File file}) async {
+    await _querySOLC(command: "upload-file "
+          "<" + authenticatedUser.sessionId + ">"
+          "<" + authenticatedUser.bearerToken + ">"
+          "<" + klasseId.toString() + ">"
+          "<" + Utils.convertToUntisDate(blockStart) + ">"
+          "<" + Utils.convertToUntisDate(blockEnd) + ">"
+    ); 
+    await authenticatedUser.regenerateSession();
+  }
+
+  ///Transferdata ist eigentlich nur eine Datei
+  ///Transferdata wird gebraucht, wenn ein Befehl einen Dateiupload oder Download inizialisiert.
+  ///
+  ///Zurückgegebene Werte können null sein, je nachdem was für ein Befehl benutzt wurde.
+  ///Ein rückgabewert gibt es nur wenn eine Serverantwort im JSON Format kommt bzw wenn der Code 0 (SUCCESS) ist.
+  ///Ansonsten wird alles über die File Objekte gehandled
+  Future<SOLCResponse?> _querySOLC({required String command, File? uploadFileSource, File? downloadFileTarget}) async {
+    try {
+
+      final socket = await Socket.connect(excelServerAddr, excelServerPort);
+
+      //Sende den Befehl
+      socket.writeln(command);
+      await socket.flush();
+      bool awaitFileStream = false;
+      SOLCResponse? returnValue;
+
+      var subscription = socket.listen((event) async {
+
+          if(awaitFileStream) {
+            if(downloadFileTarget == null) {
+              throw Exception("Kein Dateiziel zum Download angegeben");
+            }
+            await downloadFileTarget.create(recursive: true);
+            await downloadFileTarget.writeAsBytes(event);
+            return;
+          }
+
+          dynamic decodedMessage = "";
+          try {
+            decodedMessage = jsonDecode(String.fromCharCodes(event));
+          } on FormatException {
+            socket.close();
+            return;
+          }
+
+          SOLCResponse response = SOLCResponse.handle(decodedMessage);
+          if(response.isError) {
+             throw SOLCServerError(
+                response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")");
+          }
+
+          //Einfache JSON Antwort
+          if(response.responseCode == SOLCResponse.CODE_SUCCESS) {
+            returnValue = response;
+            socket.close();
+            return;
+          }
+
+          //Server bereit eine Datei zu uploaden
+          if(response.responseCode == SOLCResponse.CODE_READY) {
+            if(downloadFileTarget == null) {
+              throw Exception("Keine Datei zum Upload angegeben");
+            }
+            if(!(await uploadFileSource!.exists())) {
+              throw Exception("Datei zum Upload existiert nicht");
+            }
+            await socket.addStream(uploadFileSource.openRead());
+            socket.close();
+            return;
+          }
+
+          //Server fragt den Client ob er bereit ist eine Datei zu downloaden. Sende ein "ready-to-recieve" und lade die Date als Stream herunter
+          if(response.responseCode == SOLCResponse.CODE_SEND_READY) {
+            awaitFileStream = true;
+            socket.writeln("ready-to-recieve");
+            await socket.flush();
+            return;
+          }
+        },
+        onError: (error) {
+          throw SOLCServerError("Ein Fehler ist bei der Verbindung zum SOLC-API Server aufgetreten");        
+        },
+      );
+
+      await subscription.asFuture<void>();
+      await subscription.cancel();
+      return returnValue;
+    } on Exception catch(error) {
+      _queryActive = false;
+      throw FailedToEstablishSOLCServerConnection(
+          "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen: " + error.toString());
+    }
   }
 }

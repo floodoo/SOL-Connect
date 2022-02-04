@@ -44,14 +44,14 @@ class TimeTableRange {
 
     outer:
     for (dynamic entry in response.getPayloadData()) {
-      DateTime current = Utils().convertToDateTime(entry['date'].toString());
+      DateTime current = Utils.convertToDateTime(entry['date'].toString());
       //Checke ob der Tag schon erstellt wurde
 
       for (TimeTableDay day in _days) {
         if (day.getDate().day == current.day) {
           //Wenn ja, füge die Stunde in den Tag
           day.insertHour(entry);
-          if (Utils().dayGreaterOrEqual(realStartDate!, current)) {
+          if (Utils.dayGreaterOrEqual(realStartDate!, current)) {
             realStartDate = current;
           }
 
@@ -64,7 +64,7 @@ class TimeTableRange {
       _days.add(day);
 
       realStartDate ??= current;
-      if (Utils().dayGreaterOrEqual(realStartDate, current)) {
+      if (Utils.dayGreaterOrEqual(realStartDate, current)) {
         realStartDate = current;
       }
     }
@@ -73,10 +73,10 @@ class TimeTableRange {
     realStartDate ??= _startDate;
 
     if (_boundFrame.getManager().userSession.isDemoSession()) {
-      int realStartDateDays = Utils().daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
+      int realStartDateDays = Utils.daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
       //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
       for (TimeTableDay day in _days) {
-        int weekdayIndex = Utils().daysSinceEpoch(day.getDate().millisecondsSinceEpoch) - realStartDateDays;
+        int weekdayIndex = Utils.daysSinceEpoch(day.getDate().millisecondsSinceEpoch) - realStartDateDays;
         day.modifyDate(_startDate.add(Duration(days: weekdayIndex)));
       }
     }
@@ -84,7 +84,7 @@ class TimeTableRange {
     var finalList = <TimeTableDay>[];
 
     int day1 =
-        Utils().daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+        Utils.daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
     int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");
 

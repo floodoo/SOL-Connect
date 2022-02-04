@@ -195,9 +195,9 @@ class SettingsScreen extends ConsumerWidget {
                         errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
                       } on ExcelConversionAlreadyActive {
                         errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
-                      } on ExcelConversionServerError {
+                      } on SOLCServerError {
                         errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
-                      } on FailedToEstablishExcelServerConnection {
+                      } on FailedToEstablishSOLCServerConnection {
                         errorMessage = "Bitte überprüfe deine Internetverbindung";
                       } on ExcelMergeNonSchoolBlockException {
                         // Doesn't matter
@@ -232,9 +232,9 @@ class SettingsScreen extends ConsumerWidget {
                             child: Text(
                                 validator != null
                                     ? "Phasierung geladen für Block " +
-                                        Utils().convertToDDMM(validator.getBlockStart()) +
+                                        Utils.convertToDDMM(validator.getBlockStart()) +
                                         " bis " +
-                                        Utils().convertToDDMM(validator.getBlockEnd())
+                                        Utils.convertToDDMM(validator.getBlockEnd())
                                     : "Phasierung geladen für Block ? - ?",
                                 style: const TextStyle(fontSize: 13))),
                       ))
