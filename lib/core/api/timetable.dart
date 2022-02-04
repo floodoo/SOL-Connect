@@ -19,11 +19,9 @@ class TimeTableRange {
   int _schoolhoursLength = TimeTableDay.minHoursPerDay;
 
   TimeTableRange(this._startDate, this._endDate, this._boundFrame, this.response) {
-    // print(this.response.originalResponse!.body + "------");
-
     //Konstruiere die Tage
-    if (response.isError()) {
-      if (response.getErrorCode() == -7004) {
+    if (response.isError) {
+      if (response.rpcResponseCode == -7004) {
         //"no allowed date"
         //erzeuge eine leere Tabelle
         for (int i = 0; i < _endDate.difference(_startDate).inDays; i++) {
@@ -33,9 +31,9 @@ class TimeTableRange {
         return;
       } else {
         throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " +
-            response.getErrorMessage() +
+            response.errorMessage +
             "(" +
-            response.getErrorCode().toString() +
+            response.rpcResponseCode.toString() +
             ")");
       }
     }
@@ -45,6 +43,7 @@ class TimeTableRange {
     outer:
     for (dynamic entry in response.getPayloadData()) {
       DateTime current = Utils.convertToDateTime(entry['date'].toString());
+
       //Checke ob der Tag schon erstellt wurde
 
       for (TimeTableDay day in _days) {

@@ -87,7 +87,7 @@ class TimeTableHour {
 
     _activityType = data['activityType'];
 
-    if (data['k1'] != null) {
+    if (data['kl'] != null) {
       _klasse = TimeTableEntity("kl", data['kl']);
     } else {
       _klasse = TimeTableEntity("kl", null);

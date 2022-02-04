@@ -6,7 +6,7 @@ Diese App ist kompatibel mit Android und IOS.
 Diese App wird auch zukünftig für Windows und MacOS zur verfügung gestellt werden.
 <br>
 <br>
-Zum Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
+Zur Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
 
 ## Screenshots
 
@@ -16,7 +16,7 @@ Zum Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
   <img width="300" alt="Login Screen" src="https://user-images.githubusercontent.com/59688267/150956461-aecf096f-97c4-4cf3-ad68-8b90cb547758.png">
 </p>
 
-### Stundenplan mit und ohne Phasierung
+### Stundenplan mit und ohne Phasierung, Entfall oder Vertretung
 <p float="left">
   <img width="300" alt="Stundenplan ohne Phasierung" src="https://user-images.githubusercontent.com/59688267/150957237-b26a4592-5691-46ec-ac3f-8ad8a88ca7a6.png">
   <img width="300" alt="Stundenplan mit Phasierung" src="https://user-images.githubusercontent.com/59688267/150957414-47dbcb0e-f260-4c36-8df0-0c15a7ec722f.png">

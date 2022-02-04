@@ -150,3 +150,13 @@ class CurrentPhaseplanOutOfRange implements Exception {
     return runtimeType.toString() + ": " + cause;
   }
 }
+
+class InsufficientPermissionsException implements Exception {
+  String cause = "";
+  InsufficientPermissionsException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
