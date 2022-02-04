@@ -55,7 +55,6 @@ class TimeTableService with ChangeNotifier {
   }
 
   Future<void> login(String username, String password) async {
-    
     apiManager = SOLCApiManager(await getServerAddress(), 6969);
 
     UserSecureStorage.setUsername(username);
