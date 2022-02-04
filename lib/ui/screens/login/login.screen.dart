@@ -20,7 +20,7 @@ class LoginScreen extends ConsumerWidget {
 
     final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
     final _isLoading = ref.watch(timeTableService).isLoading;
-    final _loginError = ref.watch(timeTableService).loginError;
+    final _loginError = ref.watch(timeTableService).loginException;
 
     usernameController.text = ref.watch(timeTableService).username;
     passwordController.text = ref.watch(timeTableService).password;
@@ -41,6 +41,8 @@ class LoginScreen extends ConsumerWidget {
         loginErrorMessage = "Benutzername oder Passwort falsch";
       } else if (_loginError is MissingCredentialsException) {
         loginErrorMessage = "Fehlender Benutzername oder Passwort";
+      } else if (_loginError is ApiConnectionError) {
+        loginErrorMessage = _loginError.cause;
       } else {
         loginErrorMessage = "Bitte überprüfe deine Internetverbindung";
       }

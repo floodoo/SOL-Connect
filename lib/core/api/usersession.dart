@@ -147,28 +147,33 @@ class UserSession {
     RPCResponse response =
         await _queryRPC("authenticate", {"user": username, "password": password, "client": _appName});
 
-    if (response.isHttpError()) {
-      throw ApiConnectionError("Ein http Fehler ist aufegteten: " +
-          response.getErrorMessage().toString() +
-          "(" +
-          response.getErrorCode().toString() +
-          ")");
-    } else if (response.isError()) {
-      if (response.getErrorCode() == -8504) {
+    if (response.isHttpError) {
+      if (response.httpResponseCode == 501) {
+        throw ApiConnectionError(
+            "hepta.webuntis.com Wartungsarbeiten oder nicht verfügbar. Bitte versuche es später erneut.");
+      } else {
+        throw ApiConnectionError("Ein http Fehler ist aufegteten: " +
+            response.errorMessage +
+            "(" +
+            response.httpResponseCode.toString() +
+            ")");
+      }
+    } else if (response.isError) {
+      if (response.rpcResponseCode == RPCResponse.rpcWrongCredentials) {
         throw WrongCredentialsException("Benutzename oder Passwort falsch");
       } else {
-        throw ApiConnectionError("Ein Fehler ist aufgetreten: " +
-            response.getErrorMessage().toString() +
+        throw ApiConnectionError("Ein unbekannter Fehler ist aufgetreten: " +
+            response.errorMessage +
             "(" +
-            response.getErrorCode().toString() +
+            response.rpcResponseCode.toString() +
             ")");
       }
     }
 
-    _sessionId = response.getPayloadData()['sessionId'];
-    _personId = response.getPayloadData()['personId'];
-    _klasseId = response.getPayloadData()['klasseId'];
-    _type = PersonTypeUtils.parse(response.getPayloadData()['personType']);
+    _sessionId = response.payloadData['sessionId'];
+    _personId = response.payloadData['personId'];
+    _klasseId = response.payloadData['klasseId'];
+    _type = PersonTypeUtils.parse(response.payloadData['personType']);
 
     _sessionValid = true;
     _un = username;
@@ -393,7 +398,7 @@ class UserSession {
     RPCResponse orig = RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
 
-    if (validateSession && orig.getErrorCode() == -8520 && _sessionValid) {
+    if (validateSession && orig.rpcResponseCode == -8520 && _sessionValid) {
       await _validateSession();
       if (_sessionValid) {
         return RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),

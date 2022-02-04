@@ -31,7 +31,7 @@ class TimeTableService with ChangeNotifier {
   String password = "";
   String schoolName = "";
 
-  dynamic loginError;
+  dynamic loginException;
 
   Future<void> saveSchoolName(String schoolName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -75,18 +75,13 @@ class TimeTableService with ChangeNotifier {
     } catch (error, stacktrace) {
       log.e(stacktrace);
       log.e("Error logging in: $error");
-      log.d("Clearing user data");
 
       UserSecureStorage.clearAll();
 
-      loginError = true;
       isLoading = false;
-
       this.username = "";
       this.password = "";
-
-      loginError = error;
-
+      loginException = error;
       notifyListeners();
     }
   }
@@ -97,7 +92,7 @@ class TimeTableService with ChangeNotifier {
     isLoading = false;
     timeTable = null;
     phaseTimeTable = null;
-    loginError = null;
+    loginException = null;
     password = "";
     session.logout();
     deletePhase();
