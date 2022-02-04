@@ -1,24 +1,25 @@
-
-
 //Vielleicht einen besseren Namen ausdenken
 //Handled alles SOLC-API Server zeug
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
 import 'package:sol_connect/core/excel/solcresponse.dart';
 import 'package:sol_connect/core/exceptions.dart';
+import 'package:sol_connect/util/logger.util.dart';
 
-class SolcApiManager {
+class SOLCApiManager {
+  final Logger log = getLogger();
 
   int _activeSockets = 0;
 
   String _inetAddress;
   int _port;
 
-  SolcApiManager(this._inetAddress, this._port);
+  SOLCApiManager(this._inetAddress, this._port);
 
   void setServerAddress(String inetAddress) {
     _inetAddress = inetAddress;
@@ -32,12 +33,12 @@ class SolcApiManager {
 
   int get port => _port;
 
-    ///Wirft eine Exception wenn ein Fehlercode auftritt
+  ///Wirft eine Exception wenn ein Fehlercode auftritt
   Future<PhaseStatus?> getKlasseInfo({required int klasseId}) async {
     SOLCResponse? response = await _querySOLC(command: "phase-status <" + klasseId.toString() + ">");
-    if(response != null) {
-    return PhaseStatus(response.payload);
-    } 
+    if (response != null) {
+      return PhaseStatus(response.payload);
+    }
     return null;
   }
 
@@ -116,7 +117,8 @@ class SolcApiManager {
 
           SOLCResponse response = SOLCResponse.handle(decodedMessage);
           if (response.isError) {
-            exception =  SOLCServerError( response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")");
+            exception =
+                SOLCServerError(response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")");
             return;
           }
 
@@ -130,7 +132,6 @@ class SolcApiManager {
           //Server bereit eine Datei zu uploaden
           if (response.responseCode == SOLCResponse.CODE_READY) {
             if (downloadFileTarget == null) {
-
               exception = Exception("Keine Datei zum Upload angegeben");
               return;
             }
@@ -159,16 +160,16 @@ class SolcApiManager {
 
       await subscription.asFuture<void>();
       await subscription.cancel();
+
       _activeSockets--;
-      print("Socket closed naturally. " + _activeSockets.toString() + " active sockets.");
-      
+      log.d("Socket closed naturally. " + _activeSockets.toString() + " active sockets.");
     } on Exception catch (error) {
-      _activeSockets++;
+      _activeSockets--;
       throw FailedToEstablishSOLCServerConnection(
           "Konnte keine Verbindung zum Konvertierungsserver " + _inetAddress + " herstellen: " + error.toString());
     }
-    
-    if(exception != null) {
+
+    if (exception != null) {
       throw exception;
     }
     return returnValue;

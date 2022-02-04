@@ -135,11 +135,11 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         ),
       );
       for (var i = 0; i < allClassesAsTeacher.length; i++) {
-        try {
-          await ref.read(timeTableService).apiManager!.getKlasseInfo(klasseId: allClassesAsTeacher[i].id);
-        } catch(e) {
-          log.e(e);
-        }
+        ref.read(timeTableService).apiManager!.getKlasseInfo(klasseId: allClassesAsTeacher[i].id).then((value) {
+          log.d(value!);
+        }).onError((error, stackTrace) {
+          log.e(error);
+        });
 
         list.add(
           ListTile(

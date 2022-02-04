@@ -19,7 +19,7 @@ class TimeTableService with ChangeNotifier {
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
   ExcelValidator? validator;
-  SolcApiManager? apiManager;
+  SOLCApiManager? apiManager;
 
   SharedPreferences? prefs;
 
@@ -56,7 +56,7 @@ class TimeTableService with ChangeNotifier {
 
   Future<void> login(String username, String password) async {
     
-    apiManager = SolcApiManager("localhost", 6969);
+    apiManager = SOLCApiManager(await getServerAddress(), 6969);
 
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();

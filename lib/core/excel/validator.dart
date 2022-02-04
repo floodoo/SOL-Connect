@@ -69,8 +69,8 @@ class ExcelValidator {
   DateTime? _validDateStart;
   DateTime? _validDateEnd;
 
-  final SolcApiManager _manager;
-  
+  final SOLCApiManager _manager;
+
   ///Der Excel Validator dient dazu den Stundenplan mit der angegebenen Phasierung zu verbinden.
   ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
   ///
@@ -276,8 +276,10 @@ class ExcelValidator {
       return _colorData;
     } on Exception catch (error) {
       _queryActive = false;
-      throw FailedToEstablishSOLCServerConnection(
-          "Konnte keine Verbindung zum Konvertierungsserver " + _manager.inetAddress + " herstellen: " + error.toString());
+      throw FailedToEstablishSOLCServerConnection("Konnte keine Verbindung zum Konvertierungsserver " +
+          _manager.inetAddress +
+          " herstellen: " +
+          error.toString());
     }
   }
 
