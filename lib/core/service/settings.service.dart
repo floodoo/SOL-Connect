@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService with ChangeNotifier {
+
   bool showDeveloperOptions = false;
   String serverAddress = "flo-dev.me";
 

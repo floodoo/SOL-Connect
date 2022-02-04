@@ -8,6 +8,7 @@ import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/mappedsheet.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
 import 'package:sol_connect/core/excel/models/phaseelement.dart';
+import 'package:sol_connect/core/excel/solc-api-manager.dart';
 import 'package:sol_connect/core/exceptions.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
@@ -58,9 +59,6 @@ class ExcelValidator {
 
   bool _queryActive = false;
 
-  final String excelServerAddr;
-  final int excelServerPort = 6969;
-
   //Speichere die Farben um beim mehrfachen aufrufen der mergeExcelWithTimetable() Funktion keinen unnötigen traffic zu erzeugen.
   CellColors _colorData = CellColors();
   final _collectedTimetables = <MappedSheet>[];
@@ -71,12 +69,14 @@ class ExcelValidator {
   DateTime? _validDateStart;
   DateTime? _validDateEnd;
 
+  final SolcApiManager _manager;
+  
   ///Der Excel Validator dient dazu den Stundenplan mit der angegebenen Phasierung zu verbinden.
   ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
   ///
   ///[_path] Der lokale Pfad zur Excel Datei
   ///[EXCEL_SERVER_ADDR] Die Serveradresse eines excel Servers ohne Portangabe
-  ExcelValidator(this.excelServerAddr, this._path) {
+  ExcelValidator(this._manager, this._path) {
     if (_path.isEmpty) throw Exception("Der Pfad existiert nicht");
 
     var bytes = File(_path).readAsBytesSync();
@@ -228,7 +228,7 @@ class ExcelValidator {
 
     try {
       _queryActive = true;
-      final socket = await Socket.connect(excelServerAddr, excelServerPort);
+      final socket = await Socket.connect(_manager.inetAddress, _manager.port);
 
       //Sende den Befehl
       socket.writeln("convertxssf");
@@ -248,7 +248,7 @@ class ExcelValidator {
           }
 
           if (decodedMessage['error'] != null) {
-            throw ExcelConversionServerError(
+            throw SOLCServerError(
                 "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
           }
 
@@ -262,7 +262,7 @@ class ExcelValidator {
         },
         onError: (error) {
           _queryActive = false;
-          throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+          throw SOLCServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
         },
         onDone: () {
           //Alles OK!
@@ -274,10 +274,10 @@ class ExcelValidator {
       await subscription.cancel();
       _queryActive = false;
       return _colorData;
-    } on Exception {
+    } on Exception catch (error) {
       _queryActive = false;
-      throw FailedToEstablishExcelServerConnection(
-          "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen.");
+      throw FailedToEstablishSOLCServerConnection(
+          "Konnte keine Verbindung zum Konvertierungsserver " + _manager.inetAddress + " herstellen: " + error.toString());
     }
   }
 

@@ -130,7 +130,7 @@ class TimetableManager {
 
   TimetableFrame? _getCachedFrame(DateTime from, DateTime to) {
     for (TimetableFrame frame in frames) {
-      if (Utils().dayMatch(frame._frameStart, from) && Utils().dayMatch(frame._frameEnd, to)) {
+      if (Utils.dayMatch(frame._frameStart, from) && Utils.dayMatch(frame._frameEnd, to)) {
         return frame;
       }
     }
@@ -155,9 +155,9 @@ class TimetableManager {
 
   TimetableFrame getFrameRelativeToCurrent(int relative, {bool locked = false}) {
     DateTime from = _getRelativeWeekStartDate(relative);
-    from = Utils().normalizeDate(from);
+    from = Utils.normalizeDate(from);
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
-    lastDayOfWeek = Utils().normalizeDate(lastDayOfWeek);
+    lastDayOfWeek = Utils.normalizeDate(lastDayOfWeek);
 
     //Checke ob der Frame schon existiert
     TimetableFrame? cached = _getCachedFrame(from, lastDayOfWeek);

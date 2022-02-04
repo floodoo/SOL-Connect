@@ -162,8 +162,8 @@ class TimeTableHour {
 
     startAsString = grid.startTime;
     endAsString = grid.endTime;
-    start = _parseDate(Utils().convertToUntisDate(start), startAsString);
-    end = _parseDate(Utils().convertToUntisDate(end), endAsString);
+    start = _parseDate(Utils.convertToUntisDate(start), startAsString);
+    end = _parseDate(Utils.convertToUntisDate(end), endAsString);
   }
 
   int get yIndex => _yIndex;

@@ -95,6 +95,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
       for (var i = 0; i < ownClassesAsTeacher.length; i++) {
         list.add(
           ListTile(
+            //print("");
             title: Text(ownClassesAsTeacher[i].name),
             subtitle: Text(ownClassesAsTeacher[i].classTeacherName),
             onTap: () {
@@ -134,6 +135,12 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         ),
       );
       for (var i = 0; i < allClassesAsTeacher.length; i++) {
+        try {
+          await ref.read(timeTableService).apiManager!.getKlasseInfo(klasseId: allClassesAsTeacher[i].id);
+        } catch(e) {
+          log.e(e);
+        }
+
         list.add(
           ListTile(
             title: Text(allClassesAsTeacher[i].name),

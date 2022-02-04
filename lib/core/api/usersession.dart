@@ -194,6 +194,10 @@ class UserSession {
     //setTimetableBehavior(2162, PersonTypes.klasse);
   }
 
+  String get sessionid => _sessionId;
+
+  String get bearerToken => _bearerToken;
+
   bool isDemoSession() {
     return _un == UserSession.demoAccountName;
   }
@@ -257,12 +261,22 @@ class UserSession {
   Future<News> getNewsData(DateTime date, {bool loadFromCache = true}) async {
     if (!loadFromCache || _cachedNewsData.getRssUrl() == "") {
       http.Response r = await _queryURL(
-          "/WebUntis/api/public/news/newsWidgetData?date=" + Utils().convertToUntisDate(date),
+          "/WebUntis/api/public/news/newsWidgetData?date=" + Utils.convertToUntisDate(date),
           needsAuthorization: true);
       _cachedNewsData = News(jsonDecode(r.body));
     }
 
     return _cachedNewsData;
+  }
+
+  Future regenerateSession() async {
+    if (!_sessionValid) {
+      return;
+    }
+
+    await _queryRPC("logout", {}, validateSession: false);
+    await _queryRPC("authenticate", {"user": _un, "password": _pwd, "client": _appName});
+    await regenerateSessionBearerToken();
   }
 
   Future<Timegrid?> getTimegrid() async {
@@ -334,8 +348,8 @@ class UserSession {
         frame,
         await _queryRPC("getTimetable", {
           "options": {
-            "startDate": Utils().convertToUntisDate(from),
-            "endDate": Utils().convertToUntisDate(to),
+            "startDate": Utils.convertToUntisDate(from),
+            "endDate": Utils.convertToUntisDate(to),
             "element": {
               "id": personId == -1 ? _personId : personId,
               "type": personType == PersonTypes.unknown ? _type.id : personType.id

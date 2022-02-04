@@ -5,6 +5,7 @@ import 'package:sol_connect/core/api/timetable.dart';
 import 'package:sol_connect/core/api/timetable_manager.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
+import 'package:sol_connect/core/excel/solc-api-manager.dart';
 import 'package:sol_connect/core/excel/validator.dart';
 import 'package:sol_connect/core/exceptions.dart';
 import 'package:sol_connect/util/logger.util.dart';
@@ -18,6 +19,8 @@ class TimeTableService with ChangeNotifier {
   TimeTableRange? timeTable;
   MergedTimeTable? phaseTimeTable;
   ExcelValidator? validator;
+  SolcApiManager? apiManager;
+
   SharedPreferences? prefs;
 
   bool isLoggedIn = false;
@@ -52,6 +55,9 @@ class TimeTableService with ChangeNotifier {
   }
 
   Future<void> login(String username, String password) async {
+    
+    apiManager = SolcApiManager("localhost", 6969);
+
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
     session = UserSession(school: schoolName, appID: "untis-phasierung");
@@ -63,7 +69,7 @@ class TimeTableService with ChangeNotifier {
       await getTimeTable();
 
       try {
-        await loadCheckedPhaseFileForNextBlock(serverAdress: "flo-dev.me");
+        await loadCheckedPhaseFileForNextBlock();
       } catch (e) {
         log.e(e);
         deletePhase();
@@ -152,18 +158,18 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> loadCheckedPhaseFileForNextBlock({required String serverAdress, String? phaseFilePath}) async {
+  Future<String> loadCheckedPhaseFileForNextBlock({String? phaseFilePath}) async {
     isPhaseVerified = false;
 
     log.d("Loading phaseplan ...");
 
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator(serverAdress, phaseFilePath);
+      validator = ExcelValidator(apiManager!, phaseFilePath);
     } else {
       phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
       if (phaseFilePath != "empty") {
-        validator = ExcelValidator(serverAdress, phaseFilePath);
+        validator = ExcelValidator(apiManager!, phaseFilePath);
       }
     }
 
@@ -198,14 +204,14 @@ class TimeTableService with ChangeNotifier {
     return "";
   }
 
-  Future<void> loadPhaseFromFile({required String serverAdress, String? phaseFilePath}) async {
+  Future<void> loadPhaseFromFile({String? phaseFilePath}) async {
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator(serverAdress, phaseFilePath);
+      validator = ExcelValidator(apiManager!, phaseFilePath);
     } else {
       phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
       if (phaseFilePath != "empty") {
-        validator = ExcelValidator(serverAdress, phaseFilePath);
+        validator = ExcelValidator(apiManager!, phaseFilePath);
       }
     }
   }
