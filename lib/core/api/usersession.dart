@@ -149,7 +149,7 @@ class UserSession {
 
   ///Erzeugt eine neue Session ID
   Future regenerateSession() async {
-    if(!_sessionValid) {
+    if (!_sessionValid) {
       return;
     }
 

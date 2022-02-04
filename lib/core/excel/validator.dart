@@ -120,10 +120,9 @@ class ExcelValidator {
 
   ///Uploads the file with the given logged in user
   void uploadFile(UserSession authentification) {
-    if(!authentification.isRPCAuthroized()) {
+    if (!authentification.isRPCAuthroized()) {
       throw MissingCredentialsException("Client not authenticated to upload files");
     }
-    
   }
 
   ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.
@@ -286,7 +285,7 @@ class ExcelValidator {
       await subscription.cancel();
       _queryActive = false;
       return _colorData;
-    } on Exception catch(error) {
+    } on Exception catch (error) {
       _queryActive = false;
       throw FailedToEstablishSOLCServerConnection(
           "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen: " + error.toString());
@@ -409,23 +408,35 @@ class ExcelValidator {
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   Future<void> downloadSheet({required int klasseId, required File targetFile}) async {
-    await _querySOLC(
-      command: "download-file <" + klasseId.toString() + ">", 
-      downloadFileTarget: targetFile
-    );
+    await _querySOLC(command: "download-file <" + klasseId.toString() + ">", downloadFileTarget: targetFile);
   }
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   ///
   ///**ACHTUNG! Bei erfolgreichem hochladen wird der user automatisch serverseitig abgemeldet!**
-  Future<void> uploadSheet({required UserSession authenticatedUser, required int klasseId, required DateTime blockStart, required DateTime blockEnd, required File file}) async {
-    await _querySOLC(command: "upload-file "
-          "<" + authenticatedUser.sessionId + ">"
-          "<" + authenticatedUser.bearerToken + ">"
-          "<" + klasseId.toString() + ">"
-          "<" + Utils.convertToUntisDate(blockStart) + ">"
-          "<" + Utils.convertToUntisDate(blockEnd) + ">"
-    ); 
+  Future<void> uploadSheet(
+      {required UserSession authenticatedUser,
+      required int klasseId,
+      required DateTime blockStart,
+      required DateTime blockEnd,
+      required File file}) async {
+    await _querySOLC(
+        command: "upload-file "
+                "<" +
+            authenticatedUser.sessionId +
+            ">"
+                "<" +
+            authenticatedUser.bearerToken +
+            ">"
+                "<" +
+            klasseId.toString() +
+            ">"
+                "<" +
+            Utils.convertToUntisDate(blockStart) +
+            ">"
+                "<" +
+            Utils.convertToUntisDate(blockEnd) +
+            ">");
     await authenticatedUser.regenerateSession();
   }
 
@@ -437,7 +448,6 @@ class ExcelValidator {
   ///Ansonsten wird alles über die File Objekte gehandled
   Future<SOLCResponse?> _querySOLC({required String command, File? uploadFileSource, File? downloadFileTarget}) async {
     try {
-
       final socket = await Socket.connect(excelServerAddr, excelServerPort);
 
       //Sende den Befehl
@@ -446,10 +456,10 @@ class ExcelValidator {
       bool awaitFileStream = false;
       SOLCResponse? returnValue;
 
-      var subscription = socket.listen((event) async {
-
-          if(awaitFileStream) {
-            if(downloadFileTarget == null) {
+      var subscription = socket.listen(
+        (event) async {
+          if (awaitFileStream) {
+            if (downloadFileTarget == null) {
               throw Exception("Kein Dateiziel zum Download angegeben");
             }
             await downloadFileTarget.create(recursive: true);
@@ -466,24 +476,24 @@ class ExcelValidator {
           }
 
           SOLCResponse response = SOLCResponse.handle(decodedMessage);
-          if(response.isError) {
-             throw SOLCServerError(
+          if (response.isError) {
+            throw SOLCServerError(
                 response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")");
           }
 
           //Einfache JSON Antwort
-          if(response.responseCode == SOLCResponse.CODE_SUCCESS) {
+          if (response.responseCode == SOLCResponse.CODE_SUCCESS) {
             returnValue = response;
             socket.close();
             return;
           }
 
           //Server bereit eine Datei zu uploaden
-          if(response.responseCode == SOLCResponse.CODE_READY) {
-            if(downloadFileTarget == null) {
+          if (response.responseCode == SOLCResponse.CODE_READY) {
+            if (downloadFileTarget == null) {
               throw Exception("Keine Datei zum Upload angegeben");
             }
-            if(!(await uploadFileSource!.exists())) {
+            if (!(await uploadFileSource!.exists())) {
               throw Exception("Datei zum Upload existiert nicht");
             }
             await socket.addStream(uploadFileSource.openRead());
@@ -492,7 +502,7 @@ class ExcelValidator {
           }
 
           //Server fragt den Client ob er bereit ist eine Datei zu downloaden. Sende ein "ready-to-recieve" und lade die Date als Stream herunter
-          if(response.responseCode == SOLCResponse.CODE_SEND_READY) {
+          if (response.responseCode == SOLCResponse.CODE_SEND_READY) {
             awaitFileStream = true;
             socket.writeln("ready-to-recieve");
             await socket.flush();
@@ -500,14 +510,14 @@ class ExcelValidator {
           }
         },
         onError: (error) {
-          throw SOLCServerError("Ein Fehler ist bei der Verbindung zum SOLC-API Server aufgetreten");        
+          throw SOLCServerError("Ein Fehler ist bei der Verbindung zum SOLC-API Server aufgetreten");
         },
       );
 
       await subscription.asFuture<void>();
       await subscription.cancel();
       return returnValue;
-    } on Exception catch(error) {
+    } on Exception catch (error) {
       _queryActive = false;
       throw FailedToEstablishSOLCServerConnection(
           "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen: " + error.toString());

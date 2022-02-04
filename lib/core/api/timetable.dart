@@ -83,8 +83,7 @@ class TimeTableRange {
 
     var finalList = <TimeTableDay>[];
 
-    int day1 =
-        Utils.daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
+    int day1 = Utils.daysSinceEpoch(DateTime(_startDate.year, _startDate.month, _startDate.day).millisecondsSinceEpoch);
     int diff = _endDate.difference(_startDate).inDays;
     if (diff < 0) throw Exception("Das Start Datum muss größer als das Enddatum sein!");
 
