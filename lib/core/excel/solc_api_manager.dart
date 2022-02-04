@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -51,7 +50,7 @@ class SOLCApiManager {
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   ///
-  ///**ACHTUNG! Bei erfolgreichem hochladen wird der user automatisch serverseitig abgemeldet!** 
+  ///**ACHTUNG! Bei erfolgreichem hochladen wird der user automatisch serverseitig abgemeldet!**
   Future<void> uploadSheet(
       {required UserSession authenticatedUser,
       required int klasseId,
