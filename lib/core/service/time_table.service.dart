@@ -5,7 +5,7 @@ import 'package:sol_connect/core/api/timetable.dart';
 import 'package:sol_connect/core/api/timetable_manager.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
-import 'package:sol_connect/core/excel/solc-api-manager.dart';
+import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/excel/validator.dart';
 import 'package:sol_connect/core/exceptions.dart';
 import 'package:sol_connect/util/logger.util.dart';

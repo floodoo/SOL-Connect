@@ -8,7 +8,7 @@ import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/mappedsheet.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
 import 'package:sol_connect/core/excel/models/phaseelement.dart';
-import 'package:sol_connect/core/excel/solc-api-manager.dart';
+import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/exceptions.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
