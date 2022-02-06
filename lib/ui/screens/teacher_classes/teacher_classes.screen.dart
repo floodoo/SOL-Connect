@@ -47,9 +47,6 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     final theme = ref.watch(themeService).theme;
     final DateTime now = DateTime.now();
 
-    if (phaseStatus != null) {
-      log.i(phaseStatus.blockStart);
-    }
     return Padding(
         padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
         child: Card(
@@ -62,11 +59,11 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
                 child: Container(
                   color: phaseStatus != null
                       ? now.millisecondsSinceEpoch < phaseStatus.blockStart.millisecondsSinceEpoch
-                          ? theme.colors.phaseOrienting
+                          ? theme.colors.phaseNotStartet
                           : now.millisecondsSinceEpoch > phaseStatus.blockEnd.millisecondsSinceEpoch
                               ? theme.colors.phaseOutOfBlock
-                              : theme.colors.successColor
-                      : theme.colors.phaseUnknown,
+                              : theme.colors.phaseActive
+                      : theme.colors.phaseNotUploadedJet,
                   padding: const EdgeInsets.fromLTRB(10, 40, 10, 1),
                   width: 8,
                 ),
@@ -80,7 +77,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
               phaseStatus != null
                   ? Column(
                       children: [
-                        Text("Phasierung aktuell von " +
+                        Text("" +
                             Utils.convertToDDMMYY(phaseStatus.blockStart) +
                             " bis " +
                             Utils.convertToDDMMYY(phaseStatus.blockEnd)),
@@ -132,6 +129,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
                     ExcelValidator tempValidator =
                         ExcelValidator(manager, File(result.files.first.path!).readAsBytesSync());
                     log.d("Verifying sheet for class '" + klasse.displayName + "'");
+                    
                     try {
                       await tempValidator.mergeExcelWithWholeBlock(session);
                       log.d("Success");

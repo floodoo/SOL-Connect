@@ -126,7 +126,7 @@ class ExcelValidator {
     var nextBlockweeks = await timeTable.getBoundFrame().getManager().getNextBlockWeeks();
 
     for (TimetableFrame blockWeek in nextBlockweeks) {
-      log.v("Verifying block week phase merge " +
+      log.d("Verifying block week phase merge " +
           blockWeek.getFrameStart().toString() +
           " -> " +
           blockWeek.getFrameEnd().toString());
@@ -203,6 +203,9 @@ class ExcelValidator {
             //Nicht super schön, aber fürs erste ok
             while (_colorData.isEmpty() || _colorData.failed) {
               await _loadColorData(forceReload: false);
+              if( _colorData.failed) {
+                log.i("Failed to fetch cell colors");
+              }
             }
 
             for (MappedPhase hour in mapped.getHours()) {
@@ -277,6 +280,7 @@ class ExcelValidator {
           if (decodedMessage['message'] != null) {
             if (decodedMessage['message'] == "ready-for-file") {
               socket.add(_fileBytes);
+              await socket.flush();
             } else {
               _colorData = CellColors(data: decodedMessage['data']);
             }

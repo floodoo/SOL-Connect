@@ -22,6 +22,10 @@ class AppColors {
     required this.textLightInverted,
     required this.timetableCardBackground,
     required this.timetableCardEdge,
+    required this.phaseOutOfBounds,
+    required this.phaseNotStartet,
+    required this.phaseActive,
+    required this.phaseNotUploadedJet,
 
     // Phase colors
     required this.phaseFree,
@@ -78,6 +82,11 @@ class AppColors {
   final Color phaseFeedbackDisabled;
   final Color phaseUnknownDisabled;
 
+  final Color phaseOutOfBounds;
+  final Color phaseNotStartet;
+  final Color phaseActive;
+  final Color phaseNotUploadedJet;
+
   final Color phaseOutOfBlock;
   // Status colors
   final Color irregular;
@@ -120,10 +129,16 @@ class AppColors {
         phaseStructuredDisabled: const Color(0xff5e6591),
         phaseFeedbackDisabled: const Color(0xffcf7070),
         phaseUnknownDisabled: Colors.grey.shade700,
+        
+        phaseOutOfBounds: Colors.red.shade700,
+        phaseNotStartet: Colors.green.shade300,
+        phaseActive: Colors.green.shade700,
+        phaseNotUploadedJet: Colors.grey,
         // Status colors
         irregular: const Color(0xffa545b5),
         cancelled: const Color(0xffa80c0c),
         noTeacher: const Color(0xffa545b5));
+
   }
 
   factory AppColors.dark() {
@@ -148,13 +163,8 @@ class AppColors {
         loginBackgroundGradient1: const Color(0xff252426),
         timetableCardBackground: Colors.grey.shade900,
         timetableCardEdge: Colors.grey.shade800,
+       
         // Phase color
-        /*phaseFreeDisabled: const Color(0xff274629),
-        phaseOrientingDisabled: const Color(0xff854300),
-        phaseReflectionDisabled: const Color(0xff7C6732),
-        phaseStructuredDisabled: const Color(0xff1A3C5D),
-        phaseFeedbackDisabled: const Color(0xff5D2222),*/
-
         phaseFreeDisabled: const Color(0xff142D15),
         phaseOrientingDisabled: const Color(0xff63401C),
         phaseReflectionDisabled: const Color(0xff635636),
@@ -168,6 +178,13 @@ class AppColors {
         phaseReflection: Colors.yellow.shade700,
         phaseStructured: Colors.blue.shade700,
         phaseFeedback: Colors.red.shade700,
+
+        //Uploadedphasecolors
+        phaseOutOfBounds: Colors.red.shade700,
+        phaseNotStartet: Colors.green.shade300,
+        phaseActive: Colors.green.shade700,
+        phaseNotUploadedJet: Colors.grey,
+
         // Status colors
         irregular: const Color(0xffCB67DC),
         cancelled: const Color(0xffE2222B),
