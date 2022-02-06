@@ -203,7 +203,7 @@ class ExcelValidator {
             //Nicht super schön, aber fürs erste ok
             while (_colorData.isEmpty() || _colorData.failed) {
               await _loadColorData(forceReload: false);
-              if( _colorData.failed) {
+              if (_colorData.failed) {
                 log.i("Failed to fetch cell colors");
               }
             }

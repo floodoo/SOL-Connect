@@ -129,7 +129,6 @@ class AppColors {
         phaseStructuredDisabled: const Color(0xff5e6591),
         phaseFeedbackDisabled: const Color(0xffcf7070),
         phaseUnknownDisabled: Colors.grey.shade700,
-        
         phaseOutOfBounds: Colors.red.shade700,
         phaseNotStartet: Colors.green.shade300,
         phaseActive: Colors.green.shade700,
@@ -138,7 +137,6 @@ class AppColors {
         irregular: const Color(0xffa545b5),
         cancelled: const Color(0xffa80c0c),
         noTeacher: const Color(0xffa545b5));
-
   }
 
   factory AppColors.dark() {
@@ -163,7 +161,7 @@ class AppColors {
         loginBackgroundGradient1: const Color(0xff252426),
         timetableCardBackground: Colors.grey.shade900,
         timetableCardEdge: Colors.grey.shade800,
-       
+
         // Phase color
         phaseFreeDisabled: const Color(0xff142D15),
         phaseOrientingDisabled: const Color(0xff63401C),

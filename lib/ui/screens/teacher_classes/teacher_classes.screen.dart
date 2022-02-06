@@ -129,7 +129,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
                     ExcelValidator tempValidator =
                         ExcelValidator(manager, File(result.files.first.path!).readAsBytesSync());
                     log.d("Verifying sheet for class '" + klasse.displayName + "'");
-                    
+
                     try {
                       await tempValidator.mergeExcelWithWholeBlock(session);
                       log.d("Success");
