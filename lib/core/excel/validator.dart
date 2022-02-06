@@ -1,7 +1,6 @@
 /*Author Philipp Gersch */
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:excel/excel.dart';
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/timetable.hour.dart';
@@ -277,9 +276,7 @@ class ExcelValidator {
 
           if (decodedMessage['message'] != null) {
             if (decodedMessage['message'] == "ready-for-file") {
-              //TODO
               socket.add(_fileBytes);
-              //await socket.addStream(sheetFile.openRead());
             } else {
               _colorData = CellColors(data: decodedMessage['data']);
             }
