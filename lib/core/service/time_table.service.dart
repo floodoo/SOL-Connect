@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sol_connect/core/api/timetable.dart';
-import 'package:sol_connect/core/api/timetable_manager.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
 import 'package:sol_connect/core/excel/solc_api_manager.dart';

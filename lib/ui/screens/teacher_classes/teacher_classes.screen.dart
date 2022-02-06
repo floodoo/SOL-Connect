@@ -14,7 +14,6 @@ import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/excel/validator.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
-import 'package:sol_connect/ui/themes/app_theme.dart';
 import 'package:sol_connect/util/logger.util.dart';
 
 // ignore: must_be_immutable
@@ -31,7 +30,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
   late SearchBar searchBar;
   final Logger log = getLogger();
 
-  SnackBar _createSnackbar(String message, Color backgroundColor,
+  /*SnackBar _createSnackbar(String message, Color backgroundColor,
       {required AppTheme theme, Duration duration = const Duration(seconds: 4)}) {
     return SnackBar(
       duration: duration,
@@ -42,7 +41,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
       ),
     );
-  }
+  }*/
 
   Widget buildClasslistEntry(SchoolClass klasse, [PhaseStatus? phaseStatus]) {
     final theme = ref.watch(themeService).theme;
@@ -98,7 +97,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
                         await ref.read(timeTableService).apiManager!.downloadVirtualSheet(klasseId: klasse.id);
 
                     ref.read(timeTableService).session.setTimetableBehaviour(klasse.id, PersonTypes.klasse,
-                        debug: true); //TODO(debug): Debug Stundenplan aktiviert
+                        debug: true); // TODO(debug): Debug Stundenplan aktiviert
 
                     await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
                   } catch (e) {
