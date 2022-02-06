@@ -43,9 +43,19 @@ class SOLCApiManager {
     return null;
   }
 
+  Future<List<int>> downloadVirtualSheet({required int klasseId}) async {
+    List<int> bytes = [];
+    await _querySOLC(command: "download-file <" + klasseId.toString() + ">", downloadBytes: bytes);
+    return bytes;
+  }
+
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   Future<void> downloadSheet({required int klasseId, required File targetFile}) async {
-    await _querySOLC(command: "download-file <" + klasseId.toString() + ">", downloadFileTarget: targetFile);
+    List<int> bytes = [];
+    await _querySOLC(command: "download-file <" + klasseId.toString() + ">", downloadBytes: bytes);
+
+    await targetFile.create(recursive: true);
+    await targetFile.writeAsBytes(bytes);
   }
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
@@ -58,22 +68,13 @@ class SOLCApiManager {
       required DateTime blockEnd,
       required File file}) async {
     await _querySOLC(
+        uploadFileSource: file,
         command: "upload-file "
-                "<" +
-            authenticatedUser.sessionid +
-            ">"
-                "<" +
-            authenticatedUser.bearerToken +
-            ">"
-                "<" +
-            klasseId.toString() +
-            ">"
-                "<" +
-            Utils.convertToUntisDate(blockStart) +
-            ">"
-                "<" +
-            Utils.convertToUntisDate(blockEnd) +
-            ">");
+                "<" + authenticatedUser.sessionid + ">"
+                " <" + authenticatedUser.bearerToken + ">"
+                " <" + klasseId.toString() + ">"
+                " <" + Utils.convertToUntisDate(blockStart) + ">"
+                " <" + Utils.convertToUntisDate(blockEnd) + ">");
     await authenticatedUser.regenerateSession();
   }
 
@@ -83,10 +84,10 @@ class SOLCApiManager {
   ///Zurückgegebene Werte können null sein, je nachdem was für ein Befehl benutzt wurde.
   ///Ein rückgabewert gibt es nur wenn eine Serverantwort im JSON Format kommt bzw wenn der Code 0 (SUCCESS) ist.
   ///Ansonsten wird alles über die File Objekte gehandled
-  Future<SOLCResponse?> _querySOLC({required String command, File? uploadFileSource, File? downloadFileTarget}) async {
+  Future<SOLCResponse?> _querySOLC({required String command, File? uploadFileSource, List<int>? downloadBytes}) async {
     SOLCResponse? returnValue;
     dynamic exception;
-
+    
     try {
       _activeSockets = _activeSockets + 1;
       final socket = await Socket.connect(_inetAddress, _port);
@@ -95,16 +96,24 @@ class SOLCApiManager {
       socket.writeln(command);
       await socket.flush();
       bool awaitFileStream = false;
+      
+      if(downloadBytes != null) {
+        downloadBytes.clear();
+      }
+
+      void throwException(Exception e) {
+        exception = e;
+        socket.close();
+      }
 
       var subscription = socket.listen(
         (event) async {
           if (awaitFileStream) {
-            if (downloadFileTarget == null) {
-              exception = Exception("Kein Dateiziel zum Download angegeben");
+            if (downloadBytes == null) {
+              throwException(Exception("Kein Ziel zum Download angegeben"));
               return;
-            }
-            await downloadFileTarget.create(recursive: true);
-            await downloadFileTarget.writeAsBytes(event);
+            }           
+            downloadBytes.addAll(event);
             return;
           }
 
@@ -118,8 +127,7 @@ class SOLCApiManager {
 
           SOLCResponse response = SOLCResponse.handle(decodedMessage);
           if (response.isError) {
-            exception =
-                SOLCServerError(response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")");
+            throwException(SOLCServerError(response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")"));
             return;
           }
 
@@ -130,14 +138,15 @@ class SOLCApiManager {
             return;
           }
 
-          //Server bereit eine Datei zu uploaden
+          //Server bereit einen Dateiupload zu empfangen
           if (response.responseCode == SOLCResponse.CODE_READY) {
-            if (downloadFileTarget == null) {
-              exception = Exception("Keine Datei zum Upload angegeben");
+            if (uploadFileSource == null) {
+              throwException(Exception("Keine Datei zum Upload angegeben"));
+              socket.close();
               return;
             }
-            if (!(await uploadFileSource!.exists())) {
-              exception = Exception("Datei zum Upload existiert nicht");
+            if (!(await uploadFileSource.exists())) {
+              throwException(Exception("Datei zum Upload existiert nicht"));
               return;
             }
             await socket.addStream(uploadFileSource.openRead());
@@ -155,7 +164,7 @@ class SOLCApiManager {
         },
         onError: (error) {
           _activeSockets--;
-          exception = SOLCServerError("Ein Fehler ist bei der Verbindung zum SOLC-API Server aufgetreten");
+          throwException(SOLCServerError("Ein Fehler ist bei der Verbindung zum SOLC-API Server aufgetreten"));
         },
       );
 

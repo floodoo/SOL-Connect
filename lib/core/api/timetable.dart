@@ -70,7 +70,7 @@ class TimeTableRange {
     //Das "echte" Startdatum. Wie es in der timetable drin ist
     realStartDate ??= _startDate;
 
-    if (_boundFrame.getManager().userSession.isDemoSession()) {
+    if (_boundFrame.getManager().userSession.isDemoSession) {
       int realStartDateDays = Utils.daysSinceEpoch(realStartDate.millisecondsSinceEpoch);
       //Jetzt "normalisiere" alle Daten (Pl. von Datum) (Verschiebe das Datum in das angegebene Startdatum)
       for (TimeTableDay day in _days) {

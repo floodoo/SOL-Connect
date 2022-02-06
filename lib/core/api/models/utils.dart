@@ -12,10 +12,12 @@ class Utils {
         (date.day < 10 ? '0' + date.day.toString() : date.day.toString()).toString());
   }
 
+  ///Wandelt einen String im Format YYYYMMDD in ein DateTime Objekt um
   static DateTime convertToDateTime(String untisDate) {
     return DateTime.parse(untisDate);
   }
 
+  ///Tage seit 01.01.1970
   static int daysSinceEpoch(int timestamp) {
     return (timestamp / (1000 * 60 * 60 * 24)).floor();
   }
@@ -35,6 +37,21 @@ class Utils {
     return DateTime(date.year, date.month, date.day);
   }
 
+  static String convertToDDMMYY(DateTime? date) {
+    if (date == null) {
+      return "?";
+    }
+
+    String d = convertToUntisDate(date);
+    return d.substring(6) + "." + d.substring(4, 6) + "." + d.substring(2, 4);
+  }
+
+  ///Gibt true zurück, wenn das Da
+  bool dateInRange({required DateTime start, required DateTime end, required DateTime current}) {
+    return current.millisecondsSinceEpoch > start.millisecondsSinceEpoch && current.millisecondsSinceEpoch < end.millisecondsSinceEpoch;
+  }
+
+  ///Wandelt ein DateTime objekt in das Format DDMM um
   static String convertToDDMM(DateTime? date) {
     if (date == null) {
       return "?";

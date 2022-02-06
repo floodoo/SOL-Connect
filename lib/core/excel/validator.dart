@@ -1,15 +1,20 @@
 /*Author Philipp Gersch */
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:excel/excel.dart';
+import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/timetable.hour.dart';
 import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/api/timetable_manager.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/mappedsheet.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
 import 'package:sol_connect/core/excel/models/phaseelement.dart';
 import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/exceptions.dart';
+import 'package:sol_connect/util/logger.util.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
 class MappedPhase {
@@ -54,7 +59,9 @@ class MappedPhase {
 ///Das ist eine Beta Version. In dieser darf nur die Excel für eine Woche enthalten sein. In kommenden Versionen wird
 ///auch der komplett enthaltene Block verarbeitet werden können.
 class ExcelValidator {
-  final String _path;
+  final Logger log = getLogger();
+  
+  final List<int> _fileBytes;
   Excel? _excel;
 
   bool _queryActive = false;
@@ -74,13 +81,14 @@ class ExcelValidator {
   ///Der Excel Validator dient dazu den Stundenplan mit der angegebenen Phasierung zu verbinden.
   ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
   ///
-  ///[_path] Der lokale Pfad zur Excel Datei
+  ///[filepath] Der lokale Pfad zur Excel Datei
+  ///[bytes] Bytes einer Excel Datei. Diese Methode macht es möglich virtuelle Excel Dateien zu überprüfen. Kann aber die RAM in mitleidenschaft ziehen.
   ///[EXCEL_SERVER_ADDR] Die Serveradresse eines excel Servers ohne Portangabe
-  ExcelValidator(this._manager, this._path) {
-    if (_path.isEmpty) throw Exception("Der Pfad existiert nicht");
-
-    var bytes = File(_path).readAsBytesSync();
-    _excel = Excel.decodeBytes(bytes);
+  ExcelValidator(this._manager, this._fileBytes) {
+    
+      //var bytes = sheetFile.readAsBytesSync();
+      _excel = Excel.decodeBytes(_fileBytes);
+      return;
   }
 
   ///Mit dieser Funktion kann ein geladener Phasierungsplan auf einen Schulblock beschränkt werden.
@@ -112,6 +120,23 @@ class ExcelValidator {
       }
     }
     _collectedTimetables.add(mapped);
+  }
+
+  ///Wenn keineException geworfen wurde ist der Merge erfolgreich gewesen.
+  Future<void> mergeExcelWithWholeBlock(UserSession session) async {
+
+    TimeTableRange timeTable = await session.getRelativeTimeTableWeek(0);
+    var nextBlockweeks = await timeTable.getBoundFrame().getManager().getNextBlockWeeks();
+
+    for (TimetableFrame blockWeek in nextBlockweeks) {
+      log.v("Verifying block week phase merge " +
+          blockWeek.getFrameStart().toString() +
+          " -> " +
+          blockWeek.getFrameEnd().toString());
+
+      await blockWeek.getCurrentBlockWeek();
+      await mergeExcelWithTimetable(await blockWeek.getWeekData());
+    }
   }
 
   ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.
@@ -254,7 +279,9 @@ class ExcelValidator {
 
           if (decodedMessage['message'] != null) {
             if (decodedMessage['message'] == "ready-for-file") {
-              await socket.addStream(File(_path).openRead());
+              //TODO
+              socket.add(_fileBytes);
+              //await socket.addStream(sheetFile.openRead());
             } else {
               _colorData = CellColors(data: decodedMessage['data']);
             }

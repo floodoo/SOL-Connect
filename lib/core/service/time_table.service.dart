@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,6 +58,7 @@ class TimeTableService with ChangeNotifier {
 
   Future<void> login(String username, String password) async {
     apiManager = SOLCApiManager(await getServerAddress(), 6969);
+    //apiManager = SOLCApiManager("127.0.0.1", 6969);
 
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
@@ -107,7 +110,7 @@ class TimeTableService with ChangeNotifier {
 
   Future<void> getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
-
+    
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
     if (timeTable != null) {
       isSchool = !timeTable!.isNonSchoolblockWeek();
@@ -156,26 +159,12 @@ class TimeTableService with ChangeNotifier {
     password = value;
     notifyListeners();
   }
-
-  Future<String> loadCheckedPhaseFileForNextBlock({String? phaseFilePath}) async {
-    isPhaseVerified = false;
-
-    log.d("Loading phaseplan ...");
-
-    if (phaseFilePath != null) {
-      prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator(apiManager!, phaseFilePath);
-    } else {
-      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
-      if (phaseFilePath != "empty") {
-        validator = ExcelValidator(apiManager!, phaseFilePath);
-      }
-    }
-
+  
+  ///Dafür zuständig die Phasen im Validator für den aktuellen Block zu verifizieren
+  Future<void> _verifyBlockPhases() async {
     if (validator == null) {
       deletePhase();
       log.d("No phase file specified. Skipping phase loading ...");
-      return "";
     }
 
     log.d("Verifying phaseplan for next/current block ...");
@@ -183,37 +172,56 @@ class TimeTableService with ChangeNotifier {
     session.clearManagerCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
-    var nextBlockweeks = await timeTable!.getBoundFrame().getManager().getNextBlockWeeks();
-
-    for (TimetableFrame blockWeek in nextBlockweeks) {
-      log.d("Verifying block week phase merge " +
-          blockWeek.getFrameStart().toString() +
-          " -> " +
-          blockWeek.getFrameEnd().toString());
-
-      await blockWeek.getCurrentBlockWeek();
-      await validator!.mergeExcelWithTimetable(await blockWeek.getWeekData());
-    }
+    await validator!.mergeExcelWithWholeBlock(session);
 
     isPhaseVerified = true;
     log.i("File verified!");
 
     getTimeTable(weekCounter: 0);
-
-    return "";
   }
 
-  Future<void> loadPhaseFromFile({String? phaseFilePath}) async {
+  ///Phasierung einer "Virtuellen" Datei überprüfen.
+  Future<void> loadCheckedVirtualPhaseFileForNextBlock({required List<int> bytes}) async {
+    validator = ExcelValidator(apiManager!, bytes);
+
+    await _verifyBlockPhases();
+  }
+
+  ///Phasierung einer Datei überprüfen
+  Future<void> loadCheckedPhaseFileForNextBlock({String? phaseFilePath}) async {
+    isPhaseVerified = false;
+
+    log.d("Loading phaseplan ...");
+
     if (phaseFilePath != null) {
       prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator(apiManager!, phaseFilePath);
+      validator = ExcelValidator(apiManager!, File(phaseFilePath).readAsBytesSync());
     } else {
       phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
       if (phaseFilePath != "empty") {
-        validator = ExcelValidator(apiManager!, phaseFilePath);
+        validator = ExcelValidator(apiManager!, File(phaseFilePath).readAsBytesSync());
       }
     }
+    
+    if(validator == null) {
+      log.d("No phase file specified. Skipping phase loading ...");
+      return;
+    }
+    
+    await _verifyBlockPhases();
   }
+
+  /*Future<void> loadPhaseFromFile({String? phaseFilePath}) async {
+    if (phaseFilePath != null) {
+      prefs!.setString("phasePlan", phaseFilePath);
+      validator = ExcelValidator(apiManager!, filepath: phaseFilePath);
+    } else {
+      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
+      if (phaseFilePath != "empty") {
+        validator = ExcelValidator(apiManager!, filepath: phaseFilePath);
+      }
+    }
+  }*/
 
   Future<void> loadPhaseForCurrentTimetable() async {
     isWeekInBlock = true;

@@ -78,7 +78,7 @@ class TimetableManager {
         }
       }
     }
-    throw Exception("Kann Block start nicht feststellen");
+    throw Exception("Kann nächsten Block start (noch) nicht feststellen");
   }
 
   Future<DateTime> getNextBlockEnd() async {
@@ -221,7 +221,7 @@ class TimetableFrame {
       return _cachedWeekData!;
     }
 
-    if (_activeSession.isDemoSession()) {
+    if (_activeSession.isDemoSession) {
       await Future.delayed(Duration(milliseconds: Random().nextInt(300) + 200));
 
       if (_relativeToCurrentWeek == 1) {
