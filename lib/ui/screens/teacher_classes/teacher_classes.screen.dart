@@ -30,139 +30,141 @@ class TeacherClassesScreen extends ConsumerStatefulWidget {
 class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
   late SearchBar searchBar;
   final Logger log = getLogger();
-  
-  SnackBar _createSnackbar(String message, Color backgroundColor, {required AppTheme theme, Duration duration = const Duration(seconds: 4)}) {
-      return SnackBar(
-        duration: duration,
-        elevation: 20,
-        backgroundColor: backgroundColor,
-        content: Text(message, style: TextStyle(fontSize: 17, color: theme.colors.text)),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
-        ),
-      );
-    }
+
+  SnackBar _createSnackbar(String message, Color backgroundColor,
+      {required AppTheme theme, Duration duration = const Duration(seconds: 4)}) {
+    return SnackBar(
+      duration: duration,
+      elevation: 20,
+      backgroundColor: backgroundColor,
+      content: Text(message, style: TextStyle(fontSize: 17, color: theme.colors.text)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+      ),
+    );
+  }
 
   Widget buildClasslistEntry(SchoolClass klasse, [PhaseStatus? phaseStatus]) {
     final theme = ref.watch(themeService).theme;
     final DateTime now = DateTime.now();
 
-    if(phaseStatus != null) {
+    if (phaseStatus != null) {
       log.i(phaseStatus.blockStart);
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
-      child: 
-      Card(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [ //Erst mal so ne design idee. Das geht bestimmt 100 mal besser ;)
-            Padding(padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-              child: Container(
-                color: 
-                phaseStatus != null
-                ? now.millisecondsSinceEpoch < phaseStatus.blockStart.millisecondsSinceEpoch
-                  ? theme.colors.phaseOrienting
-                  : now.millisecondsSinceEpoch > phaseStatus.blockEnd.millisecondsSinceEpoch
-                    ? theme.colors.phaseOutOfBlock
-                    : theme.colors.successColor
-                : theme.colors.phaseUnknown,
-                padding: const EdgeInsets.fromLTRB(10, 40, 10, 1),
-                width:8,
+        padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
+        child: Card(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              //Erst mal so ne design idee. Das geht bestimmt 100 mal besser ;)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                child: Container(
+                  color: phaseStatus != null
+                      ? now.millisecondsSinceEpoch < phaseStatus.blockStart.millisecondsSinceEpoch
+                          ? theme.colors.phaseOrienting
+                          : now.millisecondsSinceEpoch > phaseStatus.blockEnd.millisecondsSinceEpoch
+                              ? theme.colors.phaseOutOfBlock
+                              : theme.colors.successColor
+                      : theme.colors.phaseUnknown,
+                  padding: const EdgeInsets.fromLTRB(10, 40, 10, 1),
+                  width: 8,
+                ),
               ),
-            ),
-            Column(
-              children: [
-                Text(klasse.displayName),
-                Text(klasse.classTeacherName),
-              ],
-            ),
-            phaseStatus != null
-              ? Column(
-                  children: [
-                      Text("Phasierung aktuell von " + Utils.convertToDDMMYY(phaseStatus.blockStart) + " bis " + Utils.convertToDDMMYY(phaseStatus.blockEnd)),
-                      Text("Dateibesitzer: " + phaseStatus.fileOwnerId.toString())
-                  ],
-                )
-              : const Padding(padding: EdgeInsets.all(0)),
+              Column(
+                children: [
+                  Text(klasse.displayName),
+                  Text(klasse.classTeacherName),
+                ],
+              ),
+              phaseStatus != null
+                  ? Column(
+                      children: [
+                        Text("Phasierung aktuell von " +
+                            Utils.convertToDDMMYY(phaseStatus.blockStart) +
+                            " bis " +
+                            Utils.convertToDDMMYY(phaseStatus.blockEnd)),
+                        Text("Dateibesitzer: " + phaseStatus.fileOwnerId.toString())
+                      ],
+                    )
+                  : const Padding(padding: EdgeInsets.all(0)),
 
-            IconButton(
-              onPressed: () async {
-
-                try {
-                  log.d("Virtuelle Phasierung für Klasse: "  + klasse.displayName + " herunterladen ...");
-                  List<int> bytes = await ref.read(timeTableService).apiManager!.downloadVirtualSheet(klasseId: klasse.id);
-
-                  ref.read(timeTableService).session.setTimetableBehaviour(klasse.id, PersonTypes.klasse, debug: true); //TODO(debug): Debug Stundenplan aktiviert
-                  
-                  await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);  
-                } catch(e) {
-                  log.e(e);
-                  return;
-                }
-                ref.read(timeTableService).resetTimeTable();
-                ref.read(timeTableService).weekCounter = 0;
-                ref.read(timeTableService).getTimeTable();
-
-                Navigator.pushNamed(context, TimeTableScreen.routeName);
-              } , 
-              icon: const Icon(Icons.remove_red_eye_rounded),
-              tooltip: "Phasierung anschauen",
-            ),
-            IconButton(
-
-              onPressed: () async {
-
-                FilePickerResult? result = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: ["xlsx"],
-                  allowMultiple: false,
-                  dialogTitle: "Phasierung hochladen: " + klasse.displayName);
-
-
-                if(result != null) {
-
-                  final UserSession session = ref.read(timeTableService).session;
-                  final SOLCApiManager manager = ref.read(timeTableService).apiManager!;
-
-                  //Schritt 1: Verifiziere den Stundenplan für die Klasse:
-                  session.setTimetableBehaviour(klasse.id, PersonTypes.klasse, debug: true); //ACHTUNG debug ist hier auf true weil noch kein neuer Blockstart der klasse festgestellt werden kann
-                  ExcelValidator tempValidator = ExcelValidator(manager, File(result.files.first.path!).readAsBytesSync());
-                  log.d("Verifying sheet for class '" + klasse.displayName + "'");
+              IconButton(
+                onPressed: () async {
                   try {
-                    await tempValidator.mergeExcelWithWholeBlock(session);
-                    log.d("Success");
-                    session.resetTimetableBehaviour();
-                  } catch(e) {
-                    log.e("Failed to verify sheet: " + e.toString());
-                    session.resetTimetableBehaviour();
+                    log.d("Virtuelle Phasierung für Klasse: " + klasse.displayName + " herunterladen ...");
+                    List<int> bytes =
+                        await ref.read(timeTableService).apiManager!.downloadVirtualSheet(klasseId: klasse.id);
+
+                    ref.read(timeTableService).session.setTimetableBehaviour(klasse.id, PersonTypes.klasse,
+                        debug: true); //TODO(debug): Debug Stundenplan aktiviert
+
+                    await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
+                  } catch (e) {
+                    log.e(e);
                     return;
                   }
+                  ref.read(timeTableService).resetTimeTable();
+                  ref.read(timeTableService).weekCounter = 0;
+                  ref.read(timeTableService).getTimeTable();
 
-                  //Schritt 2: Lade die Datei auf den Server hoch
-                  log.d("Uploading sheet ...");
-                  try {
-                    await manager.uploadSheet(
-                      authenticatedUser: ref.read(timeTableService).session, 
-                      klasseId: klasse.id, 
-                      blockStart: tempValidator.getBlockStart()!, //Kann nicht null sein
-                      blockEnd: tempValidator.getBlockEnd()!, 
-                      file: File(result.files.first.path!));
+                  Navigator.pushNamed(context, TimeTableScreen.routeName);
+                },
+                icon: const Icon(Icons.remove_red_eye_rounded),
+                tooltip: "Phasierung anschauen",
+              ),
+              IconButton(
+                onPressed: () async {
+                  FilePickerResult? result = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ["xlsx"],
+                      allowMultiple: false,
+                      dialogTitle: "Phasierung hochladen: " + klasse.displayName);
+
+                  if (result != null) {
+                    final UserSession session = ref.read(timeTableService).session;
+                    final SOLCApiManager manager = ref.read(timeTableService).apiManager!;
+
+                    //Schritt 1: Verifiziere den Stundenplan für die Klasse:
+                    session.setTimetableBehaviour(klasse.id, PersonTypes.klasse,
+                        debug:
+                            true); //ACHTUNG debug ist hier auf true weil noch kein neuer Blockstart der klasse festgestellt werden kann
+                    ExcelValidator tempValidator =
+                        ExcelValidator(manager, File(result.files.first.path!).readAsBytesSync());
+                    log.d("Verifying sheet for class '" + klasse.displayName + "'");
+                    try {
+                      await tempValidator.mergeExcelWithWholeBlock(session);
+                      log.d("Success");
+                      session.resetTimetableBehaviour();
+                    } catch (e) {
+                      log.e("Failed to verify sheet: " + e.toString());
+                      session.resetTimetableBehaviour();
+                      return;
+                    }
+
+                    //Schritt 2: Lade die Datei auf den Server hoch
+                    log.d("Uploading sheet ...");
+                    try {
+                      await manager.uploadSheet(
+                          authenticatedUser: ref.read(timeTableService).session,
+                          klasseId: klasse.id,
+                          blockStart: tempValidator.getBlockStart()!, //Kann nicht null sein
+                          blockEnd: tempValidator.getBlockEnd()!,
+                          file: File(result.files.first.path!));
                       log.d("File uploaded");
-                  } catch(e) {
-                    log.e(e);
+                    } catch (e) {
+                      log.e(e);
+                    }
                   }
-                }
-              } , 
-              icon: const Icon(Icons.upload),
-              tooltip: "Phasierung hochladen",
-            )
-          ],
-        ),
-      )
-      
-    ); 
-     /*ListTile(
+                },
+                icon: const Icon(Icons.upload),
+                tooltip: "Phasierung hochladen",
+              )
+            ],
+          ),
+        ));
+    /*ListTile(
         title: Text(klasse.name),
         subtitle: Text(klasse.classTeacherName),
         onTap: () {
@@ -173,7 +175,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
           Navigator.pushNamed(context, TimeTableScreen.routeName);
         },
       ),*/
-  
+
     /*return ListTile(
       title: Text(klasse.name),
       subtitle: Text(klasse.classTeacherName),
@@ -302,12 +304,10 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         PhaseStatus? status;
         try {
           status = await ref.read(timeTableService).apiManager!.getKlasseInfo(klasseId: allClassesAsTeacher[i].id);
-        } catch(e) {
+        } catch (e) {
           log.e(e);
         }
-        list.add(
-          buildClasslistEntry(allClassesAsTeacher[i], status)
-        );
+        list.add(buildClasslistEntry(allClassesAsTeacher[i], status));
         if (i != allClassesAsTeacher.length - 1) {
           list.add(
             Padding(

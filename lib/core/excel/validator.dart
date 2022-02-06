@@ -60,7 +60,7 @@ class MappedPhase {
 ///auch der komplett enthaltene Block verarbeitet werden können.
 class ExcelValidator {
   final Logger log = getLogger();
-  
+
   final List<int> _fileBytes;
   Excel? _excel;
 
@@ -85,10 +85,9 @@ class ExcelValidator {
   ///[bytes] Bytes einer Excel Datei. Diese Methode macht es möglich virtuelle Excel Dateien zu überprüfen. Kann aber die RAM in mitleidenschaft ziehen.
   ///[EXCEL_SERVER_ADDR] Die Serveradresse eines excel Servers ohne Portangabe
   ExcelValidator(this._manager, this._fileBytes) {
-    
-      //var bytes = sheetFile.readAsBytesSync();
-      _excel = Excel.decodeBytes(_fileBytes);
-      return;
+    //var bytes = sheetFile.readAsBytesSync();
+    _excel = Excel.decodeBytes(_fileBytes);
+    return;
   }
 
   ///Mit dieser Funktion kann ein geladener Phasierungsplan auf einen Schulblock beschränkt werden.
@@ -124,7 +123,6 @@ class ExcelValidator {
 
   ///Wenn keineException geworfen wurde ist der Merge erfolgreich gewesen.
   Future<void> mergeExcelWithWholeBlock(UserSession session) async {
-
     TimeTableRange timeTable = await session.getRelativeTimeTableWeek(0);
     var nextBlockweeks = await timeTable.getBoundFrame().getManager().getNextBlockWeeks();
 

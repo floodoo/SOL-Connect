@@ -48,7 +48,8 @@ class Utils {
 
   ///Gibt true zurück, wenn das Da
   bool dateInRange({required DateTime start, required DateTime end, required DateTime current}) {
-    return current.millisecondsSinceEpoch > start.millisecondsSinceEpoch && current.millisecondsSinceEpoch < end.millisecondsSinceEpoch;
+    return current.millisecondsSinceEpoch > start.millisecondsSinceEpoch &&
+        current.millisecondsSinceEpoch < end.millisecondsSinceEpoch;
   }
 
   ///Wandelt ein DateTime objekt in das Format DDMM um

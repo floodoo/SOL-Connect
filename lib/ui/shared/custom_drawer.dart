@@ -67,8 +67,7 @@ class CustomDrawer extends ConsumerWidget {
             ListTile(
                 title: Text("Mein Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
                 onTap: () {
-
-                  if(ref.read(timeTableService).session.personType == PersonTypes.teacher) {
+                  if (ref.read(timeTableService).session.personType == PersonTypes.teacher) {
                     ref.read(timeTableService).deletePhase();
                   }
 
@@ -81,17 +80,16 @@ class CustomDrawer extends ConsumerWidget {
             Visibility(
               visible: ref.read(timeTableService).session.personType == PersonTypes.teacher,
               child: ListTile(
-                title: Text("Ihre Klassen", style: TextStyle(color: theme.colors.textBackground)),
-                onTap: () {
-                  if(ref.read(timeTableService).session.personType == PersonTypes.teacher) {
-                    ref.read(timeTableService).deletePhase();
-                  }
-                  ref.read(timeTableService).resetTimeTable();
-                  ref.read(timeTableService).session.resetTimetableBehaviour();
-                  ref.read(timeTableService).getTimeTable(weekCounter: 0);
-                  Navigator.pushNamed(context, TeacherClassesScreen.routeName);
-                }
-              ),
+                  title: Text("Ihre Klassen", style: TextStyle(color: theme.colors.textBackground)),
+                  onTap: () {
+                    if (ref.read(timeTableService).session.personType == PersonTypes.teacher) {
+                      ref.read(timeTableService).deletePhase();
+                    }
+                    ref.read(timeTableService).resetTimeTable();
+                    ref.read(timeTableService).session.resetTimetableBehaviour();
+                    ref.read(timeTableService).getTimeTable(weekCounter: 0);
+                    Navigator.pushNamed(context, TeacherClassesScreen.routeName);
+                  }),
             ),
             // For white space
             Expanded(child: Container()),

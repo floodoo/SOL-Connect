@@ -274,7 +274,7 @@ class UserSession {
       return;
     }
 
-    await _validateSession(); 
+    await _validateSession();
   }
 
   Future<Timegrid?> getTimegrid() async {
@@ -526,8 +526,7 @@ class UserSession {
   }
 
   void resetTimetableBehaviour() {
-    
-    if(_un != demoAccountName) {
+    if (_un != demoAccountName) {
       _debugSession = false;
     }
 
@@ -544,12 +543,12 @@ class UserSession {
   ///Wenn [debug] true ist, dann wird der Debug Stundenplan geladen
   void setTimetableBehaviour(int id, PersonTypes type, {bool debug = false}) {
     getTimetableManager().clearFrameCache(hardReset: true);
-    
-    if(debug) {
+
+    if (debug) {
       _debugSession = true;
       return;
     }
-    
+
     _timetablePersonType = type;
     _timetablePersonId = id;
   }

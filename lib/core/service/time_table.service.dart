@@ -110,7 +110,7 @@ class TimeTableService with ChangeNotifier {
 
   Future<void> getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
-    
+
     timeTable = await session.getRelativeTimeTableWeek(weekCounter);
     if (timeTable != null) {
       isSchool = !timeTable!.isNonSchoolblockWeek();
@@ -159,7 +159,7 @@ class TimeTableService with ChangeNotifier {
     password = value;
     notifyListeners();
   }
-  
+
   ///Dafür zuständig die Phasen im Validator für den aktuellen Block zu verifizieren
   Future<void> _verifyBlockPhases() async {
     if (validator == null) {
@@ -202,12 +202,12 @@ class TimeTableService with ChangeNotifier {
         validator = ExcelValidator(apiManager!, File(phaseFilePath).readAsBytesSync());
       }
     }
-    
-    if(validator == null) {
+
+    if (validator == null) {
       log.d("No phase file specified. Skipping phase loading ...");
       return;
     }
-    
+
     await _verifyBlockPhases();
   }
 

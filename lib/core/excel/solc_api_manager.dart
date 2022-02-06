@@ -70,11 +70,21 @@ class SOLCApiManager {
     await _querySOLC(
         uploadFileSource: file,
         command: "upload-file "
-                "<" + authenticatedUser.sessionid + ">"
-                " <" + authenticatedUser.bearerToken + ">"
-                " <" + klasseId.toString() + ">"
-                " <" + Utils.convertToUntisDate(blockStart) + ">"
-                " <" + Utils.convertToUntisDate(blockEnd) + ">");
+                "<" +
+            authenticatedUser.sessionid +
+            ">"
+                " <" +
+            authenticatedUser.bearerToken +
+            ">"
+                " <" +
+            klasseId.toString() +
+            ">"
+                " <" +
+            Utils.convertToUntisDate(blockStart) +
+            ">"
+                " <" +
+            Utils.convertToUntisDate(blockEnd) +
+            ">");
     await authenticatedUser.regenerateSession();
   }
 
@@ -87,7 +97,7 @@ class SOLCApiManager {
   Future<SOLCResponse?> _querySOLC({required String command, File? uploadFileSource, List<int>? downloadBytes}) async {
     SOLCResponse? returnValue;
     dynamic exception;
-    
+
     try {
       _activeSockets = _activeSockets + 1;
       final socket = await Socket.connect(_inetAddress, _port);
@@ -96,8 +106,8 @@ class SOLCApiManager {
       socket.writeln(command);
       await socket.flush();
       bool awaitFileStream = false;
-      
-      if(downloadBytes != null) {
+
+      if (downloadBytes != null) {
         downloadBytes.clear();
       }
 
@@ -112,7 +122,7 @@ class SOLCApiManager {
             if (downloadBytes == null) {
               throwException(Exception("Kein Ziel zum Download angegeben"));
               return;
-            }           
+            }
             downloadBytes.addAll(event);
             return;
           }
@@ -127,7 +137,8 @@ class SOLCApiManager {
 
           SOLCResponse response = SOLCResponse.handle(decodedMessage);
           if (response.isError) {
-            throwException(SOLCServerError(response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")"));
+            throwException(SOLCServerError(
+                response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")"));
             return;
           }
 
