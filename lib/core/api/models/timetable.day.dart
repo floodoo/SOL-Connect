@@ -113,11 +113,11 @@ class TimeTableDay {
   void insertHour(dynamic data) {
     TimeTableHour constructed = TimeTableHour(data, _rng);
 
-    if (constructed.getHourIndex() < _hours.length) {
+    if (constructed.hourIndex < _hours.length) {
       for (int i = 0; i < _hours.length; i++) {
         if (constructed.startAsString ==
             _rng.getBoundFrame().getManager().timegrid.getEntryByYIndex(yIndex: i).startTime) {
-          if (_hours[i].getLessonCode() == Codes.empty) {
+          if (_hours[i].lessonCode == Codes.empty) {
             _hours[i] = constructed;
           } else {
             _hours[i].addIrregularHour(constructed);
@@ -127,13 +127,13 @@ class TimeTableDay {
       }
     } else {
       //Ansonsten erweitere den Stundenplan gemäß dem Index
-      int diffToMax = (constructed.getHourIndex() + 1) - minHoursPerDay;
+      int diffToMax = (constructed.hourIndex + 1) - minHoursPerDay;
 
       for (int i = 0; i < minHoursPerDay + diffToMax; i++) {
-        if (i >= _hours.length && i != constructed.getHourIndex()) {
+        if (i >= _hours.length && i != constructed.hourIndex) {
           _hours.add(TimeTableHour(null, _rng));
         }
-        if (constructed.getHourIndex() == i) {
+        if (constructed.hourIndex == i) {
           _hours.add(constructed);
           break;
         }

@@ -35,24 +35,24 @@ class SOLCApiManager {
   int get port => _port;
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
-  Future<PhaseStatus?> getKlasseInfo({required int klasseId}) async {
-    SOLCResponse? response = await _querySOLC(command: "phase-status <" + klasseId.toString() + ">");
+  Future<PhaseStatus?> getSchoolClassInfo({required int schoolClassId}) async {
+    SOLCResponse? response = await _querySOLC(command: "phase-status <" + schoolClassId.toString() + ">");
     if (response != null) {
       return PhaseStatus(response.payload);
     }
     return null;
   }
 
-  Future<List<int>> downloadVirtualSheet({required int klasseId}) async {
+  Future<List<int>> downloadVirtualSheet({required int schoolClassId}) async {
     List<int> bytes = [];
-    await _querySOLC(command: "download-file <" + klasseId.toString() + ">", downloadBytes: bytes);
+    await _querySOLC(command: "download-file <" + schoolClassId.toString() + ">", downloadBytes: bytes);
     return bytes;
   }
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
-  Future<void> downloadSheet({required int klasseId, required File targetFile}) async {
+  Future<void> downloadSheet({required int schoolClassId, required File targetFile}) async {
     List<int> bytes = [];
-    await _querySOLC(command: "download-file <" + klasseId.toString() + ">", downloadBytes: bytes);
+    await _querySOLC(command: "download-file <" + schoolClassId.toString() + ">", downloadBytes: bytes);
 
     await targetFile.create(recursive: true);
     await targetFile.writeAsBytes(bytes);
@@ -63,7 +63,7 @@ class SOLCApiManager {
   ///**ACHTUNG! Bei erfolgreichem hochladen wird der user automatisch serverseitig abgemeldet!**
   Future<void> uploadSheet(
       {required UserSession authenticatedUser,
-      required int klasseId,
+      required int schoolClassId,
       required DateTime blockStart,
       required DateTime blockEnd,
       required File file}) async {
@@ -77,7 +77,7 @@ class SOLCApiManager {
             authenticatedUser.bearerToken +
             ">"
                 " <" +
-            klasseId.toString() +
+            schoolClassId.toString() +
             ">"
                 " <" +
             Utils.convertToUntisDate(blockStart) +

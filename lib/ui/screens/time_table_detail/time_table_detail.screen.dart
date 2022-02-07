@@ -33,11 +33,11 @@ class TimeTableDetailScreen extends ConsumerWidget {
       secondHalf = phase.getSecondHalf();
     }
 
-    if (_timeTableHour.getLessonCode() == Codes.noteacher) {
+    if (_timeTableHour.lessonCode == Codes.noteacher) {
       statusCodeColor = theme.colors.noTeacher;
-    } else if (_timeTableHour.getLessonCode() == Codes.cancelled) {
+    } else if (_timeTableHour.lessonCode == Codes.cancelled) {
       statusCodeColor = theme.colors.cancelled;
-    } else if (_timeTableHour.isIrregular()) {
+    } else if (_timeTableHour.isIrregular) {
       statusCodeColor = theme.colors.irregular;
     }
 
@@ -64,7 +64,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                       padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
                       alignment: const Alignment(-1, 0),
                       child: Text(
-                        _timeTableHour.getSubject().longName,
+                        _timeTableHour.subject.longName,
                         textAlign: TextAlign.left,
                         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -80,7 +80,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AutoSizeText(
-                                "Lehrer: ${_timeTableHour.getTeacher().longName}",
+                                "Lehrer: ${_timeTableHour.teacher.longName}",
                                 style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -89,7 +89,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                 height: 7,
                               ),
                               AutoSizeText(
-                                "Raum: ${_timeTableHour.getRoom().name}",
+                                "Raum: ${_timeTableHour.room.name}",
                                 style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -102,7 +102,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               AutoSizeText(
-                                "Typ: ${_timeTableHour.getActivityType()}",
+                                "Typ: ${_timeTableHour.activityType}",
                                 style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -111,12 +111,12 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                 height: 7,
                               ),
                               AutoSizeText(
-                                _timeTableHour.getLessonCode().readableName.toString(),
+                                _timeTableHour.lessonCode.readableName.toString(),
                                 style: TextStyle(
                                     color: theme.colors.textInverted,
                                     fontSize: 17,
                                     backgroundColor:
-                                        _timeTableHour.getLessonCode() != Codes.regular ? statusCodeColor : null),
+                                        _timeTableHour.lessonCode != Codes.regular ? statusCodeColor : null),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                               ),
@@ -130,7 +130,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
               ),
             ),
           ),
-          _timeTableHour.getLessionInformation().isNotEmpty
+          _timeTableHour.lessionInformation.isNotEmpty
               ? Padding(
                   padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
                   child: Card(
@@ -161,7 +161,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                                     child: Text(
-                                      _timeTableHour.getLessionInformation(),
+                                      _timeTableHour.lessionInformation,
                                     ),
                                   )))
                         ],
