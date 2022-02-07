@@ -4,11 +4,9 @@ import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/schoolclass.dart';
-import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/widgets/teacher_class_card.dart';
-import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 import 'package:sol_connect/util/logger.util.dart';
 
 class TeacherClassesScreen extends ConsumerStatefulWidget {
@@ -98,19 +96,15 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
       );
 
       for (var i = 0; i < ownClassesAsTeacher.length; i++) {
-        list.add(
-          ListTile(
-            title: Text(ownClassesAsTeacher[i].name),
-            subtitle: Text(ownClassesAsTeacher[i].classTeacherName),
-            onTap: () {
-              _timeTableService.session.setTimetableBehaviour(ownClassesAsTeacher[i].id, PersonTypes.klasse);
-              _timeTableService.resetTimeTable();
-              _timeTableService.weekCounter = 0;
-              _timeTableService.getTimeTable();
-              Navigator.pushNamed(context, TimeTableScreen.routeName);
-            },
-          ),
-        );
+        PhaseStatus? status;
+        try {
+          status = await ref.read(timeTableService).apiManager!.getKlasseInfo(klasseId: allClassesAsTeacher[i].id);
+        } catch (e) {
+          log.e(e);
+        }
+
+        list.add(TeacherClassCard(schoolClass: ownClassesAsTeacher[i], phaseStatus: status));
+
         if (i != ownClassesAsTeacher.length - 1) {
           list.add(
             Padding(
@@ -138,6 +132,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
           ),
         ),
       );
+
       for (var i = 0; i < allClassesAsTeacher.length; i++) {
         PhaseStatus? status;
         try {
@@ -145,7 +140,9 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         } catch (e) {
           log.e(e);
         }
+
         list.add(TeacherClassCard(schoolClass: allClassesAsTeacher[i], phaseStatus: status));
+
         if (i != allClassesAsTeacher.length - 1) {
           list.add(
             Padding(
