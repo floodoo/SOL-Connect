@@ -78,7 +78,7 @@ class TimetableManager {
         }
       }
     }
-    throw Exception("Kann Block start nicht feststellen");
+    throw Exception("Kann nächsten Block start (noch) nicht feststellen");
   }
 
   Future<DateTime> getNextBlockEnd() async {
@@ -130,7 +130,7 @@ class TimetableManager {
 
   TimetableFrame? _getCachedFrame(DateTime from, DateTime to) {
     for (TimetableFrame frame in frames) {
-      if (Utils().dayMatch(frame._frameStart, from) && Utils().dayMatch(frame._frameEnd, to)) {
+      if (Utils.dayMatch(frame._frameStart, from) && Utils.dayMatch(frame._frameEnd, to)) {
         return frame;
       }
     }
@@ -155,9 +155,9 @@ class TimetableManager {
 
   TimetableFrame getFrameRelativeToCurrent(int relative, {bool locked = false}) {
     DateTime from = _getRelativeWeekStartDate(relative);
-    from = Utils().normalizeDate(from);
+    from = Utils.normalizeDate(from);
     DateTime lastDayOfWeek = from.add(Duration(days: DateTime.daysPerWeek - from.weekday + 1));
-    lastDayOfWeek = Utils().normalizeDate(lastDayOfWeek);
+    lastDayOfWeek = Utils.normalizeDate(lastDayOfWeek);
 
     //Checke ob der Frame schon existiert
     TimetableFrame? cached = _getCachedFrame(from, lastDayOfWeek);
@@ -221,7 +221,7 @@ class TimetableFrame {
       return _cachedWeekData!;
     }
 
-    if (_activeSession.isDemoSession()) {
+    if (_activeSession.isDemoSession) {
       await Future.delayed(Duration(milliseconds: Random().nextInt(300) + 200));
 
       if (_relativeToCurrentWeek == 1) {

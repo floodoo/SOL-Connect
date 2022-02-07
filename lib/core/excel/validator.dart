@@ -2,13 +2,18 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:excel/excel.dart';
+import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/timetable.hour.dart';
 import 'package:sol_connect/core/api/timetable.dart';
+import 'package:sol_connect/core/api/timetable_manager.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/mappedsheet.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
 import 'package:sol_connect/core/excel/models/phaseelement.dart';
+import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/exceptions.dart';
+import 'package:sol_connect/util/logger.util.dart';
 
 ///Mappt Koordinaten der Excel auf den Stundenplan
 class MappedPhase {
@@ -53,13 +58,12 @@ class MappedPhase {
 ///Das ist eine Beta Version. In dieser darf nur die Excel für eine Woche enthalten sein. In kommenden Versionen wird
 ///auch der komplett enthaltene Block verarbeitet werden können.
 class ExcelValidator {
-  final String _path;
+  final Logger log = getLogger();
+
+  final List<int> _fileBytes;
   Excel? _excel;
 
   bool _queryActive = false;
-
-  final String excelServerAddr;
-  final int excelServerPort = 6969;
 
   //Speichere die Farben um beim mehrfachen aufrufen der mergeExcelWithTimetable() Funktion keinen unnötigen traffic zu erzeugen.
   CellColors _colorData = CellColors();
@@ -71,16 +75,18 @@ class ExcelValidator {
   DateTime? _validDateStart;
   DateTime? _validDateEnd;
 
+  final SOLCApiManager _manager;
+
   ///Der Excel Validator dient dazu den Stundenplan mit der angegebenen Phasierung zu verbinden.
   ///Dieser ist komplett unabhängig zum Stundenplanobjekt.
   ///
-  ///[_path] Der lokale Pfad zur Excel Datei
+  ///[filepath] Der lokale Pfad zur Excel Datei
+  ///[bytes] Bytes einer Excel Datei. Diese Methode macht es möglich virtuelle Excel Dateien zu überprüfen. Kann aber die RAM in mitleidenschaft ziehen.
   ///[EXCEL_SERVER_ADDR] Die Serveradresse eines excel Servers ohne Portangabe
-  ExcelValidator(this.excelServerAddr, this._path) {
-    if (_path.isEmpty) throw Exception("Der Pfad existiert nicht");
-
-    var bytes = File(_path).readAsBytesSync();
-    _excel = Excel.decodeBytes(bytes);
+  ExcelValidator(this._manager, this._fileBytes) {
+    //var bytes = sheetFile.readAsBytesSync();
+    _excel = Excel.decodeBytes(_fileBytes);
+    return;
   }
 
   ///Mit dieser Funktion kann ein geladener Phasierungsplan auf einen Schulblock beschränkt werden.
@@ -112,6 +118,22 @@ class ExcelValidator {
       }
     }
     _collectedTimetables.add(mapped);
+  }
+
+  ///Wenn keineException geworfen wurde ist der Merge erfolgreich gewesen.
+  Future<void> mergeExcelWithWholeBlock(UserSession session) async {
+    TimeTableRange timeTable = await session.getRelativeTimeTableWeek(0);
+    var nextBlockweeks = await timeTable.getBoundFrame().getManager().getNextBlockWeeks();
+
+    for (TimetableFrame blockWeek in nextBlockweeks) {
+      log.d("Verifying block week phase merge " +
+          blockWeek.getFrameStart().toString() +
+          " -> " +
+          blockWeek.getFrameEnd().toString());
+
+      await blockWeek.getCurrentBlockWeek();
+      await mergeExcelWithTimetable(await blockWeek.getWeekData());
+    }
   }
 
   ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.
@@ -181,6 +203,9 @@ class ExcelValidator {
             //Nicht super schön, aber fürs erste ok
             while (_colorData.isEmpty() || _colorData.failed) {
               await _loadColorData(forceReload: false);
+              if (_colorData.failed) {
+                log.i("Failed to fetch cell colors");
+              }
             }
 
             for (MappedPhase hour in mapped.getHours()) {
@@ -228,7 +253,7 @@ class ExcelValidator {
 
     try {
       _queryActive = true;
-      final socket = await Socket.connect(excelServerAddr, excelServerPort);
+      final socket = await Socket.connect(_manager.inetAddress, _manager.port);
 
       //Sende den Befehl
       socket.writeln("convertxssf");
@@ -248,13 +273,14 @@ class ExcelValidator {
           }
 
           if (decodedMessage['error'] != null) {
-            throw ExcelConversionServerError(
+            throw SOLCServerError(
                 "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
           }
 
           if (decodedMessage['message'] != null) {
             if (decodedMessage['message'] == "ready-for-file") {
-              await socket.addStream(File(_path).openRead());
+              socket.add(_fileBytes);
+              await socket.flush();
             } else {
               _colorData = CellColors(data: decodedMessage['data']);
             }
@@ -262,7 +288,7 @@ class ExcelValidator {
         },
         onError: (error) {
           _queryActive = false;
-          throw ExcelConversionServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+          throw SOLCServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
         },
         onDone: () {
           //Alles OK!
@@ -274,10 +300,12 @@ class ExcelValidator {
       await subscription.cancel();
       _queryActive = false;
       return _colorData;
-    } on Exception {
+    } on Exception catch (error) {
       _queryActive = false;
-      throw FailedToEstablishExcelServerConnection(
-          "Konnte keine Verbindung zum Konvertierungsserver " + excelServerAddr + " herstellen.");
+      throw FailedToEstablishSOLCServerConnection("Konnte keine Verbindung zum Konvertierungsserver " +
+          _manager.inetAddress +
+          " herstellen: " +
+          error.toString());
     }
   }
 

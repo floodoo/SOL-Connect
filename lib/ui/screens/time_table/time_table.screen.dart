@@ -21,7 +21,7 @@ class TimeTableScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     final _timeTableService = ref.read(timeTableService);
-    final _isDebugTimetable = ref.read(timeTableService).session.isDemoSession();
+    final _isDebugTimetable = ref.read(timeTableService).session.isDemoSession;
 
     List<Widget> buildFirstTimeTableRow(TimeTableRange _timeTable, AppTheme theme) {
       List<Widget> timeTableList = [];

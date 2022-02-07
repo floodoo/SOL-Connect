@@ -74,6 +74,7 @@ class UserSession {
   final Logger log = getLogger();
 
   static const demoAccountName = "demo";
+  bool _debugSession = false;
 
   String _appName = "adw8638ordfgq37qp98";
   String _sessionId = "";
@@ -135,6 +136,7 @@ class UserSession {
 
     if (username == UserSession.demoAccountName) {
       _sessionValid = true;
+      _debugSession = true;
       _un = UserSession.demoAccountName;
       _pwd = UserSession.demoAccountName;
       return;
@@ -194,9 +196,11 @@ class UserSession {
     //setTimetableBehavior(2162, PersonTypes.klasse);
   }
 
-  bool isDemoSession() {
-    return _un == UserSession.demoAccountName;
-  }
+  String get sessionid => _sessionId;
+
+  String get bearerToken => _bearerToken;
+
+  bool get isDemoSession => _debugSession;
 
   ///Muss üblicherweise nicht aufgerufen werden.
   Future regenerateSessionBearerToken() async {
@@ -257,12 +261,20 @@ class UserSession {
   Future<News> getNewsData(DateTime date, {bool loadFromCache = true}) async {
     if (!loadFromCache || _cachedNewsData.getRssUrl() == "") {
       http.Response r = await _queryURL(
-          "/WebUntis/api/public/news/newsWidgetData?date=" + Utils().convertToUntisDate(date),
+          "/WebUntis/api/public/news/newsWidgetData?date=" + Utils.convertToUntisDate(date),
           needsAuthorization: true);
       _cachedNewsData = News(jsonDecode(r.body));
     }
 
     return _cachedNewsData;
+  }
+
+  Future regenerateSession() async {
+    if (!_sessionValid) {
+      return;
+    }
+
+    await _validateSession();
   }
 
   Future<Timegrid?> getTimegrid() async {
@@ -334,8 +346,8 @@ class UserSession {
         frame,
         await _queryRPC("getTimetable", {
           "options": {
-            "startDate": Utils().convertToUntisDate(from),
-            "endDate": Utils().convertToUntisDate(to),
+            "startDate": Utils.convertToUntisDate(from),
+            "endDate": Utils.convertToUntisDate(to),
             "element": {
               "id": personId == -1 ? _personId : personId,
               "type": personType == PersonTypes.unknown ? _type.id : personType.id
@@ -399,6 +411,7 @@ class UserSession {
         headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
 
     if (validateSession && orig.rpcResponseCode == -8520 && _sessionValid) {
+      log.v("Re- validating Session");
       await _validateSession();
       if (_sessionValid) {
         return RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
@@ -412,7 +425,7 @@ class UserSession {
   }
 
   void clearManagerCache() {
-    if (!isDemoSession()) {
+    if (!isDemoSession) {
       getTimetableManager().clearFrameCache();
     }
   }
@@ -512,7 +525,11 @@ class UserSession {
     return klassen;
   }
 
-  void resetTimetableLoading() {
+  void resetTimetableBehaviour() {
+    if (_un != demoAccountName) {
+      _debugSession = false;
+    }
+
     _timetablePersonId = _personId;
     _timetablePersonType = _type;
     getTimetableManager().clearFrameCache(hardReset: true);
@@ -523,8 +540,15 @@ class UserSession {
   ///
   ///Um das Stundenplanladen wieder auf die angemeldete Person zurückzusetzen,
   ///benutze `resetTimetableLoading()`
-  void setTimetableBehavior(int id, PersonTypes type) {
+  ///Wenn [debug] true ist, dann wird der Debug Stundenplan geladen
+  void setTimetableBehaviour(int id, PersonTypes type, {bool debug = false}) {
     getTimetableManager().clearFrameCache(hardReset: true);
+
+    if (debug) {
+      _debugSession = true;
+      return;
+    }
+
     _timetablePersonType = type;
     _timetablePersonId = id;
   }

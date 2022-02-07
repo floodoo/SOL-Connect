@@ -191,16 +191,16 @@ class SettingsScreen extends ConsumerWidget {
                             String errorMessage = "";
 
                             try {
-                              await ref.read(timeTableService).loadCheckedPhaseFileForNextBlock(
-                                  phaseFilePath: result.files.first.path!,
-                                  serverAdress: ref.read(settingsService).serverAddress);
+                              await ref
+                                  .read(timeTableService)
+                                  .loadCheckedPhaseFileForNextBlock(phaseFilePath: result.files.first.path!);
                             } on ExcelMergeFileNotVerified {
                               errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
                             } on ExcelConversionAlreadyActive {
                               errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
-                            } on ExcelConversionServerError {
-                              errorMessage = "Ein ExcelServer Fehler ist aufgetreten";
-                            } on FailedToEstablishExcelServerConnection {
+                            } on SOLCServerError {
+                              errorMessage = "Ein SOLC-API Server Fehler ist aufgetreten";
+                            } on FailedToEstablishSOLCServerConnection {
                               errorMessage = "Bitte überprüfe deine Internetverbindung";
                             } on ExcelMergeNonSchoolBlockException {
                               // Doesn't matter
@@ -235,9 +235,9 @@ class SettingsScreen extends ConsumerWidget {
                                   child: Text(
                                       validator != null
                                           ? "Phasierung geladen für Block " +
-                                              Utils().convertToDDMM(validator.getBlockStart()) +
+                                              Utils.convertToDDMM(validator.getBlockStart()) +
                                               " bis " +
-                                              Utils().convertToDDMM(validator.getBlockEnd())
+                                              Utils.convertToDDMM(validator.getBlockEnd())
                                           : "Phasierung geladen für Block ? - ?",
                                       style: const TextStyle(fontSize: 13))),
                             ))
