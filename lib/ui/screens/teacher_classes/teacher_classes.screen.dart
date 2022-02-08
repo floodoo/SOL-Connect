@@ -99,7 +99,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         PhaseStatus? status;
         try {
           status =
-              await ref.read(timeTableService).apiManager!.getSchoolClassInfo(schoolClassId: allClassesAsTeacher[i].id);
+              await ref.read(timeTableService).apiManager!.getSchoolClassInfo(schoolClassId: ownClassesAsTeacher[i].id);
         } catch (e) {
           log.e(e);
         }
