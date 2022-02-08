@@ -102,16 +102,6 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
               await ref.read(timeTableService).apiManager!.getSchoolClassInfo(schoolClassId: ownClassesAsTeacher[i].id);
         } catch (e) {
           log.e(e);
-          list.clear();
-          list.add(
-            Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 2.5),
-                child: const Text("Fehler beim Laden der Klasseninformationen"),
-              ),
-            ),
-          );
-          return list;
         }
 
         list.add(TeacherClassCard(schoolClass: ownClassesAsTeacher[i], phaseStatus: status));
@@ -151,16 +141,6 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
               await ref.read(timeTableService).apiManager!.getSchoolClassInfo(schoolClassId: allClassesAsTeacher[i].id);
         } catch (e) {
           log.e(e);
-          list.clear();
-          list.add(
-            Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 2.5),
-                child: const Text("Fehler beim Laden der Klasseninformationen"),
-              ),
-            ),
-          );
-          return list;
         }
 
         list.add(TeacherClassCard(schoolClass: allClassesAsTeacher[i], phaseStatus: status));
