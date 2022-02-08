@@ -11,6 +11,7 @@ import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/excel/validator.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
+import 'package:sol_connect/ui/themes/app_theme.dart';
 import 'package:sol_connect/util/logger.util.dart';
 
 class TeacherClassCard extends StatefulHookConsumerWidget {
@@ -26,6 +27,30 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
   bool isLoading = false;
   bool isUploadLoading = false;
 
+  void _createSnackbar({required String message, 
+    required Color backgroundColor, 
+    required AppTheme theme, 
+    required BuildContext context, bool clearSnachbars = false, Duration duration = const Duration(seconds: 4)}) {
+      ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
+      if (state != null) {
+        if(clearSnachbars) {
+          ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
+        }
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: duration,
+            elevation: 20,
+            backgroundColor: backgroundColor,
+            content: Text(message, style: TextStyle(fontSize: 17, color: theme.colors.text)),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+            ),
+          )
+        );
+      }
+    }
+    
   @override
   Widget build(BuildContext context) {
     final Logger log = getLogger();
@@ -41,6 +66,14 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
             isLoading = true;
           });
           try {
+            _createSnackbar(
+              message: "Phasierung herunterladen ...", 
+              backgroundColor: theme.colors.elementBackground,
+              theme: theme,
+              context: context,
+              clearSnachbars: true
+              );
+
             log.d("Virtuelle Phasierung für schoolClass: " +
                 widget.schoolClass.displayName +
                 "(" +
@@ -57,10 +90,36 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                   debug: true,
                 );
 
+            _createSnackbar(
+              message: "Phasierung überprüfen ...", 
+              backgroundColor: theme.colors.elementBackground,
+              theme: theme,
+              context: context,
+              clearSnachbars: true,
+              duration: const Duration(seconds: 15)
+              );
+
             await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
           } catch (e) {
             log.e(e);
+
+            _createSnackbar(
+              message: "Ein Fehler ist aufgetreten: $e", 
+              backgroundColor: theme.colors.errorBackground,
+              theme: theme,
+              context: context,
+              clearSnachbars: true
+              );
           }
+
+          _createSnackbar(
+              message: "Fertig!", 
+              backgroundColor: theme.colors.successColor,
+              theme: theme,
+              context: context,
+              clearSnachbars: true
+              );
+
           _timeTableService.resetTimeTable();
           _timeTableService.weekCounter = 0;
           _timeTableService.getTimeTable();
@@ -166,21 +225,48 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                     File(result.files.first.path!).readAsBytesSync(),
                                   );
 
+                                    
                                   log.d("Verifying sheet for class '" + widget.schoolClass.displayName + "'");
 
                                   try {
+                                    _createSnackbar(
+                                        message: "Phasierung für Klasse ${widget.schoolClass.displayName} überprüfen ...", 
+                                        backgroundColor: theme.colors.elementBackground,
+                                        theme: theme,
+                                        context: context,
+                                        clearSnachbars: true,
+                                        duration: const Duration(seconds: 15)
+                                      );
                                     await tempValidator.mergeExcelWithWholeBlock(session);
                                     log.d("Success");
                                     session.resetTimetableBehaviour();
                                   } catch (e) {
+
+                                    _createSnackbar(
+                                      message: "Überprüfung fehlgeschlagen: ${e.toString()}", 
+                                      backgroundColor: theme.colors.errorBackground,
+                                      theme: theme,
+                                      context: context,
+                                      clearSnachbars: true
+                                    );
+
                                     log.e("Failed to verify sheet: " + e.toString());
                                     session.resetTimetableBehaviour();
                                     return;
                                   }
 
+
                                   // Step 2: Upload file to server
                                   log.d("Uploading sheet ...");
                                   try {
+                                    _createSnackbar(
+                                        message: "Datei hochladen ...", 
+                                        backgroundColor: theme.colors.elementBackground,
+                                        theme: theme,
+                                        context: context,
+                                        clearSnachbars: true
+                                      );
+
                                     await manager.uploadSheet(
                                       authenticatedUser: ref.read(timeTableService).session,
                                       schoolClassId: widget.schoolClass.id,
@@ -189,6 +275,15 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                       file: File(result.files.first.path!),
                                     );
                                     log.d("File uploaded");
+                                    
+                                    _createSnackbar(
+                                        message: "Fertig!", 
+                                        backgroundColor: theme.colors.successColor,
+                                        theme: theme,
+                                        context: context,
+                                        clearSnachbars: true
+                                      );
+
                                     ref.read(teacherService).toggleReloading();
                                     await Future.delayed(const Duration(seconds: 2), () {
                                       setState(() {
@@ -196,6 +291,13 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                       });
                                     });
                                   } catch (e) {
+                                    _createSnackbar(
+                                      message: "Hochladen fehlgeschlagen: ${e.toString()}", 
+                                      backgroundColor: theme.colors.errorBackground,
+                                      theme: theme,
+                                      context: context,
+                                      clearSnachbars: true
+                                    );
                                     log.e(e);
                                   }
                                 }

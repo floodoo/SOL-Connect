@@ -17,6 +17,7 @@ class SOLCResponse {
   static const int CODE_ID_NOT_MATCH = 105;
   static const int CODE_HTTP_ERROR = 106;
   static const int CODE_ENTRY_MISSING = 107;
+  static const int CODE_FILE_MISSING = 108;
 
   int _responseCode = 0;
   dynamic _payload;

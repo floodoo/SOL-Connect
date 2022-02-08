@@ -13,7 +13,7 @@ class PhaseStatus {
 
     _startDate = Utils.convertToDateTime(json['startDate'].toString());
     _endDate = Utils.convertToDateTime(json['endDate'].toString());
-    _uploaded = DateTime.fromMillisecondsSinceEpoch(((json['created'] as int) * 1000).round());
+    _uploaded = DateTime.fromMillisecondsSinceEpoch(int.parse(json['created']));
     _fileOwnerId = json['fileowner'];
   }
 

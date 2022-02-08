@@ -18,6 +18,7 @@ class TeacherClassesScreen extends ConsumerStatefulWidget {
 }
 
 class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
+  
   late SearchBar searchBar;
   final Logger log = getLogger();
   String searchString = "";
@@ -60,8 +61,8 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
   }
 
   Future<List<Widget>> buildAllTeacherClasses(String searchString) async {
-    final theme = ref.watch(themeService).theme;
     final _timeTableService = ref.read(timeTableService);
+    final theme = ref.watch(themeService).theme;
 
     List<Widget> list = [];
     List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 3);
