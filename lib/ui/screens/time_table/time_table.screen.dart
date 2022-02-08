@@ -117,8 +117,7 @@ class TimeTableScreen extends ConsumerWidget {
           }
           if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
             TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
-            if (current.teacher.name == next.teacher.name &&
-                current.subject.longName == next.subject.longName) {
+            if (current.teacher.name == next.teacher.name && current.subject.longName == next.subject.longName) {
               //Doppelstunde!
               connectBottom = true;
             }
@@ -137,15 +136,13 @@ class TimeTableScreen extends ConsumerWidget {
 
             if (index < timeColumnCounter - 1) {
               for (int i = index; i < timeColumnCounter - 1; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name !=
-                    current.teacher.name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
                   return false;
                 }
               }
             } else {
               for (int i = timeColumnCounter - 1; i < index; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name !=
-                    current.teacher.name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
                   return false;
                 }
               }
@@ -168,8 +165,7 @@ class TimeTableScreen extends ConsumerWidget {
           }
 
           for (int i = 0; i < _timeTable.schoolDayLength; i++) {
-            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name ==
-                current.teacher.name) {
+            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name == current.teacher.name) {
               if (connectedToCurrent(i)) {
                 doubleLessonCount++;
                 counter++;

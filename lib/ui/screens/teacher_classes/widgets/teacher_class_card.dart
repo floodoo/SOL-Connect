@@ -13,13 +13,20 @@ import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 import 'package:sol_connect/util/logger.util.dart';
 
-class TeacherClassCard extends ConsumerWidget {
+class TeacherClassCard extends StatefulHookConsumerWidget {
   const TeacherClassCard({required this.schoolClass, this.phaseStatus, Key? key}) : super(key: key);
   final SchoolClass schoolClass;
   final PhaseStatus? phaseStatus;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _TeacherClassCardState createState() => _TeacherClassCardState();
+}
+
+class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
+  bool isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
     final Logger log = getLogger();
     final theme = ref.watch(themeService).theme;
     final _timeTableService = ref.read(timeTableService);
@@ -29,14 +36,22 @@ class TeacherClassCard extends ConsumerWidget {
       padding: const EdgeInsets.all(15.0),
       child: GestureDetector(
         onTap: () async {
+          setState(() {
+            isLoading = true;
+          });
           try {
-            log.d("Virtuelle Phasierung für schoolClass: " + schoolClass.displayName + "(" + schoolClass.id.toString() + ")" + " herunterladen ...");
+            log.d("Virtuelle Phasierung für schoolClass: " +
+                widget.schoolClass.displayName +
+                "(" +
+                widget.schoolClass.id.toString() +
+                ")" +
+                " herunterladen ...");
             List<int> bytes =
-                await ref.read(timeTableService).apiManager!.downloadVirtualSheet(schoolClassId: schoolClass.id);
+                await ref.read(timeTableService).apiManager!.downloadVirtualSheet(schoolClassId: widget.schoolClass.id);
 
             // TODO(debug): Debug timeTable is active
             ref.read(timeTableService).session.setTimetableBehaviour(
-                  schoolClass.id,
+                  widget.schoolClass.id,
                   PersonTypes.schoolClass,
                   debug: true,
                 );
@@ -67,10 +82,10 @@ class TeacherClassCard extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: Container(
-                        color: phaseStatus != null
-                            ? now.millisecondsSinceEpoch < phaseStatus!.blockStart.millisecondsSinceEpoch
+                        color: widget.phaseStatus != null
+                            ? now.millisecondsSinceEpoch < widget.phaseStatus!.blockStart.millisecondsSinceEpoch
                                 ? theme.colors.phaseNotStartet
-                                : now.millisecondsSinceEpoch > phaseStatus!.blockEnd.millisecondsSinceEpoch
+                                : now.millisecondsSinceEpoch > widget.phaseStatus!.blockEnd.millisecondsSinceEpoch
                                     ? theme.colors.phaseOutOfBlock
                                     : theme.colors.phaseActive
                             : theme.colors.phaseNotUploadedJet,
@@ -81,21 +96,21 @@ class TeacherClassCard extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(schoolClass.displayName),
-                        Text(schoolClass.classTeacherName),
+                        Text(widget.schoolClass.displayName),
+                        Text(widget.schoolClass.classTeacherName),
                       ],
                     ),
                   ],
                 ),
               ),
-              if (phaseStatus != null)
+              if (widget.phaseStatus != null)
                 Row(
                   children: [
                     Column(
                       children: [
-                        Text(Utils.convertToDDMMYY(phaseStatus!.blockStart)),
+                        Text(Utils.convertToDDMMYY(widget.phaseStatus!.blockStart)),
                         Text(
-                          Utils.convertToDDMMYY(phaseStatus!.blockEnd),
+                          Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd),
                         )
                       ],
                     )
@@ -115,7 +130,7 @@ class TeacherClassCard extends ConsumerWidget {
                               type: FileType.custom,
                               allowedExtensions: ["xlsx"],
                               allowMultiple: false,
-                              dialogTitle: "Phasierung hochladen: " + schoolClass.displayName);
+                              dialogTitle: "Phasierung hochladen: " + widget.schoolClass.displayName);
 
                           if (result != null) {
                             final UserSession session = ref.read(timeTableService).session;
@@ -124,7 +139,7 @@ class TeacherClassCard extends ConsumerWidget {
                             // Step 1: Verify timetable for schoolClass:
                             // TODO(debug): Debug timeTable is active
                             session.setTimetableBehaviour(
-                              schoolClass.id,
+                              widget.schoolClass.id,
                               PersonTypes.schoolClass,
                               debug: true,
                             );
@@ -134,7 +149,7 @@ class TeacherClassCard extends ConsumerWidget {
                               File(result.files.first.path!).readAsBytesSync(),
                             );
 
-                            log.d("Verifying sheet for class '" + schoolClass.displayName + "'");
+                            log.d("Verifying sheet for class '" + widget.schoolClass.displayName + "'");
 
                             try {
                               await tempValidator.mergeExcelWithWholeBlock(session);
@@ -151,7 +166,7 @@ class TeacherClassCard extends ConsumerWidget {
                             try {
                               await manager.uploadSheet(
                                 authenticatedUser: ref.read(timeTableService).session,
-                                schoolClassId: schoolClass.id,
+                                schoolClassId: widget.schoolClass.id,
                                 blockStart: tempValidator.getBlockStart()!, // Can't be null
                                 blockEnd: tempValidator.getBlockEnd()!,
                                 file: File(result.files.first.path!),
@@ -166,10 +181,19 @@ class TeacherClassCard extends ConsumerWidget {
                       const SizedBox(
                         width: 15,
                       ),
-                      Icon(
-                        Icons.adaptive.arrow_forward_rounded,
-                        size: 30,
-                      ),
+                      isLoading
+                          ? Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: theme.colors.progressIndicator,
+                                ),
+                              ),
+                            )
+                          : Icon(
+                              Icons.adaptive.arrow_forward_rounded,
+                              size: 30,
+                            ),
                     ],
                   ),
                 ),
