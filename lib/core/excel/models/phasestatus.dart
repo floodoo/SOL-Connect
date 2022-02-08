@@ -5,6 +5,7 @@ class PhaseStatus {
   DateTime _endDate = DateTime(0);
   DateTime _uploaded = DateTime(0);
   int _fileOwnerId = 0;
+  String _fileOwnerDisplayName = "";
 
   PhaseStatus(dynamic json) {
     if (json == null) {
@@ -13,8 +14,9 @@ class PhaseStatus {
 
     _startDate = Utils.convertToDateTime(json['startDate'].toString());
     _endDate = Utils.convertToDateTime(json['endDate'].toString());
-    _uploaded = DateTime.fromMillisecondsSinceEpoch(((json['created'] as int) * 1000).round());
+    _uploaded = DateTime.fromMillisecondsSinceEpoch(int.parse(json['created']));
     _fileOwnerId = json['fileowner'];
+    _fileOwnerDisplayName = json['ownerDisplayName'];
   }
 
   ///Start des Blocks wie beim upload der Phasierungsdatei angegeben
@@ -28,4 +30,7 @@ class PhaseStatus {
 
   ///Von wem die Datei das letzte mal hochgeladen wurde. Lässt sich mit "fileCreated" verbinden. (X hat am Y die Phasierung aktualisiert / geändert)
   int get fileOwnerId => _fileOwnerId;
+
+  ///Das Kürzel vom letzten der die Phasierung geupdatet hat. Z.B. "tes"
+  String get fileOwnerDisplayName => _fileOwnerDisplayName;
 }
