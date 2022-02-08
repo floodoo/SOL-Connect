@@ -65,7 +65,12 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
           _timeTableService.weekCounter = 0;
           _timeTableService.getTimeTable();
 
-          Navigator.pushNamed(context, TimeTableScreen.routeName, arguments: {"title": widget.schoolClass.displayName});
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            TimeTableScreen.routeName,
+            (Route<dynamic> route) => false,
+            arguments: {"title": widget.schoolClass.displayName},
+          );
         },
         onLongPress: () {
           // TODO(philipp): Implement delete phase plan
