@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
-import 'package:sol_connect/core/excel/models/version.dart';
 import 'package:sol_connect/core/excel/solcresponse.dart';
 import 'package:sol_connect/core/exceptions.dart';
 import 'package:sol_connect/util/logger.util.dart';
@@ -21,8 +20,6 @@ class SOLCApiManager {
   String _inetAddress;
   int _port;
 
-  static final Version buildRequired = Version.of("2.1.5");
-
   SOLCApiManager(this._inetAddress, this._port);
 
   void setServerAddress(String inetAddress) {
@@ -36,14 +33,6 @@ class SOLCApiManager {
   String get inetAddress => _inetAddress;
 
   int get port => _port;
-
-  Future<Version> getVersion() async {
-    SOLCResponse? response = await _querySOLC(command: "version");
-    if(response != null) {
-      return Version.of(response.payload['displayValue']);
-    }
-    return Version(1, 0, 0);
-  }
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   Future<PhaseStatus?> getSchoolClassInfo({required int schoolClassId}) async {

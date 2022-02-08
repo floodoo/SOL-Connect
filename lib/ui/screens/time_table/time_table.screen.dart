@@ -22,6 +22,11 @@ class TimeTableScreen extends ConsumerWidget {
     final theme = ref.watch(themeService).theme;
     final _timeTableService = ref.read(timeTableService);
     final _isDebugTimetable = ref.read(timeTableService).session.isDemoSession;
+    String title = "Stundenplan";
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+      title = arguments['title'];
+    }
 
     List<Widget> buildFirstTimeTableRow(TimeTableRange _timeTable, AppTheme theme) {
       List<Widget> timeTableList = [];
@@ -117,8 +122,7 @@ class TimeTableScreen extends ConsumerWidget {
           }
           if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
             TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
-            if (current.teacher.name == next.teacher.name &&
-                current.subject.longName == next.subject.longName) {
+            if (current.teacher.name == next.teacher.name && current.subject.longName == next.subject.longName) {
               //Doppelstunde!
               connectBottom = true;
             }
@@ -137,15 +141,13 @@ class TimeTableScreen extends ConsumerWidget {
 
             if (index < timeColumnCounter - 1) {
               for (int i = index; i < timeColumnCounter - 1; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name !=
-                    current.teacher.name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
                   return false;
                 }
               }
             } else {
               for (int i = timeColumnCounter - 1; i < index; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name !=
-                    current.teacher.name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
                   return false;
                 }
               }
@@ -168,8 +170,7 @@ class TimeTableScreen extends ConsumerWidget {
           }
 
           for (int i = 0; i < _timeTable.schoolDayLength; i++) {
-            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name ==
-                current.teacher.name) {
+            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name == current.teacher.name) {
               if (connectedToCurrent(i)) {
                 doubleLessonCount++;
                 counter++;
@@ -226,18 +227,13 @@ class TimeTableScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: _isDebugTimetable
-            ? RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(text: "Stundenplan    ", style: TextStyle(fontSize: 19)),
-                    WidgetSpan(
-                      child: Icon(Icons.warning, size: 19, color: Colors.orange.shade600),
-                    ),
-                    TextSpan(text: " Debug Session", style: TextStyle(color: Colors.orange.shade600, fontSize: 19)),
-                  ],
-                ),
+            ? Column(
+                children: [
+                  Text(title),
+                  Text("Debug Session", style: TextStyle(color: Colors.orange.shade600, fontSize: 15)),
+                ],
               )
-            : Text("Stundenplan", style: TextStyle(color: theme.colors.text)),
+            : Text(title, style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
         actions: [

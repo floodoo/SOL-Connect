@@ -220,9 +220,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                 ),
                 // Info icon
                 (timeTableHour.lessionInformation.isNotEmpty && connectTop && connectBottom == false ||
-                        timeTableHour.lessionInformation.isNotEmpty &&
-                            connectTop == false &&
-                            connectBottom == false)
+                        timeTableHour.lessionInformation.isNotEmpty && connectTop == false && connectBottom == false)
                     ? Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(

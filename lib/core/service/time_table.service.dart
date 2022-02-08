@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sol_connect/core/api/timetable.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
-import 'package:sol_connect/core/excel/models/version.dart';
 import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/excel/validator.dart';
 import 'package:sol_connect/core/exceptions.dart';
@@ -59,16 +58,6 @@ class TimeTableService with ChangeNotifier {
   Future<void> login(String username, String password) async {
     apiManager = SOLCApiManager(await getServerAddress(), 6969);
     //apiManager = SOLCApiManager("127.0.0.1", 6969);
-
-
-    apiManager!.getVersion().then((value) {
-      //Dieser Build benötigt Server version > 2.1.5
-      if(Version.isOlder(value, SOLCApiManager.buildRequired)) {
-        log.e("This build requires SOLC-API Server version > v${SOLCApiManager.buildRequired} (${apiManager!.inetAddress} running on: v$value) Unexpected errors may happen!");
-      }
-    }).catchError((error, stackTrace) {
-      log.w("Failed to verify SOLC-API Server version. Unexpected errors may happen!");
-    });
 
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
