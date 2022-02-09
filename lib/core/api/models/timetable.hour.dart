@@ -38,12 +38,12 @@ extension CodeReadables on Codes {
 class TimeTableHour {
   static const noTeacherDisplayname = "---";
 
-  TimeTableEntity _klasse = TimeTableEntity("", null);
+  TimeTableEntity _schoolClass = TimeTableEntity("", null);
   TimeTableEntity _teacher = TimeTableEntity("", null);
   TimeTableEntity _subject = TimeTableEntity("", null);
   TimeTableEntity _room = TimeTableEntity("", null);
 
-  final replacement = <TimeTableHour>[];
+  final replacementLessons = <TimeTableHour>[];
 
   String _substText = "";
   String _activityType = "";
@@ -88,11 +88,11 @@ class TimeTableHour {
     _activityType = data['activityType'];
 
     if (data['kl'] != null) {
-      _klasse = TimeTableEntity("kl", data['kl']);
+      _schoolClass = TimeTableEntity("kl", data['kl']);
     } else {
-      _klasse = TimeTableEntity("kl", null);
-      _klasse.longName = "unknown";
-      _klasse.name = "unknown";
+      _schoolClass = TimeTableEntity("kl", null);
+      _schoolClass.longName = "unknown";
+      _schoolClass.name = "unknown";
     }
 
     if (data['te'] != null) {
@@ -111,7 +111,7 @@ class TimeTableHour {
 
       if (c == "regular") {
         //Ziele den speziellen case "Lehrer entfall" nur in Betracht, wenn sonst kein anderer code speziell angegeben sind"
-        if (!hasTeacher()) {
+        if (!hasTeacher) {
           _code = Codes.noteacher;
         } else {
           _code = Codes.regular;
@@ -124,7 +124,7 @@ class TimeTableHour {
         _code = Codes.unknown;
       }
     } else {
-      if (!hasTeacher()) {
+      if (!hasTeacher) {
         _code = Codes.noteacher;
       } else {
         _code = Codes.regular;
@@ -143,7 +143,7 @@ class TimeTableHour {
     }
   }
 
-  List<TimeTableHour> get replacements => replacement;
+  List<TimeTableHour> get replacements => replacementLessons;
 
   //Ändert das Datim dieser Stunde. Stunde und Minute dürfen nicht verändert werden
   void modifyDate(int year, int month, int day) {
@@ -181,24 +181,16 @@ class TimeTableHour {
   }
 
   ///Gibt den Index der Stunde zurück. Abhängig von der Startzeit der Stunde, nicht von der fertigen Tabelle
-  int getHourIndex() {
-    return _hourIndex;
-  }
+  int get hourIndex => _hourIndex;
 
-  bool hasTeacher() {
-    return _teacher.name != noTeacherDisplayname;
-  }
+  bool get hasTeacher => _teacher.name != noTeacherDisplayname;
 
   ///Gibt die Stundeninformation zurück, die ein Lehere bei Ausfall vielleicht notiert hat.
   ///
   ///Meißtenst steht dann "EvA" da
-  String getLessionInformation() {
-    return _substText;
-  }
+  String get lessionInformation => _substText;
 
-  String getActivityType() {
-    return _activityType;
-  }
+  String get activityType => _activityType;
 
   ///Der Code beschreibt die "Art" der Stunde. Folgende Codes sind definiert als:
   ///* __regular__: Die Stunde ist regulär
@@ -206,64 +198,43 @@ class TimeTableHour {
   ///* __cancelled__: Die Stunde fällt aus
   ///* __empty__: Die Stunde gibt es nicht. Diese dient also nur als Platzhalter um Lücken zu füllen falls z.B. die Erste Stunde frei ist
   ///* __unknown__: Das sollte nicht vorkommen. Der Status ist unbekannt / illegal
-  Codes getLessonCode() {
-    return _code;
-  }
+  Codes get lessonCode => _code;
 
   ///Wenn `true` dann besitzt die Stunde in `getReplacement()` eine Stunde die diese durch eine Vertretung ersetzen soll.
-  bool isIrregular() {
-    return getLessonCode() == Codes.irregular;
-  }
+  bool get isIrregular => lessonCode == Codes.irregular;
 
   ///Diese Stunde ist leer bzw. es gibt hier nichts
-  bool isEmpty() {
-    return getLessonCode() == Codes.empty;
-  }
+  bool get isEmpty => lessonCode == Codes.empty;
 
-  int getId() {
-    return _id;
-  }
+  ///Die ID der Stunde
+  int get id => _id;
 
-  DateTime getStartTime() {
-    return start;
-  }
+  DateTime get startTime => start;
 
-  DateTime getEndTime() {
-    return end;
-  }
+  DateTime get endTime => end;
 
   ///Gibt die Stunden zurück die diese ersetzen sollen.
   ///Ist nicht leer wenn `getLessonCode()` -> `Code.irregular` zuückliefert.
-  TimeTableHour getReplacement() {
-    return replacement[0];
-  }
+  TimeTableHour get replacement => replacementLessons[0];
 
-  ///@return Die Klasse der Stunde als TimeTableEntity objekt
-  TimeTableEntity getClazz() {
-    return _klasse;
-  }
+  ///Gibt die Klasse der Stunde als TimeTableEntity objekt zurück
+  TimeTableEntity get schoolClass => _schoolClass;
 
   ///@return Der Lehrer der Stunde als TimeTableEntity objekt
-  TimeTableEntity getTeacher() {
-    return _teacher;
-  }
+  TimeTableEntity get teacher => _teacher;
 
   ///@return Das Fach der Stunde als TimeTableEntity objekt
-  TimeTableEntity getSubject() {
-    return _subject;
-  }
+  TimeTableEntity get subject => _subject;
 
   ///@return Der Raum der Stunde als TimeTableEntity objekt
-  TimeTableEntity getRoom() {
-    return _room;
-  }
+  TimeTableEntity get room => _room;
 
   ///Interne Funktion.
   void addIrregularHour(TimeTableHour entity) {
     entity.xIndex = xIndex;
     entity._yIndex = _yIndex;
     //entity._code = _code;
-    replacement.add(entity);
+    replacementLessons.add(entity);
   }
 
   ///Die Startzeit im Format HH:mm
@@ -289,6 +260,6 @@ class TimeTableHour {
 
   @override
   String toString() {
-    return getSubject().name + " (" + getTeacher().name + ")" + " Code: " + getLessonCode().name;
+    return subject.name + " (" + teacher.name + ")" + " Code: " + lessonCode.name;
   }
 }

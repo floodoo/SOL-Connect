@@ -22,6 +22,11 @@ class TimeTableScreen extends ConsumerWidget {
     final theme = ref.watch(themeService).theme;
     final _timeTableService = ref.read(timeTableService);
     final _isDebugTimetable = ref.read(timeTableService).session.isDemoSession;
+    String title = "Stundenplan";
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+      title = arguments['title'];
+    }
 
     List<Widget> buildFirstTimeTableRow(TimeTableRange _timeTable, AppTheme theme) {
       List<Widget> timeTableList = [];
@@ -93,7 +98,7 @@ class TimeTableScreen extends ConsumerWidget {
           );
 
           // If no subject
-        } else if (_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty()) {
+        } else if (_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty) {
           timeTableList.add(CustomTimeTableCard(color: theme.colors.background));
 
           // subject
@@ -107,8 +112,8 @@ class TimeTableScreen extends ConsumerWidget {
 
           if (timeColumnCounter - 1 > 0) {
             TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
-            if (current.getTeacher().name == prev.getTeacher().name &&
-                current.getSubject().longName == prev.getSubject().longName &&
+            if (current.teacher.name == prev.teacher.name &&
+                current.subject.longName == prev.subject.longName &&
                 current.getStartTimeString() != "13:30") {
               //Doppelstunde!
               connectTop = true;
@@ -117,12 +122,11 @@ class TimeTableScreen extends ConsumerWidget {
           }
           if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
             TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
-            if (current.getTeacher().name == next.getTeacher().name &&
-                current.getSubject().longName == next.getSubject().longName) {
+            if (current.teacher.name == next.teacher.name && current.subject.longName == next.subject.longName) {
               //Doppelstunde!
               connectBottom = true;
             }
-            if (current.getEndTime().hour == 13) {
+            if (current.endTime.hour == 13) {
               // hourBeforeLunch = true;
               connectBottom = false;
             }
@@ -137,15 +141,13 @@ class TimeTableScreen extends ConsumerWidget {
 
             if (index < timeColumnCounter - 1) {
               for (int i = index; i < timeColumnCounter - 1; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name !=
-                    current.getTeacher().name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
                   return false;
                 }
               }
             } else {
               for (int i = timeColumnCounter - 1; i < index; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].getTeacher().name !=
-                    current.getTeacher().name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
                   return false;
                 }
               }
@@ -157,19 +159,18 @@ class TimeTableScreen extends ConsumerWidget {
           int doubleLessonIndex = 0;
           int doubleLessonCount = 0;
           int counter = -1;
-          String subjectDisplay = current.getSubject().name;
-          String teacherDisplay = current.getTeacher().name;
-          String roomDisplay = current.getRoom().name;
+          String subjectDisplay = current.subject.name;
+          String teacherDisplay = current.teacher.name;
+          String roomDisplay = current.room.name;
 
-          if (current.getLessonCode() == Codes.cancelled && current.replacements.isNotEmpty) {
-            subjectDisplay = current.getReplacement().getSubject().name;
-            teacherDisplay = current.getReplacement().getTeacher().name;
-            roomDisplay = current.getReplacement().getRoom().name;
+          if (current.lessonCode == Codes.cancelled && current.replacements.isNotEmpty) {
+            subjectDisplay = current.replacement.subject.name;
+            teacherDisplay = current.replacement.teacher.name;
+            roomDisplay = current.replacement.room.name;
           }
 
           for (int i = 0; i < _timeTable.schoolDayLength; i++) {
-            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).getTeacher().name ==
-                current.getTeacher().name) {
+            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name == current.teacher.name) {
               if (connectedToCurrent(i)) {
                 doubleLessonCount++;
                 counter++;
@@ -180,9 +181,9 @@ class TimeTableScreen extends ConsumerWidget {
             }
           }
 
-          if (current.getLessonCode() != Codes.irregular) {
+          if (current.lessonCode != Codes.irregular) {
             if (doubleLessonCount == 1) {
-              lessonInfo = [current.getSubject().name, current.getTeacher().name, current.getRoom().name];
+              lessonInfo = [current.subject.name, current.teacher.name, current.room.name];
             } else if (doubleLessonCount == 2) {
               if (doubleLessonIndex == 0) {
                 lessonInfo = [subjectDisplay, teacherDisplay];
@@ -202,8 +203,8 @@ class TimeTableScreen extends ConsumerWidget {
             lessonInfo = [subjectDisplay, teacherDisplay, roomDisplay];
           }
 
-          if (current.getLessonCode() == Codes.cancelled && current.replacements.isNotEmpty) {
-            current = current.getReplacement();
+          if (current.lessonCode == Codes.cancelled && current.replacements.isNotEmpty) {
+            current = current.replacement;
           }
 
           timeTableList.add(
@@ -226,18 +227,13 @@ class TimeTableScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: _isDebugTimetable
-            ? RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(text: "Stundenplan    ", style: TextStyle(fontSize: 19)),
-                    WidgetSpan(
-                      child: Icon(Icons.warning, size: 19, color: Colors.orange.shade600),
-                    ),
-                    TextSpan(text: " Debug Session", style: TextStyle(color: Colors.orange.shade600, fontSize: 19)),
-                  ],
-                ),
+            ? Column(
+                children: [
+                  Text(title),
+                  Text("Debug Session", style: TextStyle(color: Colors.orange.shade600, fontSize: 15)),
+                ],
               )
-            : Text("Stundenplan", style: TextStyle(color: theme.colors.text)),
+            : Text(title, style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
         actions: [

@@ -1,5 +1,7 @@
 /*Author Philipp Gersch */
 
+import 'package:sol_connect/core/excel/solcresponse.dart';
+
 class FailedToEstablishSOLCServerConnection implements Exception {
   String cause = "";
   FailedToEstablishSOLCServerConnection(this.cause);
@@ -32,7 +34,11 @@ class ExcelConversionAlreadyActive implements Exception {
 
 class SOLCServerError implements Exception {
   String cause = "";
-  SOLCServerError(this.cause);
+  final SOLCResponse? _response;
+
+  SOLCServerError(this.cause, [this._response]);
+
+  SOLCResponse get response => _response!;
 
   @override
   String toString() {
@@ -154,6 +160,56 @@ class CurrentPhaseplanOutOfRange implements Exception {
 class InsufficientPermissionsException implements Exception {
   String cause = "";
   InsufficientPermissionsException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+
+class UploadFileNotFoundException implements Exception {
+  String cause = "";
+  UploadFileNotFoundException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+
+class UploadFileNotSpecifiedException implements Exception {
+  String cause = "";
+  UploadFileNotSpecifiedException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+
+class DownloadFileNotFoundException implements Exception {
+  String cause = "";
+  DownloadFileNotFoundException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+
+class NextBlockStartNotInRangeException implements Exception {
+  String cause = "";
+  NextBlockStartNotInRangeException(this.cause);
+
+  @override
+  String toString() {
+    return runtimeType.toString() + ": " + cause;
+  }
+}
+
+class NextBlockEndNotInRangeException implements Exception {
+  String cause = "";
+  NextBlockEndNotInRangeException(this.cause);
 
   @override
   String toString() {

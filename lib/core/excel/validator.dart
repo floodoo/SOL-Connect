@@ -377,17 +377,17 @@ class ExcelValidator {
         TimeTableHour hour = range.getHourByIndex(xIndex: tx, yIndex: ty);
         Data cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: excelX, rowIndex: excelY));
 
-        if (hour.getLessonCode() == Codes.irregular) {
-          hour = hour.getReplacement();
+        if (hour.lessonCode == Codes.irregular) {
+          hour = hour.replacement;
         }
 
         String cellValueString = cell.value == null ? "null" : cell.value.toString();
 
-        if (cellValueString.toLowerCase().contains(hour.getTeacher().name.toString().toLowerCase()) ||
-            hour.getTeacher().name == "---" ||
+        if (cellValueString.toLowerCase().contains(hour.teacher.name.toString().toLowerCase()) ||
+            hour.teacher.name == "---" ||
             cellValueString == "null" ||
-            hour.getLessonCode() == Codes.empty ||
-            hour.getLessonCode() == Codes.cancelled) {
+            hour.lessonCode == Codes.empty ||
+            hour.lessonCode == Codes.cancelled) {
           MappedPhase phase = MappedPhase();
 
           phase._excelXIndex = excelX;

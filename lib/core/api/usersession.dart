@@ -15,13 +15,13 @@ import 'dart:convert';
 
 import 'package:sol_connect/util/logger.util.dart';
 
-enum PersonTypes { klasse, student, teacher, subject, room, unknown }
+enum PersonTypes { schoolClass, student, teacher, subject, room, unknown }
 
 extension PersonTypeUtils on PersonTypes {
   static PersonTypes parse(int type) {
     switch (type) {
       case 1:
-        return PersonTypes.klasse;
+        return PersonTypes.schoolClass;
       case 2:
         return PersonTypes.teacher;
       case 3:
@@ -37,7 +37,7 @@ extension PersonTypeUtils on PersonTypes {
 
   int get id {
     switch (this) {
-      case PersonTypes.klasse:
+      case PersonTypes.schoolClass:
         return 1;
       case PersonTypes.teacher:
         return 2;
@@ -54,7 +54,7 @@ extension PersonTypeUtils on PersonTypes {
 
   String get readable {
     switch (this) {
-      case PersonTypes.klasse:
+      case PersonTypes.schoolClass:
         return "Klasse";
       case PersonTypes.teacher:
         return "Lehrer";
@@ -79,7 +79,7 @@ class UserSession {
   String _appName = "adw8638ordfgq37qp98";
   String _sessionId = "";
   int _personId = -1;
-  int _klasseId = -1;
+  int _schoolClassId = -1;
   PersonTypes _type = PersonTypes.unknown;
 
   int _timetablePersonId = -1;
@@ -174,7 +174,7 @@ class UserSession {
 
     _sessionId = response.payloadData['sessionId'];
     _personId = response.payloadData['personId'];
-    _klasseId = response.payloadData['klasseId'];
+    _schoolClassId = response.payloadData['klasseId'];
     _type = PersonTypeUtils.parse(response.payloadData['personType']);
 
     _sessionValid = true;
@@ -235,7 +235,7 @@ class UserSession {
     _un = "";
     _pwd = "";
     _personId = -1;
-    _klasseId = -1;
+    _schoolClassId = -1;
     _type = PersonTypes.unknown;
     _bearerToken = "";
     clearManagerCache();
@@ -331,9 +331,7 @@ class UserSession {
   }
 
   ///Die ID der Klasse in der der Schüler ist
-  int getKlasseId() {
-    return _klasseId;
-  }
+  int get schoolClassId => _schoolClassId;
 
   // TODO(philipp): automate frame assignment
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to, TimetableFrame frame,
@@ -457,25 +455,25 @@ class UserSession {
     var allClasses = await getSchoolClasses();
     var filtered = <SchoolClass>[];
 
-    for (int i = -(checkRange - 1); i < checkRange + 1; i++) {
+    for (int i = -checkRange; i < checkRange + 1; i++) {
       TimeTableRange rng = await getTimetableManager().getFrameRelativeToCurrent(i).getWeekData();
       if (!rng.isNonSchoolblockWeek()) {
         for (int x = 0; x < rng.getDays().length; x++) {
           for (int y = 0; y < rng.getDays()[0].getHours().length; y++) {
             TimeTableHour hour = rng.getHourByIndex(xIndex: x, yIndex: y);
 
-            if (hour.getLessonCode() != Codes.empty) {
-              if (hour.getTeacher().identifier == _personId) {
+            if (hour.lessonCode != Codes.empty) {
+              if (hour.teacher.identifier == _personId) {
                 bool added = false;
                 for (int j = 0; j < filtered.length; j++) {
-                  if (filtered[j].name == hour.getClazz().name) {
+                  if (filtered[j].name == hour.schoolClass.name) {
                     added = true;
                     break;
                   }
                 }
                 if (!added) {
                   for (SchoolClass s in allClasses) {
-                    if (s.id == hour.getClazz().identifier) {
+                    if (s.id == hour.schoolClass.identifier) {
                       filtered.add(s);
                     }
                   }
@@ -496,33 +494,33 @@ class UserSession {
     }
 
     http.Response r = await _queryURL("/WebUntis/api/public/timetable/weekly/pageconfig?type=1");
-    var klassen = <SchoolClass>[];
+    var schoolClasses = <SchoolClass>[];
 
     if (r.statusCode == 200) {
       dynamic json = jsonDecode(r.body);
 
       for (dynamic d in json["data"]["elements"]) {
-        klassen.add(SchoolClass(d));
+        schoolClasses.add(SchoolClass(d));
       }
     } else {
       throw ApiConnectionError("Failed to fetch class info for school: Connection error");
     }
-    return klassen;
+    return schoolClasses;
   }
 
   ///Gibt alle Klassen zurück der der Lehrer als Klassen hat
   Future<List<SchoolClass>> getOwnClassesAsClassteacher({String simulateTeacher = ""}) async {
-    var klassen = <SchoolClass>[];
+    var schoolClasses = <SchoolClass>[];
     var all = await getSchoolClasses();
     String displayName =
         simulateTeacher != "" ? simulateTeacher : (await getProfileData(loadFromCache: true)).getFirstAndLastName();
 
-    for (SchoolClass klasse in all) {
-      if (klasse.classTeacherName == displayName || klasse.classTeacher2Name == displayName) {
-        klassen.add(klasse);
+    for (SchoolClass schoolClass in all) {
+      if (schoolClass.classTeacherName == displayName || schoolClass.classTeacher2Name == displayName) {
+        schoolClasses.add(schoolClass);
       }
     }
-    return klassen;
+    return schoolClasses;
   }
 
   void resetTimetableBehaviour() {

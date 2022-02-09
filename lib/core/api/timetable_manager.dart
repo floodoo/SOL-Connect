@@ -6,6 +6,7 @@ import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/rpcresponse.dart';
 import 'package:sol_connect/core/api/timetable.dart';
 import 'package:sol_connect/core/api/usersession.dart';
+import 'package:sol_connect/core/exceptions.dart';
 
 class TimetableManager {
   DateTime? nextBlockStart;
@@ -78,7 +79,7 @@ class TimetableManager {
         }
       }
     }
-    throw Exception("Kann nächsten Block start (noch) nicht feststellen");
+    throw NextBlockStartNotInRangeException("Kann nächsten Block start (noch) nicht feststellen");
   }
 
   Future<DateTime> getNextBlockEnd() async {
@@ -111,7 +112,7 @@ class TimetableManager {
         }
       }
     }
-    throw Exception("Konnte nächsten Blockende nicht ausfindig machen");
+    throw NextBlockEndNotInRangeException("Konnte nächsten Blockende nicht ausfindig machen");
   }
 
   ///Gibt nur das Datum einers Wochenstartes relativ zum aktuellen Datum zurück ohne ein extra Timetable Objekt abzufragen und zu erzeugen
