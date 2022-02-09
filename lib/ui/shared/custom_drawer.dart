@@ -80,7 +80,7 @@ class CustomDrawer extends ConsumerWidget {
             Visibility(
               visible: ref.read(timeTableService).session.personType == PersonTypes.teacher,
               child: ListTile(
-                  title: Text("Ihre Klassen", style: TextStyle(color: theme.colors.textBackground)),
+                  title: Text("Unterricht", style: TextStyle(color: theme.colors.textBackground)),
                   onTap: () {
                     if (ref.read(timeTableService).session.personType == PersonTypes.teacher) {
                       ref.read(timeTableService).deletePhase();

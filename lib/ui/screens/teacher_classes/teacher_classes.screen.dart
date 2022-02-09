@@ -18,7 +18,6 @@ class TeacherClassesScreen extends ConsumerStatefulWidget {
 }
 
 class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
-  
   late SearchBar searchBar;
   final Logger log = getLogger();
   String searchString = "";
@@ -84,7 +83,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     if (ownClassesAsTeacher.isNotEmpty) {
       list.add(
         const Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.fromLTRB(20, 20, 20.0, 5),
           child: Center(
             child: AutoSizeText(
               "Ihre Klassen als Klassenlehrer:in",
@@ -92,6 +91,14 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
+          ),
+        ),
+      );
+      list.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: Divider(
+            color: ref.watch(themeService).theme.colors.textInverted,
           ),
         ),
       );
@@ -106,24 +113,13 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         }
 
         list.add(TeacherClassCard(schoolClass: ownClassesAsTeacher[i], phaseStatus: status));
-
-        if (i != ownClassesAsTeacher.length - 1) {
-          list.add(
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Divider(
-                color: ref.watch(themeService).theme.colors.textInverted,
-              ),
-            ),
-          );
-        }
       }
     }
 
     if (allClassesAsTeacher.isNotEmpty) {
       list.add(
         const Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.fromLTRB(20, 20, 20.0, 5),
           child: Center(
             child: AutoSizeText(
               "Unterrichtete Klassen",
@@ -131,6 +127,14 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
+          ),
+        ),
+      );
+      list.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: Divider(
+            color: theme.colors.textInverted,
           ),
         ),
       );
@@ -145,17 +149,6 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         }
 
         list.add(TeacherClassCard(schoolClass: allClassesAsTeacher[i], phaseStatus: status));
-
-        if (i != allClassesAsTeacher.length - 1) {
-          list.add(
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Divider(
-                color: theme.colors.textInverted,
-              ),
-            ),
-          );
-        }
       }
     }
 
