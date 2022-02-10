@@ -22,6 +22,15 @@ class Utils {
     return (timestamp / (1000 * 60 * 60 * 24)).floor();
   }
 
+  static bool dateInbetweenDays({required DateTime from, required DateTime to, DateTime? current}) {
+    int fromd = Utils.daysSinceEpoch(from.millisecondsSinceEpoch);
+    int tod = Utils.daysSinceEpoch(to.millisecondsSinceEpoch);
+    int currentd =
+        Utils.daysSinceEpoch(current == null ? DateTime.now().millisecondsSinceEpoch : current.millisecondsSinceEpoch);
+
+    return currentd >= fromd && currentd <= tod;
+  }
+
   ///Gibt true zurück, wenn nur Tag, Monat und Jahr gleich sind. ZEiten können verschieden sein
   static bool dayMatch(DateTime d1, DateTime d2) {
     return d1.day == d2.day && d1.month == d2.month && d1.year == d2.year;

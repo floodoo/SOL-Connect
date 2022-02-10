@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sol_connect/core/api/timetable.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
+import 'package:sol_connect/core/excel/models/version.dart';
 import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/excel/validator.dart';
 import 'package:sol_connect/core/exceptions.dart';
@@ -57,11 +58,24 @@ class TimeTableService with ChangeNotifier {
 
   Future<void> login(String username, String password) async {
     apiManager = SOLCApiManager(await getServerAddress(), 6969);
+
     //apiManager = SOLCApiManager("127.0.0.1", 6969);
+
+    apiManager!.getVersion().then((value) {
+      //Dieser Build benötigt Server version > 2.1.5
+      if (Version.isOlder(value, SOLCApiManager.buildRequired)) {
+        log.e(
+            "This build requires SOLC-API Server version > v${SOLCApiManager.buildRequired} (${apiManager!.inetAddress} running on: v$value) Unexpected errors may happen!");
+      }
+    }).catchError((error, stackTrace) {
+      log.w("Failed to verify SOLC-API Server version. Unexpected errors may happen!");
+    });
 
     UserSecureStorage.setUsername(username);
     prefs = await SharedPreferences.getInstance();
     session = UserSession(school: schoolName, appID: "untis-phasierung");
+
+    prefs!.remove("phasePlan");
 
     try {
       await session.createSession(username: username, password: password);
@@ -70,9 +84,9 @@ class TimeTableService with ChangeNotifier {
       await getTimeTable();
 
       try {
-        await loadCheckedPhaseFileForNextBlock();
-      } catch (e) {
-        log.e(e);
+        await loadCheckedVirtualPhaseFileForNextBlock();
+      } catch (e, stacktrace) {
+        log.e(stacktrace);
         deletePhase();
       }
 
@@ -161,16 +175,17 @@ class TimeTableService with ChangeNotifier {
 
   ///Dafür zuständig die Phasen im Validator für den aktuellen Block zu verifizieren
   Future<void> _verifyBlockPhases() async {
-    if (validator == null) {
-      deletePhase();
-      log.d("No phase file specified. Skipping phase loading ...");
-    }
-
     log.d("Verifying phaseplan for next/current block ...");
 
     session.clearManagerCache();
 
     timeTable = await session.getRelativeTimeTableWeek(0);
+
+    if (validator == null) {
+      deletePhase();
+      log.d("No phase file specified. Skipping phase loading ...");
+    }
+
     await validator!.mergeExcelWithWholeBlock(session);
 
     isPhaseVerified = true;
@@ -179,26 +194,19 @@ class TimeTableService with ChangeNotifier {
     getTimeTable(weekCounter: 0);
   }
 
-  ///Phasierung einer "Virtuellen" Datei überprüfen.
-  Future<void> loadCheckedVirtualPhaseFileForNextBlock({required List<int> bytes}) async {
-    validator = ExcelValidator(apiManager!, bytes);
-
-    await _verifyBlockPhases();
-  }
-
-  ///Phasierung einer Datei überprüfen
-  Future<void> loadCheckedPhaseFileForNextBlock({String? phaseFilePath}) async {
-    isPhaseVerified = false;
-
-    log.d("Loading phaseplan ...");
-
-    if (phaseFilePath != null) {
-      prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator(apiManager!, File(phaseFilePath).readAsBytesSync());
+  ///Phasierung einer "Virtuellen" Datei überprüfen und in den preferences speichern
+  ///
+  ///[persistent] gibt an, ob die bytes gespeichert werden sollten
+  Future<void> loadCheckedVirtualPhaseFileForNextBlock({List<int>? bytes, bool persistent = true}) async {
+    if (bytes != null) {
+      if (persistent) {
+        prefs!.setStringList("phase-data", bytes.map((e) => e.toString()).toList());
+      }
+      validator = ExcelValidator(apiManager!, bytes);
     } else {
-      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
-      if (phaseFilePath != "empty") {
-        validator = ExcelValidator(apiManager!, File(phaseFilePath).readAsBytesSync());
+      List<String>? list = prefs!.getStringList("phase-data");
+      if (list != null) {
+        validator = ExcelValidator(apiManager!, list.map((e) => int.parse(e)).toList());
       }
     }
 
@@ -209,18 +217,6 @@ class TimeTableService with ChangeNotifier {
 
     await _verifyBlockPhases();
   }
-
-  /*Future<void> loadPhaseFromFile({String? phaseFilePath}) async {
-    if (phaseFilePath != null) {
-      prefs!.setString("phasePlan", phaseFilePath);
-      validator = ExcelValidator(apiManager!, filepath: phaseFilePath);
-    } else {
-      phaseFilePath = prefs!.getString("phasePlan") ?? "empty";
-      if (phaseFilePath != "empty") {
-        validator = ExcelValidator(apiManager!, filepath: phaseFilePath);
-      }
-    }
-  }*/
 
   Future<void> loadPhaseForCurrentTimetable() async {
     isWeekInBlock = true;
@@ -242,8 +238,7 @@ class TimeTableService with ChangeNotifier {
     isPhaseVerified = false;
     phaseTimeTable = null;
 
-    prefs!.remove("phasePlan");
-
+    prefs!.remove("phase-data");
     log.i("Deleted Phase block limitation");
 
     notifyListeners();
