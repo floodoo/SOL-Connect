@@ -245,11 +245,11 @@ class SettingsScreen extends ConsumerWidget {
                                   duration: const Duration(seconds: 15)),
                             );
                             log.d("Versuche Phasierung zu laden ...");
-                            // TODO(debug): Debug timetable active
-                            ref
-                                .read(timeTableService)
-                                .session
-                                .setTimetableBehaviour(0, PersonTypes.student, debug: true);
+                            // TODO(debug): Debug timetable inactive
+                            //ref
+                            //   .read(timeTableService)
+                            //    .session
+                            //    .setTimetableBehaviour(0, PersonTypes.student, debug: true);
                             try {
                               await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
 
