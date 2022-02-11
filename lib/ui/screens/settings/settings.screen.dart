@@ -7,6 +7,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/usersession.dart';
+import 'package:sol_connect/core/excel/models/phasestatus.dart';
+import 'package:sol_connect/core/excel/solc_api_manager.dart';
+import 'package:sol_connect/core/excel/solcresponse.dart';
 import 'package:sol_connect/core/exceptions.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/settings/widgets/custom_settings_card.dart';
@@ -32,6 +35,7 @@ class SettingsScreen extends ConsumerWidget {
     final showDeveloperOptions = ref.watch(settingsService).showDeveloperOptions;
 
     bool lightMode;
+    bool working = false;
 
     SnackBar _createSnackbar(String message, Color backgroundColor, {Duration duration = const Duration(seconds: 4)}) {
       return SnackBar(
@@ -132,12 +136,6 @@ class SettingsScreen extends ConsumerWidget {
                                         ],
                                       ),
                                     ),
-
-                                    //desc: "Die Phasierung ist eine einfache Excel Datei."
-                                    //  "\n\nDiese wird üblicherweise am anfang deines Schulblocks vorgestellt und von einem Lehrer zur Verfügung gestellt."
-                                    //  "\nDiesen Plan kannst du dann als Excel Datei hier laden und in deinen Stundenplan einfügen."
-                                    //  "\n\n"
-                                    //  ,
                                     btnOkOnPress: () {},
                                   ).show();
                                 },
@@ -153,16 +151,157 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     Visibility(
+                        visible: ref.read(timeTableService).session.personType != PersonTypes.teacher &&
+                            !ref.read(timeTableService).isPhaseVerified,
+                        child: CustomSettingsCard(
+                          padBottom: 5,
+                          leading: Icon(
+                            Icons.file_download,
+                            color: theme.colors.text,
+                            size: 26,
+                          ),
+                          text: "Phasierung herunterladen",
+                          onTap: () async {
+                            if (working) {
+                              return;
+                            }
+
+                            working = true;
+                            final SOLCApiManager manager = ref.read(timeTableService).apiManager!;
+                            final int schoolClassId = ref.read(timeTableService).session.schoolClassId;
+                            ScaffoldMessenger.of(context).clearSnackBars();
+
+                            //Schritt 1: Überprüfe ob die herunterzuladene Datei noch aktuell ist / existiert#
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              _createSnackbar(
+                                  "Überprüfe, ob eine Phasierung verfügbar ist ...", theme.colors.elementBackground,
+                                  duration: const Duration(seconds: 10)),
+                            );
+                            log.d("Checking file status on server ...");
+                            try {
+                              PhaseStatus? status = await manager.getSchoolClassInfo(schoolClassId: schoolClassId);
+                              if (!Utils.dateInbetweenDays(from: status!.blockStart, to: status.blockEnd)) {
+                                log.e("Phasierung nicht mehr aktuell!");
+                                working = false;
+                                return;
+                              }
+                            } on SOLCServerError catch (e) {
+                              log.e("Server Error: $e");
+                              if (e.response.responseCode == SOLCResponse.CODE_FILE_MISSING ||
+                                  e.response.responseCode == SOLCResponse.CODE_ENTRY_MISSING) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  _createSnackbar(
+                                      "Keine Phasierung für deine Klasse gefunden.\nBitte frage einen deiner Lehrer ob er die Phasierung für deine Klasse bereitstellen kann.",
+                                      theme.colors.elementBackground,
+                                      duration: const Duration(seconds: 10)),
+                                );
+                              }
+                              working = false;
+                              return;
+                            } on FailedToEstablishSOLCServerConnection {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                _createSnackbar(
+                                    "Bitte überprüfe deine Internetverbindung", theme.colors.errorBackground),
+                              );
+                              working = false;
+                              return;
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                _createSnackbar(
+                                    "Ein unbekannter Fehler ist aufgetreten: $e", theme.colors.errorBackground,
+                                    duration: const Duration(seconds: 10)),
+                              );
+                              working = false;
+                              return;
+                            }
+
+                            //Schritt 2: Downloade die Phasierung
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              _createSnackbar("Phasierung herunterladen ...", theme.colors.elementBackground),
+                            );
+                            log.d("Downloading sheet for class " + schoolClassId.toString() + " ...");
+                            List<int> bytes;
+                            try {
+                              bytes = await manager.downloadVirtualSheet(schoolClassId: schoolClassId);
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                _createSnackbar(
+                                    "Ein unerwarteter Serverfehler ist aufgetreten: ($e)", theme.colors.errorBackground,
+                                    duration: const Duration(seconds: 8)),
+                              );
+                              working = false;
+                              return;
+                            }
+
+                            //Schritt 3: Lade Phasierung
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              _createSnackbar("Phasierung laden ...", theme.colors.elementBackground,
+                                  duration: const Duration(seconds: 15)),
+                            );
+                            log.d("Versuche Phasierung zu laden ...");
+                            // TODO(debug): Debug timetable inactive
+                            //ref
+                            //   .read(timeTableService)
+                            //    .session
+                            //    .setTimetableBehaviour(0, PersonTypes.student, debug: true);
+                            try {
+                              await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
+
+                              ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                _createSnackbar("Fertig!", theme.colors.successColor),
+                              );
+                            } on NextBlockStartNotInRangeException {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                _createSnackbar(
+                                    "Phasierung konnte nicht geladen werden: Dein nächster Schulblock ist noch so lange hin, er kann noch nicht festgestellt werden. Bitte gedulde dich ein wenig.",
+                                    theme.colors.errorBackground,
+                                    duration: const Duration(seconds: 10)),
+                              );
+                            } on FailedToEstablishSOLCServerConnection {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                _createSnackbar(
+                                    "Bitte überprüfe deine Internetverbindung", theme.colors.errorBackground),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                _createSnackbar(
+                                    "Fehler beim laden der Phasierung: $e. Bitte Frage deinen Lehrer nach einer gültigen Phasierung.",
+                                    theme.colors.errorBackground,
+                                    duration: const Duration(seconds: 10)),
+                              );
+                            }
+
+                            Future.delayed(const Duration(seconds: 4)).then((value) {
+                              working = false;
+                            });
+                          },
+                        )),
+                    Visibility(
                       visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
                       child: CustomSettingsCard(
+                        padTop: 5,
                         padBottom: 0,
                         leading: Icon(
-                          phaseLoaded ? Icons.delete_rounded : Icons.add_chart_rounded,
+                          phaseLoaded ? Icons.delete_rounded : Icons.folder_open_sharp,
                           color: theme.colors.text,
                           size: 26,
                         ),
-                        text: phaseLoaded ? "Phasierung entfernen" : "Phasierung laden",
+                        text: phaseLoaded ? "Phasierung entfernen" : "Eigene Phasierung laden",
                         onTap: () async {
+                          if (working) {
+                            return;
+                          }
+
                           if (phaseLoaded) {
                             ref.read(timeTableService).deletePhase();
 
@@ -170,6 +309,7 @@ class SettingsScreen extends ConsumerWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               _createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
                             );
+                            working = false;
                             return;
                           }
 
@@ -191,9 +331,8 @@ class SettingsScreen extends ConsumerWidget {
                             String errorMessage = "";
 
                             try {
-                              await ref
-                                  .read(timeTableService)
-                                  .loadCheckedPhaseFileForNextBlock(phaseFilePath: result.files.first.path!);
+                              await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(
+                                  bytes: File(result.files.first.path!).readAsBytesSync(), persistent: true);
                             } on ExcelMergeFileNotVerified {
                               errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
                             } on ExcelConversionAlreadyActive {
@@ -221,6 +360,10 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                               );
                             }
+
+                            Future.delayed(const Duration(seconds: 4)).then((value) {
+                              working = false;
+                            });
                           }
                         },
                       ),
@@ -349,7 +492,7 @@ class SettingsScreen extends ConsumerWidget {
                                       child: Padding(
                                         padding: const EdgeInsets.only(top: 10, bottom: 10.0),
                                         child: Text(
-                                          "Server adresse",
+                                          "SOLC-API Server",
                                           style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
                                         ),
                                       ),
@@ -367,6 +510,10 @@ class SettingsScreen extends ConsumerWidget {
                                               ref
                                                   .read(settingsService)
                                                   .saveServerAdress(serverAdressTextController.text);
+                                              ref
+                                                  .read(timeTableService)
+                                                  .apiManager!
+                                                  .setServerAddress(serverAdressTextController.text);
                                             }
                                             serverAdressTextController.clear();
                                             FocusManager.instance.primaryFocus?.unfocus();
@@ -404,7 +551,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               const Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
+                padding: EdgeInsets.symmetric(vertical: 6.0),
                 child: CreatedByText(),
               )
             ],

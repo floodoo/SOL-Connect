@@ -87,12 +87,12 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
             List<int> bytes =
                 await ref.read(timeTableService).apiManager!.downloadVirtualSheet(schoolClassId: widget.schoolClass.id);
 
-            // TODO(debug): Debug timeTable is active
-            ref.read(timeTableService).session.setTimetableBehaviour(
-                  widget.schoolClass.id,
-                  PersonTypes.schoolClass,
-                  debug: true,
-                );
+            // TODO(debug): Debug timeTable is inactive
+            //ref.read(timeTableService).session.setTimetableBehaviour(
+            //      widget.schoolClass.id,
+            //      PersonTypes.schoolClass,
+            //      debug: true,
+            //    );
 
             _createSnackbar(
                 message: "Phasierung überprüfen ...",
@@ -229,12 +229,12 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                   final SOLCApiManager manager = ref.read(timeTableService).apiManager!;
 
                                   // Step 1: Verify timetable for schoolClass:
-                                  // TODO(debug): Debug timeTable is active
-                                  session.setTimetableBehaviour(
-                                    widget.schoolClass.id,
-                                    PersonTypes.schoolClass,
-                                    debug: true,
-                                  );
+                                  // TODO(debug): Debug timeTable is inactive
+                                  //session.setTimetableBehaviour(
+                                  //  widget.schoolClass.id,
+                                  //  PersonTypes.schoolClass,
+                                  //  debug: true,
+                                  //);
 
                                   ExcelValidator tempValidator = ExcelValidator(
                                     manager,
