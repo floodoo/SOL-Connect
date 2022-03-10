@@ -9,25 +9,43 @@ import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/teacher_classes.screen.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 
-class CustomDrawer extends ConsumerWidget {
+class CustomDrawer extends ConsumerStatefulWidget {
   const CustomDrawer({Key? key}) : super(key: key);
   static final routeName = (CustomDrawer).toString();
   static Random random = Random();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends ConsumerState<CustomDrawer> {
+  String? username;
+  String? school;
+
+  @override
+  void initState() {
+    getUserDataFromStorage();
+    super.initState();
+  }
+
+  Future<void> getUserDataFromStorage() async {
+    username = await ref.read(timeTableService).getUserName();
+    school = await ref.read(timeTableService).getSchool();
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = ref.watch(themeService).theme;
 
     UserSession session = ref.watch(timeTableService).session;
-    String username = ref.watch(timeTableService).username;
-
     String profilePictureUrl = "";
 
     CircleAvatar profilePicture = CircleAvatar(child: CircularProgressIndicator(color: theme.colors.text));
 
     if (session.isAPIAuthorized()) {
       ImageProvider? imageProvider;
-      if (random.nextInt(100) == 20) {
+      if (CustomDrawer.random.nextInt(100) == 20) {
         imageProvider = const Image(image: AssetImage('assets/images/trollface.png')).image;
       } else {
         profilePictureUrl = session.getCachedProfilePictureUrl();
@@ -56,9 +74,14 @@ class CustomDrawer extends ConsumerWidget {
         child: Column(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(username + " (Rolle " + session.personType.readable + ")",
-                  style: TextStyle(color: theme.colors.text)),
-              accountEmail: Text(ref.watch(timeTableService).schoolName, style: TextStyle(color: theme.colors.text)),
+              accountName: Text(
+                username ?? "",
+                style: TextStyle(color: theme.colors.text),
+              ),
+              accountEmail: Text(
+                school ?? "",
+                style: TextStyle(color: theme.colors.text),
+              ),
               currentAccountPicture: profilePicture,
               decoration: BoxDecoration(
                 color: theme.colors.primary,

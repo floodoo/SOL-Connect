@@ -25,8 +25,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
     ref.read(themeService).loadAppearence();
-    ref.read(timeTableService).getSchoolName();
-    ref.read(timeTableService).getUserData();
+    ref.read(timeTableService).getSchool();
 
     return MaterialApp(
       title: "Untis phasierung",
@@ -34,7 +33,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: LoginScreen.routeName,
       routes: {
-        LoginScreen.routeName: (context) => LoginScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
         CustomDrawer.routeName: (context) => const CustomDrawer(),
         TimeTableScreen.routeName: (context) => const TimeTableScreen(),
         TimeTableDetailScreen.routeName: (context) => const TimeTableDetailScreen(),

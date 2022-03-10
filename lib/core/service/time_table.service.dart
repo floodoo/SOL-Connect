@@ -21,8 +21,6 @@ class TimeTableService with ChangeNotifier {
   ExcelValidator? validator;
   SOLCApiManager? apiManager;
 
-  SharedPreferences? prefs;
-
   bool isLoggedIn = false;
   bool isLoading = false;
   bool isSchool = true;
@@ -30,50 +28,42 @@ class TimeTableService with ChangeNotifier {
   bool isWeekInBlock = false;
   int weekCounter = 0;
 
-  String username = "";
-  String password = "";
-  String schoolName = "";
-
   dynamic loginException;
 
-  Future<void> saveSchoolName(String schoolName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("schoolName", schoolName);
-    this.schoolName = schoolName;
-    notifyListeners();
-  }
-
-  void getSchoolName() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    schoolName = prefs.getString("schoolName") ?? "bbs1-mainz";
-    notifyListeners();
-  }
-
   Future<String> getServerAddress() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     return prefs.getString("serverAddress") ?? "flo-dev.me";
   }
 
-  Future<void> login(String username, String password) async {
+  Future<void> login({required String username, required String password, required String school}) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    isLoading = true;
+    notifyListeners();
+
     apiManager = SOLCApiManager(await getServerAddress(), 6969);
 
-    //apiManager = SOLCApiManager("127.0.0.1", 6969);
-
-    apiManager!.getVersion().then((value) {
-      //Dieser Build benötigt Server version > 2.1.5
-      if (Version.isOlder(value, SOLCApiManager.buildRequired)) {
-        log.e(
-            "This build requires SOLC-API Server version > v${SOLCApiManager.buildRequired} (${apiManager!.inetAddress} running on: v$value) Unexpected errors may happen!");
-      }
-    }).catchError((error, stackTrace) {
-      log.w("Failed to verify SOLC-API Server version. Unexpected errors may happen!");
-    });
+    apiManager!.getVersion().then(
+      (value) {
+        //Dieser Build benötigt Server version > 2.1.5
+        if (Version.isOlder(value, SOLCApiManager.buildRequired)) {
+          log.e(
+              "This build requires SOLC-API Server version > v${SOLCApiManager.buildRequired} (${apiManager!.inetAddress} running on: v$value) Unexpected errors may happen!");
+        }
+      },
+    ).catchError(
+      (error, stackTrace) {
+        log.w("Failed to verify SOLC-API Server version. Unexpected errors may happen!");
+      },
+    );
 
     UserSecureStorage.setUsername(username);
-    prefs = await SharedPreferences.getInstance();
-    session = UserSession(school: schoolName, appID: "untis-phasierung");
 
-    prefs!.remove("phasePlan");
+    await prefs.setString("school", school);
+
+    session = UserSession(school: school, appID: "untis-phasierung");
+
+    prefs.remove("phasePlan");
 
     try {
       await session.createSession(username: username, password: password);
@@ -89,6 +79,7 @@ class TimeTableService with ChangeNotifier {
       }
 
       UserSecureStorage.setPassword(password);
+      isLoading = false;
       log.i("Successfully logged in");
       notifyListeners();
     } catch (error, stacktrace) {
@@ -98,8 +89,6 @@ class TimeTableService with ChangeNotifier {
       UserSecureStorage.clearAll();
 
       isLoading = false;
-      this.username = "";
-      this.password = "";
       loginException = error;
       notifyListeners();
     }
@@ -112,7 +101,6 @@ class TimeTableService with ChangeNotifier {
     timeTable = null;
     phaseTimeTable = null;
     loginException = null;
-    password = "";
     session.logout();
     deletePhase();
     notifyListeners();
@@ -155,20 +143,17 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getUserData() async {
-    username = await UserSecureStorage.getUsername() ?? "";
-    password = await UserSecureStorage.getPassword() ?? "";
-    notifyListeners();
+  Future<String> getUserName() async {
+    return await UserSecureStorage.getUsername() ?? "";
   }
 
-  void setUsername(String value) {
-    username = value;
-    notifyListeners();
+  Future<String> getPassword() async {
+    return await UserSecureStorage.getPassword() ?? "";
   }
 
-  void setPassword(String value) {
-    password = value;
-    notifyListeners();
+  Future<String> getSchool() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("school") ?? "bbs1-mainz";
   }
 
   ///Dafür zuständig die Phasen im Validator für den aktuellen Block zu verifizieren
@@ -196,13 +181,15 @@ class TimeTableService with ChangeNotifier {
   ///
   ///[persistent] gibt an, ob die bytes gespeichert werden sollten
   Future<void> loadCheckedVirtualPhaseFileForNextBlock({List<int>? bytes, bool persistent = true}) async {
+    final prefs = await SharedPreferences.getInstance();
+
     if (bytes != null) {
       if (persistent) {
-        prefs!.setStringList("phase-data", bytes.map((e) => e.toString()).toList());
+        prefs.setStringList("phase-data", bytes.map((e) => e.toString()).toList());
       }
       validator = ExcelValidator(apiManager!, bytes);
     } else {
-      List<String>? list = prefs!.getStringList("phase-data");
+      List<String>? list = prefs.getStringList("phase-data");
       if (list != null) {
         validator = ExcelValidator(apiManager!, list.map((e) => int.parse(e)).toList());
       }
@@ -231,12 +218,14 @@ class TimeTableService with ChangeNotifier {
     }
   }
 
-  void deletePhase() {
+  Future<void> deletePhase() async {
+    final prefs = await SharedPreferences.getInstance();
+
     validator = null;
     isPhaseVerified = false;
     phaseTimeTable = null;
 
-    prefs!.remove("phase-data");
+    prefs.remove("phase-data");
     log.i("Deleted Phase block limitation");
 
     notifyListeners();
