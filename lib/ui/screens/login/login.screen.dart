@@ -3,40 +3,56 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sol_connect/core/exceptions.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
-import 'package:sol_connect/util/user_secure_stotage.dart';
 
-class LoginScreen extends ConsumerWidget {
-  LoginScreen({Key? key}) : super(key: key);
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
   static final routeName = (LoginScreen).toString();
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController schoolNameController = TextEditingController();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = ref.watch(themeService).theme;
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController schoolController = TextEditingController();
+
+  @override
+  void initState() {
+    getUserDataFromStorage();
+    super.initState();
+  }
+
+  Future<void> getUserDataFromStorage() async {
+    final username = await ref.read(timeTableService).getUserName();
+    final password = await ref.read(timeTableService).getPassword();
+    final school = await ref.read(timeTableService).getSchool();
+
+    usernameController.text = username;
+    passwordController.text = password;
+    schoolController.text = school;
+
+    if (username.isNotEmpty && password.isNotEmpty && school.isNotEmpty) {
+      ref.read(timeTableService).login(
+            username: username,
+            password: password,
+            school: school,
+          );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final _timeTableService = ref.read(timeTableService);
-
-    final _isLoggedIn = ref.watch(timeTableService).isLoggedIn;
-    final _isLoading = ref.watch(timeTableService).isLoading;
+    final theme = ref.watch(themeService).theme;
     final _loginError = ref.watch(timeTableService).loginException;
-
-    usernameController.text = ref.watch(timeTableService).username;
-    passwordController.text = ref.watch(timeTableService).password;
-    schoolNameController.text = ref.watch(timeTableService).schoolName;
-    usernameController.selection = TextSelection.fromPosition(TextPosition(offset: usernameController.text.length));
-    passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
-    schoolNameController.selection = TextSelection.fromPosition(TextPosition(offset: schoolNameController.text.length));
 
     String? loginErrorMessage;
 
-    if (_isLoggedIn) {
-      Future.delayed(Duration.zero, () => Navigator.pushReplacementNamed(context, TimeTableScreen.routeName));
-      ref.read(timeTableService).isLoggedIn = false;
-    }
-
     if (_loginError != null) {
+      usernameController.clear();
+      passwordController.clear();
+
       if (_loginError is WrongCredentialsException) {
         loginErrorMessage = "Benutzername oder Passwort falsch";
       } else if (_loginError is MissingCredentialsException) {
@@ -47,27 +63,6 @@ class LoginScreen extends ConsumerWidget {
         loginErrorMessage = "Bitte überprüfe deine Internetverbindung";
       }
     }
-
-    void _login(String username, String password) {
-      _timeTableService.toggleIsLoading(true);
-      _timeTableService.login(username, password);
-    }
-
-    void checkAutoLogin() async {
-      UserSecureStorage.getPassword().then(
-        (password) {
-          UserSecureStorage.getUsername().then(
-            (username) {
-              if (password != null && username != null && _isLoading == false) {
-                _login(username, password);
-              }
-            },
-          );
-        },
-      );
-    }
-
-    checkAutoLogin();
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -134,87 +129,89 @@ class LoginScreen extends ConsumerWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                              child: Focus(
-                                onFocusChange: (value) {
-                                  if (value == false) {
-                                    ref.read(timeTableService).setUsername(usernameController.text);
-                                  }
-                                },
-                                child: TextField(
-                                  controller: usernameController,
-                                  onChanged: (value) {
-                                    ref.read(timeTableService).setUsername(value);
-                                  },
-                                  autocorrect: false,
-                                  decoration: InputDecoration(
-                                    hintText: "Benutzername",
-                                    prefixIcon: Icon(Icons.person, color: theme.colors.textInverted),
-                                  ),
+                              child: TextField(
+                                autocorrect: false,
+                                controller: usernameController,
+                                decoration: InputDecoration(
+                                  hintText: "Benutzername",
+                                  prefixIcon: Icon(Icons.person, color: theme.colors.textInverted),
                                 ),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                              child: Focus(
-                                onFocusChange: (value) {
-                                  if (value == false) {
-                                    ref.read(timeTableService).setPassword(passwordController.text);
-                                  }
-                                },
-                                child: TextField(
-                                  controller: passwordController,
-                                  onEditingComplete: () => _login(usernameController.text, passwordController.text),
-                                  onChanged: (value) {
-                                    ref.read(timeTableService).setPassword(value);
-                                  },
-                                  obscureText: true,
-                                  autocorrect: false,
-                                  decoration: InputDecoration(
-                                    hintText: "Passwort",
-                                    prefixIcon: Icon(
-                                      Icons.lock,
-                                      color: theme.colors.textInverted,
-                                    ),
+                              child: TextField(
+                                obscureText: true,
+                                autocorrect: false,
+                                controller: passwordController,
+                                onEditingComplete: () => _timeTableService.login(
+                                  username: usernameController.text,
+                                  password: passwordController.text,
+                                  school: schoolController.text,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: "Passwort",
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: theme.colors.textInverted,
                                   ),
                                 ),
                               ),
                             ),
-                            if (loginErrorMessage != null)
+                            if (loginErrorMessage != null) ...[
+                              const SizedBox(height: 10),
                               Text(
                                 loginErrorMessage,
                                 style: const TextStyle(color: Colors.red),
                               ),
+                            ],
                             Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
+                              padding: const EdgeInsets.only(top: 15.0),
                               child: InkWell(
+                                onTap: () {
+                                  _timeTableService.login(
+                                    username: usernameController.text,
+                                    password: passwordController.text,
+                                    school: schoolController.text,
+                                  );
+                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: theme.colors.primary,
                                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(13)),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      (_isLoading)
-                                          ? CircularProgressIndicator(
-                                              color: theme.colors.icon,
-                                            )
-                                          : Text(
-                                              "Login",
-                                              style: TextStyle(
-                                                color: theme.colors.text,
-                                                fontSize: 20,
+                                  child: Consumer(
+                                    builder: (context, ref, _) {
+                                      if (ref.watch(timeTableService).isLoggedIn) {
+                                        // Hack so i don't get an error on pushing
+                                        Future.delayed(
+                                          Duration.zero,
+                                          () => Navigator.pushReplacementNamed(context, TimeTableScreen.routeName),
+                                        );
+                                      }
+                                      return SizedBox(
+                                        height: 70,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            if (ref.watch(timeTableService).isLoading != true) ...[
+                                              Text(
+                                                "Login",
+                                                style: TextStyle(
+                                                  color: theme.colors.text,
+                                                  fontSize: 20,
+                                                ),
                                               ),
-                                            ),
-                                    ],
+                                            ] else
+                                              CircularProgressIndicator(
+                                                color: theme.colors.icon,
+                                              )
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
-                                onTap: () {
-                                  if (_isLoading == false) {
-                                    _login(usernameController.text, passwordController.text);
-                                  }
-                                },
                               ),
                             ),
                           ],
@@ -240,20 +237,16 @@ class LoginScreen extends ConsumerWidget {
                   ),
                   child: ListTile(
                     title: TextField(
-                      controller: schoolNameController,
-                      onChanged: (value) {
-                        ref.read(timeTableService).saveSchoolName(value);
-                      },
+                      controller: schoolController,
                       textAlignVertical: TextAlignVertical.center,
                       autocorrect: false,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        hintText: ref.watch(timeTableService).schoolName,
-                      ),
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          hintText: "Deine Schul-ID"),
                     ),
                   ),
                 ),
