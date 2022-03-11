@@ -249,44 +249,44 @@ class TimeTableScreen extends ConsumerWidget {
         ],
       ),
       drawer: const CustomDrawer(),
-      body: GestureDetector(
-        onHorizontalDragEnd: (dragEndDetails) {
-          if (dragEndDetails.primaryVelocity! < 0) {
-            // Next page
-            _timeTableService.resetTimeTable();
-            _timeTableService.getTimeTableNextWeek();
-          } else if (dragEndDetails.primaryVelocity! > 0) {
-            // Previous page
-            _timeTableService.resetTimeTable();
-            _timeTableService.getTimeTablePreviousWeek();
-          }
+      body: LiquidPullToRefresh(
+        showChildOpacityTransition: false,
+        color: theme.colors.primary,
+        backgroundColor: Colors.white,
+        onRefresh: () async {
+          ref.read(timeTableService).session.clearManagerCache();
+          ref.read(timeTableService).getTimeTable(weekCounter: _timeTableService.weekCounter);
         },
-        child: LiquidPullToRefresh(
-          showChildOpacityTransition: false,
-          color: theme.colors.primary,
-          backgroundColor: Colors.white,
-          onRefresh: () async {
-            ref.read(timeTableService).session.clearManagerCache();
-            ref.read(timeTableService).getTimeTable(weekCounter: _timeTableService.weekCounter);
-          },
-          child: HookConsumer(
-            builder: (context, ref, child) {
-              final _timeTable = ref.watch(timeTableService).timeTable;
-              final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
-              List<Widget> timeTableList = [];
-              List<Widget> firstTimeTableRowList = [];
+        child: HookConsumer(
+          builder: (context, ref, child) {
+            final _timeTable = ref.watch(timeTableService).timeTable;
+            final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
+            List<Widget> timeTableList = [];
+            List<Widget> firstTimeTableRowList = [];
 
-              if (_timeTable != null) {
-                firstTimeTableRowList = buildFirstTimeTableRow(_timeTable, theme);
-                timeTableList = buildTimeTable(
-                  _timeTable,
-                  _phaseTimeTable,
-                  theme,
-                  context,
-                );
-              }
+            if (_timeTable != null) {
+              firstTimeTableRowList = buildFirstTimeTableRow(_timeTable, theme);
+              timeTableList = buildTimeTable(
+                _timeTable,
+                _phaseTimeTable,
+                theme,
+                context,
+              );
+            }
 
-              return Container(
+            return GestureDetector(
+              onHorizontalDragEnd: (dragEndDetails) {
+                if (dragEndDetails.primaryVelocity! < 0 && _timeTable != null) {
+                  // Next page
+                  _timeTableService.resetTimeTable();
+                  _timeTableService.getTimeTableNextWeek();
+                } else if (dragEndDetails.primaryVelocity! > 0 && _timeTable != null) {
+                  // Previous page
+                  _timeTableService.resetTimeTable();
+                  _timeTableService.getTimeTablePreviousWeek();
+                }
+              },
+              child: Container(
                 color: theme.colors.background,
                 child: (_timeTable == null)
                     ? Center(
@@ -380,9 +380,9 @@ class TimeTableScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
