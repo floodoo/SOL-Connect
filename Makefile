@@ -12,9 +12,10 @@ analyze:
 	@echo "╠ Verifying code..."
 	$(FLUTTER) analyze
 
-tests:
+test:
 	@echo "╠ Running tests..."
 	$(FLUTTER) test
+.PHONY: test
 
 outdated:
 	@echo "╠ Check outdated dependencies..."
