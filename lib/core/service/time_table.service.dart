@@ -24,6 +24,7 @@ class TimeTableService with ChangeNotifier {
   bool isLoggedIn = false;
   bool isLoading = false;
   bool isSchool = true;
+  bool isChangingSchool = false;
   bool isPhaseVerified = false;
   bool isWeekInBlock = false;
   int weekCounter = 0;
@@ -86,7 +87,7 @@ class TimeTableService with ChangeNotifier {
       log.e(stacktrace);
       log.e("Error logging in: $error");
 
-      UserSecureStorage.clearAll();
+      UserSecureStorage.clearPassword();
 
       isLoading = false;
       loginException = error;
@@ -124,6 +125,11 @@ class TimeTableService with ChangeNotifier {
 
   void toggleIsLoading(bool value) {
     isLoading = value;
+    notifyListeners();
+  }
+
+  void setIsChangingSchool(bool value) {
+    isChangingSchool = value;
     notifyListeners();
   }
 

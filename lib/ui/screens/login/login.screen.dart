@@ -13,14 +13,21 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController schoolController = TextEditingController();
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final schoolController = TextEditingController();
+  final passwordFocusNode = FocusNode();
+  final schoolFocusNode = FocusNode();
 
   @override
   void initState() {
     getUserDataFromStorage();
+    schoolFocusNode.addListener(onSchoolFocusChange);
     super.initState();
+  }
+
+  void onSchoolFocusChange() {
+    ref.read(timeTableService).setIsChangingSchool(schoolFocusNode.hasFocus);
   }
 
   Future<void> getUserDataFromStorage() async {
@@ -50,7 +57,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     String? loginErrorMessage;
 
     if (_loginError != null) {
-      usernameController.clear();
       passwordController.clear();
 
       if (_loginError is WrongCredentialsException) {
@@ -67,6 +73,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        resizeToAvoidBottomInset: ref.watch(timeTableService).isChangingSchool,
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: BoxDecoration(
@@ -131,10 +138,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                               child: TextField(
                                 autocorrect: false,
+                                onEditingComplete: () => FocusScope.of(context).requestFocus(passwordFocusNode),
                                 controller: usernameController,
+                                cursorColor: theme.colors.textInverted,
                                 decoration: InputDecoration(
                                   hintText: "Benutzername",
                                   prefixIcon: Icon(Icons.person, color: theme.colors.textInverted),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: theme.colors.textInverted),
+                                  ),
                                 ),
                               ),
                             ),
@@ -143,17 +155,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               child: TextField(
                                 obscureText: true,
                                 autocorrect: false,
+                                focusNode: passwordFocusNode,
                                 controller: passwordController,
-                                onEditingComplete: () => _timeTableService.login(
-                                  username: usernameController.text,
-                                  password: passwordController.text,
-                                  school: schoolController.text,
-                                ),
+                                cursorColor: theme.colors.textInverted,
                                 decoration: InputDecoration(
                                   hintText: "Passwort",
                                   prefixIcon: Icon(
                                     Icons.lock,
                                     color: theme.colors.textInverted,
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: theme.colors.textInverted),
                                   ),
                                 ),
                               ),
@@ -174,6 +186,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     password: passwordController.text,
                                     school: schoolController.text,
                                   );
+                                  _timeTableService.setIsChangingSchool(false);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -222,32 +235,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: theme.colors.background,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black87,
-                        blurRadius: 7,
-                        offset: Offset(0, 0.8),
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    title: TextField(
-                      controller: schoolController,
-                      textAlignVertical: TextAlignVertical.center,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          hintText: "Deine Schul-ID"),
+                padding: const EdgeInsets.fromLTRB(30, 0, 30, 40),
+                child: TextField(
+                  controller: schoolController,
+                  textAlignVertical: TextAlignVertical.center,
+                  autocorrect: false,
+                  focusNode: schoolFocusNode,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: theme.colors.background,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide.none,
                     ),
+                    hintText: "Deine Schul-ID",
                   ),
                 ),
               ),
