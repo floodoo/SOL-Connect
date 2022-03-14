@@ -407,7 +407,7 @@ class SettingsScreen extends ConsumerWidget {
                             ref.read(themeService).saveAppearence(value);
                           },
                           title: Text(
-                            (theme.mode == ThemeMode.light) ? "Light Mode" : "Dark Mode",
+                            "Light Mode",
                             maxLines: 1,
                             style: TextStyle(color: theme.colors.text),
                             softWrap: false,
