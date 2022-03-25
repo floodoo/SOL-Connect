@@ -10,6 +10,7 @@ class CreatedByText extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
+
     return RichText(
       text: TextSpan(
         children: [

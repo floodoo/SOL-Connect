@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'package:awesome_dialog/awesome_dialog.dart';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
@@ -13,26 +12,24 @@ import 'package:sol_connect/core/excel/solcresponse.dart';
 import 'package:sol_connect/core/exceptions.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/settings/widgets/custom_settings_card.dart';
+import 'package:sol_connect/ui/screens/settings/widgets/developer_options.dart';
+import 'package:sol_connect/ui/screens/settings/widgets/info_dialog.dart';
 import 'package:sol_connect/ui/shared/created_by.text.dart';
 import 'package:sol_connect/util/logger.util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  SettingsScreen({Key? key}) : super(key: key);
   static final routeName = (SettingsScreen).toString();
+  final scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Logger log = getLogger();
-
-    final TextEditingController serverAdressTextController = TextEditingController();
-    FocusNode textFieldFocus = FocusNode();
+    final log = getLogger();
 
     final theme = ref.watch(themeService).theme;
-
     final phaseLoaded = ref.watch(timeTableService).isPhaseVerified;
     final validator = ref.watch(timeTableService).validator;
-    final showDeveloperOptions = ref.watch(settingsService).showDeveloperOptions;
 
     bool lightMode;
     bool working = false;
@@ -56,6 +53,16 @@ class SettingsScreen extends ConsumerWidget {
       lightMode = false;
     }
 
+    if (ref.watch(settingsService).showDeveloperOptions) {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent + 50,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn,
+        );
+      }
+    }
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -70,6 +77,7 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               Expanded(
                 child: ListView(
+                  controller: scrollController,
                   children: [
                     Visibility(
                       visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
@@ -78,73 +86,12 @@ class SettingsScreen extends ConsumerWidget {
                           padding: const EdgeInsets.only(top: 25.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
+                            children: const [
+                              Text(
                                 "Phasierung",
                                 style: TextStyle(fontSize: 25),
                               ),
-                              IconButton(
-                                onPressed: () {
-                                  AwesomeDialog(
-                                    context: context,
-                                    dialogType: DialogType.NO_HEADER,
-                                    animType: AnimType.BOTTOMSLIDE,
-                                    headerAnimationLoop: false,
-                                    // title: "Was ist das?",
-                                    body: Padding(
-                                      padding: const EdgeInsets.all(6),
-                                      child: Column(
-                                        children: const [
-                                          Padding(
-                                            padding: EdgeInsets.only(bottom: 15),
-                                            child: Text(
-                                              "Die Phasierung",
-                                              style: TextStyle(fontSize: 23),
-                                            ),
-                                          ),
-                                          Text(
-                                            "Die Phasierung ist eine einfache Excel Datei die deinem Stundenplan gleicht und zusätzlich die SOL Phasen des aktuellen Blocks enthält.",
-                                            textAlign: TextAlign.left,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(bottom: 15, top: 5),
-                                            child: Text(
-                                              "Welche Excel Datei?",
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Diese wird üblicherweise am anfang deines Schulblocks vorgestellt und von deinem Lehrer zur Verfügung gestellt."
-                                            "\nDiesen Plan kannst du dann als Excel Datei hier laden und in deinen Stundenplan einfügen.",
-                                            textAlign: TextAlign.left,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(bottom: 15, top: 5),
-                                            child: Text(
-                                              "Ist die immer gültig?",
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Wenn du eine Phasierung laden willst, wird sie immer für den nächsten aktuellen Block geladen. "
-                                            "Der gültigkeits Zeitraum wird auch grün angezeigt."
-                                            "\nDu wirst benachrichtigt, wenn du noch die Phasierung eines alten Blocks geladen hast.",
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    btnOkOnPress: () {},
-                                  ).show();
-                                },
-                                icon: Icon(
-                                  Icons.info_outline,
-                                  color: theme.colors.textInverted,
-                                ),
-                                iconSize: 25,
-                              )
+                              InfoDialog(),
                             ],
                           ),
                         ),
@@ -465,88 +412,7 @@ class SettingsScreen extends ConsumerWidget {
                       padBottom: 15,
                       text: "Version Alpha 1.0.1",
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 25.0, bottom: (showDeveloperOptions) ? 5 : 30, right: 25.0),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: InkWell(
-                              onTap: () {
-                                ref.read(settingsService).toggleDeveloperOptions();
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(showDeveloperOptions ? Icons.arrow_drop_down : Icons.arrow_right_rounded,
-                                      color: theme.colors.textInverted),
-                                  Text("Entwickleroptionen", style: TextStyle(color: theme.colors.textInverted)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          showDeveloperOptions
-                              ? Column(
-                                  children: [
-                                    Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: 10, bottom: 10.0),
-                                        child: Text(
-                                          "SOLC-API Server",
-                                          style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
-                                        ),
-                                      ),
-                                    ),
-                                    Card(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                      color: theme.colors.primary,
-                                      child: ListTile(
-                                        // Idk why but on emulator it doesn't work with PC keyboard
-                                        title: TextField(
-                                          focusNode: textFieldFocus,
-                                          controller: serverAdressTextController,
-                                          onEditingComplete: () {
-                                            if (serverAdressTextController.text != "") {
-                                              ref
-                                                  .read(settingsService)
-                                                  .saveServerAdress(serverAdressTextController.text);
-                                              ref
-                                                  .read(timeTableService)
-                                                  .apiManager!
-                                                  .setServerAddress(serverAdressTextController.text);
-                                            }
-                                            serverAdressTextController.clear();
-                                            FocusManager.instance.primaryFocus?.unfocus();
-                                            textFieldFocus.unfocus();
-                                          },
-                                          textAlignVertical: TextAlignVertical.center,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            focusedBorder: InputBorder.none,
-                                            enabledBorder: InputBorder.none,
-                                            errorBorder: InputBorder.none,
-                                            disabledBorder: InputBorder.none,
-                                            hintText: ref.watch(settingsService).serverAddress,
-                                            suffixIcon: IconButton(
-                                              onPressed: () {
-                                                ref.read(settingsService).saveServerAdress("flo-dev.me");
-                                                FocusManager.instance.primaryFocus?.unfocus();
-                                                textFieldFocus.unfocus();
-                                              },
-                                              icon: Icon(Icons.settings_backup_restore,
-                                                  color: theme.colors.textBackground),
-                                              tooltip: "Setzte Server URL zurück",
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    ),
+                    const DeveloperOptions(),
                   ],
                 ),
               ),
