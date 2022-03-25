@@ -16,5 +16,6 @@ ThemeData get darkTheme {
             ),
           ),
         ),
+    canvasColor: colors.background,
   );
 }

@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sol_connect/core/api/usersession.dart';
-import 'dart:math';
-
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/login/login.screen.dart';
 import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/teacher_classes.screen.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
 
-class CustomDrawer extends ConsumerStatefulWidget {
+class CustomDrawer extends StatefulHookConsumerWidget {
   const CustomDrawer({Key? key}) : super(key: key);
   static final routeName = (CustomDrawer).toString();
-  static Random random = Random();
 
   @override
-  ConsumerState<CustomDrawer> createState() => _CustomDrawerState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _CustomDrawerState();
 }
 
 class _CustomDrawerState extends ConsumerState<CustomDrawer> {
-  String? username;
-  String? school;
+  String username = "";
+  String school = "";
 
   @override
   void initState() {
@@ -31,107 +28,87 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
   Future<void> getUserDataFromStorage() async {
     username = await ref.read(timeTableService).getUserName();
     school = await ref.read(timeTableService).getSchool();
+    // setState to update username and school
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeService).theme;
+    final session = ref.watch(timeTableService).session;
 
-    UserSession session = ref.watch(timeTableService).session;
-    String profilePictureUrl = "";
+    // default circle avatar
+    CircleAvatar profileAvatar = CircleAvatar(
+      backgroundColor: theme.colors.background,
+      child: Icon(Icons.person, color: theme.colors.circleAvatar),
+    );
 
-    CircleAvatar profilePicture = CircleAvatar(child: CircularProgressIndicator(color: theme.colors.text));
-
+    // check authorization and if user has a profile picture
     if (session.isAPIAuthorized()) {
-      ImageProvider? imageProvider;
-      if (CustomDrawer.random.nextInt(100) == 20) {
-        imageProvider = const Image(image: AssetImage('assets/images/trollface.png')).image;
-      } else {
-        profilePictureUrl = session.getCachedProfilePictureUrl();
-        if (profilePictureUrl.isNotEmpty) {
-          imageProvider = Image.network(profilePictureUrl).image;
-        }
+      final profilePictureUrl = session.getCachedProfilePictureUrl();
+
+      if (profilePictureUrl.isNotEmpty) {
+        profileAvatar = CircleAvatar(
+            backgroundColor: theme.colors.background, backgroundImage: Image.network(profilePictureUrl).image);
       }
-      if (imageProvider != null) {
-        profilePicture = CircleAvatar(backgroundColor: theme.colors.background, backgroundImage: imageProvider);
-      } else {
-        profilePicture = CircleAvatar(
-          backgroundColor: theme.colors.background,
-          child: Icon(Icons.person, color: theme.colors.circleAvatar),
-        );
-      }
-    } else {
-      profilePicture = CircleAvatar(
-        backgroundColor: theme.colors.background,
-        child: Icon(Icons.person, color: theme.colors.circleAvatar),
-      );
     }
 
-    return Theme(
-      data: Theme.of(context).copyWith(canvasColor: theme.colors.background),
-      child: Drawer(
-        child: Column(
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text(
-                username ?? "",
-                style: TextStyle(color: theme.colors.text),
-              ),
-              accountEmail: Text(
-                school ?? "",
-                style: TextStyle(color: theme.colors.text),
-              ),
-              currentAccountPicture: profilePicture,
-              decoration: BoxDecoration(
-                color: theme.colors.primary,
-              ),
+    return Drawer(
+      child: Column(
+        children: [
+          UserAccountsDrawerHeader(
+            accountName: Text(
+              username,
+              style: TextStyle(color: theme.colors.text),
             ),
-            ListTile(
-                title: Text("Mein Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
-                onTap: () {
-                  if (ref.read(timeTableService).session.personType == PersonTypes.teacher) {
-                    ref.read(timeTableService).deletePhase();
-                  }
+            accountEmail: Text(
+              school,
+              style: TextStyle(color: theme.colors.text),
+            ),
+            currentAccountPicture: profileAvatar,
+            decoration: BoxDecoration(
+              color: theme.colors.primary,
+            ),
+          ),
+          ListTile(
+            title: Text("Mein Stundenplan", style: TextStyle(color: theme.colors.textBackground)),
+            onTap: () {
+              if (ref.read(timeTableService).session.personType == PersonTypes.teacher) {
+                ref.read(timeTableService).deletePhase();
+              }
 
-                  ref.read(timeTableService).session.resetTimetableBehaviour();
-                  ref.read(timeTableService).resetTimeTable();
-                  ref.read(timeTableService).getTimeTable(weekCounter: 0);
+              ref.read(timeTableService).resetAndGetTimeTable();
 
-                  Navigator.popAndPushNamed(context, TimeTableScreen.routeName);
-                }),
-            Visibility(
-              visible: ref.read(timeTableService).session.personType == PersonTypes.teacher,
-              child: ListTile(
-                  title: Text("Unterricht", style: TextStyle(color: theme.colors.textBackground)),
-                  onTap: () {
-                    if (ref.read(timeTableService).session.personType == PersonTypes.teacher) {
-                      ref.read(timeTableService).deletePhase();
-                    }
-                    ref.read(timeTableService).resetTimeTable();
-                    ref.read(timeTableService).session.resetTimetableBehaviour();
-                    ref.read(timeTableService).getTimeTable(weekCounter: 0);
-                    Navigator.pushNamed(context, TeacherClassesScreen.routeName);
-                  }),
-            ),
-            // For white space
-            Expanded(child: Container()),
-            ListTile(
-              title: Text("Einstellungen", style: TextStyle(color: theme.colors.textBackground)),
-              onTap: () => Navigator.pushNamed(context, SettingsScreen.routeName),
-            ),
-            ListTile(
-              title: Text(
-                "Logout",
-                style: TextStyle(color: theme.colors.error),
-              ),
+              Navigator.pushReplacementNamed(context, TimeTableScreen.routeName);
+            },
+          ),
+          Visibility(
+            visible: ref.read(timeTableService).session.personType == PersonTypes.teacher,
+            child: ListTile(
+              title: Text("Unterricht", style: TextStyle(color: theme.colors.textBackground)),
               onTap: () {
-                ref.read(timeTableService).logout();
-                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                ref.read(timeTableService).deletePhase();
+                ref.read(timeTableService).resetAndGetTimeTable();
+                Navigator.pushNamed(context, TeacherClassesScreen.routeName);
               },
             ),
-          ],
-        ),
+          ),
+          Expanded(child: Container()),
+          ListTile(
+            title: Text("Einstellungen", style: TextStyle(color: theme.colors.textBackground)),
+            onTap: () => Navigator.pushNamed(context, SettingsScreen.routeName),
+          ),
+          ListTile(
+            title: Text(
+              "Logout",
+              style: TextStyle(color: theme.colors.error),
+            ),
+            onTap: () {
+              ref.read(timeTableService).logout();
+              Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            },
+          ),
+        ],
       ),
     );
   }
