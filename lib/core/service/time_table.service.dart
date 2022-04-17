@@ -241,4 +241,12 @@ class TimeTableService with ChangeNotifier {
     weekCounter = 0;
     notifyListeners();
   }
+
+  void resetAndGetTimeTable() {
+    resetTimeTable();
+    session.resetTimetableBehaviour();
+    resetWeekCounter();
+    getTimeTable();
+    notifyListeners();
+  }
 }

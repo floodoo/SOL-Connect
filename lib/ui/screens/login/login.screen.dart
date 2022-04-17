@@ -73,6 +73,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        // School text field should not be on top of the keyboard, if it isn't focused
         resizeToAvoidBottomInset: ref.watch(timeTableService).isChangingSchool,
         backgroundColor: Colors.transparent,
         body: Container(
@@ -193,6 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     color: theme.colors.primary,
                                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(13)),
                                   ),
+                                  // Consumer Widget to avoid re-rendering the whole widget
                                   child: Consumer(
                                     builder: (context, ref, _) {
                                       if (ref.watch(timeTableService).isLoggedIn) {
@@ -207,7 +209,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            if (ref.watch(timeTableService).isLoading != true) ...[
+                                            if (ref.watch(timeTableService).isLoading)
+                                              CircularProgressIndicator(
+                                                color: theme.colors.icon,
+                                              )
+                                            else ...[
                                               Text(
                                                 "Login",
                                                 style: TextStyle(
@@ -215,10 +221,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                                   fontSize: 20,
                                                 ),
                                               ),
-                                            ] else
-                                              CircularProgressIndicator(
-                                                color: theme.colors.icon,
-                                              )
+                                            ]
                                           ],
                                         ),
                                       );

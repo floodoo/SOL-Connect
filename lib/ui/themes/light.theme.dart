@@ -16,5 +16,6 @@ ThemeData get lightTheme {
             ),
           ),
         ),
+    canvasColor: colors.background,
   );
 }

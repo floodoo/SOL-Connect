@@ -64,9 +64,8 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     final theme = ref.watch(themeService).theme;
 
     List<Widget> list = [];
-    List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 3);
-    List<SchoolClass> ownClassesAsTeacher =
-        await _timeTableService.session.getOwnClassesAsClassteacher(simulateTeacher: "CAG");
+    List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 15);
+    List<SchoolClass> ownClassesAsTeacher = await _timeTableService.session.getOwnClassesAsClassteacher();
 
     if (searchString != "") {
       allClassesAsTeacher = allClassesAsTeacher
