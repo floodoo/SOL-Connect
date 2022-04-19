@@ -206,7 +206,12 @@ class TimeTableService with ChangeNotifier {
       return;
     }
 
-    await _verifyBlockPhases();
+    try {
+      await _verifyBlockPhases();
+    } catch (e) {
+      validator = null;
+      rethrow;
+    }
   }
 
   Future<void> loadPhaseForCurrentTimetable() async {

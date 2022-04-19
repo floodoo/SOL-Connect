@@ -231,7 +231,7 @@ class ExcelValidator {
           "Stelle sicher, dass in der Excel ein Stundenplan mit der überschrift 'Woche ${currentWeek + 1}' existiert und dieser auch in die angegebene Woche passt.");
     }
 
-    throw ExcelMergeFileNotVerified("Es konnte kein Stundenplan auf der Excel Datei gefunden werden.");
+    throw ExcelMergeFileNotVerified("Es konnte kein gültiger Stundenplan auf der Excel Datei gefunden werden.");
   }
 
   ///Sendet eine Anfrage an den Server in 4 Schritten:

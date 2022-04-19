@@ -333,7 +333,6 @@ class UserSession {
   ///Die ID der Klasse in der der Schüler ist
   int get schoolClassId => _schoolClassId;
 
-  // TODO(philipp): automate frame assignment
   Future<TimeTableRange> getTimeTable(DateTime from, DateTime to, TimetableFrame frame,
       {int personId = -1, PersonTypes personType = PersonTypes.unknown}) async {
     if (!_sessionValid) throw Exception("Die Session ist ungültig.");
@@ -347,8 +346,10 @@ class UserSession {
             "startDate": Utils.convertToUntisDate(from),
             "endDate": Utils.convertToUntisDate(to),
             "element": {
-              "id": personId == -1 ? _personId : personId,
-              "type": personType == PersonTypes.unknown ? _type.id : personType.id
+              "id": personId == -1 ? (_timetablePersonId == -1 ? _personId : _timetablePersonId) : personId,
+              "type": personType == PersonTypes.unknown
+                  ? (_timetablePersonType == PersonTypes.unknown ? _type.id : _timetablePersonType.id)
+                  : personType.id
             },
             "showLsText": true,
             "showPeText": true,

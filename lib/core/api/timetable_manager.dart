@@ -23,6 +23,9 @@ class TimetableManager {
   }
 
   void clearFrameCache({bool hardReset = false}) {
+    nextBlockStart = null;
+    nextBlockEnd = null;
+
     if (hardReset) {
       frames.clear();
       return;
@@ -136,22 +139,6 @@ class TimetableManager {
       }
     }
     return null;
-  }
-
-  // TODO(philipp): Fertig machen
-  /*TimetableFrame getFramefromRange(DateTime startDate, DateTime endDate) {
-    
-    for(TimetableFrame frame in frames) {
-      if(frame._frameStart.millisecondsSinceEpoch <= startDate.millisecondsSinceEpoch && 
-        frame._frameEnd.millisecondsSinceEpoch >= endDate.millisecondsSinceEpoch) {
-          return frame;
-      }
-    }
-
-  }*/
-
-  void modifyFrameCache(TimeTableRange rng, TimetableFrame frame) {
-    frame._cachedWeekData = rng;
   }
 
   TimetableFrame getFrameRelativeToCurrent(int relative, {bool locked = false}) {

@@ -127,7 +127,7 @@ class SettingsScreen extends ConsumerWidget {
                             log.d("Checking file status on server ...");
                             try {
                               PhaseStatus? status = await manager.getSchoolClassInfo(schoolClassId: schoolClassId);
-                              if (!Utils.dateInbetweenDays(from: status!.blockStart, to: status.blockEnd)) {
+                              if (DateTime.now().millisecondsSinceEpoch >= status!.blockEnd.millisecondsSinceEpoch) {
                                 log.e("Phasierung nicht mehr aktuell!");
                                 working = false;
                                 return;
@@ -292,6 +292,8 @@ class SettingsScreen extends ConsumerWidget {
                               // Doesn't matter
                             } on SocketException {
                               errorMessage = "Bitte überprüfe deine Internetverbindung";
+                            } on ExcelMergeTimetableNotFound catch (e) {
+                              errorMessage = e.toString();
                             } catch (e) {
                               log.e(e.toString());
                               errorMessage = "Unbekannter Fehler: " + e.toString();

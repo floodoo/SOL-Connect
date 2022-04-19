@@ -79,7 +79,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
 
             log.d("Virtuelle Phasierung für schoolClass: " +
                 widget.schoolClass.displayName +
-                "(" +
+                " (" +
                 widget.schoolClass.id.toString() +
                 ")" +
                 " herunterladen ...");
@@ -88,11 +88,11 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                 await ref.read(timeTableService).apiManager!.downloadVirtualSheet(schoolClassId: widget.schoolClass.id);
 
             // TODO(debug): Debug timeTable is inactive
-            //ref.read(timeTableService).session.setTimetableBehaviour(
-            //      widget.schoolClass.id,
-            //      PersonTypes.schoolClass,
-            //      debug: true,
-            //    );
+            ref.read(timeTableService).session.setTimetableBehaviour(
+                  widget.schoolClass.id,
+                  PersonTypes.schoolClass,
+                  debug: false,
+                );
 
             _createSnackbar(
                 message: "Phasierung überprüfen ...",
@@ -188,9 +188,9 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                   children: [
                     Column(
                       children: [
-                        Text(Utils.convertToDDMMYY(widget.phaseStatus!.blockStart)),
+                        Text("Gültig von " + Utils.convertToDDMMYY(widget.phaseStatus!.blockStart)),
                         Text(
-                          Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd),
+                          "bis " + Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd),
                         )
                       ],
                     )
@@ -230,11 +230,11 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
 
                                   // Step 1: Verify timetable for schoolClass:
                                   // TODO(debug): Debug timeTable is inactive
-                                  //session.setTimetableBehaviour(
-                                  //  widget.schoolClass.id,
-                                  //  PersonTypes.schoolClass,
-                                  //  debug: true,
-                                  //);
+                                  session.setTimetableBehaviour(
+                                    widget.schoolClass.id,
+                                    PersonTypes.schoolClass,
+                                    debug: false,
+                                  );
 
                                   ExcelValidator tempValidator = ExcelValidator(
                                     manager,
@@ -269,7 +269,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                   } on SocketException {
                                     errorMessage = "Bitte überprüfe deine Internetverbindung";
                                   } on NextBlockStartNotInRangeException {
-                                    errorMessage = "Nächster Block kann noch nicht festgestellt werden";
+                                    errorMessage = "Nächster Schulblock kann noch nicht festgestellt werden";
                                   } on ExcelMergeTimetableNotFound {
                                     errorMessage =
                                         "Phasierung passt nicht zum Stundenplan der ${widget.schoolClass.displayName}";
