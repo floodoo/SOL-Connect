@@ -43,7 +43,7 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
 
     apiManager = SOLCApiManager(await getServerAddress(), 6969);
-
+    
     apiManager!.getVersion().then(
       (value) {
         //Dieser Build benötigt Server version > 2.1.5
@@ -206,7 +206,12 @@ class TimeTableService with ChangeNotifier {
       return;
     }
 
-    await _verifyBlockPhases();
+    try {
+      await _verifyBlockPhases();
+    } catch(e) {
+      validator = null;
+      rethrow;
+    }
   }
 
   Future<void> loadPhaseForCurrentTimetable() async {

@@ -23,6 +23,9 @@ class TimetableManager {
   }
 
   void clearFrameCache({bool hardReset = false}) {
+    nextBlockStart = null;
+    nextBlockEnd = null;
+    
     if (hardReset) {
       frames.clear();
       return;
@@ -150,9 +153,9 @@ class TimetableManager {
 
   }*/
 
-  void modifyFrameCache(TimeTableRange rng, TimetableFrame frame) {
-    frame._cachedWeekData = rng;
-  }
+  //void modifyFrameCache(TimeTableRange rng, TimetableFrame frame) {
+  //  frame._cachedWeekData = rng;
+  //}
 
   TimetableFrame getFrameRelativeToCurrent(int relative, {bool locked = false}) {
     DateTime from = _getRelativeWeekStartDate(relative);

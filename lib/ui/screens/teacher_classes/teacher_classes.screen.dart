@@ -38,7 +38,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
       clearOnSubmit: false,
       buildDefaultAppBar: (BuildContext context) {
         return AppBar(
-          title: const Text("Ihre Klassen"),
+          title: const Text("Meine Klassen"),
           actions: [
             searchString == ""
                 ? searchBar.getSearchAction(context)
@@ -64,8 +64,8 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     final theme = ref.watch(themeService).theme;
 
     List<Widget> list = [];
-    List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 15);
-    List<SchoolClass> ownClassesAsTeacher = await _timeTableService.session.getOwnClassesAsClassteacher();
+    List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 2);
+    List<SchoolClass> ownClassesAsTeacher = await _timeTableService.session.getOwnClassesAsClassteacher(simulateTeacher: "CAG");
 
     if (searchString != "") {
       allClassesAsTeacher = allClassesAsTeacher
@@ -73,10 +73,6 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
               element.name.toLowerCase().replaceAll(" ", "").contains(searchString.toLowerCase().replaceAll(" ", "")))
           .toList();
       ownClassesAsTeacher.clear();
-    }
-
-    if (allClassesAsTeacher.isEmpty) {
-      return list;
     }
 
     if (ownClassesAsTeacher.isNotEmpty) {
