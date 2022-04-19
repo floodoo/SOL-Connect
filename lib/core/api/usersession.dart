@@ -347,7 +347,9 @@ class UserSession {
             "endDate": Utils.convertToUntisDate(to),
             "element": {
               "id": personId == -1 ? (_timetablePersonId == -1 ? _personId : _timetablePersonId) : personId,
-              "type": personType == PersonTypes.unknown ? (_timetablePersonType == PersonTypes.unknown ? _type.id : _timetablePersonType.id) : personType.id
+              "type": personType == PersonTypes.unknown
+                  ? (_timetablePersonType == PersonTypes.unknown ? _type.id : _timetablePersonType.id)
+                  : personType.id
             },
             "showLsText": true,
             "showPeText": true,

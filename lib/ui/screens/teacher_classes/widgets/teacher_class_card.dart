@@ -189,7 +189,8 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                     Column(
                       children: [
                         Text("Gültig von " + Utils.convertToDDMMYY(widget.phaseStatus!.blockStart)),
-                        Text("bis " + Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd),
+                        Text(
+                          "bis " + Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd),
                         )
                       ],
                     )

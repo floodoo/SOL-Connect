@@ -291,9 +291,8 @@ class SettingsScreen extends ConsumerWidget {
                             } on ExcelMergeNonSchoolBlockException {
                               // Doesn't matter
                             } on SocketException {
-
                               errorMessage = "Bitte überprüfe deine Internetverbindung";
-                            } on ExcelMergeTimetableNotFound catch(e) {
+                            } on ExcelMergeTimetableNotFound catch (e) {
                               errorMessage = e.toString();
                             } catch (e) {
                               log.e(e.toString());

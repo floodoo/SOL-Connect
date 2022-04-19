@@ -25,7 +25,7 @@ class TimetableManager {
   void clearFrameCache({bool hardReset = false}) {
     nextBlockStart = null;
     nextBlockEnd = null;
-    
+
     if (hardReset) {
       frames.clear();
       return;
