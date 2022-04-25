@@ -419,7 +419,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       padTop: 10,
                       padBottom: 15,
-                      text: "Version Alpha 1.0.1",
+                      text: "Version 1.1.0+2",
                     ),
                     const DeveloperOptions(),
                   ],
