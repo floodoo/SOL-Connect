@@ -15,7 +15,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  final schoolController = TextEditingController();
+  final schoolController = TextEditingController(text: "bbs1-mainz");
   final passwordFocusNode = FocusNode();
   final schoolFocusNode = FocusNode();
 
@@ -33,11 +33,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> getUserDataFromStorage() async {
     final username = await ref.read(timeTableService).getUserName();
     final password = await ref.read(timeTableService).getPassword();
-    final school = await ref.read(timeTableService).getSchool();
+    const school = "bbs1-mainz";
 
     usernameController.text = username;
     passwordController.text = password;
-    schoolController.text = school;
+    schoolController.text = "bbs1-mainz";
 
     if (username.isNotEmpty && password.isNotEmpty && school.isNotEmpty) {
       ref.read(timeTableService).login(

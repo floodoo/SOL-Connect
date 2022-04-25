@@ -15,7 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_search_bar: ^3.0.0-dev.1
-  flutter_secure_storage: ^5.0.2
+  flutter_secure_storage: 4.2.1
   flutter_staggered_animations: ^1.0.0
   fluttericon: ^2.0.0
   google_fonts: 2.2.0

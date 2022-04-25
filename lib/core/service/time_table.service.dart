@@ -159,6 +159,11 @@ class TimeTableService with ChangeNotifier {
 
   Future<String> getSchool() async {
     final prefs = await SharedPreferences.getInstance();
+    final school = prefs.getString("school");
+
+    if (school == null || school.isEmpty) {
+      return "bbs1-mainz";
+    }
     return prefs.getString("school") ?? "bbs1-mainz";
   }
 
