@@ -128,6 +128,13 @@ class SettingsScreen extends ConsumerWidget {
                             try {
                               PhaseStatus? status = await manager.getSchoolClassInfo(schoolClassId: schoolClassId);
                               if (DateTime.now().millisecondsSinceEpoch >= status!.blockEnd.millisecondsSinceEpoch) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  _createSnackbar(
+                                      "Keine aktuelle Phasierung für deine Klasse gefunden.\nBitte frage einen deiner Lehrer ob er die aktuelle Phasierung für deine Klasse bereitstellen kann.",
+                                      theme.colors.errorBackground,
+                                      duration: const Duration(seconds: 10)),
+                                );
                                 log.e("Phasierung nicht mehr aktuell!");
                                 working = false;
                                 return;
