@@ -16,7 +16,7 @@ import 'package:sol_connect/ui/screens/settings/widgets/developer_options.dart';
 import 'package:sol_connect/ui/screens/settings/widgets/info_dialog.dart';
 import 'package:sol_connect/ui/shared/created_by.text.dart';
 import 'package:sol_connect/util/logger.util.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends ConsumerWidget {
   SettingsScreen({Key? key}) : super(key: key);
@@ -392,7 +392,7 @@ class SettingsScreen extends ConsumerWidget {
                       text: "Github Projekt",
                       onTap: () async {
                         String _url = "https://github.com/floodoo/untis_phasierung";
-                        if (!await launch(_url)) {
+                        if (!await launchUrlString(_url)) {
                           throw "Could not launch $_url";
                         }
                       },
@@ -407,7 +407,7 @@ class SettingsScreen extends ConsumerWidget {
                       onTap: () async {
                         String _url =
                             "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
-                        if (!await launch(_url)) {
+                        if (!await launchUrlString(_url)) {
                           throw "Could not launch $_url";
                         }
                       },

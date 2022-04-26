@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sol_connect/core/service/services.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class CreatedByText extends ConsumerWidget {
   const CreatedByText({Key? key}) : super(key: key);
@@ -27,7 +27,7 @@ class CreatedByText extends ConsumerWidget {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                launch("https://github.com/floodoo");
+                launchUrlString("https://github.com/floodoo");
               },
           ),
           TextSpan(
@@ -43,7 +43,7 @@ class CreatedByText extends ConsumerWidget {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                launch("https://github.com/DevKevYT");
+                launchUrlString("https://github.com/DevKevYT");
               },
           ),
         ],
