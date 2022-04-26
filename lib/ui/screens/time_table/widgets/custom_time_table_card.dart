@@ -10,7 +10,8 @@ class CustomTimeTableCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      elevation: 0,
+      elevation: child != null ? 3 : 0,
+      shadowColor: child != null ? Colors.black : null,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       color: color,
       child: Center(child: child),
