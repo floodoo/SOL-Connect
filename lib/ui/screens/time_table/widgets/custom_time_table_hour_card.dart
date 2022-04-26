@@ -17,7 +17,8 @@ class CustomTimeTableHourCard extends ConsumerWidget {
     int hour = timeTableHour.yIndex + 1;
 
     return Card(
-      elevation: 0,
+      elevation: 3,
+      shadowColor: Colors.black,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       color: customColor ?? theme.colors.primary,
       child: Padding(

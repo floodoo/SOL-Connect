@@ -14,7 +14,8 @@ class CustomTimeTableDayCard extends ConsumerWidget {
     final theme = ref.watch(themeService).theme;
 
     return Card(
-      elevation: 1,
+      elevation: 3,
+      shadowColor: Colors.black,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       color: (cardColor ?? theme.colors.primary),
       child: Center(

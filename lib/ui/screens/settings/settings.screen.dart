@@ -16,7 +16,7 @@ import 'package:sol_connect/ui/screens/settings/widgets/developer_options.dart';
 import 'package:sol_connect/ui/screens/settings/widgets/info_dialog.dart';
 import 'package:sol_connect/ui/shared/created_by.text.dart';
 import 'package:sol_connect/util/logger.util.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends ConsumerWidget {
   SettingsScreen({Key? key}) : super(key: key);
@@ -328,18 +328,24 @@ class SettingsScreen extends ConsumerWidget {
                         ? Padding(
                             padding: const EdgeInsets.fromLTRB(30, 6, 30, 0),
                             child: Container(
-                              color: theme.colors.successColor,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: theme.colors.successColor,
+                              ),
                               child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 8, 5, 10),
-                                  child: Text(
-                                      validator != null
-                                          ? "Phasierung geladen für Block " +
-                                              Utils.convertToDDMM(validator.getBlockStart()) +
-                                              " bis " +
-                                              Utils.convertToDDMM(validator.getBlockEnd())
-                                          : "Phasierung geladen für Block ? - ?",
-                                      style: const TextStyle(fontSize: 13))),
-                            ))
+                                padding: const EdgeInsets.fromLTRB(10, 8, 5, 10),
+                                child: Text(
+                                  validator != null
+                                      ? "Phasierung geladen für Block " +
+                                          Utils.convertToDDMM(validator.getBlockStart()) +
+                                          " bis " +
+                                          Utils.convertToDDMM(validator.getBlockEnd())
+                                      : "Phasierung geladen für Block ? - ?",
+                                  style: TextStyle(fontSize: 13, color: theme.colors.background),
+                                ),
+                              ),
+                            ),
+                          )
                         : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
                     Center(
                       child: Padding(
@@ -392,7 +398,7 @@ class SettingsScreen extends ConsumerWidget {
                       text: "Github Projekt",
                       onTap: () async {
                         String _url = "https://github.com/floodoo/untis_phasierung";
-                        if (!await launch(_url)) {
+                        if (!await launchUrlString(_url)) {
                           throw "Could not launch $_url";
                         }
                       },
@@ -407,7 +413,7 @@ class SettingsScreen extends ConsumerWidget {
                       onTap: () async {
                         String _url =
                             "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
-                        if (!await launch(_url)) {
+                        if (!await launchUrlString(_url)) {
                           throw "Could not launch $_url";
                         }
                       },
