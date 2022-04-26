@@ -62,7 +62,9 @@ class DeveloperOptions extends ConsumerWidget {
                             FocusManager.instance.primaryFocus?.unfocus();
                             textFieldFocus.unfocus();
                           },
+                          style: TextStyle(color: theme.colors.text),
                           textAlignVertical: TextAlignVertical.center,
+                          cursorColor: theme.colors.text,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -70,13 +72,14 @@ class DeveloperOptions extends ConsumerWidget {
                             errorBorder: InputBorder.none,
                             disabledBorder: InputBorder.none,
                             hintText: ref.watch(settingsService).serverAddress,
+                            hintStyle: TextStyle(color: theme.colors.text),
                             suffixIcon: IconButton(
                               onPressed: () {
                                 ref.read(settingsService).saveServerAdress("flo-dev.me");
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 textFieldFocus.unfocus();
                               },
-                              icon: Icon(Icons.settings_backup_restore, color: theme.colors.textBackground),
+                              icon: Icon(Icons.settings_backup_restore, color: theme.colors.text),
                               tooltip: "Setzte Server URL zurück",
                             ),
                           ),
