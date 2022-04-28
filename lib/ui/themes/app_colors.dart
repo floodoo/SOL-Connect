@@ -117,7 +117,7 @@ class AppColors {
       loginBackgroundGradient1: const Color.fromARGB(255, 13, 43, 177),
       loginBackgroundGradient2: const Color.fromARGB(255, 15, 39, 148),
       timetableCardBackground: Colors.grey.shade800,
-      timetableCardEdge: Color.fromARGB(255, 255, 255, 255),
+      timetableCardEdge: const Color.fromARGB(255, 255, 255, 255),
       // Phase colors
       phaseFree: Colors.green.shade700,
       phaseOrienting: Colors.orange.shade700,
