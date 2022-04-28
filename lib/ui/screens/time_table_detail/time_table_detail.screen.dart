@@ -134,7 +134,8 @@ class TimeTableDetailScreen extends ConsumerWidget {
               ? Padding(
                   padding: const EdgeInsets.fromLTRB(10, 2, 10, 20),
                   child: Card(
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
                       elevation: 10,
                       child: Column(
                         children: [
