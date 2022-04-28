@@ -14,16 +14,17 @@ class CustomTimeTableDayCard extends ConsumerWidget {
     final theme = ref.watch(themeService).theme;
 
     return Card(
-      elevation: 3,
+      elevation: 5,
       shadowColor: Colors.black,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
       color: (cardColor ?? theme.colors.primary),
+      margin: const EdgeInsets.all(2),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(timeTableDay.getShortName(), style: TextStyle(color: theme.colors.text)),
-            Text(timeTableDay.getFormattedDate(), style: TextStyle(color: theme.colors.text)),
+            Text(timeTableDay.getShortName(), style: TextStyle(color: theme.colors.textInverted)),
+            Text(timeTableDay.getFormattedDate(), style: TextStyle(color: theme.colors.textInverted)),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   const AppColors({
     required this.primary,
+    required this.timetableBackground,
     required this.primaryLight,
     required this.background,
     required this.elementBackground,
@@ -50,6 +51,7 @@ class AppColors {
   final Color primary;
   final Color primaryLight;
   final Color background;
+  final Color timetableBackground;
   final Color elementBackground;
   final Color errorBackground;
   final Color text;
@@ -95,9 +97,10 @@ class AppColors {
 
   factory AppColors.light() {
     return AppColors(
-      primary: Colors.blue.shade800,
+      primary: const Color.fromARGB(255, 14, 120, 240),
       primaryLight: Colors.red.shade500,
-      background: const Color.fromARGB(255, 244, 245, 255),
+      background: const Color.fromARGB(255, 225, 225, 230),
+      timetableBackground: const Color.fromARGB(255, 201, 201, 211),
       elementBackground: Colors.grey.shade600,
       errorBackground: Colors.red.shade900,
       text: Colors.white,
@@ -114,7 +117,7 @@ class AppColors {
       loginBackgroundGradient1: const Color.fromARGB(255, 13, 43, 177),
       loginBackgroundGradient2: const Color.fromARGB(255, 15, 39, 148),
       timetableCardBackground: Colors.grey.shade800,
-      timetableCardEdge: const Color(0xff3d3d3d),
+      timetableCardEdge: Color.fromARGB(255, 255, 255, 255),
       // Phase colors
       phaseFree: Colors.green.shade700,
       phaseOrienting: Colors.orange.shade700,
@@ -145,6 +148,7 @@ class AppColors {
         primary: Colors.grey.shade900,
         primaryLight: Colors.grey.shade800,
         background: const Color(0xff2b2e36),
+        timetableBackground: const Color(0xff2b2e36),
         elementBackground: Colors.black,
         errorBackground: Colors.red.shade900,
         text: Colors.white,
