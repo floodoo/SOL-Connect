@@ -4,6 +4,7 @@ import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/schoolclass.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/widgets/teacher_class_card.dart';
@@ -64,8 +65,20 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     final theme = ref.watch(themeService).theme;
 
     List<Widget> list = [];
+    //_timeTableService.session.setTimetableBehaviour(308, PersonTypes.teacher);
     List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 2);
     List<SchoolClass> ownClassesAsTeacher = await _timeTableService.session.getOwnClassesAsClassteacher();
+
+    //Remove duplicates
+    outer:
+    for (SchoolClass own in ownClassesAsTeacher) {
+      for (SchoolClass teaching in allClassesAsTeacher) {
+        if (teaching.id == own.id) {
+          allClassesAsTeacher.remove(teaching);
+          continue outer;
+        }
+      }
+    }
 
     if (searchString != "") {
       allClassesAsTeacher = allClassesAsTeacher
