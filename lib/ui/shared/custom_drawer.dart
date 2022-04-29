@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/login/login.screen.dart';
+import 'package:sol_connect/ui/screens/news/news.screen.dart';
 import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/teacher_classes.screen.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
@@ -92,6 +93,15 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                 Navigator.pushNamed(context, TeacherClassesScreen.routeName);
               },
             ),
+          ),
+          const Divider(),
+          ListTile(
+            title: Text("Benachrichtigungen", style: TextStyle(color: theme.colors.textBackground)),
+            onTap: () async {
+              final news = await session.getNewsData(DateTime.now());
+              final htmlNews = news.getNewsMessages();
+              Navigator.pushNamed(context, NewsScreen.routeName, arguments: htmlNews);
+            },
           ),
           Expanded(child: Container()),
           ListTile(
