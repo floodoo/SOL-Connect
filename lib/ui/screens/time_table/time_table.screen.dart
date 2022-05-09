@@ -37,7 +37,7 @@ class TimeTableScreen extends ConsumerWidget {
             CustomTimeTableCard(
               child: Icon(
                 Icons.calendar_today_rounded,
-                color: theme.colors.icon,
+                color: theme.colors.textInverted,
               ),
               color: theme.colors.timetableCardEdge,
             ),
@@ -244,14 +244,14 @@ class TimeTableScreen extends ConsumerWidget {
               _timeTableService.getTimeTable();
             },
             icon: const Icon(Icons.today),
-            tooltip: "Spring zur aktuellen Woche",
+            tooltip: "Springe zur aktuellen Woche",
           )
         ],
       ),
       drawer: const CustomDrawer(),
       body: LiquidPullToRefresh(
         showChildOpacityTransition: false,
-        color: theme.colors.primary,
+        color: theme.colors.timetableBackground,
         backgroundColor: Colors.white,
         onRefresh: () async {
           ref.read(timeTableService).session.clearManagerCache();
@@ -287,7 +287,7 @@ class TimeTableScreen extends ConsumerWidget {
                 }
               },
               child: Container(
-                color: theme.colors.background,
+                color: theme.colors.timetableBackground,
                 child: (_timeTable == null)
                     ? Center(
                         child: CircularProgressIndicator(

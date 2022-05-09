@@ -341,7 +341,7 @@ class SettingsScreen extends ConsumerWidget {
                                           " bis " +
                                           Utils.convertToDDMM(validator.getBlockEnd())
                                       : "Phasierung geladen für Block ? - ?",
-                                  style: TextStyle(fontSize: 13, color: theme.colors.background),
+                                  style: TextStyle(fontSize: 13, color: theme.colors.textInverted),
                                 ),
                               ),
                             ),
