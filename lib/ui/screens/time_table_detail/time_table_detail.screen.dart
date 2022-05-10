@@ -54,7 +54,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.fromLTRB(10, 10, 10.0, 0),
             child: Card(
               elevation: 10,
               shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
@@ -83,7 +83,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AutoSizeText(
-                                "Lehrer: ${_timeTableHour.teacher.longName}",
+                                "Lehrkraft: ${_timeTableHour.teacher.longName}",
                                 style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -135,13 +135,15 @@ class TimeTableDetailScreen extends ConsumerWidget {
           ),
           _timeTableHour.lessionInformation.isNotEmpty
               ? Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
+                  padding: const EdgeInsets.fromLTRB(10, 2, 10, 20),
                   child: Card(
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
                       elevation: 10,
                       child: Column(
                         children: [
                           Container(
-                              color: Colors.black26,
+                              color: theme.colors.elementBackground,
                               alignment: Alignment.topLeft,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

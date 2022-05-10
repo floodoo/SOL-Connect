@@ -17,10 +17,11 @@ class CustomTimeTableHourCard extends ConsumerWidget {
     int hour = timeTableHour.yIndex + 1;
 
     return Card(
-      elevation: 3,
+      elevation: 5,
       shadowColor: Colors.black,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      color: customColor ?? theme.colors.primary,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
+      color: customColor ?? theme.colors.elementBackground,
+      margin: const EdgeInsets.all(2),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
         child: Column(
@@ -33,7 +34,7 @@ class CustomTimeTableHourCard extends ConsumerWidget {
                   timeTableHour.getStartTimeString(),
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: TextStyle(color: theme.colors.text),
+                  style: TextStyle(color: theme.colors.textInverted),
                 ),
               ),
             ),
@@ -42,7 +43,7 @@ class CustomTimeTableHourCard extends ConsumerWidget {
               child: Center(
                 child: Text(
                   hour.toString(),
-                  style: TextStyle(color: theme.colors.text),
+                  style: TextStyle(color: theme.colors.textInverted),
                 ),
               ),
             ),
@@ -52,7 +53,7 @@ class CustomTimeTableHourCard extends ConsumerWidget {
                 alignment: Alignment.bottomRight,
                 child: Text(
                   timeTableHour.getEndTimeString(),
-                  style: TextStyle(color: theme.colors.text),
+                  style: TextStyle(color: theme.colors.textInverted),
                 ),
               ),
             ),

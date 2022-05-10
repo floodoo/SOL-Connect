@@ -214,6 +214,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                           : IconButton(
                               icon: const Icon(Icons.cloud_upload_rounded),
                               iconSize: 30,
+                              color: theme.colors.textInverted,
                               onPressed: () async {
                                 FilePickerResult? result = await FilePicker.platform.pickFiles(
                                     type: FileType.custom,
@@ -356,6 +357,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                           : Icon(
                               Icons.adaptive.arrow_forward_rounded,
                               size: 30,
+                              color: theme.colors.textInverted,
                             ),
                     ],
                   ),
