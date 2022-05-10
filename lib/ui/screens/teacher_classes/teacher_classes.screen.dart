@@ -69,8 +69,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     List<Widget> list = [];
     //_timeTableService.session.setTimetableBehaviour(308, PersonTypes.teacher);
     List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 2);
-    List<SchoolClass> ownClassesAsTeacher =
-        await _timeTableService.session.getOwnClassesAsClassteacher();
+    List<SchoolClass> ownClassesAsTeacher = await _timeTableService.session.getOwnClassesAsClassteacher();
 
     //Remove duplicates
     outer:
