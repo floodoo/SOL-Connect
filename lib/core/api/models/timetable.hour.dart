@@ -85,7 +85,9 @@ class TimeTableHour {
     start = _parseDate(data['date'].toString(), startAsString);
     end = _parseDate(data['date'].toString(), endAsString);
 
-    _activityType = data['activityType'];
+    if (data['activityType'] != null) {
+      _activityType = data['activityType'];
+    }
 
     if (data['kl'] != null) {
       _schoolClass = TimeTableEntity("kl", data['kl']);

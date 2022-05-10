@@ -30,6 +30,7 @@ class TimeTableService with ChangeNotifier {
   int weekCounter = 0;
 
   dynamic loginException;
+  dynamic timetableLoadingException;
 
   Future<String> getServerAddress() async {
     final prefs = await SharedPreferences.getInstance();
@@ -64,13 +65,13 @@ class TimeTableService with ChangeNotifier {
     await prefs.setString("school", school);
 
     session = UserSession(school: school, appID: "untis-phasierung");
-
     prefs.remove("phasePlan");
 
     try {
       await session.createSession(username: username, password: password);
-
+      //session.setTimetableBehaviour(308, PersonTypes.teacher);
       isLoggedIn = true;
+
       await getTimeTable();
 
       try {
@@ -85,13 +86,13 @@ class TimeTableService with ChangeNotifier {
       log.i("Successfully logged in");
       notifyListeners();
     } catch (error, stacktrace) {
+      isLoading = false;
+      loginException = error;
+
       log.e(stacktrace);
       log.e("Error logging in: $error");
 
       UserSecureStorage.clearPassword();
-
-      isLoading = false;
-      loginException = error;
       notifyListeners();
     }
   }
@@ -112,11 +113,20 @@ class TimeTableService with ChangeNotifier {
   Future<void> getTimeTable({int weekCounter = 0}) async {
     log.d("Getting timetable");
 
-    timeTable = await session.getRelativeTimeTableWeek(weekCounter);
-    if (timeTable != null) {
-      isSchool = !timeTable!.isNonSchoolblockWeek();
-    } else {
+    timetableLoadingException = null;
+
+    try {
+      timeTable = await session.getRelativeTimeTableWeek(weekCounter);
+      if (timeTable != null) {
+        isSchool = !timeTable!.isNonSchoolblockWeek();
+      } else {
+        isSchool = false;
+      }
+    } catch (e, stacktrace) {
+      log.e(stacktrace);
+      log.e(e);
       isSchool = false;
+      timetableLoadingException = e;
     }
 
     await loadPhaseForCurrentTimetable().onError((error, stackTrace) => log.e(error));

@@ -90,12 +90,13 @@ class TimeTableScreen extends ConsumerWidget {
 
           // If holiday  or weekend
         } else if (_timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
-          timeTableList.add(
+          /*timeTableList.add(
             CustomTimeTableCard(
               child: const Text("Holiday"),
               color: theme.colors.phaseUnknown,
             ),
-          );
+          );*/
+          timeTableList.add(CustomTimeTableCard(color: theme.colors.background));
 
           // If no subject
         } else if (_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty) {
@@ -114,6 +115,7 @@ class TimeTableScreen extends ConsumerWidget {
             TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
             if (current.teacher.name == prev.teacher.name &&
                 current.subject.longName == prev.subject.longName &&
+                current.room.name == prev.room.name &&
                 current.getStartTimeString() != "13:30") {
               //Doppelstunde!
               connectTop = true;
@@ -122,7 +124,9 @@ class TimeTableScreen extends ConsumerWidget {
           }
           if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
             TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
-            if (current.teacher.name == next.teacher.name && current.subject.longName == next.subject.longName) {
+            if (current.teacher.name == next.teacher.name &&
+                current.subject.longName == next.subject.longName &&
+                current.room.name == next.room.name) {
               //Doppelstunde!
               connectBottom = true;
             }
@@ -141,13 +145,15 @@ class TimeTableScreen extends ConsumerWidget {
 
             if (index < timeColumnCounter - 1) {
               for (int i = index; i < timeColumnCounter - 1; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name ||
+                    _timeTable.getDays()[schoolDayCounter].getHours()[i].room.name != current.room.name) {
                   return false;
                 }
               }
             } else {
               for (int i = timeColumnCounter - 1; i < index; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name) {
+                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name ||
+                    _timeTable.getDays()[schoolDayCounter].getHours()[i].room.name != current.room.name) {
                   return false;
                 }
               }
@@ -170,7 +176,8 @@ class TimeTableScreen extends ConsumerWidget {
           }
 
           for (int i = 0; i < _timeTable.schoolDayLength; i++) {
-            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name == current.teacher.name) {
+            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name == current.teacher.name &&
+                _timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).room.name == current.room.name) {
               if (connectedToCurrent(i)) {
                 doubleLessonCount++;
                 counter++;
@@ -261,6 +268,8 @@ class TimeTableScreen extends ConsumerWidget {
           builder: (context, ref, child) {
             final _timeTable = ref.watch(timeTableService).timeTable;
             final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
+            final _timetableLoadingException = ref.watch(timeTableService).timetableLoadingException;
+
             List<Widget> timeTableList = [];
             List<Widget> firstTimeTableRowList = [];
 
@@ -287,99 +296,107 @@ class TimeTableScreen extends ConsumerWidget {
                 }
               },
               child: Container(
-                color: theme.colors.timetableBackground,
-                child: (_timeTable == null)
+                color: theme.colors.background,
+                child: (_timeTable == null && _timetableLoadingException == null)
                     ? Center(
                         child: CircularProgressIndicator(
                           color: theme.colors.progressIndicator,
                         ),
                       )
-                    : (ref.watch(timeTableService).isSchool)
-                        ? ListView(
-                            children: [
-                              AnimationLimiter(
-                                child: GridView.count(
-                                  crossAxisCount: 6,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  children: List.generate(
-                                    firstTimeTableRowList.length,
-                                    (int index) {
-                                      return AnimationConfiguration.staggeredGrid(
-                                        position: index,
-                                        duration: const Duration(milliseconds: 220),
-                                        columnCount: 6,
-                                        child: ScaleAnimation(
-                                          child: FadeInAnimation(
-                                            child: firstTimeTableRowList[index],
-                                          ),
-                                        ),
-                                      );
-                                    },
+                    : (_timeTable == null && _timetableLoadingException != null)
+                        ? Padding(
+                            padding: const EdgeInsets.all(30),
+                            child: Text(
+                                "Ein unbekannter Fehler ist aufgetreten:\n\n" +
+                                    _timetableLoadingException.toString() +
+                                    "\n\nBitte logge dich aus und versuche es erneut",
+                                style: TextStyle(color: theme.colors.error, fontSize: 19)))
+                        : (ref.watch(timeTableService).isSchool)
+                            ? ListView(
+                                children: [
+                                  AnimationLimiter(
+                                    child: GridView.count(
+                                      crossAxisCount: 6,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      children: List.generate(
+                                        firstTimeTableRowList.length,
+                                        (int index) {
+                                          return AnimationConfiguration.staggeredGrid(
+                                            position: index,
+                                            duration: const Duration(milliseconds: 220),
+                                            columnCount: 6,
+                                            child: ScaleAnimation(
+                                              child: FadeInAnimation(
+                                                child: firstTimeTableRowList[index],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              AnimationLimiter(
-                                child: GridView.count(
-                                  crossAxisCount: 6,
-                                  crossAxisSpacing: 0,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  childAspectRatio: 0.75,
-                                  children: List.generate(
-                                    timeTableList.length,
-                                    (int index) {
-                                      return AnimationConfiguration.staggeredGrid(
-                                        position: index,
-                                        duration: const Duration(milliseconds: 220),
-                                        columnCount: 6,
-                                        child: ScaleAnimation(
-                                          child: FadeInAnimation(
-                                            child: timeTableList[index],
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                  AnimationLimiter(
+                                    child: GridView.count(
+                                      crossAxisCount: 6,
+                                      crossAxisSpacing: 0,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      childAspectRatio: 0.75,
+                                      children: List.generate(
+                                        timeTableList.length,
+                                        (int index) {
+                                          return AnimationConfiguration.staggeredGrid(
+                                            position: index,
+                                            duration: const Duration(milliseconds: 220),
+                                            columnCount: 6,
+                                            child: ScaleAnimation(
+                                              child: FadeInAnimation(
+                                                child: timeTableList[index],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              AnimationLimiter(
-                                child: GridView.count(
-                                  crossAxisCount: 6,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  children: List.generate(
-                                    firstTimeTableRowList.length,
-                                    (int index) {
-                                      return AnimationConfiguration.staggeredGrid(
-                                        position: index,
-                                        duration: const Duration(milliseconds: 220),
-                                        columnCount: 6,
-                                        child: ScaleAnimation(
-                                          child: FadeInAnimation(
-                                            child: firstTimeTableRowList[index],
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  AnimationLimiter(
+                                    child: GridView.count(
+                                      crossAxisCount: 6,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      children: List.generate(
+                                        firstTimeTableRowList.length,
+                                        (int index) {
+                                          return AnimationConfiguration.staggeredGrid(
+                                            position: index,
+                                            duration: const Duration(milliseconds: 220),
+                                            columnCount: 6,
+                                            child: ScaleAnimation(
+                                              child: FadeInAnimation(
+                                                child: firstTimeTableRowList[index],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                                  child: Text(
-                                    "Keine Schulwoche",
-                                    style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                                      child: Text(
+                                        "Keine Schulwoche",
+                                        style: TextStyle(color: theme.colors.textBackground, fontSize: 20),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
               ),
             );
           },
