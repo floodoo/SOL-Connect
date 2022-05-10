@@ -4,7 +4,6 @@ import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/schoolclass.dart';
-import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/widgets/teacher_class_card.dart';
