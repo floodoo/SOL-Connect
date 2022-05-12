@@ -22,31 +22,31 @@ class TimeTableDetailScreen extends ConsumerWidget {
 
     final MappedPhase? phase = args.phase;
 
-    late TimeTableHour _timeTableHour;
+    late TimeTableHour timeTableHour;
 
     PhaseCodes? firstHalf;
     PhaseCodes? secondHalf;
 
     Color statusCodeColor = Colors.black38;
 
-    _timeTableHour = args.timeTableHour;
+    timeTableHour = args.timeTableHour;
 
     if (phase != null) {
       firstHalf = phase.getFirstHalf();
       secondHalf = phase.getSecondHalf();
     }
 
-    if (_timeTableHour.lessonCode == Codes.noteacher) {
+    if (timeTableHour.lessonCode == Codes.noteacher) {
       statusCodeColor = theme.colors.noTeacher;
-    } else if (_timeTableHour.lessonCode == Codes.cancelled) {
+    } else if (timeTableHour.lessonCode == Codes.cancelled) {
       statusCodeColor = theme.colors.cancelled;
-    } else if (_timeTableHour.isIrregular) {
+    } else if (timeTableHour.isIrregular) {
       statusCodeColor = theme.colors.irregular;
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Stunde " + _timeTableHour.getStartTimeString() + " - " + _timeTableHour.getEndTimeString(),
+        title: Text("Stunde ${timeTableHour.getStartTimeString()} - ${timeTableHour.getEndTimeString()}",
             style: TextStyle(color: theme.colors.text)),
         iconTheme: IconThemeData(color: theme.colors.icon),
         backgroundColor: theme.colors.primary,
@@ -67,7 +67,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                       padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
                       alignment: const Alignment(-1, 0),
                       child: Text(
-                        _timeTableHour.subject.longName,
+                        timeTableHour.subject.longName,
                         textAlign: TextAlign.left,
                         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -83,7 +83,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AutoSizeText(
-                                "Lehrkraft: ${_timeTableHour.teacher.longName}",
+                                "Lehrkraft: ${timeTableHour.teacher.longName}",
                                 style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -92,7 +92,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                 height: 7,
                               ),
                               AutoSizeText(
-                                "Raum: ${_timeTableHour.room.name}",
+                                "Raum: ${timeTableHour.room.name}",
                                 style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -105,7 +105,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               AutoSizeText(
-                                "Typ: ${_timeTableHour.activityType}",
+                                "Typ: ${timeTableHour.activityType}",
                                 style: TextStyle(color: theme.colors.textInverted, fontSize: 17),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -114,12 +114,12 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                 height: 7,
                               ),
                               AutoSizeText(
-                                _timeTableHour.lessonCode.readableName.toString(),
+                                timeTableHour.lessonCode.readableName.toString(),
                                 style: TextStyle(
                                     color: theme.colors.textInverted,
                                     fontSize: 17,
                                     backgroundColor:
-                                        _timeTableHour.lessonCode != Codes.regular ? statusCodeColor : null),
+                                        timeTableHour.lessonCode != Codes.regular ? statusCodeColor : null),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                               ),
@@ -133,7 +133,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
               ),
             ),
           ),
-          _timeTableHour.lessionInformation.isNotEmpty
+          timeTableHour.lessionInformation.isNotEmpty
               ? Padding(
                   padding: const EdgeInsets.fromLTRB(10, 2, 10, 20),
                   child: Card(
@@ -166,7 +166,7 @@ class TimeTableDetailScreen extends ConsumerWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                                     child: Text(
-                                      _timeTableHour.lessionInformation,
+                                      timeTableHour.lessionInformation,
                                     ),
                                   )))
                         ],

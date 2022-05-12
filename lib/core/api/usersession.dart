@@ -115,7 +115,7 @@ class UserSession {
 
     _school = school;
     _schoolBase64 = base64Encode(utf8.encode(school));
-    rpcUrl += apiBaseUrl + "/WebUntis/jsonrpc.do?school=" + school.toString();
+    rpcUrl += "$apiBaseUrl/WebUntis/jsonrpc.do?school=$school";
   }
 
   ///Erstellt eine User Session. Gibt nur ein Future Objekt zurück, welches ausgeführt wird, wenn die Server Antwort kommt
@@ -154,21 +154,15 @@ class UserSession {
         throw ApiConnectionError(
             "hepta.webuntis.com Wartungsarbeiten oder nicht verfügbar. Bitte versuche es später erneut.");
       } else {
-        throw ApiConnectionError("Ein http Fehler ist aufegteten: " +
-            response.errorMessage +
-            "(" +
-            response.httpResponseCode.toString() +
-            ")");
+        throw ApiConnectionError(
+            "Ein http Fehler ist aufegteten: ${response.errorMessage}(${response.httpResponseCode})");
       }
     } else if (response.isError) {
       if (response.rpcResponseCode == RPCResponse.rpcWrongCredentials) {
         throw WrongCredentialsException("Benutzename oder Passwort falsch");
       } else {
-        throw ApiConnectionError("Ein unbekannter Fehler ist aufgetreten: " +
-            response.errorMessage +
-            "(" +
-            response.rpcResponseCode.toString() +
-            ")");
+        throw ApiConnectionError(
+            "Ein unbekannter Fehler ist aufgetreten: ${response.errorMessage}(${response.rpcResponseCode})");
       }
     }
 
@@ -263,7 +257,7 @@ class UserSession {
   Future<News> getNewsData(DateTime date, {bool loadFromCache = true}) async {
     if (!loadFromCache || _cachedNewsData.getRssUrl() == "") {
       http.Response r = await _queryURL(
-          "/WebUntis/api/public/news/newsWidgetData?date=" + Utils.convertToUntisDate(date),
+          "/WebUntis/api/public/news/newsWidgetData?date=${Utils.convertToUntisDate(date)}",
           needsAuthorization: true);
       _cachedNewsData = News(jsonDecode(r.body));
     }
@@ -286,7 +280,7 @@ class UserSession {
         log.i("Dynamic timegrid loaded from WebUntis");
         return Timegrid(jsonDecode(r.body));
       } catch (e) {
-        log.e("Failed to load timegrid: " + e.toString() + "");
+        log.e("Failed to load timegrid: $e");
         return null;
       }
     }
@@ -373,7 +367,7 @@ class UserSession {
   /// Diese müssen in den Header gelegt werden
   String _buildAuthCookie() {
     if (!_sessionValid) return "";
-    return "JSESSIONID=" + _sessionId + "; schoolname=" + _schoolBase64.replaceAll("=", "%3D");
+    return "JSESSIONID=$_sessionId; schoolname=${_schoolBase64.replaceAll("=", "%3D")}";
   }
 
   Future _validateSession() async {
@@ -393,7 +387,7 @@ class UserSession {
       header = {
         'Content-type': 'application/json',
         'Cookie': _buildAuthCookie(),
-        'Authorization': "Bearer " + _bearerToken
+        'Authorization': "Bearer $_bearerToken"
       };
     } else {
       header = {

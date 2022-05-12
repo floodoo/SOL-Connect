@@ -8,8 +8,8 @@ class Utils {
   ///Gibt einen String im Format YYYYMMDD zurück
   static String convertToUntisDate(DateTime date) {
     return ((date.year >= 1000 ? date.year.toString() : "1970") +
-        (date.month < 10 ? '0' + date.month.toString() : date.month.toString()) +
-        (date.day < 10 ? '0' + date.day.toString() : date.day.toString()).toString());
+        (date.month < 10 ? '0${date.month}' : date.month.toString()) +
+        (date.day < 10 ? '0${date.day}' : date.day.toString()).toString());
   }
 
   ///Wandelt einen String im Format YYYYMMDD in ein DateTime Objekt um
@@ -52,7 +52,7 @@ class Utils {
     }
 
     String d = convertToUntisDate(date);
-    return d.substring(6) + "." + d.substring(4, 6) + "." + d.substring(2, 4);
+    return "${d.substring(6)}.${d.substring(4, 6)}.${d.substring(2, 4)}";
   }
 
   ///Gibt true zurück, wenn das Da
@@ -68,6 +68,6 @@ class Utils {
     }
 
     String d = convertToUntisDate(date);
-    return d.substring(6) + "." + d.substring(4, 6);
+    return "${d.substring(6)}.${d.substring(4, 6)}";
   }
 }

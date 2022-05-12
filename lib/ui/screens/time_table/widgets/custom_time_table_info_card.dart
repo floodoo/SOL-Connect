@@ -28,72 +28,68 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
 
-    late TimeTableHour _timeTableHour;
-
-    Color _colorPhaseTop = theme.colors.timetableCardBackground;
-    Color _colorPhaseBottom = theme.colors.timetableCardBackground;
-
-    _timeTableHour = timeTableHour;
+    Color colorPhaseTop = theme.colors.timetableCardBackground;
+    Color colorPhaseBottom = theme.colors.timetableCardBackground;
 
     if (phase != null) {
       // _timeTableHour.lessonCode != Codes.cancelled &&
       //_timeTableHour.lessonCode != Codes.irregular) {
       switch (phase!.getFirstHalf()) {
         case PhaseCodes.free:
-          _colorPhaseTop =
-              _timeTableHour.lessonCode != Codes.regular ? theme.colors.phaseFreeDisabled : theme.colors.phaseFree;
+          colorPhaseTop =
+              timeTableHour.lessonCode != Codes.regular ? theme.colors.phaseFreeDisabled : theme.colors.phaseFree;
           break;
         case PhaseCodes.orienting:
-          _colorPhaseTop = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseTop = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseOrientingDisabled
               : theme.colors.phaseOrienting;
           break;
         case PhaseCodes.reflection:
-          _colorPhaseTop = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseTop = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseReflectionDisabled
               : theme.colors.phaseReflection;
           break;
         case PhaseCodes.structured:
-          _colorPhaseTop = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseTop = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseStructuredDisabled
               : theme.colors.phaseStructured;
           break;
         case PhaseCodes.feedback:
-          _colorPhaseTop = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseTop = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseFeedbackDisabled
               : theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseTop = theme.colors.timetableCardBackground;
+          colorPhaseTop = theme.colors.timetableCardBackground;
       }
 
       switch (phase!.getSecondHalf()) {
         case PhaseCodes.free:
-          _colorPhaseBottom =
-              _timeTableHour.lessonCode != Codes.regular ? theme.colors.phaseFreeDisabled : theme.colors.phaseFree;
+          colorPhaseBottom =
+              timeTableHour.lessonCode != Codes.regular ? theme.colors.phaseFreeDisabled : theme.colors.phaseFree;
           break;
         case PhaseCodes.orienting:
-          _colorPhaseBottom = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseBottom = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseOrientingDisabled
               : theme.colors.phaseOrienting;
           break;
         case PhaseCodes.reflection:
-          _colorPhaseBottom = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseBottom = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseReflectionDisabled
               : theme.colors.phaseReflection;
           break;
         case PhaseCodes.structured:
-          _colorPhaseBottom = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseBottom = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseStructuredDisabled
               : theme.colors.phaseStructured;
           break;
         case PhaseCodes.feedback:
-          _colorPhaseBottom = _timeTableHour.lessonCode != Codes.regular
+          colorPhaseBottom = timeTableHour.lessonCode != Codes.regular
               ? theme.colors.phaseFeedbackDisabled
               : theme.colors.phaseFeedback;
           break;
         default:
-          _colorPhaseBottom = theme.colors.timetableCardBackground;
+          colorPhaseBottom = theme.colors.timetableCardBackground;
       }
     }
 
@@ -154,7 +150,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(connectTop ? 0 : 10.0),
                                 ),
-                                color: _colorPhaseTop,
+                                color: colorPhaseTop,
                               ),
                             ),
                           ),
@@ -166,13 +162,13 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                 borderRadius: BorderRadius.only(
                                   topRight: Radius.circular(connectTop ? 0 : 10.0),
                                 ),
-                                color: (_timeTableHour.lessonCode == Codes.irregular)
+                                color: (timeTableHour.lessonCode == Codes.irregular)
                                     ? theme.colors.irregular
-                                    : (_timeTableHour.lessonCode == Codes.cancelled)
+                                    : (timeTableHour.lessonCode == Codes.cancelled)
                                         ? theme.colors.cancelled
                                         : (!timeTableHour.hasTeacher)
                                             ? theme.colors.noTeacher
-                                            : _colorPhaseTop,
+                                            : colorPhaseTop,
                               ),
                             ),
                           )
@@ -191,7 +187,7 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(connectBottom ? 0 : 10.0),
                                 ),
-                                color: _colorPhaseBottom,
+                                color: colorPhaseBottom,
                               ),
                             ),
                           ),
@@ -203,13 +199,13 @@ class CustomTimeTableInfoCard extends ConsumerWidget {
                                 borderRadius: BorderRadius.only(
                                   bottomRight: Radius.circular(connectBottom ? 0 : 10.0),
                                 ),
-                                color: (_timeTableHour.lessonCode == Codes.irregular)
+                                color: (timeTableHour.lessonCode == Codes.irregular)
                                     ? theme.colors.irregular
-                                    : (_timeTableHour.lessonCode == Codes.cancelled)
+                                    : (timeTableHour.lessonCode == Codes.cancelled)
                                         ? theme.colors.cancelled
                                         : (!timeTableHour.hasTeacher)
                                             ? theme.colors.noTeacher
-                                            : _colorPhaseBottom,
+                                            : colorPhaseBottom,
                               ),
                             ),
                           )

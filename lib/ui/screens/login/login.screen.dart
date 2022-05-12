@@ -50,21 +50,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _timeTableService = ref.read(timeTableService);
+    final timeTableServiceInstance = ref.read(timeTableService);
     final theme = ref.watch(themeService).theme;
-    final _loginError = ref.watch(timeTableService).loginException;
+    final loginError = ref.watch(timeTableService).loginException;
 
     String? loginErrorMessage;
 
-    if (_loginError != null) {
+    if (loginError != null) {
       passwordController.clear();
 
-      if (_loginError is WrongCredentialsException) {
+      if (loginError is WrongCredentialsException) {
         loginErrorMessage = "Benutzername oder Passwort falsch";
-      } else if (_loginError is MissingCredentialsException) {
+      } else if (loginError is MissingCredentialsException) {
         loginErrorMessage = "Fehlender Benutzername oder Passwort";
-      } else if (_loginError is ApiConnectionError) {
-        loginErrorMessage = _loginError.cause;
+      } else if (loginError is ApiConnectionError) {
+        loginErrorMessage = loginError.cause;
       } else {
         loginErrorMessage = "Bitte überprüfe deine Internetverbindung";
       }
@@ -182,12 +182,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               padding: const EdgeInsets.only(top: 15.0),
                               child: InkWell(
                                 onTap: () {
-                                  _timeTableService.login(
+                                  timeTableServiceInstance.login(
                                     username: usernameController.text,
                                     password: passwordController.text,
                                     school: schoolController.text,
                                   );
-                                  _timeTableService.setIsChangingSchool(false);
+                                  timeTableServiceInstance.setIsChangingSchool(false);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
