@@ -121,6 +121,7 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
             onTap: () async {
               final news = await session.getNewsData(DateTime.now());
               final htmlNews = news.getNewsMessages();
+              // ignore: use_build_context_synchronously
               Navigator.pushNamed(context, NewsScreen.routeName, arguments: htmlNews);
             },
           ),

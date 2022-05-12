@@ -14,6 +14,7 @@ class TeacherClassesScreen extends ConsumerStatefulWidget {
   static final routeName = (TeacherClassesScreen).toString();
 
   @override
+  // ignore: library_private_types_in_public_api
   _TeacherClassesScreenState createState() => _TeacherClassesScreenState();
 }
 
@@ -63,13 +64,13 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
   }
 
   Future<List<Widget>> buildAllTeacherClasses(String searchString) async {
-    final _timeTableService = ref.read(timeTableService);
+    final timeTableServiceInstance = ref.read(timeTableService);
     final theme = ref.watch(themeService).theme;
 
     List<Widget> list = [];
     //_timeTableService.session.setTimetableBehaviour(308, PersonTypes.teacher);
-    List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 2);
-    List<SchoolClass> ownClassesAsTeacher = await _timeTableService.session.getOwnClassesAsClassteacher();
+    List<SchoolClass> allClassesAsTeacher = await timeTableServiceInstance.session.getClassesAsTeacher(checkRange: 2);
+    List<SchoolClass> ownClassesAsTeacher = await timeTableServiceInstance.session.getOwnClassesAsClassteacher();
 
     //Remove duplicates
     outer:

@@ -30,11 +30,8 @@ class TimeTableRange {
         }
         return;
       } else {
-        throw Exception("Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: " +
-            response.errorMessage +
-            "(" +
-            response.rpcResponseCode.toString() +
-            ")");
+        throw Exception(
+            "Ein Fehler ist bei der Beschaffung des Stundenplanes aufgetreten: ${response.errorMessage}(${response.rpcResponseCode})");
       }
     }
     //Das "echte" Startdatum. Stundenpläne an sich haben ein festes Datum. Diese können jedoch durch _startDate beeinflusst werden.
@@ -173,16 +170,12 @@ class TimeTableRange {
 
   ///Gibt das Startdatum im Format dd.mm zurück
   String getStartDateString() {
-    return (_startDate.day < 10 ? "0" + _startDate.day.toString() : _startDate.day.toString()) +
-        "." +
-        (_startDate.month < 10 ? "0" + _startDate.toString() : _startDate.month.toString());
+    return "${_startDate.day < 10 ? "0${_startDate.day}" : _startDate.day.toString()}.${_startDate.month < 10 ? "0$_startDate" : _startDate.month.toString()}";
   }
 
   ///Gibt das Enddatum im Format dd.mm zurück
   String getEndDateString() {
-    return (_endDate.day < 10 ? "0" + _endDate.day.toString() : _endDate.day.toString()) +
-        "." +
-        (_endDate.month < 10 ? "0" + _endDate.month.toString() : _endDate.month.toString());
+    return "${_endDate.day < 10 ? "0${_endDate.day}" : _endDate.day.toString()}.${_endDate.month < 10 ? "0${_endDate.month}" : _endDate.month.toString()}";
   }
 
   ///Über den Frame bekommt man zugriff auf Blockdaten, wochenindex etc.

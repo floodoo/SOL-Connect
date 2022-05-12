@@ -171,15 +171,8 @@ class TimeTableHour {
   int get yIndex => _yIndex;
 
   DateTime _parseDate(String date, String time) {
-    return DateTime.parse(date.substring(0, 4) +
-        "-" +
-        date.substring(4, 6) +
-        "-" +
-        date.substring(6, 8) +
-        " " +
-        (time.length == 3
-            ? "0" + time.substring(0, 1) + ":" + time.substring(1) + ":00"
-            : time.substring(0, 2) + ":" + time.substring(2) + ":00"));
+    return DateTime.parse(
+        "${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)} ${time.length == 3 ? "0${time.substring(0, 1)}:${time.substring(1)}:00" : "${time.substring(0, 2)}:${time.substring(2)}:00"}");
   }
 
   ///Gibt den Index der Stunde zurück. Abhängig von der Startzeit der Stunde, nicht von der fertigen Tabelle
@@ -241,27 +234,21 @@ class TimeTableHour {
 
   ///Die Startzeit im Format HH:mm
   String getStartTimeString() {
-    return start.hour.toString() + ":" + (start.minute >= 10 ? start.minute.toString() : start.minute.toString() + "0");
+    return "${start.hour}:${start.minute >= 10 ? start.minute.toString() : "${start.minute}0"}";
   }
 
   ///Die Endzeit im Format HH:mm
   String getEndTimeString() {
-    return end.hour.toString() + ":" + (end.minute >= 10 ? end.minute.toString() : end.minute.toString() + "0");
+    return "${end.hour}:${end.minute >= 10 ? end.minute.toString() : "${end.minute}0"}";
   }
 
   ///Der Titel der Stunde. Im Format HH:mm - HH:mm
   String getTitle() {
-    return (start.hour < 10 ? "0" + start.hour.toString() : start.hour.toString()) +
-        ":" +
-        (start.minute < 10 ? "0" + start.minute.toString() : start.minute.toString()) +
-        " - " +
-        (end.hour < 10 ? "0" + end.hour.toString() : end.hour.toString()) +
-        ":" +
-        (end.minute < 10 ? "0" + end.minute.toString() : end.minute.toString());
+    return "${start.hour < 10 ? "0${start.hour}" : start.hour.toString()}:${start.minute < 10 ? "0${start.minute}" : start.minute.toString()} - ${end.hour < 10 ? "0${end.hour}" : end.hour.toString()}:${end.minute < 10 ? "0${end.minute}" : end.minute.toString()}";
   }
 
   @override
   String toString() {
-    return subject.name + " (" + teacher.name + ")" + " Code: " + lessonCode.name;
+    return "${subject.name} (${teacher.name}) Code: ${lessonCode.name}";
   }
 }

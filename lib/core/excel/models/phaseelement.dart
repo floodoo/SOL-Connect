@@ -95,6 +95,6 @@ class PhaseColor {
 
   @override
   String toString() {
-    return r.toString() + ", " + g.toString() + ", " + b.toString();
+    return "$r, $g, $b";
   }
 }

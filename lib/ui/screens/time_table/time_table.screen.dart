@@ -20,34 +20,33 @@ class TimeTableScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeService).theme;
-    final _timeTableService = ref.read(timeTableService);
-    final _isDebugTimetable = ref.read(timeTableService).session.isDemoSession;
+    final timeTableServiceInstance = ref.read(timeTableService);
+    final isDebugTimetable = ref.read(timeTableService).session.isDemoSession;
     String title = "Stundenplan";
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final arguments = ModalRoute.of(context)!.settings.arguments as Map;
       title = arguments['title'];
     }
 
-    List<Widget> buildFirstTimeTableRow(TimeTableRange _timeTable, AppTheme theme) {
+    List<Widget> buildFirstTimeTableRow(TimeTableRange timeTable, AppTheme theme) {
       List<Widget> timeTableList = [];
       for (int i = 0; i <= 5; i++) {
         // Icon in the top right corner
         if (i == 0) {
           timeTableList.add(
             CustomTimeTableCard(
+              color: theme.colors.timetableCardEdge,
               child: Icon(
                 Icons.calendar_today_rounded,
                 color: theme.colors.textInverted,
               ),
-              color: theme.colors.timetableCardEdge,
             ),
           );
 
           // The first row
         } else {
           timeTableList.add(
-            CustomTimeTableDayCard(
-                timeTableDay: _timeTable.getDays()[i - 1], cardColor: theme.colors.timetableCardEdge),
+            CustomTimeTableDayCard(timeTableDay: timeTable.getDays()[i - 1], cardColor: theme.colors.timetableCardEdge),
           );
         }
       }
@@ -55,8 +54,8 @@ class TimeTableScreen extends ConsumerWidget {
     }
 
     List<Widget> buildTimeTable(
-      TimeTableRange _timeTable,
-      MergedTimeTable? _phasedTimeTable,
+      TimeTableRange timeTable,
+      MergedTimeTable? phasedTimeTable,
       AppTheme theme,
       BuildContext context,
     ) {
@@ -64,7 +63,7 @@ class TimeTableScreen extends ConsumerWidget {
       int timeColumnCounter = 0;
       int schoolDayCounter = 0;
 
-      for (int i = 6; i < 6 * _timeTable.schoolDayLength + 6; i++) {
+      for (int i = 6; i < 6 * timeTable.schoolDayLength + 6; i++) {
         // don't calculate first row
         if (i > 7) {
           //reset counter for the first left column
@@ -83,13 +82,13 @@ class TimeTableScreen extends ConsumerWidget {
         if (i % 6 == 0) {
           timeTableList.add(
             CustomTimeTableHourCard(
-              timeTableHour: _timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
+              timeTableHour: timeTable.getDays()[0].getHours()[timeColumnCounter - 1],
               customColor: theme.colors.timetableCardEdge,
             ),
           );
 
           // If holiday  or weekend
-        } else if (_timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
+        } else if (timeTable.getDays()[schoolDayCounter].isHolidayOrWeekend()) {
           /*timeTableList.add(
             CustomTimeTableCard(
               child: const Text("Holiday"),
@@ -99,7 +98,7 @@ class TimeTableScreen extends ConsumerWidget {
           timeTableList.add(CustomTimeTableCard(color: theme.colors.background));
 
           // If no subject
-        } else if (_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty) {
+        } else if (timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1].isEmpty) {
           timeTableList.add(CustomTimeTableCard(color: theme.colors.background));
 
           // subject
@@ -109,10 +108,10 @@ class TimeTableScreen extends ConsumerWidget {
           bool doubleLesson = false;
           //bool hourBeforeLunch = false;
 
-          TimeTableHour current = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1];
+          TimeTableHour current = timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1];
 
           if (timeColumnCounter - 1 > 0) {
-            TimeTableHour prev = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
+            TimeTableHour prev = timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 2];
             if (current.teacher.name == prev.teacher.name &&
                 current.subject.longName == prev.subject.longName &&
                 current.room.name == prev.room.name &&
@@ -122,8 +121,8 @@ class TimeTableScreen extends ConsumerWidget {
               doubleLesson = true;
             }
           }
-          if (timeColumnCounter < _timeTable.getDays()[schoolDayCounter].getHours().length) {
-            TimeTableHour next = _timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
+          if (timeColumnCounter < timeTable.getDays()[schoolDayCounter].getHours().length) {
+            TimeTableHour next = timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter];
             if (current.teacher.name == next.teacher.name &&
                 current.subject.longName == next.subject.longName &&
                 current.room.name == next.room.name) {
@@ -145,15 +144,15 @@ class TimeTableScreen extends ConsumerWidget {
 
             if (index < timeColumnCounter - 1) {
               for (int i = index; i < timeColumnCounter - 1; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name ||
-                    _timeTable.getDays()[schoolDayCounter].getHours()[i].room.name != current.room.name) {
+                if (timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name ||
+                    timeTable.getDays()[schoolDayCounter].getHours()[i].room.name != current.room.name) {
                   return false;
                 }
               }
             } else {
               for (int i = timeColumnCounter - 1; i < index; i++) {
-                if (_timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name ||
-                    _timeTable.getDays()[schoolDayCounter].getHours()[i].room.name != current.room.name) {
+                if (timeTable.getDays()[schoolDayCounter].getHours()[i].teacher.name != current.teacher.name ||
+                    timeTable.getDays()[schoolDayCounter].getHours()[i].room.name != current.room.name) {
                   return false;
                 }
               }
@@ -175,9 +174,9 @@ class TimeTableScreen extends ConsumerWidget {
             roomDisplay = current.replacement.room.name;
           }
 
-          for (int i = 0; i < _timeTable.schoolDayLength; i++) {
-            if (_timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name == current.teacher.name &&
-                _timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).room.name == current.room.name) {
+          for (int i = 0; i < timeTable.schoolDayLength; i++) {
+            if (timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).teacher.name == current.teacher.name &&
+                timeTable.getHourByIndex(xIndex: schoolDayCounter, yIndex: i).room.name == current.room.name) {
               if (connectedToCurrent(i)) {
                 doubleLessonCount++;
                 counter++;
@@ -217,9 +216,9 @@ class TimeTableScreen extends ConsumerWidget {
           timeTableList.add(
             CustomTimeTableInfoCard(
               timeTableHour: current,
-              phase: (_phasedTimeTable != null)
-                  ? _phasedTimeTable
-                      .getPhaseForHour(_timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1])
+              phase: (phasedTimeTable != null)
+                  ? phasedTimeTable
+                      .getPhaseForHour(timeTable.getDays()[schoolDayCounter].getHours()[timeColumnCounter - 1])
                   : null,
               connectBottom: connectBottom,
               connectTop: connectTop,
@@ -233,7 +232,7 @@ class TimeTableScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: _isDebugTimetable
+        title: isDebugTimetable
             ? Column(
                 children: [
                   Text(title),
@@ -246,9 +245,9 @@ class TimeTableScreen extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
-              _timeTableService.resetWeekCounter();
-              _timeTableService.resetTimeTable();
-              _timeTableService.getTimeTable();
+              timeTableServiceInstance.resetWeekCounter();
+              timeTableServiceInstance.resetTimeTable();
+              timeTableServiceInstance.getTimeTable();
             },
             icon: const Icon(Icons.today),
             tooltip: "Springe zur aktuellen Woche",
@@ -262,22 +261,22 @@ class TimeTableScreen extends ConsumerWidget {
         backgroundColor: Colors.white,
         onRefresh: () async {
           ref.read(timeTableService).session.clearManagerCache();
-          ref.read(timeTableService).getTimeTable(weekCounter: _timeTableService.weekCounter);
+          ref.read(timeTableService).getTimeTable(weekCounter: timeTableServiceInstance.weekCounter);
         },
         child: HookConsumer(
           builder: (context, ref, child) {
-            final _timeTable = ref.watch(timeTableService).timeTable;
-            final _phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
-            final _timetableLoadingException = ref.watch(timeTableService).timetableLoadingException;
+            final timeTable = ref.watch(timeTableService).timeTable;
+            final phaseTimeTable = ref.watch(timeTableService).phaseTimeTable;
+            final timetableLoadingException = ref.watch(timeTableService).timetableLoadingException;
 
             List<Widget> timeTableList = [];
             List<Widget> firstTimeTableRowList = [];
 
-            if (_timeTable != null) {
-              firstTimeTableRowList = buildFirstTimeTableRow(_timeTable, theme);
+            if (timeTable != null) {
+              firstTimeTableRowList = buildFirstTimeTableRow(timeTable, theme);
               timeTableList = buildTimeTable(
-                _timeTable,
-                _phaseTimeTable,
+                timeTable,
+                phaseTimeTable,
                 theme,
                 context,
               );
@@ -285,31 +284,29 @@ class TimeTableScreen extends ConsumerWidget {
 
             return GestureDetector(
               onHorizontalDragEnd: (dragEndDetails) {
-                if (dragEndDetails.primaryVelocity! < 0 && _timeTable != null) {
+                if (dragEndDetails.primaryVelocity! < 0 && timeTable != null) {
                   // Next page
-                  _timeTableService.resetTimeTable();
-                  _timeTableService.getTimeTableNextWeek();
-                } else if (dragEndDetails.primaryVelocity! > 0 && _timeTable != null) {
+                  timeTableServiceInstance.resetTimeTable();
+                  timeTableServiceInstance.getTimeTableNextWeek();
+                } else if (dragEndDetails.primaryVelocity! > 0 && timeTable != null) {
                   // Previous page
-                  _timeTableService.resetTimeTable();
-                  _timeTableService.getTimeTablePreviousWeek();
+                  timeTableServiceInstance.resetTimeTable();
+                  timeTableServiceInstance.getTimeTablePreviousWeek();
                 }
               },
               child: Container(
                 color: theme.colors.background,
-                child: (_timeTable == null && _timetableLoadingException == null)
+                child: (timeTable == null && timetableLoadingException == null)
                     ? Center(
                         child: CircularProgressIndicator(
                           color: theme.colors.progressIndicator,
                         ),
                       )
-                    : (_timeTable == null && _timetableLoadingException != null)
+                    : (timeTable == null && timetableLoadingException != null)
                         ? Padding(
                             padding: const EdgeInsets.all(30),
                             child: Text(
-                                "Ein unbekannter Fehler ist aufgetreten:\n\n" +
-                                    _timetableLoadingException.toString() +
-                                    "\n\nBitte logge dich aus und versuche es erneut",
+                                "Ein unbekannter Fehler ist aufgetreten:\n\n$timetableLoadingException\n\nBitte logge dich aus und versuche es erneut",
                                 style: TextStyle(color: theme.colors.error, fontSize: 19)))
                         : (ref.watch(timeTableService).isSchool)
                             ? ListView(

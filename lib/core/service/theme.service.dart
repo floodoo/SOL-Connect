@@ -23,7 +23,7 @@ class ThemeService with ChangeNotifier {
   void loadAppearence() async {
     if (loaded == false) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      var brightness = SchedulerBinding.instance!.window.platformBrightness;
+      var brightness = SchedulerBinding.instance.window.platformBrightness;
       bool lightMode = prefs.getBool("lightMode") ?? brightness == Brightness.light;
       prefs.setBool("lightMode", lightMode);
       _theme = lightMode ? AppTheme.light() : AppTheme.dark();

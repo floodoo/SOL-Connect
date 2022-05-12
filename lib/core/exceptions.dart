@@ -8,7 +8,7 @@ class FailedToEstablishSOLCServerConnection implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -18,7 +18,7 @@ class ExcelConversionConnectionError implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -28,7 +28,7 @@ class ExcelConversionAlreadyActive implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -42,7 +42,7 @@ class SOLCServerError implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -52,7 +52,7 @@ class ExcelMergeNonSchoolBlockException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -62,7 +62,7 @@ class ExcelMergeTimetableNotMatchException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -72,7 +72,7 @@ class ExcelMergeTimetableNotFound implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -83,7 +83,7 @@ class ExcelMergeFileNotVerified implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -93,7 +93,7 @@ class FailedToFetchUserdata implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -103,7 +103,7 @@ class UserAlreadyLoggedInException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -113,7 +113,7 @@ class WrongCredentialsException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -123,7 +123,7 @@ class MissingCredentialsException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -133,7 +133,7 @@ class ApiConnectionError implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -143,7 +143,7 @@ class FailedToFetchNewsException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -153,7 +153,7 @@ class CurrentPhaseplanOutOfRange implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -163,7 +163,7 @@ class InsufficientPermissionsException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -173,7 +173,7 @@ class UploadFileNotFoundException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -183,7 +183,7 @@ class UploadFileNotSpecifiedException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -193,7 +193,7 @@ class DownloadFileNotFoundException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -203,7 +203,7 @@ class NextBlockStartNotInRangeException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }
 
@@ -213,6 +213,6 @@ class NextBlockEndNotInRangeException implements Exception {
 
   @override
   String toString() {
-    return runtimeType.toString() + ": " + cause;
+    return "$runtimeType: $cause";
   }
 }

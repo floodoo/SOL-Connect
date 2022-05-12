@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -23,6 +25,7 @@ class TeacherClassCard extends StatefulHookConsumerWidget {
   final PhaseStatus? phaseStatus;
 
   @override
+  // ignore: library_private_types_in_public_api
   _TeacherClassCardState createState() => _TeacherClassCardState();
 }
 
@@ -59,7 +62,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
   Widget build(BuildContext context) {
     final Logger log = getLogger();
     final theme = ref.watch(themeService).theme;
-    final _timeTableService = ref.read(timeTableService);
+    final timeTableServiceInstance = ref.read(timeTableService);
     final DateTime now = DateTime.now();
 
     return Padding(
@@ -78,12 +81,8 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                 clearSnachbars: true,
                 duration: const Duration(seconds: 15));
 
-            log.d("Virtuelle Phasierung für schoolClass: " +
-                widget.schoolClass.displayName +
-                " (" +
-                widget.schoolClass.id.toString() +
-                ")" +
-                " herunterladen ...");
+            log.d(
+                "Virtuelle Phasierung für schoolClass: ${widget.schoolClass.displayName} (${widget.schoolClass.id}) herunterladen ...");
 
             List<int> bytes =
                 await ref.read(timeTableService).apiManager!.downloadVirtualSheet(schoolClassId: widget.schoolClass.id);
@@ -137,9 +136,9 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                 clearSnachbars: true);
           }
 
-          _timeTableService.resetTimeTable();
-          _timeTableService.weekCounter = 0;
-          _timeTableService.getTimeTable();
+          timeTableServiceInstance.resetTimeTable();
+          timeTableServiceInstance.weekCounter = 0;
+          timeTableServiceInstance.getTimeTable();
 
           Navigator.pushNamedAndRemoveUntil(
             context,
@@ -221,7 +220,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                     type: FileType.custom,
                                     allowedExtensions: ["xlsx"],
                                     allowMultiple: false,
-                                    dialogTitle: "Phasierung hochladen: " + widget.schoolClass.displayName);
+                                    dialogTitle: "Phasierung hochladen: ${widget.schoolClass.displayName}");
 
                                 if (result != null) {
                                   setState(() {
@@ -243,7 +242,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                     File(result.files.first.path!).readAsBytesSync(),
                                   );
 
-                                  log.d("Verifying sheet for class '" + widget.schoolClass.displayName + "'");
+                                  log.d("Verifying sheet for class '${widget.schoolClass.displayName}'");
 
                                   String errorMessage = "";
                                   try {
@@ -277,7 +276,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                         "Phasierung passt nicht zum Stundenplan der ${widget.schoolClass.displayName}";
                                   } catch (e) {
                                     log.e(e.toString());
-                                    errorMessage = "Unbekannter Fehler: " + e.toString();
+                                    errorMessage = "Unbekannter Fehler: $e";
                                   }
 
                                   if (errorMessage.isNotEmpty) {
@@ -289,7 +288,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                         clearSnachbars: true,
                                         duration: const Duration(seconds: 7));
 
-                                    log.e("Failed to verify sheet: " + errorMessage);
+                                    log.e("Failed to verify sheet: $errorMessage");
                                     session.resetTimetableBehaviour();
 
                                     setState(() {

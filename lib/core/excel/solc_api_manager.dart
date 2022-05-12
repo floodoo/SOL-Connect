@@ -47,7 +47,7 @@ class SOLCApiManager {
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   Future<PhaseStatus?> getSchoolClassInfo({required int schoolClassId}) async {
-    SOLCResponse? response = await _querySOLC(command: "phase-status <" + schoolClassId.toString() + ">");
+    SOLCResponse? response = await _querySOLC(command: "phase-status <$schoolClassId>");
     if (response != null) {
       return PhaseStatus(response.payload);
     }
@@ -56,14 +56,14 @@ class SOLCApiManager {
 
   Future<List<int>> downloadVirtualSheet({required int schoolClassId}) async {
     List<int> bytes = [];
-    await _querySOLC(command: "download-file <" + schoolClassId.toString() + ">", downloadBytes: bytes);
+    await _querySOLC(command: "download-file <$schoolClassId>", downloadBytes: bytes);
     return bytes;
   }
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   Future<void> downloadSheet({required int schoolClassId, required File targetFile}) async {
     List<int> bytes = [];
-    await _querySOLC(command: "download-file <" + schoolClassId.toString() + ">", downloadBytes: bytes);
+    await _querySOLC(command: "download-file <$schoolClassId>", downloadBytes: bytes);
 
     await targetFile.create(recursive: true);
     await targetFile.writeAsBytes(bytes);
@@ -80,22 +80,8 @@ class SOLCApiManager {
       required File file}) async {
     await _querySOLC(
         uploadFileSource: file,
-        command: "upload-file "
-                "<" +
-            authenticatedUser.sessionid +
-            ">"
-                " <" +
-            authenticatedUser.bearerToken +
-            ">"
-                " <" +
-            schoolClassId.toString() +
-            ">"
-                " <" +
-            Utils.convertToUntisDate(blockStart) +
-            ">"
-                " <" +
-            Utils.convertToUntisDate(blockEnd) +
-            ">");
+        command:
+            "upload-file <${authenticatedUser.sessionid}> <${authenticatedUser.bearerToken}> <$schoolClassId> <${Utils.convertToUntisDate(blockStart)}> <${Utils.convertToUntisDate(blockEnd)}>");
     await authenticatedUser.regenerateSession();
   }
 
@@ -155,8 +141,8 @@ class SOLCApiManager {
 
           SOLCResponse response = SOLCResponse.handle(decodedMessage);
           if (response.isError) {
-            throwException(SOLCServerError(
-                response.errorMessage + " (SOLC Error Code: " + response.responseCode.toString() + ")", response));
+            throwException(
+                SOLCServerError("${response.errorMessage} (SOLC Error Code: ${response.responseCode})", response));
             return;
           }
 
@@ -205,7 +191,7 @@ class SOLCApiManager {
     } on Exception catch (error) {
       _activeSockets--;
       throw FailedToEstablishSOLCServerConnection(
-          "Konnte keine Verbindung zum Konvertierungsserver " + _inetAddress + " herstellen: " + error.toString());
+          "Konnte keine Verbindung zum Konvertierungsserver $_inetAddress herstellen: $error");
     }
 
     if (exception != null) {

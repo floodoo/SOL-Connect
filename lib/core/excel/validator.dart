@@ -126,10 +126,7 @@ class ExcelValidator {
     var nextBlockweeks = await timeTable.getBoundFrame().getManager().getNextBlockWeeks();
 
     for (TimetableFrame blockWeek in nextBlockweeks) {
-      log.d("Verifying block week phase merge " +
-          blockWeek.getFrameStart().toString() +
-          " -> " +
-          blockWeek.getFrameEnd().toString());
+      log.d("Verifying block week phase merge ${blockWeek.getFrameStart()} -> ${blockWeek.getFrameEnd()}");
 
       await blockWeek.getCurrentBlockWeek();
       await mergeExcelWithTimetable(await blockWeek.getWeekData());
@@ -274,7 +271,7 @@ class ExcelValidator {
 
           if (decodedMessage['error'] != null) {
             throw SOLCServerError(
-                "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + decodedMessage['error']);
+                "Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: ${decodedMessage['error']}");
           }
 
           if (decodedMessage['message'] != null) {
@@ -288,7 +285,7 @@ class ExcelValidator {
         },
         onError: (error) {
           _queryActive = false;
-          throw SOLCServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten: " + error);
+          throw SOLCServerError("Ein Fehler ist bei der Beschaffung der Zellenfarben aufgetreten:  $error");
         },
         onDone: () {
           //Alles OK!
@@ -302,10 +299,8 @@ class ExcelValidator {
       return _colorData;
     } on Exception catch (error) {
       _queryActive = false;
-      throw FailedToEstablishSOLCServerConnection("Konnte keine Verbindung zum Konvertierungsserver " +
-          _manager.inetAddress +
-          " herstellen: " +
-          error.toString());
+      throw FailedToEstablishSOLCServerConnection(
+          "Konnte keine Verbindung zum Konvertierungsserver ${_manager.inetAddress} herstellen: $error");
     }
   }
 

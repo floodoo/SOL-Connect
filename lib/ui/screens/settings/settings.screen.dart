@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -177,7 +179,7 @@ class SettingsScreen extends ConsumerWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               _createSnackbar("Phasierung herunterladen ...", theme.colors.elementBackground),
                             );
-                            log.d("Downloading sheet for class " + schoolClassId.toString() + " ...");
+                            log.d("Downloading sheet for class $schoolClassId ...");
                             List<int> bytes;
                             try {
                               bytes = await manager.downloadVirtualSheet(schoolClassId: schoolClassId);
@@ -303,7 +305,7 @@ class SettingsScreen extends ConsumerWidget {
                               errorMessage = e.toString();
                             } catch (e) {
                               log.e(e.toString());
-                              errorMessage = "Unbekannter Fehler: " + e.toString();
+                              errorMessage = "Unbekannter Fehler: $e";
                             }
 
                             ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
@@ -336,10 +338,7 @@ class SettingsScreen extends ConsumerWidget {
                                 padding: const EdgeInsets.fromLTRB(10, 8, 5, 10),
                                 child: Text(
                                   validator != null
-                                      ? "Phasierung geladen für Block " +
-                                          Utils.convertToDDMM(validator.getBlockStart()) +
-                                          " bis " +
-                                          Utils.convertToDDMM(validator.getBlockEnd())
+                                      ? "Phasierung geladen für Block ${Utils.convertToDDMM(validator.getBlockStart())} bis ${Utils.convertToDDMM(validator.getBlockEnd())}"
                                       : "Phasierung geladen für Block ? - ?",
                                   style: TextStyle(fontSize: 13, color: theme.colors.textInverted),
                                 ),
@@ -397,9 +396,9 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       text: "Github Projekt",
                       onTap: () async {
-                        String _url = "https://github.com/floodoo/untis_phasierung";
-                        if (!await launchUrlString(_url)) {
-                          throw "Could not launch $_url";
+                        String url = "https://github.com/floodoo/untis_phasierung";
+                        if (!await launchUrlString(url)) {
+                          throw "Could not launch $url";
                         }
                       },
                     ),
@@ -411,10 +410,10 @@ class SettingsScreen extends ConsumerWidget {
                       padTop: 10,
                       text: "Fehler Melden",
                       onTap: () async {
-                        String _url =
+                        String url =
                             "https://github.com/floodoo/untis_phasierung/issues/new?assignees=&labels=bug&title=Untis%20Phasierung%20Fehlerbericht";
-                        if (!await launchUrlString(_url)) {
-                          throw "Could not launch $_url";
+                        if (!await launchUrlString(url)) {
+                          throw "Could not launch $url";
                         }
                       },
                     ),
