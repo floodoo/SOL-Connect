@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/login/login.screen.dart';
+import 'package:sol_connect/ui/screens/news/news.screen.dart';
 import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/teacher_classes.screen.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
@@ -39,6 +40,7 @@ class MyApp extends ConsumerWidget {
         TimeTableDetailScreen.routeName: (context) => const TimeTableDetailScreen(),
         SettingsScreen.routeName: (context) => SettingsScreen(),
         TeacherClassesScreen.routeName: (context) => const TeacherClassesScreen(),
+        NewsScreen.routeName: (context) => const NewsScreen(),
       },
     );
   }

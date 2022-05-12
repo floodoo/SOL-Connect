@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/login/login.screen.dart';
+import 'package:sol_connect/ui/screens/news/news.screen.dart';
 import 'package:sol_connect/ui/screens/settings/settings.screen.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/teacher_classes.screen.dart';
 import 'package:sol_connect/ui/screens/time_table/time_table.screen.dart';
@@ -18,10 +19,12 @@ class CustomDrawer extends StatefulHookConsumerWidget {
 class _CustomDrawerState extends ConsumerState<CustomDrawer> {
   String username = "";
   String school = "";
+  int newsLength = 0;
 
   @override
   void initState() {
     getUserDataFromStorage();
+    getNewsLength();
     super.initState();
   }
 
@@ -29,6 +32,12 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
     username = await ref.read(timeTableService).getUserName();
     school = await ref.read(timeTableService).getSchool();
     // setState to update username and school
+    setState(() {});
+  }
+
+  Future<void> getNewsLength() async {
+    final news = await ref.read(timeTableService).session.getNewsData(DateTime.now());
+    newsLength = news.getNewsMessages().length;
     setState(() {});
   }
 
@@ -92,6 +101,28 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                 Navigator.pushNamed(context, TeacherClassesScreen.routeName);
               },
             ),
+          ),
+          const Divider(),
+          ListTile(
+            title: Text("Benachrichtigungen", style: TextStyle(color: theme.colors.textBackground)),
+            trailing: newsLength != 0
+                ? Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: theme.colors.primary,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      newsLength.toString(),
+                      style: TextStyle(color: theme.colors.text),
+                    ),
+                  )
+                : null,
+            onTap: () async {
+              final news = await session.getNewsData(DateTime.now());
+              final htmlNews = news.getNewsMessages();
+              Navigator.pushNamed(context, NewsScreen.routeName, arguments: htmlNews);
+            },
           ),
           Expanded(child: Container()),
           ListTile(

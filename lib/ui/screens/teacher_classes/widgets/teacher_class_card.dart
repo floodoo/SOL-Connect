@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -184,17 +185,17 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                 ),
               ),
               if (widget.phaseStatus != null)
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        Text("Gültig von " + Utils.convertToDDMMYY(widget.phaseStatus!.blockStart)),
-                        Text(
-                          "bis " + Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd),
-                        )
-                      ],
-                    )
-                  ],
+                Flexible(
+                  child: Row(
+                    children: [
+                      Column(
+                        children: [
+                          Text(Utils.convertToDDMMYY(widget.phaseStatus!.blockStart)),
+                          Text(Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd))
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               Expanded(
                 child: Padding(
@@ -343,14 +344,18 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                               },
                             ),
                       const SizedBox(
-                        width: 15,
+                        width: 10,
                       ),
                       isLoading
                           ? Padding(
                               padding: const EdgeInsets.only(right: 10.0),
                               child: Center(
-                                child: CircularProgressIndicator(
-                                  color: theme.colors.progressIndicator,
+                                child: SizedBox(
+                                  width: 28,
+                                  height: 28,
+                                  child: CircularProgressIndicator(
+                                    color: theme.colors.textBackground,
+                                  ),
                                 ),
                               ),
                             )
