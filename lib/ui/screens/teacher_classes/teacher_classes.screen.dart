@@ -37,8 +37,11 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
       showClearButton: true,
       clearOnSubmit: false,
       buildDefaultAppBar: (BuildContext context) {
+        final theme = ref.watch(themeService).theme;
+
         return AppBar(
           title: const Text("Meine Klassen"),
+          backgroundColor: theme.colors.primary,
           actions: [
             searchString == ""
                 ? searchBar.getSearchAction(context)
@@ -64,8 +67,20 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     final theme = ref.watch(themeService).theme;
 
     List<Widget> list = [];
+    //_timeTableService.session.setTimetableBehaviour(308, PersonTypes.teacher);
     List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 2);
     List<SchoolClass> ownClassesAsTeacher = await _timeTableService.session.getOwnClassesAsClassteacher();
+
+    //Remove duplicates
+    outer:
+    for (SchoolClass own in ownClassesAsTeacher) {
+      for (SchoolClass teaching in allClassesAsTeacher) {
+        if (teaching.id == own.id) {
+          allClassesAsTeacher.remove(teaching);
+          continue outer;
+        }
+      }
+    }
 
     if (searchString != "") {
       allClassesAsTeacher = allClassesAsTeacher
@@ -81,7 +96,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
           padding: EdgeInsets.fromLTRB(20, 20, 20.0, 5),
           child: Center(
             child: AutoSizeText(
-              "Ihre Klassen als Klassenlehrer:in",
+              "Ihre Klassen als Klassenleitung",
               style: TextStyle(fontSize: 20),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

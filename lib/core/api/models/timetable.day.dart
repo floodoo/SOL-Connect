@@ -27,31 +27,31 @@ class TimeTableDay {
     switch (_date.weekday) {
       case 1:
         _dayName = "Montag";
-        _shortDayName = "Mo";
+        _shortDayName = "Mo.";
         break;
       case 2:
         _dayName = "Dienstag";
-        _shortDayName = "Di";
+        _shortDayName = "Di.";
         break;
       case 3:
         _dayName = "Mittwoch";
-        _shortDayName = "Mi";
+        _shortDayName = "Mi.";
         break;
       case 4:
         _dayName = "Donnerstag";
-        _shortDayName = "Do";
+        _shortDayName = "Do.";
         break;
       case 5:
         _dayName = "Freitag";
-        _shortDayName = "Fr";
+        _shortDayName = "Fr.";
         break;
       case 6:
         _dayName = "Samstag";
-        _shortDayName = "Sa";
+        _shortDayName = "Sa.";
         break;
       case 7:
         _dayName = "Sonntag";
-        _shortDayName = "So";
+        _shortDayName = "So.";
         break;
       default:
         "";

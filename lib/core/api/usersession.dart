@@ -78,9 +78,9 @@ class UserSession {
 
   String _appName = "adw8638ordfgq37qp98";
   String _sessionId = "";
-  int _personId = -1;
+  int _loggedPersonId = -1;
   int _schoolClassId = -1;
-  PersonTypes _type = PersonTypes.unknown;
+  PersonTypes _loggedPersonType = PersonTypes.unknown;
 
   int _timetablePersonId = -1;
   PersonTypes _timetablePersonType = PersonTypes.unknown;
@@ -173,9 +173,11 @@ class UserSession {
     }
 
     _sessionId = response.payloadData['sessionId'];
-    _personId = response.payloadData['personId'];
+    _loggedPersonId = response.payloadData['personId'];
+    _timetablePersonId = _loggedPersonId;
     _schoolClassId = response.payloadData['klasseId'];
-    _type = PersonTypeUtils.parse(response.payloadData['personType']);
+    _loggedPersonType = PersonTypeUtils.parse(response.payloadData['personType']);
+    _timetablePersonType = _loggedPersonType;
 
     _sessionValid = true;
     _un = username;
@@ -224,7 +226,7 @@ class UserSession {
   }
 
   ///Die Rolle der eingeloggten Person. Es gibt "Schüler" und "Lehrer"
-  PersonTypes get personType => _type;
+  PersonTypes get personType => _loggedPersonType;
 
   ///Loggt einen user aus und beendet die Session automatisch. Sie kann mit einem erneuten Login (createSession(...)) wieder aktiviert werden
   ///Wenn versucht wird nach dem ausloggen und vor einem wieder einloggen Daten zu holen wird der Fehler "Die Session ist ungültig" geworfen.*/
@@ -234,9 +236,9 @@ class UserSession {
     _sessionId = "";
     _un = "";
     _pwd = "";
-    _personId = -1;
+    _loggedPersonId = -1;
     _schoolClassId = -1;
-    _type = PersonTypes.unknown;
+    _loggedPersonType = PersonTypes.unknown;
     _bearerToken = "";
     clearManagerCache();
     return response;
@@ -244,12 +246,12 @@ class UserSession {
 
   ///Gibt true zurück, wenn in diesem Objekt ein Benutzer eingeloggt ist
   bool isLoggedIn() {
-    return _sessionId.isNotEmpty && _sessionValid && _personId != -1;
+    return _sessionId.isNotEmpty && _sessionValid && _loggedPersonId != -1;
   }
 
   ///Gibt true zurück, wenn der user eingeloggt ist und JsonRPC API Anfragen stellen darf
   bool isRPCAuthroized() {
-    return _sessionId.isNotEmpty && _personId != -1;
+    return _sessionId.isNotEmpty && _loggedPersonId != -1;
   }
 
   ///Gibt true zurück, wenn der user eingeloggt ist und API Anfragen stellen darf
@@ -346,9 +348,9 @@ class UserSession {
             "startDate": Utils.convertToUntisDate(from),
             "endDate": Utils.convertToUntisDate(to),
             "element": {
-              "id": personId == -1 ? (_timetablePersonId == -1 ? _personId : _timetablePersonId) : personId,
+              "id": personId == -1 ? (_timetablePersonId == -1 ? _loggedPersonId : _timetablePersonId) : personId,
               "type": personType == PersonTypes.unknown
-                  ? (_timetablePersonType == PersonTypes.unknown ? _type.id : _timetablePersonType.id)
+                  ? (_timetablePersonType == PersonTypes.unknown ? _loggedPersonType.id : _timetablePersonType.id)
                   : personType.id
             },
             "showLsText": true,
@@ -464,7 +466,7 @@ class UserSession {
             TimeTableHour hour = rng.getHourByIndex(xIndex: x, yIndex: y);
 
             if (hour.lessonCode != Codes.empty) {
-              if (hour.teacher.identifier == _personId) {
+              if (hour.teacher.identifier == _timetablePersonId) {
                 bool added = false;
                 for (int j = 0; j < filtered.length; j++) {
                   if (filtered[j].name == hour.schoolClass.name) {
@@ -529,8 +531,8 @@ class UserSession {
       _debugSession = false;
     }
 
-    _timetablePersonId = _personId;
-    _timetablePersonType = _type;
+    _timetablePersonId = _loggedPersonId;
+    _timetablePersonType = _loggedPersonType;
     getTimetableManager().clearFrameCache(hardReset: true);
   }
 
