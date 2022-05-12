@@ -21,7 +21,7 @@ class SOLCApiManager {
   String _inetAddress;
   int _port;
 
-  static final Version buildRequired = Version.of("2.1.5");
+  static final Version buildRequired = Version.of("2.2.1");
 
   SOLCApiManager(this._inetAddress, this._port);
 
@@ -45,11 +45,37 @@ class SOLCApiManager {
     return Version(1, 0, 0);
   }
 
+  //Wirft eine Exception wenn ein Fehlercode auftritt
+  //Ermöglicht mehrere Phasierungs Abfragen mit einer Anfrage.
+  //Benötigt SOLC-API Server Version > 2.2.1
+  //Wenn eine ID nicht vorhanden ist ist sie nicht in der Liste
+  Future<List<PhaseStatus>> getSchoolClassInfos({required List<int> schoolClassIds}) async {
+    
+    String args = "";
+    for(int id in schoolClassIds) {
+      args += " <" + id.toString() + ">";
+    }
+  
+    SOLCResponse? response = await _querySOLC(command: "phase-statuses$args");
+
+    if (response != null) {
+      List<PhaseStatus> existing = [];
+      for(int id in schoolClassIds) {
+        if(response.payload[id.toString()] != null) {
+          existing.add(PhaseStatus(id, response.payload[id.toString()]));
+        }
+      }
+      return existing;
+    }
+
+    return List.empty();
+  }
+
   ///Wirft eine Exception wenn ein Fehlercode auftritt
   Future<PhaseStatus?> getSchoolClassInfo({required int schoolClassId}) async {
     SOLCResponse? response = await _querySOLC(command: "phase-status <" + schoolClassId.toString() + ">");
     if (response != null) {
-      return PhaseStatus(response.payload);
+      return PhaseStatus(schoolClassId, response.payload);
     }
     return null;
   }
@@ -115,6 +141,7 @@ class SOLCApiManager {
   Future<SOLCResponse?> _querySOLC({required String command, File? uploadFileSource, List<int>? downloadBytes}) async {
     SOLCResponse? returnValue;
     dynamic exception;
+    bool hasException = false;
 
     try {
       _activeSockets = _activeSockets + 1;
@@ -131,6 +158,7 @@ class SOLCApiManager {
 
       void throwException(Exception e) {
         exception = e;
+        hasException = true;
         socket.close();
       }
 
@@ -148,10 +176,10 @@ class SOLCApiManager {
           dynamic decodedMessage = "";
           try {
             decodedMessage = jsonDecode(String.fromCharCodes(event));
-          } on FormatException {
-            socket.close();
+          } catch (e) {
+            throwException(Exception("Invalid response: " + e.toString()));
             return;
-          }
+          } 
 
           SOLCResponse response = SOLCResponse.handle(decodedMessage);
           if (response.isError) {
@@ -202,13 +230,14 @@ class SOLCApiManager {
 
       _activeSockets--;
       //log.d("Socket closed naturally. " + _activeSockets.toString() + " active sockets.");
+
     } on Exception catch (error) {
       _activeSockets--;
       throw FailedToEstablishSOLCServerConnection(
-          "Konnte keine Verbindung zum Konvertierungsserver " + _inetAddress + " herstellen: " + error.toString());
+        "Konnte keine Verbindung zum Konvertierungsserver " + _inetAddress + " herstellen: " + error.toString());
     }
 
-    if (exception != null) {
+    if (hasException) {
       throw exception;
     }
     return returnValue;

@@ -1,12 +1,13 @@
 import 'package:sol_connect/core/api/models/utils.dart';
 
 class PhaseStatus {
+  int id = 0;
   DateTime _startDate = DateTime(0);
   DateTime _endDate = DateTime(0);
   DateTime _uploaded = DateTime(0);
   int _fileOwnerId = 0;
 
-  PhaseStatus(dynamic json) {
+  PhaseStatus(this.id, dynamic json) {
     if (json == null) {
       return;
     }

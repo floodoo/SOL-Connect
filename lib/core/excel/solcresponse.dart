@@ -1,5 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:sol_connect/core/exceptions.dart';
+
 ///Klasse um SOLC-API Server antworten zu handlen
 class SOLCResponse {
   //Server Codes
@@ -18,10 +20,11 @@ class SOLCResponse {
   static const int CODE_HTTP_ERROR = 106;
   static const int CODE_ENTRY_MISSING = 107;
   static const int CODE_FILE_MISSING = 108;
+  static const int CODE_INVALID_RESPONSE_FORMAT = 109;
 
-  int _responseCode = 0;
+  int _responseCode = CODE_INVALID_RESPONSE_FORMAT;
   dynamic _payload;
-  String _errorMessage = "";
+  String _errorMessage = "Invalid response format";
 
   final dynamic _body;
 
@@ -33,13 +36,13 @@ class SOLCResponse {
     if (response._body['code'] != null) {
       response._responseCode = response._body['code'];
     } else {
-      //Invalid response
       return response;
     }
 
     if (response._responseCode < 100) {
       if (response._body['data'] != null) {
         response._payload = response._body['data'];
+        response._errorMessage = "";
       }
     } else {
       if (response._body['error'] != null) {

@@ -44,7 +44,7 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
 
     //apiManager = SOLCApiManager(await getServerAddress(), 6969);
-    apiManager = SOLCApiManager(await getServerAddress(), 6969);
+    apiManager = SOLCApiManager("127.0.0.1", 6969);
 
     apiManager!.getVersion().then(
       (value) {

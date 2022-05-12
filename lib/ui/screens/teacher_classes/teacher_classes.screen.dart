@@ -4,6 +4,7 @@ import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/schoolclass.dart';
+import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
 import 'package:sol_connect/core/service/services.dart';
 import 'package:sol_connect/ui/screens/teacher_classes/widgets/teacher_class_card.dart';
@@ -67,7 +68,7 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
     final theme = ref.watch(themeService).theme;
 
     List<Widget> list = [];
-    //_timeTableService.session.setTimetableBehaviour(308, PersonTypes.teacher);
+    _timeTableService.session.setTimetableBehaviour(308, PersonTypes.teacher);
     List<SchoolClass> allClassesAsTeacher = await _timeTableService.session.getClassesAsTeacher(checkRange: 2);
     List<SchoolClass> ownClassesAsTeacher =
         await _timeTableService.session.getOwnClassesAsClassteacher(simulateTeacher: "CAG");
@@ -113,18 +114,36 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
           ),
         ),
       );
+    }
 
+    try {
+      List<PhaseStatus> found = await ref.read(timeTableService).apiManager!.getSchoolClassInfos(schoolClassIds: ownClassesAsTeacher.map((e) => e.id).toList());
       for (var i = 0; i < ownClassesAsTeacher.length; i++) {
-        PhaseStatus? status;
-        try {
-          status =
-              await ref.read(timeTableService).apiManager!.getSchoolClassInfo(schoolClassId: ownClassesAsTeacher[i].id);
-        } catch (e) {
-          log.e(e);
+        bool exists = false;
+        for(PhaseStatus f in found) {
+          if(f.id == ownClassesAsTeacher[i].id) {
+            list.add(TeacherClassCard(schoolClass: ownClassesAsTeacher[i], phaseStatus: f));
+            exists = true;
+            break;
+          }
         }
-
-        list.add(TeacherClassCard(schoolClass: ownClassesAsTeacher[i], phaseStatus: status));
+        if(!exists) {
+          list.add(TeacherClassCard(schoolClass: ownClassesAsTeacher[i], phaseStatus: null));
+        }
       }
+    } catch(e) {
+      log.e(e);
+       list.add(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20.0, 5),
+          child: Center(
+            child: Text(
+              "Unbekannter Fehler: " + e.toString(),
+              style: TextStyle(fontSize: 15, color: theme.colors.error),
+            ),
+          ),
+        ),
+      );
     }
 
     if (allClassesAsTeacher.isNotEmpty) {
@@ -150,16 +169,35 @@ class _TeacherClassesScreenState extends ConsumerState<TeacherClassesScreen> {
         ),
       );
 
-      for (var i = 0; i < allClassesAsTeacher.length; i++) {
-        PhaseStatus? status;
-        try {
-          status =
-              await ref.read(timeTableService).apiManager!.getSchoolClassInfo(schoolClassId: allClassesAsTeacher[i].id);
-        } catch (e) {
-          log.e(e);
-        }
+      try {
+        List<PhaseStatus> classesAsTeacherPhases = await ref.read(timeTableService).apiManager!.getSchoolClassInfos(schoolClassIds: allClassesAsTeacher.map((e) => e.id).toList());
+        for (var i = 0; i < allClassesAsTeacher.length; i++) {
+          bool exists = false;
+          for(PhaseStatus f in classesAsTeacherPhases) {
+            if(f.id == allClassesAsTeacher[i].id) {
+              list.add(TeacherClassCard(schoolClass: allClassesAsTeacher[i], phaseStatus: f));
+              exists = true;
+              break;
+            }
 
-        list.add(TeacherClassCard(schoolClass: allClassesAsTeacher[i], phaseStatus: status));
+          }
+          if(!exists) {
+            list.add(TeacherClassCard(schoolClass: allClassesAsTeacher[i], phaseStatus: null));
+          }
+        }
+      } catch(e) {
+        log.e(e);
+        list.add(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20.0, 5),
+            child: Center(
+              child: Text(
+                "Unbekannter Fehler: " + e.toString(),
+                style: TextStyle(fontSize: 15, color: theme.colors.error),
+              ),
+            ),
+          ),
+        );
       }
     }
 
