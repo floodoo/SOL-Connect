@@ -19,10 +19,12 @@ class CustomDrawer extends StatefulHookConsumerWidget {
 class _CustomDrawerState extends ConsumerState<CustomDrawer> {
   String username = "";
   String school = "";
+  int newsLength = 0;
 
   @override
   void initState() {
     getUserDataFromStorage();
+    getNewsLength();
     super.initState();
   }
 
@@ -30,6 +32,12 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
     username = await ref.read(timeTableService).getUserName();
     school = await ref.read(timeTableService).getSchool();
     // setState to update username and school
+    setState(() {});
+  }
+
+  Future<void> getNewsLength() async {
+    final news = await ref.read(timeTableService).session.getNewsData(DateTime.now());
+    newsLength = news.getNewsMessages().length;
     setState(() {});
   }
 
@@ -97,6 +105,19 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
           const Divider(),
           ListTile(
             title: Text("Benachrichtigungen", style: TextStyle(color: theme.colors.textBackground)),
+            trailing: newsLength != 0
+                ? Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: theme.colors.primary,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      newsLength.toString(),
+                      style: TextStyle(color: theme.colors.text),
+                    ),
+                  )
+                : null,
             onTap: () async {
               final news = await session.getNewsData(DateTime.now());
               final htmlNews = news.getNewsMessages();
