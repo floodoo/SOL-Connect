@@ -124,9 +124,7 @@ class UserSession {
   ///* `MissingCredentialsException` Bei fehlendem Benutzer oder Passwort
   ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
-  Future createSession({String username = "", String password = ""}) async {
-    //clearTimetableCache();
-
+  Future createSession({String username = "", String password = "", token = ""}) async {
     _manager = TimetableManager(this);
 
     if (_sessionValid) {
@@ -177,6 +175,25 @@ class UserSession {
     _un = username;
     _pwd = password;
 
+    //Überprüfe, ob 2 Faktor benötigt wird. Erfolgreiche anfragen verifizieren automatisch die Session id
+    http.Response securityCheck = await _queryURL("https://hepta.webuntis.com/WebUntis/j_spring_security_check",
+        postBody: {"school": _school, "j_username": username, "j_password": password, "token": token},
+        needsAuthorization: true);
+
+    if (securityCheck.body.isNotEmpty) {
+      dynamic json = jsonDecode(securityCheck.body);
+      if (json["state"] != null) {
+        if (json["state"] == "TOKEN_REQUIRED") {
+          if (json["invalidToken"] == true) {
+            throw InvalidSecurityToken("Zwei-Faktor Authentifizierung fehlgeschlagen. Bitte versuche es erneut");
+          } else {
+            throw SecurityTokenRequired(
+                "Dieses Profil ist mit Zwei-Faktor Authentifizierung versehen. Bitte gib deinen Zwei-Faktor Authentifizierungscode ein");
+          }
+        }
+      }
+    }
+
     await regenerateSessionBearerToken(); //14375
     _cachedProfileData = await getProfileData(loadFromCache: false);
 
@@ -201,11 +218,12 @@ class UserSession {
   ///Muss üblicherweise nicht aufgerufen werden.
   Future regenerateSessionBearerToken() async {
     //Bearer Token für aktuelle Session holen.
+    log.d("Refreshing Bearer Token");
     http.Response r = await _queryURL("/WebUntis/api/token/new");
     if (r.statusCode == 200) {
       _bearerToken = r.body;
     } else {
-      //print("Warning: Failed to fetch api token. Unable to call 'getNews()' and 'getProfileData()'");
+      log.w("Warning: Failed to fetch api token. Unable to call 'getNews()' and 'getProfileData()'");
     }
   }
 
@@ -376,9 +394,9 @@ class UserSession {
     await createSession(username: _un, password: _pwd);
   }
 
-  Future<http.Response> _queryURL(String url, {bool needsAuthorization = false}) async {
+  Future<http.Response> _queryURL(String url, {bool needsAuthorization = false, dynamic postBody}) async {
     if (needsAuthorization && !isAPIAuthorized()) {
-      //print("Failed to fetch bearer token. Retrying ...");
+      log.w("Failed to fetch bearer token. Retrying ...");
       await regenerateSessionBearerToken();
     }
 
@@ -396,20 +414,27 @@ class UserSession {
       };
     }
 
-    return http.Client().get(Uri.parse(apiBaseUrl + url), headers: header);
+    if (postBody == null) {
+      return http.Client().get(Uri.parse(apiBaseUrl + url), headers: header);
+    } else {
+      return http.Client().post(Uri.parse(url), body: postBody);
+    }
   }
 
-  Future<RPCResponse> _queryRPC(String method, Object params, {bool validateSession = true}) async {
+  Future<RPCResponse> _queryRPC(String method, Object params,
+      {bool validateSession = true, String overwriteUrl = ""}) async {
     Object build = {"id": _appName, "method": method, "params": params, "jsonrpc": 2.0};
 
-    RPCResponse orig = RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
-        headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
+    RPCResponse orig = RPCResponse.handle(await http.Client().post(
+        Uri.parse(overwriteUrl.isEmpty ? rpcUrl : overwriteUrl),
+        headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()},
+        body: jsonEncode(build)));
 
     if (validateSession && orig.rpcResponseCode == -8520 && _sessionValid) {
       log.v("Re- validating Session");
       await _validateSession();
       if (_sessionValid) {
-        return RPCResponse.handle(await http.Client().post(Uri.parse(rpcUrl),
+        return RPCResponse.handle(await http.Client().post(Uri.parse(overwriteUrl.isEmpty ? rpcUrl : overwriteUrl),
             headers: {'Content-type': 'application/json', 'Cookie': _buildAuthCookie()}, body: jsonEncode(build)));
       } else {
         throw Exception("Failed to revalidate session. Please log out and in again manually");

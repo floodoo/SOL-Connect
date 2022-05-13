@@ -65,6 +65,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         loginErrorMessage = "Fehlender Benutzername oder Passwort";
       } else if (loginError is ApiConnectionError) {
         loginErrorMessage = loginError.cause;
+      } else if (loginError is SecurityTokenRequired) {
+        loginErrorMessage = loginError.cause;
+      } else if (loginError is InvalidSecurityToken) {
+        loginErrorMessage = loginError.cause;
       } else {
         loginErrorMessage = "Bitte überprüfe deine Internetverbindung";
       }
