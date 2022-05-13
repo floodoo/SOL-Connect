@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -139,7 +137,7 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
           timeTableServiceInstance.resetTimeTable();
           timeTableServiceInstance.weekCounter = 0;
           timeTableServiceInstance.getTimeTable();
-
+          if (!mounted) return;
           Navigator.pushNamedAndRemoveUntil(
             context,
             TimeTableScreen.routeName,
