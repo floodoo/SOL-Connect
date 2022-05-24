@@ -269,21 +269,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30, 0, 30, 40),
-                child: TextField(
-                  controller: schoolController,
-                  textAlignVertical: TextAlignVertical.center,
-                  autocorrect: false,
-                  focusNode: schoolFocusNode,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: theme.colors.background,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                      borderSide: BorderSide.none,
+              Visibility(
+                visible: !twoFactorAuth,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 0, 30, 40),
+                  child: TextField(
+                    controller: schoolController,
+                    textAlignVertical: TextAlignVertical.center,
+                    autocorrect: false,
+                    focusNode: schoolFocusNode,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: theme.colors.background,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: "Deine Schul-ID",
                     ),
-                    hintText: "Deine Schul-ID",
                   ),
                 ),
               ),
