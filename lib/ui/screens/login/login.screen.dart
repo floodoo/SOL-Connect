@@ -15,6 +15,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final twoFactorController = TextEditingController();
   final schoolController = TextEditingController(text: "bbs1-mainz");
   final passwordFocusNode = FocusNode();
   final schoolFocusNode = FocusNode();
@@ -53,6 +54,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final timeTableServiceInstance = ref.read(timeTableService);
     final theme = ref.watch(themeService).theme;
     final loginError = ref.watch(timeTableService).loginException;
+    final twoFactorAuth = ref.watch(timeTableService).twoFactorAuth;
 
     String? loginErrorMessage;
 
@@ -139,42 +141,67 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                              child: TextField(
-                                autocorrect: false,
-                                onEditingComplete: () => FocusScope.of(context).requestFocus(passwordFocusNode),
-                                controller: usernameController,
-                                cursorColor: theme.colors.textInverted,
-                                decoration: InputDecoration(
-                                  hintText: "Benutzername",
-                                  prefixIcon: Icon(Icons.person, color: theme.colors.textInverted),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: theme.colors.textInverted),
+                            twoFactorAuth
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
+                                    child: TextField(
+                                      obscureText: true,
+                                      autocorrect: false,
+                                      controller: twoFactorController,
+                                      cursorColor: theme.colors.textInverted,
+                                      decoration: InputDecoration(
+                                        hintText: "2 Faktor code",
+                                        prefixIcon: Icon(
+                                          Icons.lock_clock,
+                                          color: theme.colors.textInverted,
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(color: theme.colors.textInverted),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
+                                        child: TextField(
+                                          autocorrect: false,
+                                          onEditingComplete: () =>
+                                              FocusScope.of(context).requestFocus(passwordFocusNode),
+                                          controller: usernameController,
+                                          cursorColor: theme.colors.textInverted,
+                                          decoration: InputDecoration(
+                                            hintText: "Benutzername",
+                                            prefixIcon: Icon(Icons.person, color: theme.colors.textInverted),
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: theme.colors.textInverted),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
+                                        child: TextField(
+                                          obscureText: true,
+                                          autocorrect: false,
+                                          focusNode: passwordFocusNode,
+                                          controller: passwordController,
+                                          cursorColor: theme.colors.textInverted,
+                                          decoration: InputDecoration(
+                                            hintText: "Passwort",
+                                            prefixIcon: Icon(
+                                              Icons.lock,
+                                              color: theme.colors.textInverted,
+                                            ),
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: theme.colors.textInverted),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
-                              child: TextField(
-                                obscureText: true,
-                                autocorrect: false,
-                                focusNode: passwordFocusNode,
-                                controller: passwordController,
-                                cursorColor: theme.colors.textInverted,
-                                decoration: InputDecoration(
-                                  hintText: "Passwort",
-                                  prefixIcon: Icon(
-                                    Icons.lock,
-                                    color: theme.colors.textInverted,
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: theme.colors.textInverted),
-                                  ),
-                                ),
-                              ),
-                            ),
                             if (loginErrorMessage != null) ...[
                               const SizedBox(height: 10),
                               Text(
@@ -190,6 +217,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     username: usernameController.text,
                                     password: passwordController.text,
                                     school: schoolController.text,
+                                    twoFactorAuthToken: twoFactorController.text,
                                   );
                                   timeTableServiceInstance.setIsChangingSchool(false);
                                 },

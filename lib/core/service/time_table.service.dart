@@ -27,6 +27,7 @@ class TimeTableService with ChangeNotifier {
   bool isChangingSchool = false;
   bool isPhaseVerified = false;
   bool isWeekInBlock = false;
+  bool twoFactorAuth = false;
   int weekCounter = 0;
 
   dynamic loginException;
@@ -37,7 +38,11 @@ class TimeTableService with ChangeNotifier {
     return prefs.getString("serverAddress") ?? "flo-dev.me";
   }
 
-  Future<void> login({required String username, required String password, required String school}) async {
+  Future<void> login(
+      {required String username,
+      required String password,
+      required String school,
+      String twoFactorAuthToken = ""}) async {
     final prefs = await SharedPreferences.getInstance();
 
     isLoading = true;
@@ -68,7 +73,7 @@ class TimeTableService with ChangeNotifier {
     prefs.remove("phasePlan");
 
     try {
-      await session.createSession(username: username, password: password);
+      await session.createSession(username: username, password: password, token: twoFactorAuthToken);
       //session.setTimetableBehaviour(308, PersonTypes.teacher);
       isLoggedIn = true;
 
@@ -87,13 +92,18 @@ class TimeTableService with ChangeNotifier {
       notifyListeners();
     } catch (error, stacktrace) {
       isLoading = false;
-      loginException = error;
 
-      log.e(stacktrace);
-      log.e("Error logging in: $error");
+      if (error is SecurityTokenRequired) {
+        twoFactorAuth = true;
+        notifyListeners();
+      } else {
+        loginException = error;
+        log.e(stacktrace);
+        log.e("Error logging in: $error");
 
-      UserSecureStorage.clearPassword();
-      notifyListeners();
+        UserSecureStorage.clearPassword();
+        notifyListeners();
+      }
     }
   }
 
@@ -101,6 +111,7 @@ class TimeTableService with ChangeNotifier {
     UserSecureStorage.clearPassword();
     isLoggedIn = false;
     isLoading = false;
+    twoFactorAuth = false;
     timeTable = null;
     phaseTimeTable = null;
     loginException = null;

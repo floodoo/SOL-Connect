@@ -124,7 +124,7 @@ class UserSession {
   ///* `MissingCredentialsException` Bei fehlendem Benutzer oder Passwort
   ///* `UserAlreadyLoggedInException` Wenn in dieser Instanz bereits eine Session erstellt wurde. Versuche `logout()` vor `createSession()` aufzurufen oder eine neue Instanz zu erstellen
   ///* `WrongCredentialsException` Wenn der Benutzername oder das Passwort falsch ist.
-  Future createSession({String username = "", String password = "", token = ""}) async {
+  Future createSession({String username = "", String password = "", String token = ""}) async {
     _manager = TimetableManager(this);
 
     if (_sessionValid) {
