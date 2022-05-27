@@ -216,3 +216,23 @@ class NextBlockEndNotInRangeException implements Exception {
     return "$runtimeType: $cause";
   }
 }
+
+class SecurityTokenRequired implements Exception {
+  String cause = "";
+  SecurityTokenRequired(this.cause);
+
+  @override
+  String toString() {
+    return "$runtimeType: $cause";
+  }
+}
+
+class InvalidSecurityToken implements Exception {
+  String cause = "";
+  InvalidSecurityToken(this.cause);
+
+  @override
+  String toString() {
+    return "$runtimeType: $cause";
+  }
+}
