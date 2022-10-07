@@ -130,7 +130,7 @@ class SettingsScreen extends ConsumerWidget {
                             log.d("Checking file status on server ...");
                             try {
                               PhaseStatus? status = await manager.getSchoolClassInfo(schoolClassId: schoolClassId);
-                              
+
                               if (DateTime.now().millisecondsSinceEpoch >= status!.blockEnd.millisecondsSinceEpoch) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
