@@ -13,8 +13,8 @@ class InfoDialog extends ConsumerWidget {
       onPressed: () {
         AwesomeDialog(
           context: context,
-          dialogType: DialogType.NO_HEADER,
-          animType: AnimType.BOTTOMSLIDE,
+          dialogType: DialogType.noHeader,
+          animType: AnimType.bottomSlide,
           headerAnimationLoop: false,
           body: Padding(
             padding: const EdgeInsets.all(6),

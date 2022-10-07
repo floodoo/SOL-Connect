@@ -36,7 +36,7 @@ class SettingsScreen extends ConsumerWidget {
     bool lightMode;
     bool working = false;
 
-    SnackBar _createSnackbar(String message, Color backgroundColor, {Duration duration = const Duration(seconds: 4)}) {
+    SnackBar createSnackbar(String message, Color backgroundColor, {Duration duration = const Duration(seconds: 4)}) {
       return SnackBar(
         duration: duration,
         elevation: 20,
@@ -122,7 +122,7 @@ class SettingsScreen extends ConsumerWidget {
 
                             //Schritt 1: Überprüfe ob die herunterzuladene Datei noch aktuell ist / existiert#
                             ScaffoldMessenger.of(context).showSnackBar(
-                              _createSnackbar(
+                              createSnackbar(
                                   "Überprüfe, ob eine Phasierung verfügbar ist ...", theme.colors.elementBackground,
                                   duration: const Duration(seconds: 10)),
                             );
@@ -132,7 +132,7 @@ class SettingsScreen extends ConsumerWidget {
                               if (DateTime.now().millisecondsSinceEpoch >= status!.blockEnd.millisecondsSinceEpoch) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  _createSnackbar(
+                                  createSnackbar(
                                       "Keine aktuelle Phasierung für deine Klasse gefunden.\nBitte frage einen deiner Lehrer ob er die aktuelle Phasierung für deine Klasse bereitstellen kann.",
                                       theme.colors.errorBackground,
                                       duration: const Duration(seconds: 10)),
@@ -147,7 +147,7 @@ class SettingsScreen extends ConsumerWidget {
                                   e.response.responseCode == SOLCResponse.CODE_ENTRY_MISSING) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  _createSnackbar(
+                                  createSnackbar(
                                       "Keine Phasierung für deine Klasse gefunden.\nBitte frage einen deiner Lehrer ob er die Phasierung für deine Klasse bereitstellen kann.",
                                       theme.colors.elementBackground,
                                       duration: const Duration(seconds: 10)),
@@ -158,7 +158,7 @@ class SettingsScreen extends ConsumerWidget {
                             } on FailedToEstablishSOLCServerConnection {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar(
+                                createSnackbar(
                                     "Bitte überprüfe deine Internetverbindung", theme.colors.errorBackground),
                               );
                               working = false;
@@ -166,7 +166,7 @@ class SettingsScreen extends ConsumerWidget {
                             } catch (e) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar(
+                                createSnackbar(
                                     "Ein unbekannter Fehler ist aufgetreten: $e", theme.colors.errorBackground,
                                     duration: const Duration(seconds: 10)),
                               );
@@ -177,7 +177,7 @@ class SettingsScreen extends ConsumerWidget {
                             //Schritt 2: Downloade die Phasierung
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              _createSnackbar("Phasierung herunterladen ...", theme.colors.elementBackground),
+                              createSnackbar("Phasierung herunterladen ...", theme.colors.elementBackground),
                             );
                             log.d("Downloading sheet for class $schoolClassId ...");
                             List<int> bytes;
@@ -186,7 +186,7 @@ class SettingsScreen extends ConsumerWidget {
                             } catch (e) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar(
+                                createSnackbar(
                                     "Ein unerwarteter Serverfehler ist aufgetreten: ($e)", theme.colors.errorBackground,
                                     duration: const Duration(seconds: 8)),
                               );
@@ -197,7 +197,7 @@ class SettingsScreen extends ConsumerWidget {
                             //Schritt 3: Lade Phasierung
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              _createSnackbar("Phasierung laden ...", theme.colors.elementBackground,
+                              createSnackbar("Phasierung laden ...", theme.colors.elementBackground,
                                   duration: const Duration(seconds: 15)),
                             );
                             log.d("Versuche Phasierung zu laden ...");
@@ -211,12 +211,12 @@ class SettingsScreen extends ConsumerWidget {
 
                               ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar("Fertig!", theme.colors.successColor),
+                                createSnackbar("Fertig!", theme.colors.successColor),
                               );
                             } on NextBlockStartNotInRangeException {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar(
+                                createSnackbar(
                                     "Phasierung konnte nicht geladen werden: Dein nächster Schulblock ist noch so lange hin, er kann noch nicht festgestellt werden. Bitte gedulde dich ein wenig.",
                                     theme.colors.errorBackground,
                                     duration: const Duration(seconds: 10)),
@@ -224,13 +224,13 @@ class SettingsScreen extends ConsumerWidget {
                             } on FailedToEstablishSOLCServerConnection {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar(
+                                createSnackbar(
                                     "Bitte überprüfe deine Internetverbindung", theme.colors.errorBackground),
                               );
                             } catch (e) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar(
+                                createSnackbar(
                                     "Fehler beim laden der Phasierung: $e. Bitte Frage deinen Lehrer nach einer gültigen Phasierung.",
                                     theme.colors.errorBackground,
                                     duration: const Duration(seconds: 10)),
@@ -263,7 +263,7 @@ class SettingsScreen extends ConsumerWidget {
 
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              _createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
+                              createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
                             );
                             working = false;
                             return;
@@ -277,7 +277,7 @@ class SettingsScreen extends ConsumerWidget {
 
                           if (result != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              _createSnackbar(
+                              createSnackbar(
                                 "Datei Überprüfen ...",
                                 theme.colors.elementBackground,
                                 duration: const Duration(minutes: 1),
@@ -312,7 +312,7 @@ class SettingsScreen extends ConsumerWidget {
                             if (state != null) {
                               ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                _createSnackbar(
+                                createSnackbar(
                                   errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
                                   errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
                                 ),

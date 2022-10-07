@@ -8,19 +8,19 @@ environment:
 
 dependencies:
   auto_size_text: ^3.0.0
-  awesome_dialog: ^2.1.2
+  awesome_dialog: ^3.0.2
   cupertino_icons: ^1.0.2
   excel: 2.0.0-null-safety-3
-  file_picker: ^4.3.1
+  file_picker: ^5.2.0+1
   flutter:
     sdk: flutter
   flutter_html: ^2.2.1
   flutter_search_bar: ^3.0.0-dev.1
-  flutter_secure_storage: ^5.0.2
+  flutter_secure_storage: ^6.0.0
   flutter_staggered_animations: ^1.0.0
   fluttericon: ^2.0.0
-  google_fonts: ^2.3.2
-  hooks_riverpod: ^1.0.3
+  google_fonts: ^3.0.1
+  hooks_riverpod: ^2.0.2
   http: ^0.13.4
   intl: ^0.17.0
   liquid_pull_to_refresh: ^3.0.1
@@ -30,7 +30,7 @@ dependencies:
 
 dev_dependencies:
   change_app_package_name: ^1.0.0
-  flutter_launcher_icons: "^0.9.2"
+  flutter_launcher_icons: ^0.10.0
   flutter_lints: ^2.0.1
   flutter_native_splash: ^2.1.6
   flutter_test:
