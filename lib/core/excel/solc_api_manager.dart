@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -20,6 +21,7 @@ class SOLCApiManager {
 
   String _inetAddress;
   int _port;
+  static const int timeoutSeconds = 5; //Throw a timeout if a response does not come within x seconds
 
   static final Version buildRequired = Version.of("2.1.5");
 
@@ -105,23 +107,25 @@ class SOLCApiManager {
     try {
       _activeSockets = _activeSockets + 1;
       final socket = await Socket.connect(_inetAddress, _port);
-
+      
       //Sende den Befehl
       socket.writeln(command);
       await socket.flush();
+      
+      void throwException(Exception e) {
+        exception = e;
+        socket.close();
+      }
+      
       bool awaitFileStream = false;
 
       if (downloadBytes != null) {
         downloadBytes.clear();
       }
-
-      void throwException(Exception e) {
-        exception = e;
-        socket.close();
-      }
-
+      
       var subscription = socket.listen(
         (event) async {
+          
           if (awaitFileStream) {
             if (downloadBytes == null) {
               throwException(DownloadFileNotFoundException("Kein Ziel zum Download angegeben"));
@@ -183,17 +187,21 @@ class SOLCApiManager {
         },
       );
 
-      await subscription.asFuture<void>();
+      await subscription.asFuture<void>().timeout(const Duration(seconds: timeoutSeconds), onTimeout: () {
+        throwException(SOLCServerResponseTimeoutException("Timeout after $timeoutSeconds seconds"));
+      });
+      
+      await socket.close();
       await subscription.cancel();
 
       _activeSockets--;
-      //log.d("Socket closed naturally. " + _activeSockets.toString() + " active sockets.");
+      log.d("Connection for SOLC command '$command' closed. $_activeSockets active connections.");
+    
     } on Exception catch (error) {
       _activeSockets--;
-      throw FailedToEstablishSOLCServerConnection(
+      throw FailedToEstablishSOLCServerConnection (
           "Konnte keine Verbindung zum Konvertierungsserver $_inetAddress herstellen: $error");
     }
-
     if (exception != null) {
       throw exception;
     }

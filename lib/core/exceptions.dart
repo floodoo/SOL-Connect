@@ -12,6 +12,16 @@ class FailedToEstablishSOLCServerConnection implements Exception {
   }
 }
 
+class SOLCServerResponseTimeoutException implements Exception {
+  String cause = "";
+  SOLCServerResponseTimeoutException(this.cause);
+
+  @override
+  String toString() {
+    return "$runtimeType: $cause";
+  }
+}
+
 class ExcelConversionConnectionError implements Exception {
   String cause = "";
   ExcelConversionConnectionError(this.cause);
