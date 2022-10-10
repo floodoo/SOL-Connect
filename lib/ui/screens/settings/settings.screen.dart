@@ -124,11 +124,13 @@ class SettingsScreen extends ConsumerWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               createSnackbar(
                                   "Überprüfe, ob eine Phasierung verfügbar ist ...", theme.colors.elementBackground,
-                                  duration: const Duration(seconds: 10)),
+                                  duration: const Duration(seconds: SOLCApiManager.timeoutSeconds)),
                             );
+
                             log.d("Checking file status on server ...");
                             try {
                               PhaseStatus? status = await manager.getSchoolClassInfo(schoolClassId: schoolClassId);
+
                               if (DateTime.now().millisecondsSinceEpoch >= status!.blockEnd.millisecondsSinceEpoch) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -159,7 +161,15 @@ class SettingsScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 createSnackbar(
-                                    "Bitte überprüfe deine Internetverbindung", theme.colors.errorBackground),
+                                    "Fehler beim Verbindungsaufbau zum Server", theme.colors.errorBackground),
+                              );
+                              working = false;
+                              return;
+                            } on SOLCServerResponseTimeoutException {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                createSnackbar(
+                                    "Zeitüberschreitung bei der Serververbindung", theme.colors.errorBackground),
                               );
                               working = false;
                               return;
