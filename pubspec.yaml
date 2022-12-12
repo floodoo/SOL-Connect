@@ -1,11 +1,11 @@
 name: sol_connect
 description: A timetable for self-organized learning with a phase plan
 publish_to: "none"
-version: 1.1.0+3
+version: 1.1.1+4
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
-  flutter: ^3.3.4
+  flutter: ^3.3.9
 
 dependencies:
   auto_size_text: ^3.0.0
