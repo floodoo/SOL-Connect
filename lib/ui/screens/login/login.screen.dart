@@ -145,7 +145,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30),
                                     child: TextField(
-                                      obscureText: true,
+                                      obscureText: false,
                                       autocorrect: false,
                                       controller: twoFactorController,
                                       cursorColor: theme.colors.textInverted,

@@ -210,7 +210,7 @@ class TimeTableHour {
 
   ///Gibt die Stunden zurück die diese ersetzen sollen.
   ///Ist nicht leer wenn `getLessonCode()` -> `Code.irregular` zuückliefert.
-  TimeTableHour get replacement => replacementLessons[0];
+  TimeTableHour get replacement => replacementLessons.isEmpty ? this : replacementLessons[0];
 
   ///Gibt die Klasse der Stunde als TimeTableEntity objekt zurück
   TimeTableEntity get schoolClass => _schoolClass;
