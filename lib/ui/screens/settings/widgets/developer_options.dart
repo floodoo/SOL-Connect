@@ -56,7 +56,7 @@ class DeveloperOptions extends ConsumerWidget {
                           onEditingComplete: () {
                             if (serverAdressTextController.text != "") {
                               ref.read(settingsService).saveServerAdress(serverAdressTextController.text);
-                              ref.read(timeTableService).apiManager!.setServerAddress(serverAdressTextController.text);
+                              ref.read(timeTableService).apiManager!.setBaseURL(serverAdressTextController.text);
                             }
                             serverAdressTextController.clear();
                             FocusManager.instance.primaryFocus?.unfocus();

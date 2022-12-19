@@ -35,7 +35,7 @@ class TimeTableService with ChangeNotifier {
 
   Future<String> getServerAddress() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("serverAddress") ?? "flo-dev.me";
+    return "http://localhost"; //prefs.getString("serverAddress") ?? "flo-dev.me";
   }
 
   Future<void> login(
@@ -49,19 +49,22 @@ class TimeTableService with ChangeNotifier {
     notifyListeners();
 
     //apiManager = SOLCApiManager(await getServerAddress(), 6969);
-    apiManager = SOLCApiManager(await getServerAddress(), 6969);
+    apiManager = SOLCApiManager(await getServerAddress(), 8080);
 
     apiManager!.getVersion().then(
       (value) {
         //Dieser Build benötigt Server version > 2.1.5
         if (Version.isOlder(value, SOLCApiManager.buildRequired)) {
           log.e(
-              "This build requires SOLC-API Server version > v${SOLCApiManager.buildRequired} (${apiManager!.inetAddress} running on: v$value) Unexpected errors may happen!");
+              "This build requires SOLC-API Server version > v${SOLCApiManager.buildRequired} (${apiManager!.baseURL} running on: v$value) Unexpected errors may happen!");
+        } else {
+          log.i("Verified SOLC-API server version. (${apiManager!.baseURL}:${apiManager!.port} running on: v$value)");
         }
       },
     ).catchError(
       (error, stackTrace) {
-        log.w("Failed to verify SOLC-API Server version. Unexpected errors may happen!");
+        log.e(stackTrace);
+        log.w("Failed to verify SOLC-API Server version. Unexpected errors may happen! ($error)");
       },
     );
 

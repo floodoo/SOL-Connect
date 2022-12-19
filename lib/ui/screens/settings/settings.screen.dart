@@ -36,14 +36,17 @@ class SettingsScreen extends ConsumerWidget {
     bool lightMode;
     bool working = false;
 
-    SnackBar createSnackbar(String message, Color backgroundColor, {Duration duration = const Duration(seconds: 4)}) {
+    SnackBar createSnackbar(String message, Color backgroundColor,
+        {Duration duration = const Duration(seconds: 4)}) {
       return SnackBar(
         duration: duration,
         elevation: 20,
         backgroundColor: backgroundColor,
-        content: Text(message, style: TextStyle(fontSize: 17, color: theme.colors.text)),
+        content: Text(message,
+            style: TextStyle(fontSize: 17, color: theme.colors.text)),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
         ),
       );
     }
@@ -69,7 +72,8 @@ class SettingsScreen extends ConsumerWidget {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Einstellungen', style: TextStyle(color: theme.colors.text)),
+          title:
+              Text('Einstellungen', style: TextStyle(color: theme.colors.text)),
           backgroundColor: theme.colors.primary,
           leading: BackButton(color: theme.colors.icon),
         ),
@@ -82,7 +86,8 @@ class SettingsScreen extends ConsumerWidget {
                   controller: scrollController,
                   children: [
                     Visibility(
-                      visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
+                      visible: ref.read(timeTableService).session.personType !=
+                          PersonTypes.teacher,
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 25.0),
@@ -100,8 +105,10 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     Visibility(
-                        visible: ref.read(timeTableService).session.personType != PersonTypes.teacher &&
-                            !ref.read(timeTableService).isPhaseVerified,
+                        visible:
+                            ref.read(timeTableService).session.personType !=
+                                    PersonTypes.teacher &&
+                                !ref.read(timeTableService).isPhaseVerified,
                         child: CustomSettingsCard(
                           padBottom: 5,
                           leading: Icon(
@@ -116,22 +123,31 @@ class SettingsScreen extends ConsumerWidget {
                             }
 
                             working = true;
-                            final SOLCApiManager manager = ref.read(timeTableService).apiManager!;
-                            final int schoolClassId = ref.read(timeTableService).session.schoolClassId;
+                            final SOLCApiManager manager =
+                                ref.read(timeTableService).apiManager!;
+                            final int schoolClassId = ref
+                                .read(timeTableService)
+                                .session
+                                .schoolClassId;
                             ScaffoldMessenger.of(context).clearSnackBars();
 
                             //Schritt 1: Überprüfe ob die herunterzuladene Datei noch aktuell ist / existiert#
                             ScaffoldMessenger.of(context).showSnackBar(
                               createSnackbar(
-                                  "Überprüfe, ob eine Phasierung verfügbar ist ...", theme.colors.elementBackground,
-                                  duration: const Duration(seconds: SOLCApiManager.timeoutSeconds)),
+                                  "Überprüfe, ob eine Phasierung verfügbar ist ...",
+                                  theme.colors.elementBackground,
+                                  duration: const Duration(
+                                      seconds: SOLCApiManager.timeoutSeconds)),
                             );
 
                             log.d("Checking file status on server ...");
                             try {
-                              PhaseStatus? status = await manager.getSchoolClassInfo(schoolClassId: schoolClassId);
+                              PhaseStatus? status =
+                                  await manager.getSchoolClassInfo(
+                                      schoolClassId: schoolClassId);
 
-                              if (DateTime.now().millisecondsSinceEpoch >= status!.blockEnd.millisecondsSinceEpoch) {
+                              if (DateTime.now().millisecondsSinceEpoch >=
+                                  status!.blockEnd.millisecondsSinceEpoch) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   createSnackbar(
@@ -145,8 +161,10 @@ class SettingsScreen extends ConsumerWidget {
                               }
                             } on SOLCServerError catch (e) {
                               log.e("Server Error: $e");
-                              if (e.response.responseCode == SOLCResponse.CODE_FILE_MISSING ||
-                                  e.response.responseCode == SOLCResponse.CODE_ENTRY_MISSING) {
+                              if (e.response.responseCode ==
+                                      SOLCResponse.CODE_FILE_MISSING ||
+                                  e.response.responseCode ==
+                                      SOLCResponse.CODE_ENTRY_MISSING) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   createSnackbar(
@@ -161,7 +179,8 @@ class SettingsScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 createSnackbar(
-                                    "Fehler beim Verbindungsaufbau zum Server", theme.colors.errorBackground),
+                                    "Fehler beim Verbindungsaufbau zum Server",
+                                    theme.colors.errorBackground),
                               );
                               working = false;
                               return;
@@ -169,7 +188,8 @@ class SettingsScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 createSnackbar(
-                                    "Zeitüberschreitung bei der Serververbindung", theme.colors.errorBackground),
+                                    "Zeitüberschreitung bei der Serververbindung",
+                                    theme.colors.errorBackground),
                               );
                               working = false;
                               return;
@@ -177,7 +197,8 @@ class SettingsScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 createSnackbar(
-                                    "Ein unbekannter Fehler ist aufgetreten: $e", theme.colors.errorBackground,
+                                    "Ein unbekannter Fehler ist aufgetreten: $e",
+                                    theme.colors.errorBackground,
                                     duration: const Duration(seconds: 10)),
                               );
                               working = false;
@@ -187,17 +208,21 @@ class SettingsScreen extends ConsumerWidget {
                             //Schritt 2: Downloade die Phasierung
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              createSnackbar("Phasierung herunterladen ...", theme.colors.elementBackground),
+                              createSnackbar("Phasierung herunterladen ...",
+                                  theme.colors.elementBackground),
                             );
-                            log.d("Downloading sheet for class $schoolClassId ...");
+                            log.d(
+                                "Downloading sheet for class $schoolClassId ...");
                             List<int> bytes;
                             try {
-                              bytes = await manager.downloadVirtualSheet(schoolClassId: schoolClassId);
+                              bytes = await manager.downloadVirtualSheet(
+                                  schoolClassId: schoolClassId);
                             } catch (e) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 createSnackbar(
-                                    "Ein unerwarteter Serverfehler ist aufgetreten: ($e)", theme.colors.errorBackground,
+                                    "Ein unerwarteter Serverfehler ist aufgetreten: ($e)",
+                                    theme.colors.errorBackground,
                                     duration: const Duration(seconds: 8)),
                               );
                               working = false;
@@ -207,7 +232,8 @@ class SettingsScreen extends ConsumerWidget {
                             //Schritt 3: Lade Phasierung
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              createSnackbar("Phasierung laden ...", theme.colors.elementBackground,
+                              createSnackbar("Phasierung laden ...",
+                                  theme.colors.elementBackground,
                                   duration: const Duration(seconds: 15)),
                             );
                             log.d("Versuche Phasierung zu laden ...");
@@ -217,11 +243,16 @@ class SettingsScreen extends ConsumerWidget {
                             //    .session
                             //    .setTimetableBehaviour(0, PersonTypes.student, debug: true);
                             try {
-                              await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
+                              await ref
+                                  .read(timeTableService)
+                                  .loadCheckedVirtualPhaseFileForNextBlock(
+                                      bytes: bytes);
 
-                              ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
+                              ScaffoldMessenger.maybeOf(context)!
+                                  .clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                createSnackbar("Fertig!", theme.colors.successColor),
+                                createSnackbar(
+                                    "Fertig!", theme.colors.successColor),
                               );
                             } on NextBlockStartNotInRangeException {
                               ScaffoldMessenger.of(context).clearSnackBars();
@@ -235,7 +266,8 @@ class SettingsScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 createSnackbar(
-                                    "Bitte überprüfe deine Internetverbindung", theme.colors.errorBackground),
+                                    "Bitte überprüfe deine Internetverbindung",
+                                    theme.colors.errorBackground),
                               );
                             } catch (e) {
                               ScaffoldMessenger.of(context).clearSnackBars();
@@ -247,22 +279,28 @@ class SettingsScreen extends ConsumerWidget {
                               );
                             }
 
-                            Future.delayed(const Duration(seconds: 4)).then((value) {
+                            Future.delayed(const Duration(seconds: 4))
+                                .then((value) {
                               working = false;
                             });
                           },
                         )),
                     Visibility(
-                      visible: ref.read(timeTableService).session.personType != PersonTypes.teacher,
+                      visible: ref.read(timeTableService).session.personType !=
+                          PersonTypes.teacher,
                       child: CustomSettingsCard(
                         padTop: 5,
                         padBottom: 0,
                         leading: Icon(
-                          phaseLoaded ? Icons.delete_rounded : Icons.folder_open_sharp,
+                          phaseLoaded
+                              ? Icons.delete_rounded
+                              : Icons.folder_open_sharp,
                           color: theme.colors.text,
                           size: 26,
                         ),
-                        text: phaseLoaded ? "Phasierung entfernen" : "Eigene Phasierung laden",
+                        text: phaseLoaded
+                            ? "Phasierung entfernen"
+                            : "Eigene Phasierung laden",
                         onTap: () async {
                           if (working) {
                             return;
@@ -273,17 +311,19 @@ class SettingsScreen extends ConsumerWidget {
 
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              createSnackbar("Phasierung entfernt", theme.colors.elementBackground),
+                              createSnackbar("Phasierung entfernt",
+                                  theme.colors.elementBackground),
                             );
                             working = false;
                             return;
                           }
 
-                          FilePickerResult? result = await FilePicker.platform.pickFiles(
-                              type: FileType.custom,
-                              allowedExtensions: ["xlsx"],
-                              allowMultiple: false,
-                              dialogTitle: "Phasierung laden");
+                          FilePickerResult? result = await FilePicker.platform
+                              .pickFiles(
+                                  type: FileType.custom,
+                                  allowedExtensions: ["xlsx"],
+                                  allowMultiple: false,
+                                  dialogTitle: "Phasierung laden");
 
                           if (result != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -297,20 +337,29 @@ class SettingsScreen extends ConsumerWidget {
                             String errorMessage = "";
 
                             try {
-                              await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(
-                                  bytes: File(result.files.first.path!).readAsBytesSync(), persistent: true);
+                              await ref
+                                  .read(timeTableService)
+                                  .loadCheckedVirtualPhaseFileForNextBlock(
+                                      bytes: File(result.files.first.path!)
+                                          .readAsBytesSync(),
+                                      persistent: true);
                             } on ExcelMergeFileNotVerified {
-                              errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
+                              errorMessage =
+                                  "Kein passender Block- Stundenplan in Datei gefunden!";
                             } on ExcelConversionAlreadyActive {
-                              errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
+                              errorMessage =
+                                  "Unbekannter Fehler. Bitte starte die App neu!";
                             } on SOLCServerError {
-                              errorMessage = "Ein SOLC-API Server Fehler ist aufgetreten";
+                              errorMessage =
+                                  "Ein SOLC-API Server Fehler ist aufgetreten";
                             } on FailedToEstablishSOLCServerConnection {
-                              errorMessage = "Bitte überprüfe deine Internetverbindung";
+                              errorMessage =
+                                  "Bitte überprüfe deine Internetverbindung";
                             } on ExcelMergeNonSchoolBlockException {
                               // Doesn't matter
                             } on SocketException {
-                              errorMessage = "Bitte überprüfe deine Internetverbindung";
+                              errorMessage =
+                                  "Bitte überprüfe deine Internetverbindung";
                             } on ExcelMergeTimetableNotFound catch (e) {
                               errorMessage = e.toString();
                             } catch (e) {
@@ -318,18 +367,25 @@ class SettingsScreen extends ConsumerWidget {
                               errorMessage = "Unbekannter Fehler: $e";
                             }
 
-                            ScaffoldMessengerState? state = ScaffoldMessenger.maybeOf(context);
+                            ScaffoldMessengerState? state =
+                                ScaffoldMessenger.maybeOf(context);
                             if (state != null) {
-                              ScaffoldMessenger.maybeOf(context)!.clearSnackBars();
+                              ScaffoldMessenger.maybeOf(context)!
+                                  .clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 createSnackbar(
-                                  errorMessage == "" ? "Phasierung für aktuellen Block geladen!" : errorMessage,
-                                  errorMessage == "" ? theme.colors.successColor : theme.colors.errorBackground,
+                                  errorMessage == ""
+                                      ? "Phasierung für aktuellen Block geladen!"
+                                      : errorMessage,
+                                  errorMessage == ""
+                                      ? theme.colors.successColor
+                                      : theme.colors.errorBackground,
                                 ),
                               );
                             }
 
-                            Future.delayed(const Duration(seconds: 4)).then((value) {
+                            Future.delayed(const Duration(seconds: 4))
+                                .then((value) {
                               working = false;
                             });
                           }
@@ -345,23 +401,28 @@ class SettingsScreen extends ConsumerWidget {
                                 color: theme.colors.successColor,
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 8, 5, 10),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 8, 5, 10),
                                 child: Text(
                                   validator != null
                                       ? "Phasierung geladen für Block ${Utils.convertToDDMM(validator.getBlockStart())} bis ${Utils.convertToDDMM(validator.getBlockEnd())}"
                                       : "Phasierung geladen für Block ? - ?",
-                                  style: TextStyle(fontSize: 13, color: theme.colors.textInverted),
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      color: theme.colors.textInverted),
                                 ),
                               ),
                             ),
                           )
-                        : const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                        : const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0)),
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 25.0),
                         child: Text(
                           "Erscheinungsbild",
-                          style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
+                          style: TextStyle(
+                              fontSize: 25, color: theme.colors.textInverted),
                         ),
                       ),
                     ),
@@ -395,7 +456,8 @@ class SettingsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.only(top: 25.0),
                         child: Text(
                           "App Info",
-                          style: TextStyle(fontSize: 25, color: theme.colors.textInverted),
+                          style: TextStyle(
+                              fontSize: 25, color: theme.colors.textInverted),
                         ),
                       ),
                     ),
@@ -406,7 +468,8 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       text: "Github Projekt",
                       onTap: () async {
-                        String url = "https://github.com/floodoo/untis_phasierung";
+                        String url =
+                            "https://github.com/floodoo/untis_phasierung";
                         if (!await launchUrlString(url)) {
                           throw "Could not launch $url";
                         }

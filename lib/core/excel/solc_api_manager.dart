@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
 
 import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/usersession.dart';
+import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
 import 'package:sol_connect/core/excel/models/version.dart';
 import 'package:sol_connect/core/excel/solcresponse.dart';
@@ -19,32 +22,48 @@ class SOLCApiManager {
 
   int _activeSockets = 0;
 
-  String _inetAddress;
+  String _baseURL;
   int _port;
   static const int timeoutSeconds = 5; //Throw a timeout if a response does not come within x seconds
 
-  static final Version buildRequired = Version.of("2.1.5");
+  static final Version buildRequired = Version.of("3.0.0");
 
-  SOLCApiManager(this._inetAddress, this._port);
+  SOLCApiManager(this._baseURL, this._port);
 
-  void setServerAddress(String inetAddress) {
-    _inetAddress = inetAddress;
+  void setBaseURL(String baseURL) {
+    _baseURL = baseURL;
   }
 
   void setServerPort(int port) {
     _port = port;
   }
 
-  String get inetAddress => _inetAddress;
+  String get apiAddress => "$_baseURL:$_port/api";
+
+  String get baseURL => _baseURL;
 
   int get port => _port;
 
   Future<Version> getVersion() async {
-    SOLCResponse? response = await _querySOLC(command: "version");
-    if (response != null) {
-      return Version.of(response.payload['displayValue']);
+    http.Response response = await http.Client().get(Uri.parse("$apiAddress/version"));
+    if (response.statusCode == 200 && response.body.isNotEmpty) {
+      return Version.of(jsonDecode(response.body)['data']['displayValue']);
+    } else {
+      return Version(0, 0, 0);
     }
-    return Version(1, 0, 0);
+  }
+
+  ///Sendet eine Anfrage an den Server, um Farben einer Excel Datei zu extrahieren.
+  Future<CellColors> getExcelColorData(List<int> fileBytes) async {
+    var request = http.MultipartRequest("POST", Uri.parse("$apiAddress/getcolor"));
+    request.files.add(http.MultipartFile.fromBytes('sheet', fileBytes, filename: 'sheet'));
+
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      String json = await convert.utf8.decodeStream(response.stream);
+      return CellColors(data: jsonDecode(json)['data'], failed: false);
+    }
+    return CellColors(failed: true);
   }
 
   ///Wirft eine Exception wenn ein Fehlercode auftritt
@@ -100,13 +119,15 @@ class SOLCApiManager {
   ///* `UploadFileNotSpecifiedException` Wenn ein Befehl ein Dateiupload erwartet diese jedoch nicht angegeben wurde
   ///* `UploadFileNotFoundException` Wenn die hochzuladene Datei im System nicht gefunden werden konnte bzw. nicht existiert
   ///* `DownloadFileNotFoundException` Wenn keine Datei zum Download nicht angegeben wurde
+  ///
+  @Deprecated('Use [ConflictException]')
   Future<SOLCResponse?> _querySOLC({required String command, File? uploadFileSource, List<int>? downloadBytes}) async {
     SOLCResponse? returnValue;
     dynamic exception;
 
     try {
       _activeSockets = _activeSockets + 1;
-      final socket = await Socket.connect(_inetAddress, _port);
+      final socket = await Socket.connect(_baseURL, _port);
 
       //Sende den Befehl
       socket.writeln(command);
@@ -198,7 +219,7 @@ class SOLCApiManager {
     } on Exception catch (error) {
       _activeSockets--;
       throw FailedToEstablishSOLCServerConnection(
-          "Konnte keine Verbindung zum Konvertierungsserver $_inetAddress herstellen: $error");
+          "Konnte keine Verbindung zum Konvertierungsserver $_baseURL herstellen: $error");
     }
     if (exception != null) {
       throw exception;
