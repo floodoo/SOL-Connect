@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:sol_connect/core/api/models/schoolclass.dart';
 import 'package:sol_connect/core/api/models/utils.dart';
 import 'package:sol_connect/core/api/usersession.dart';
+import 'package:sol_connect/core/excel/models/mergedblock.dart';
 import 'package:sol_connect/core/excel/models/phasestatus.dart';
 import 'package:sol_connect/core/excel/solc_api_manager.dart';
 import 'package:sol_connect/core/excel/solcresponse.dart';
@@ -18,7 +19,9 @@ import 'package:sol_connect/ui/themes/app_theme.dart';
 import 'package:sol_connect/util/logger.util.dart';
 
 class TeacherClassCard extends StatefulHookConsumerWidget {
-  const TeacherClassCard({required this.schoolClass, this.phaseStatus, Key? key}) : super(key: key);
+  const TeacherClassCard(
+      {required this.schoolClass, this.phaseStatus, Key? key})
+      : super(key: key);
   final SchoolClass schoolClass;
   final PhaseStatus? phaseStatus;
 
@@ -48,9 +51,11 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
         duration: duration,
         elevation: 20,
         backgroundColor: backgroundColor,
-        content: Text(message, style: TextStyle(fontSize: 17, color: theme.colors.text)),
+        content: Text(message,
+            style: TextStyle(fontSize: 17, color: theme.colors.text)),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
         ),
       ));
     }
@@ -82,8 +87,10 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
             log.d(
                 "Virtuelle Phasierung für schoolClass: ${widget.schoolClass.displayName} (${widget.schoolClass.id}) herunterladen ...");
 
-            List<int> bytes =
-                await ref.read(timeTableService).apiManager!.downloadVirtualSheet(schoolClassId: widget.schoolClass.id);
+            List<int> bytes = await ref
+                .read(timeTableService)
+                .apiManager!
+                .downloadVirtualSheet(schoolClassId: widget.schoolClass.id);
 
             // TODO(debug): Debug timeTable is inactive
             ref.read(timeTableService).session.setTimetableBehaviour(
@@ -100,7 +107,9 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                 clearSnachbars: true,
                 duration: const Duration(seconds: 15));
 
-            await ref.read(timeTableService).loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
+            await ref
+                .read(timeTableService)
+                .loadCheckedVirtualPhaseFileForNextBlock(bytes: bytes);
 
             _createSnackbar(
                 message: "Fertig!",
@@ -161,9 +170,13 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                       padding: const EdgeInsets.only(right: 10),
                       child: Container(
                         color: widget.phaseStatus != null
-                            ? now.millisecondsSinceEpoch < widget.phaseStatus!.blockStart.millisecondsSinceEpoch
+                            ? now.millisecondsSinceEpoch <
+                                    widget.phaseStatus!.blockStart
+                                        .millisecondsSinceEpoch
                                 ? theme.colors.phaseNotStartet
-                                : now.millisecondsSinceEpoch > widget.phaseStatus!.blockEnd.millisecondsSinceEpoch
+                                : now.millisecondsSinceEpoch >
+                                        widget.phaseStatus!.blockEnd
+                                            .millisecondsSinceEpoch
                                     ? theme.colors.phaseOutOfBlock
                                     : theme.colors.phaseActive
                             : theme.colors.phaseNotUploadedJet,
@@ -187,8 +200,10 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                     children: [
                       Column(
                         children: [
-                          Text(Utils.convertToDDMMYY(widget.phaseStatus!.blockStart)),
-                          Text(Utils.convertToDDMMYY(widget.phaseStatus!.blockEnd))
+                          Text(Utils.convertToDDMMYY(
+                              widget.phaseStatus!.blockStart)),
+                          Text(Utils.convertToDDMMYY(
+                              widget.phaseStatus!.blockEnd))
                         ],
                       )
                     ],
@@ -214,18 +229,22 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                               iconSize: 30,
                               color: theme.colors.textInverted,
                               onPressed: () async {
-                                FilePickerResult? result = await FilePicker.platform.pickFiles(
-                                    type: FileType.custom,
-                                    allowedExtensions: ["xlsx"],
-                                    allowMultiple: false,
-                                    dialogTitle: "Phasierung hochladen: ${widget.schoolClass.displayName}");
+                                FilePickerResult? result =
+                                    await FilePicker.platform.pickFiles(
+                                        type: FileType.custom,
+                                        allowedExtensions: ["xlsx"],
+                                        allowMultiple: false,
+                                        dialogTitle:
+                                            "Phasierung hochladen: ${widget.schoolClass.displayName}");
 
                                 if (result != null) {
                                   setState(() {
                                     isUploadLoading = true;
                                   });
-                                  final UserSession session = ref.read(timeTableService).session;
-                                  final SOLCApiManager manager = ref.read(timeTableService).apiManager!;
+                                  final UserSession session =
+                                      ref.read(timeTableService).session;
+                                  final SOLCApiManager manager =
+                                      ref.read(timeTableService).apiManager!;
 
                                   // Step 1: Verify timetable for schoolClass:
                                   // TODO(debug): Debug timeTable is inactive
@@ -237,38 +256,49 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
 
                                   ExcelValidator tempValidator = ExcelValidator(
                                     manager,
-                                    File(result.files.first.path!).readAsBytesSync(),
+                                    File(result.files.first.path!)
+                                        .readAsBytesSync(),
                                   );
 
-                                  log.d("Verifying sheet for class '${widget.schoolClass.displayName}'");
+                                  log.d(
+                                      "Verifying sheet for class '${widget.schoolClass.displayName}'");
 
                                   String errorMessage = "";
+                                  MergedBlock? mergedBlock;
                                   try {
                                     _createSnackbar(
                                         message:
                                             "Phasierung für Klasse ${widget.schoolClass.displayName} überprüfen ...",
-                                        backgroundColor: theme.colors.elementBackground,
+                                        backgroundColor:
+                                            theme.colors.elementBackground,
                                         theme: theme,
                                         context: context,
                                         clearSnachbars: true,
                                         duration: const Duration(seconds: 15));
-                                    await tempValidator.mergeExcelWithWholeBlock(session);
+                                    mergedBlock = await tempValidator
+                                        .mergeExcelWithWholeBlock(session);
                                     log.d("Success");
                                     session.resetTimetableBehaviour();
                                   } on ExcelMergeFileNotVerified {
-                                    errorMessage = "Kein passender Block- Stundenplan in Datei gefunden!";
+                                    errorMessage =
+                                        "Kein passender Block- Stundenplan in Datei gefunden!";
                                   } on ExcelConversionAlreadyActive {
-                                    errorMessage = "Unbekannter Fehler. Bitte starte die App neu!";
+                                    errorMessage =
+                                        "Unbekannter Fehler. Bitte starte die App neu!";
                                   } on SOLCServerError {
-                                    errorMessage = "Ein SOLC-API Server Fehler ist aufgetreten";
+                                    errorMessage =
+                                        "Ein SOLC-API Server Fehler ist aufgetreten";
                                   } on FailedToEstablishSOLCServerConnection {
-                                    errorMessage = "Bitte überprüfe deine Internetverbindung";
+                                    errorMessage =
+                                        "Bitte überprüfe deine Internetverbindung";
                                   } on ExcelMergeNonSchoolBlockException {
                                     // Doesn't matter
                                   } on SocketException {
-                                    errorMessage = "Bitte überprüfe deine Internetverbindung";
+                                    errorMessage =
+                                        "Bitte überprüfe deine Internetverbindung";
                                   } on NextBlockStartNotInRangeException {
-                                    errorMessage = "Nächster Schulblock kann noch nicht festgestellt werden";
+                                    errorMessage =
+                                        "Nächster Schulblock kann noch nicht festgestellt werden";
                                   } on ExcelMergeTimetableNotFound {
                                     errorMessage =
                                         "Phasierung passt nicht zum Stundenplan der ${widget.schoolClass.displayName}";
@@ -279,14 +309,17 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
 
                                   if (errorMessage.isNotEmpty) {
                                     _createSnackbar(
-                                        message: "Überprüfung fehlgeschlagen: $errorMessage",
-                                        backgroundColor: theme.colors.errorBackground,
+                                        message:
+                                            "Überprüfung fehlgeschlagen: $errorMessage",
+                                        backgroundColor:
+                                            theme.colors.errorBackground,
                                         theme: theme,
                                         context: context,
                                         clearSnachbars: true,
                                         duration: const Duration(seconds: 7));
 
-                                    log.e("Failed to verify sheet: $errorMessage");
+                                    log.e(
+                                        "Failed to verify sheet: $errorMessage");
                                     session.resetTimetableBehaviour();
 
                                     setState(() {
@@ -301,37 +334,41 @@ class _TeacherClassCardState extends ConsumerState<TeacherClassCard> {
                                   try {
                                     _createSnackbar(
                                         message: "Datei hochladen ...",
-                                        backgroundColor: theme.colors.elementBackground,
+                                        backgroundColor:
+                                            theme.colors.elementBackground,
                                         theme: theme,
                                         context: context,
                                         clearSnachbars: true);
 
-                                    await manager.uploadSheet(
-                                      authenticatedUser: ref.read(timeTableService).session,
-                                      schoolClassId: widget.schoolClass.id,
-                                      blockStart: tempValidator.getBlockStart()!, // Can't be null
-                                      blockEnd: tempValidator.getBlockEnd()!,
-                                      file: File(result.files.first.path!),
-                                    );
+                                    await manager.uploadPhasing(
+                                        authenticatedUser:
+                                            ref.read(timeTableService).session,
+                                        schoolClassId: widget.schoolClass.id,
+                                        block: mergedBlock!);
+                                    
                                     log.d("File uploaded");
 
                                     _createSnackbar(
                                         message: "Fertig!",
-                                        backgroundColor: theme.colors.successColor,
+                                        backgroundColor:
+                                            theme.colors.successColor,
                                         theme: theme,
                                         context: context,
                                         clearSnachbars: true);
 
                                     ref.read(teacherService).toggleReloading();
-                                    await Future.delayed(const Duration(seconds: 2), () {
+                                    await Future.delayed(
+                                        const Duration(seconds: 2), () {
                                       setState(() {
                                         isUploadLoading = false;
                                       });
                                     });
                                   } catch (e) {
                                     _createSnackbar(
-                                        message: "Hochladen fehlgeschlagen: ${e.toString()}",
-                                        backgroundColor: theme.colors.errorBackground,
+                                        message:
+                                            "Hochladen fehlgeschlagen: ${e.toString()}",
+                                        backgroundColor:
+                                            theme.colors.errorBackground,
                                         theme: theme,
                                         context: context,
                                         clearSnachbars: true);

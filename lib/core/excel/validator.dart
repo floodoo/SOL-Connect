@@ -7,6 +7,7 @@ import 'package:sol_connect/core/api/timetable_manager.dart';
 import 'package:sol_connect/core/api/usersession.dart';
 import 'package:sol_connect/core/excel/models/cellcolors.dart';
 import 'package:sol_connect/core/excel/models/mappedsheet.dart';
+import 'package:sol_connect/core/excel/models/mergedblock.dart';
 import 'package:sol_connect/core/excel/models/mergedtimetable.dart';
 import 'package:sol_connect/core/excel/models/phaseelement.dart';
 import 'package:sol_connect/core/excel/solc_api_manager.dart';
@@ -113,19 +114,25 @@ class ExcelValidator {
     _collectedTimetables.add(mapped);
   }
 
-  ///Wenn keineException geworfen wurde ist der Merge erfolgreich gewesen.
-  Future<void> mergeExcelWithWholeBlock(UserSession session) async {
+  ///Wenn keineException geworfen wurde und ein "MergedBlock" Objekt zurückgegeben wurde, war der merge erfolgreich
+  Future<MergedBlock> mergeExcelWithWholeBlock(UserSession session) async {
     TimeTableRange timeTable = await session.getRelativeTimeTableWeek(0);
     var nextBlockweeks =
         await timeTable.getBoundFrame().getManager().getNextBlockWeeks();
 
+    List<MergedTimeTable> mergedWeeks = <MergedTimeTable>[];
     for (TimetableFrame blockWeek in nextBlockweeks) {
       log.d(
           "Verifying block week phase merge ${blockWeek.getFrameStart()} -> ${blockWeek.getFrameEnd()}");
 
       await blockWeek.getCurrentBlockWeek();
-      await mergeExcelWithTimetable(await blockWeek.getWeekData());
+      mergedWeeks
+          .add(await mergeExcelWithTimetable(await blockWeek.getWeekData()));
     }
+
+    return MergedBlock(nextBlockweeks.first.getFrameStart(), 
+      nextBlockweeks.last.getFrameEnd(), 
+      mergedWeeks);
   }
 
   ///Verifiziert die im Konstruktor angegebene Excel Datei und überprüft, ob der Stundenplan enthalten ist.

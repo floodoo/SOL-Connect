@@ -5,10 +5,6 @@ import 'package:sol_connect/core/excel/models/mappedsheet.dart';
 import 'package:sol_connect/core/excel/validator.dart';
 
 class MergedTimeTable {
-  ///Gibt eine Fehlermeldung zurück, falls dieser Stundenplan nicht mit der Excel gemappt werden konnte.
-  ///
-  ///Immer leer, außer `verified() == false`
-  //String errorMessage = "";
 
   //Der Stundenplan
   final TimeTableRange timetable;
@@ -31,7 +27,7 @@ class MergedTimeTable {
 
   ///Gibt die entsprechende Phasierung zum Stunden Index zurück.
   ///
-  ///* ` getPhaseFromHourIndex(xIndex: 0, yIndex: 0)`  gibt die Phasierung zur ersten Stunde am Montag zurück
+  ///* `getPhaseFromHourIndex(xIndex: 0, yIndex: 0)`  gibt die Phasierung zur ersten Stunde am Montag zurück
   ///* `getPhaseFromHourIndex(xIndex: 2, yIndex: 2)` gibt die Phasierung zur dritten Stunde am Mittwoch zurück
   ///
   ///Gibt immer unbekannte Phasen zurück, wenn `verified() == false`

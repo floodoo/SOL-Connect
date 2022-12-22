@@ -222,6 +222,7 @@ class UserSession {
     http.Response r = await _queryURL("/WebUntis/api/token/new");
     if (r.statusCode == 200) {
       _bearerToken = r.body;
+      log.d("Bearer Token refreshed");
     } else {
       log.w("Warning: Failed to fetch api token. Unable to call 'getNews()' and 'getProfileData()'");
     }
