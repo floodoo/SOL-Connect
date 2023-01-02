@@ -8,6 +8,9 @@ Diese App wird auch zukünftig für Windows und MacOS zur verfügung gestellt we
 <br>
 Zur Wiki gehts [hier](https://github.com/floodoo/untis_phasierung/wiki)
 
+## Links
+[iOS App](https://apps.apple.com/de/app/sol-connect/id1632191935)
+
 ## Screenshots
 
 ### Login
